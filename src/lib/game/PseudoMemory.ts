@@ -8,6 +8,8 @@ import {
   Personality,
   ThreatLevel
 } from '@/lib/game/types';
+import { db } from '@/firebase/config';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 /**
  * PseudoMemory - Authoritative behavioral state.
@@ -35,7 +37,6 @@ export class PseudoMemory {
       ...update,
       timestamp: Date.now()
     };
-    // Future Persistence Bridge: this.saveToDatabase();
   }
 
   public getSnapshot(): AdaptiveAICompanionBehaviorInput {
@@ -46,14 +47,28 @@ export class PseudoMemory {
    * Persistence Interface (Phase 9 Bridge)
    * Ensures cognitive data survives session termination.
    */
-  public async save() {
-    console.log('[SENTINEL] Cognitive Persistence Initiated...');
-    // Implementation: await setDoc(doc(db, 'avatars', avatarId), this.state);
+  public async save(avatarId: string = 'default-avatar') {
+    try {
+      await setDoc(doc(db, 'avatar_memory', avatarId), {
+        ...this.state,
+        savedAt: Date.now()
+      });
+      console.log('[SENTINEL] Cognitive Persistence: SAVED');
+    } catch(e) {
+      console.error('[SENTINEL] Persistence FAILED', e);
+    }
   }
 
-  public async hydrate(data: AdaptiveAICompanionBehaviorInput) {
-    this.state = data;
-    console.log('[SENTINEL] Cognitive Hydration Successful');
+  public async hydrate(avatarId: string = 'default-avatar') {
+    try {
+      const snap = await getDoc(doc(db, 'avatar_memory', avatarId));
+      if (snap.exists()) {
+        this.state = snap.data() as AdaptiveAICompanionBehaviorInput;
+        console.log('[SENTINEL] Cognitive Hydration: LOADED');
+      }
+    } catch(e) {
+      console.error('[SENTINEL] Hydration FAILED', e);
+    }
   }
 }
 

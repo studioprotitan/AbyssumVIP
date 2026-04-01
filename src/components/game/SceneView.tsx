@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useEffect, useRef } from 'react';
@@ -12,13 +13,11 @@ interface SceneViewProps {
   isWarmed?: boolean;
 }
 
-export const SceneView: React.FC<SceneViewProps> = ({ phase, stats, isWarmed }) => {
+export const SceneView: React.FC<SceneViewProps> = ({ phase, stats, lastAction = 'IDLE' }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<BABYLON.Engine | null>(null);
   const sceneRef = useRef<BABYLON.Scene | null>(null);
-  const characterRef = useRef<BABYLON.Mesh | null>(null);
-  const characterMatRef = useRef<BABYLON.StandardMaterial | null>(null);
-  const characterWireMatRef = useRef<BABYLON.StandardMaterial | null>(null);
+  const playerRef = useRef<BABYLON.AbstractMesh | null>(null);
   const particleSystemRef = useRef<BABYLON.ParticleSystem | null>(null);
 
   useEffect(() => {
@@ -32,57 +31,61 @@ export const SceneView: React.FC<SceneViewProps> = ({ phase, stats, isWarmed }) 
       "camera",
       -Math.PI / 2,
       Math.PI / 2.5,
-      15,
+      10,
       BABYLON.Vector3.Zero(),
       scene
     );
     camera.attachControl(canvasRef.current, true);
-    camera.lowerRadiusLimit = 5;
-    camera.upperRadiusLimit = 30;
+    camera.lowerRadiusLimit = 4;
+    camera.upperRadiusLimit = 20;
 
     const ambientLight = new BABYLON.HemisphericLight("ambient", new BABYLON.Vector3(0, 1, 0), scene);
-    ambientLight.intensity = 0.3;
+    ambientLight.intensity = 0.5;
 
-    // Materials
-    const wireMat = new BABYLON.StandardMaterial("wireMat", scene);
-    wireMat.wireframe = true;
-    wireMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
-    characterWireMatRef.current = wireMat;
+    // MANDATORY: Bridge Material logic for GLB PBR materials
+    const _bridgeMaterials = (meshes: BABYLON.AbstractMesh[]) => {
+      meshes.forEach(mesh => {
+        if (mesh.material && mesh.material.getClassName() === "PBRMaterial") {
+          const std = new BABYLON.StandardMaterial(mesh.material.name + "_std", scene);
+          const pbr = mesh.material as any;
+          std.diffuseColor = pbr.albedoColor ?? new BABYLON.Color3(1, 1, 1);
+          std.emissiveColor = pbr.emissiveColor ?? new BABYLON.Color3(0.1, 0.05, 0.01);
+          mesh.material.dispose();
+          mesh.material = std;
+        }
+      });
+    };
 
-    const solidMat = new BABYLON.StandardMaterial("solidMat", scene);
-    solidMat.diffuseColor = new BABYLON.Color3(0.1, 0.1, 0.1);
-    solidMat.emissiveColor = new BABYLON.Color3(1, 0.4, 0.1);
-    characterMatRef.current = solidMat;
+    // Load Stellar Woman GLB
+    BABYLON.SceneLoader.ImportMesh(
+      "",
+      "https://raw.githubusercontent.com/studioprotitan/Forge-Avatars/main/models/",
+      "scene-mint-deploy-idle.glb",
+      scene,
+      (meshes) => {
+        const root = meshes[0];
+        root.name = "player";
+        root.position = new BABYLON.Vector3(0, 0, 0);
+        playerRef.current = root;
+        _bridgeMaterials(meshes);
 
-    // Character Mesh
-    const character = BABYLON.MeshBuilder.CreateBox("character", { size: 2 }, scene);
-    character.position.y = 1;
-    character.material = wireMat;
-    characterRef.current = character;
-
-    // Particles
-    const emberTexture = PlaceHolderImages.find(img => img.id === 'ember-texture')?.imageUrl || '';
-    const particleSystem = new BABYLON.ParticleSystem("embers", 2000, scene);
-    particleSystem.particleTexture = new BABYLON.Texture(emberTexture, scene);
-    particleSystem.emitter = character;
-    particleSystem.minSize = 0.05;
-    particleSystem.maxSize = 0.2;
-    particleSystem.emitRate = 0;
-    particleSystem.start();
-    particleSystemRef.current = particleSystem;
+        // Add Embers to Player
+        const emberTexture = PlaceHolderImages.find(img => img.id === 'ember-texture')?.imageUrl || '';
+        const particleSystem = new BABYLON.ParticleSystem("embers", 2000, scene);
+        particleSystem.particleTexture = new BABYLON.Texture(emberTexture, scene);
+        particleSystem.emitter = root;
+        particleSystem.minSize = 0.05;
+        particleSystem.maxSize = 0.2;
+        particleSystem.emitRate = phase === PhaseState.STREAMING ? 600 : 0;
+        particleSystem.start();
+        particleSystemRef.current = particleSystem;
+      }
+    );
 
     engine.runRenderLoop(() => {
       scene.render();
-      if (character) {
-        character.rotation.y += 0.005;
-        character.rotation.x += 0.002;
-        character.position.y = 1 + Math.sin(Date.now() * 0.001) * 0.2;
-
-        // Synchronized "heartbeat" pulse for emissive intensity
-        if (characterMatRef.current && (isWarmed || phase === PhaseState.STREAMING)) {
-          const pulse = 0.5 + Math.sin(Date.now() * 0.002) * 0.2; // Pulsing between 0.3 and 0.7
-          characterMatRef.current.emissiveColor = new BABYLON.Color3(pulse * 1, pulse * 0.4, pulse * 0.1);
-        }
+      if (playerRef.current) {
+        playerRef.current.position.y = Math.sin(Date.now() * 0.001) * 0.1;
       }
     });
 
@@ -96,20 +99,14 @@ export const SceneView: React.FC<SceneViewProps> = ({ phase, stats, isWarmed }) 
       window.removeEventListener('resize', handleResize);
       engine.dispose();
     };
-  }, [phase, isWarmed]);
+  }, [phase]);
 
-  // Sync visuals with warming state
+  // Sync visuals with phase
   useEffect(() => {
-    if (!characterRef.current || !characterMatRef.current || !characterWireMatRef.current || !particleSystemRef.current) return;
-
-    if (isWarmed || phase === PhaseState.STREAMING) {
-      characterRef.current.material = characterMatRef.current;
-      particleSystemRef.current.emitRate = phase === PhaseState.STREAMING ? 600 : 200;
-    } else {
-      characterRef.current.material = characterWireMatRef.current;
-      particleSystemRef.current.emitRate = 0;
+    if (particleSystemRef.current) {
+      particleSystemRef.current.emitRate = phase === PhaseState.STREAMING ? 600 : 0;
     }
-  }, [isWarmed, phase]);
+  }, [phase]);
 
   return (
     <div className="relative w-full h-full overflow-hidden">

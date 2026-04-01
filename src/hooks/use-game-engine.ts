@@ -19,6 +19,8 @@ import { adaptiveAICompanionBehavior, AdaptiveAICompanionBehaviorOutput } from '
 import { getOracleIntel, OracleIntelOutput } from '@/ai/flows/oracle-intel-node';
 import { toast } from '@/hooks/use-toast';
 
+const FLASH_COOLDOWN_MS = 800;
+
 export const useGameEngine = () => {
   const [phase, setPhase] = useState<PhaseState>(PhaseState.LOADING);
   const [stats, setStats] = useState<OperatorStats>({
@@ -38,12 +40,18 @@ export const useGameEngine = () => {
   const [currentWave, setCurrentWave] = useState(1);
   
   const tickCount = useRef(0);
+  const isProcessing = useRef(false);
+  const lastFlashTime = useRef(0);
 
+  // Initialize and Hydrate
   useEffect(() => {
-    const timer = setTimeout(() => {
-      globalPhaseEngine.setState(PhaseState.LANDING);
-    }, 2500);
-    return () => clearTimeout(timer);
+    const init = async () => {
+      await companionMemory.hydrate('default-avatar');
+      setTimeout(() => {
+        globalPhaseEngine.setState(PhaseState.LANDING);
+      }, 2500);
+    };
+    init();
   }, []);
 
   useEffect(() => {
@@ -57,44 +65,47 @@ export const useGameEngine = () => {
     if (phase !== PhaseState.STREAMING) return;
 
     const agentTick = async () => {
-      tickCount.current++;
-      
-      let wave = 1;
-      if (tickCount.current > 12) wave = 3;
-      else if (tickCount.current > 6) wave = 2;
-      setCurrentWave(wave);
-
-      const snapshot = companionMemory.getSnapshot();
-      
-      let currentHazard: string | undefined = undefined;
-      let forceDirective: SurvivalDirective | null = null;
-      let forceLocomotion: Locomotion | null = null;
-      let auditLog: string | undefined = undefined;
-
-      // Hazard Simulation
-      if (wave === 1) {
-        companionMemory.update({ threatLevel: ThreatLevel.LOW, missionContext: MissionContext.launchPrep });
-      } else if (wave === 2) {
-        if (tickCount.current % 3 === 0) {
-          forceLocomotion = Locomotion.vault;
-          companionMemory.update({ environment: Environment.railcar });
-        }
-      } else if (wave === 3) {
-        if (tickCount.current % 2 === 0) {
-          currentHazard = tickCount.current % 4 === 0 ? "CRITICAL FALL DETECTED" : "IMMINENT DROWNING";
-          forceDirective = SurvivalDirective.EMERGENCY;
-          forceLocomotion = tickCount.current % 4 === 0 ? Locomotion.falling : Locomotion.swim;
-          companionMemory.update({ 
-            environment: tickCount.current % 4 === 0 ? Environment.rooftop : Environment.water,
-            threatLevel: ThreatLevel.CRITICAL 
-          });
-        }
-      }
-
-      const newEntropy = Math.min(1, Math.max(0, stats.entropyScore + (Math.random() * 0.15 - 0.05)));
-      const newDrift = Math.min(1, Math.max(0, stats.driftScore + (Math.random() * 0.08 - 0.03)));
+      if (isProcessing.current) return;
+      isProcessing.current = true;
 
       try {
+        tickCount.current++;
+        
+        let wave = 1;
+        if (tickCount.current > 12) wave = 3;
+        else if (tickCount.current > 6) wave = 2;
+        setCurrentWave(wave);
+
+        const snapshot = companionMemory.getSnapshot();
+        
+        let currentHazard: string | undefined = undefined;
+        let forceDirective: SurvivalDirective | null = null;
+        let forceLocomotion: Locomotion | null = null;
+        let auditLog: string | undefined = undefined;
+
+        // Hazard Simulation
+        if (wave === 1) {
+          companionMemory.update({ threatLevel: ThreatLevel.LOW, missionContext: MissionContext.launchPrep });
+        } else if (wave === 2) {
+          if (tickCount.current % 3 === 0) {
+            forceLocomotion = Locomotion.vault;
+            companionMemory.update({ environment: Environment.railcar });
+          }
+        } else if (wave === 3) {
+          if (tickCount.current % 2 === 0) {
+            currentHazard = tickCount.current % 4 === 0 ? "CRITICAL FALL DETECTED" : "IMMINENT DROWNING";
+            forceDirective = SurvivalDirective.EMERGENCY;
+            forceLocomotion = tickCount.current % 4 === 0 ? Locomotion.falling : Locomotion.swim;
+            companionMemory.update({ 
+              environment: tickCount.current % 4 === 0 ? Environment.rooftop : Environment.water,
+              threatLevel: ThreatLevel.CRITICAL 
+            });
+          }
+        }
+
+        const newEntropy = Math.min(1, Math.max(0, stats.entropyScore + (Math.random() * 0.15 - 0.05)));
+        const newDrift = Math.min(1, Math.max(0, stats.driftScore + (Math.random() * 0.08 - 0.03)));
+
         const intel = await getOracleIntel({
           environment: snapshot.environment,
           threatLevel: snapshot.threatLevel,
@@ -118,7 +129,6 @@ export const useGameEngine = () => {
 
         let activeAction = "idle";
         
-        // Deterministic Transition (Audit Layer)
         if (forceLocomotion) {
           const success = globalStateMachine.transition(forceLocomotion);
           if (success) {
@@ -167,15 +177,21 @@ export const useGameEngine = () => {
         }
 
         if (currentHazard) {
-          toast({
-            title: "SURVIVAL PRIME ACTIVE",
-            description: currentHazard,
-            variant: "destructive"
-          });
+          const now = Date.now();
+          if (now - lastFlashTime.current > FLASH_COOLDOWN_MS) {
+            lastFlashTime.current = now;
+            toast({
+              title: "SURVIVAL PRIME ACTIVE",
+              description: currentHazard,
+              variant: "destructive"
+            });
+          }
         }
 
       } catch (e) {
-        // [MOAI:ERROR] Oracle Sync Failure
+        console.error('[MOAI:ERROR] Oracle Sync Failure', e);
+      } finally {
+        isProcessing.current = false;
       }
     };
 
@@ -237,18 +253,21 @@ export const useGameEngine = () => {
     }
   }, [isRecording, stats.threatLevel, stats.entropyScore]);
 
-  const toggleRecording = useCallback(() => {
-    setIsRecording(!isRecording);
-    if (!isRecording) {
+  const toggleRecording = useCallback(async () => {
+    const nextRecordingState = !isRecording;
+    setIsRecording(nextRecordingState);
+    if (!nextRecordingState) {
+      // Finalize and Save
+      await companionMemory.save('default-avatar');
+      toast({
+        title: "Recording Stopped",
+        description: `Artifact finalized with ${artifactLog.length} snapshots. Cognitive memory persisted.`,
+      });
+    } else {
       setArtifactLog([]);
       toast({
         title: "Recording Started",
         description: "Capturing investor artifact loop...",
-      });
-    } else {
-      toast({
-        title: "Recording Stopped",
-        description: `Artifact finalized with ${artifactLog.length} snapshots.`,
       });
     }
   }, [isRecording, artifactLog.length]);
