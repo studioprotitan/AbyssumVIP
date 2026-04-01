@@ -13,7 +13,7 @@ interface SceneViewProps {
   isWarmed?: boolean;
 }
 
-export const SceneView: React.FC<SceneViewProps> = ({ phase, stats, lastAction = 'IDLE' }) => {
+export const SceneView: React.FC<SceneViewProps> = ({ phase, stats }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<BABYLON.Engine | null>(null);
   const sceneRef = useRef<BABYLON.Scene | null>(null);
@@ -56,11 +56,15 @@ export const SceneView: React.FC<SceneViewProps> = ({ phase, stats, lastAction =
       });
     };
 
-    // Load Stellar Woman GLB
+    // Load Stellar Woman GLB with CDN and Fallback
+    // Using jsdelivr for more reliable binary serving from GitHub
+    const modelBase = "https://cdn.jsdelivr.net/gh/studioprotitan/Forge-Avatars@main/models/";
+    const modelFile = "scene-mint-deploy-idle.glb";
+
     BABYLON.SceneLoader.ImportMesh(
       "",
-      "https://raw.githubusercontent.com/studioprotitan/Forge-Avatars/main/models/",
-      "scene-mint-deploy-idle.glb",
+      modelBase,
+      modelFile,
       scene,
       (meshes) => {
         const root = meshes[0];
@@ -79,6 +83,29 @@ export const SceneView: React.FC<SceneViewProps> = ({ phase, stats, lastAction =
         particleSystem.emitRate = phase === PhaseState.STREAMING ? 600 : 0;
         particleSystem.start();
         particleSystemRef.current = particleSystem;
+      },
+      null,
+      (scene, message) => {
+        console.warn("GLB Load Failed (Unexpected Magic or 404), falling back to primitive:", message);
+        // Fallback: Create a placeholder diamond/box if the model fails
+        const box = BABYLON.MeshBuilder.CreateBox("player_fallback", { size: 1.5 }, scene);
+        box.position = new BABYLON.Vector3(0, 0, 0);
+        playerRef.current = box;
+        
+        const mat = new BABYLON.StandardMaterial("fallback_mat", scene);
+        mat.diffuseColor = new BABYLON.Color3(1, 0.5, 0.2); // Ember color
+        mat.emissiveColor = new BABYLON.Color3(0.2, 0.1, 0.05);
+        box.material = mat;
+
+        const emberTexture = PlaceHolderImages.find(img => img.id === 'ember-texture')?.imageUrl || '';
+        const particleSystem = new BABYLON.ParticleSystem("embers_fallback", 2000, scene);
+        particleSystem.particleTexture = new BABYLON.Texture(emberTexture, scene);
+        particleSystem.emitter = box;
+        particleSystem.minSize = 0.05;
+        particleSystem.maxSize = 0.2;
+        particleSystem.emitRate = phase === PhaseState.STREAMING ? 600 : 0;
+        particleSystem.start();
+        particleSystemRef.current = particleSystem;
       }
     );
 
@@ -86,6 +113,10 @@ export const SceneView: React.FC<SceneViewProps> = ({ phase, stats, lastAction =
       scene.render();
       if (playerRef.current) {
         playerRef.current.position.y = Math.sin(Date.now() * 0.001) * 0.1;
+        // Subtle rotation if it's the fallback mesh
+        if (playerRef.current.name === "player_fallback") {
+          playerRef.current.rotation.y += 0.01;
+        }
       }
     });
 
