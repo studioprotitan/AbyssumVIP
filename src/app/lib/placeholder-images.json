@@ -1,0 +1,17 @@
+
+{
+  "placeholderImages": [
+    {
+      "id": "ember-texture",
+      "description": "Ember particle texture",
+      "imageUrl": "https://picsum.photos/seed/ember/64/64",
+      "imageHint": "fire ember"
+    },
+    {
+      "id": "arena-ground",
+      "description": "Dark metallic arena floor",
+      "imageUrl": "https://picsum.photos/seed/arena/1024/1024",
+      "imageHint": "dark metal"
+    }
+  ]
+}
