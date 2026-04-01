@@ -1,5 +1,11 @@
-
-import { AdaptiveAICompanionBehaviorInput, Locomotion, Environment, MissionContext, PilotIntent, Personality } from '@/ai/flows/adaptive-ai-companion-behavior';
+import { 
+  AdaptiveAICompanionBehaviorInput, 
+  Locomotion, 
+  Environment, 
+  MissionContext, 
+  PilotIntent, 
+  Personality 
+} from '@/lib/game/types';
 
 export class PseudoMemory {
   private state: AdaptiveAICompanionBehaviorInput;
