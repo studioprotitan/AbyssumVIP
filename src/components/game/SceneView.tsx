@@ -3,7 +3,7 @@
 import React, { useEffect, useRef } from 'react';
 import * as BABYLON from 'babylonjs';
 import 'babylonjs-loaders';
-import { PhaseState, OperatorStats, SurvivalDirective } from '@/lib/game/types';
+import { PhaseState, OperatorStats } from '@/lib/game/types';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 interface SceneViewProps {
@@ -43,10 +43,6 @@ export const SceneView: React.FC<SceneViewProps> = ({ phase, stats, isWarmed }) 
     const ambientLight = new BABYLON.HemisphericLight("ambient", new BABYLON.Vector3(0, 1, 0), scene);
     ambientLight.intensity = 0.3;
 
-    const emberLight = new BABYLON.PointLight("emberLight", new BABYLON.Vector3(0, 5, 0), scene);
-    emberLight.diffuse = new BABYLON.Color3(1, 0.4, 0.1);
-    emberLight.intensity = 0;
-
     // Materials
     const wireMat = new BABYLON.StandardMaterial("wireMat", scene);
     wireMat.wireframe = true;
@@ -81,6 +77,12 @@ export const SceneView: React.FC<SceneViewProps> = ({ phase, stats, isWarmed }) 
         character.rotation.y += 0.005;
         character.rotation.x += 0.002;
         character.position.y = 1 + Math.sin(Date.now() * 0.001) * 0.2;
+
+        // Synchronized "heartbeat" pulse for emissive intensity
+        if (characterMatRef.current && (isWarmed || phase === PhaseState.STREAMING)) {
+          const pulse = 0.5 + Math.sin(Date.now() * 0.002) * 0.2; // Pulsing between 0.3 and 0.7
+          characterMatRef.current.emissiveColor = new BABYLON.Color3(pulse * 1, pulse * 0.4, pulse * 0.1);
+        }
       }
     });
 
@@ -94,7 +96,7 @@ export const SceneView: React.FC<SceneViewProps> = ({ phase, stats, isWarmed }) 
       window.removeEventListener('resize', handleResize);
       engine.dispose();
     };
-  }, []);
+  }, [phase, isWarmed]);
 
   // Sync visuals with warming state
   useEffect(() => {

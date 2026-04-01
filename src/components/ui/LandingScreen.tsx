@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { Terminal, Cpu, Database, BrainCircuit, Radio, ShieldCheck, ChevronRight } from 'lucide-react';
+import { Terminal, Cpu, Database, BrainCircuit, Radio, ShieldCheck } from 'lucide-react';
 
 interface LandingScreenProps {
   onLaunch: () => void;
@@ -94,7 +94,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onLaunch, onWarmUp
 
   // Handle all systems green
   useEffect(() => {
-    if (confirmedChecks.length === 6) {
+    if (confirmedChecks.length === totalSystems) {
       setTimeout(() => {
         setBootLabel('ALL SYSTEMS GREEN — OPERATIVE READY');
         log('ALL SYSTEMS WARM — FORGE ATOM ACTIVE', 'ok');
@@ -111,6 +111,8 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onLaunch, onWarmUp
     { id: 'chk-moai', name: 'MOAI_BRIDGE', icon: Radio },
     { id: 'chk-sentinel', name: 'SENTINEL_DRIFT', icon: BrainCircuit },
   ];
+
+  const totalSystems = systems.length;
 
   const telemLines = [
     'ENGINE: Babylon.js v7.54.3',
@@ -172,7 +174,8 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onLaunch, onWarmUp
                   className={cn(
                     "text-[8px] tracking-wider transition-all duration-500",
                     visibleTelem > i ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-2",
-                    isWarmed && i > 2 ? "text-ember" : "text-white/40"
+                    isWarmed && i > 2 ? "text-ember" : "text-white/40",
+                    isWarmed && "animate-console-breathe"
                   )}
                 >
                   {t}
@@ -191,9 +194,9 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onLaunch, onWarmUp
             "absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity duration-1000",
             isWarmed ? "opacity-20" : "opacity-5"
           )}>
-            <div className="size-[300px] border border-dashed border-white rounded-full animate-spin duration-[20s]" />
-            <div className="absolute size-[220px] border border-dashed border-white rounded-full animate-spin duration-[15s] direction-reverse" />
-            <div className="absolute size-[140px] border border-white/20 rounded-full animate-pulse" />
+            <div className={cn("size-[300px] border border-dashed border-white rounded-full animate-spin duration-[20s]", isWarmed && "animate-console-breathe")} />
+            <div className={cn("absolute size-[220px] border border-dashed border-white rounded-full animate-spin duration-[15s] direction-reverse", isWarmed && "animate-console-breathe")} />
+            <div className={cn("absolute size-[140px] border border-white/20 rounded-full animate-pulse", isWarmed && "animate-console-breathe")} />
           </div>
 
           <div className={cn("absolute top-8 left-8 size-8 border-t border-l transition-colors", isWarmed ? "border-ember" : "border-white/10")} />

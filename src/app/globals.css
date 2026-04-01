@@ -94,6 +94,15 @@
   100% { transform: translate(0) }
 }
 
+@keyframes consoleBreathe {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+.animate-console-breathe {
+  animation: consoleBreathe 4s ease-in-out infinite;
+}
+
 canvas {
   outline: none;
 }
