@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { QTEStatus } from '@/lib/game/types';
 import { generateDynamicQTEPrompt } from '@/ai/flows/dynamic-qte-prompt-generation';
 
@@ -12,11 +12,18 @@ interface QTEOverlayProps {
 
 export const QTEOverlay: React.FC<QTEOverlayProps> = ({ active, onResult }) => {
   const [qteData, setQteData] = useState<QTEStatus>({ active: false });
-  const [timer, setTimer] = useState(0);
+  const [timer, setTimer] = useState(100);
+  const onResultRef = useRef(onResult);
+
+  // Keep the latest onResult callback in a ref to avoid effect dependency loops
+  useEffect(() => {
+    onResultRef.current = onResult;
+  }, [onResult]);
 
   useEffect(() => {
     if (!active) {
       setQteData({ active: false });
+      setTimer(100);
       return;
     }
 
@@ -35,40 +42,60 @@ export const QTEOverlay: React.FC<QTEOverlayProps> = ({ active, onResult }) => {
         });
         setTimer(100);
       } catch (e) {
-        console.error("QTE generation failed", e);
+        // Fallback for safety
+        setQteData({
+          active: true,
+          prompt: 'CALIBRATE SYNC',
+          expectedKey: 'f',
+          loreContext: 'The resonance is shifting...'
+        });
+        setTimer(100);
       }
     };
 
     fetchQTE();
   }, [active]);
 
+  // Timer countdown logic
   useEffect(() => {
     if (!qteData.active) return;
 
     const interval = setInterval(() => {
-      setTimer((prev) => {
-        if (prev <= 0) {
-          onResult(false);
-          return 0;
-        }
-        return prev - 2;
-      });
+      setTimer((prev) => Math.max(0, prev - 2));
     }, 50);
 
+    return () => clearInterval(interval);
+  }, [qteData.active]);
+
+  // Handle timer expiration as a side effect, not inside an updater
+  useEffect(() => {
+    if (qteData.active && timer <= 0) {
+      onResultRef.current(false);
+    }
+  }, [timer, qteData.active]);
+
+  // Key listener logic
+  useEffect(() => {
+    if (!qteData.active || !qteData.expectedKey) return;
+
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === qteData.expectedKey) {
-        onResult(true);
+      // Normalize keys for comparison
+      const pressedKey = e.key.toLowerCase();
+      const expected = qteData.expectedKey!.toLowerCase();
+
+      if (pressedKey === expected) {
+        onResultRef.current(true);
       } else {
-        onResult(false);
+        // Ignore modifier keys to prevent accidental failures
+        if (!['shift', 'control', 'alt', 'meta'].includes(pressedKey)) {
+          onResultRef.current(false);
+        }
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      clearInterval(interval);
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [qteData, onResult]);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [qteData.active, qteData.expectedKey]);
 
   if (!qteData.active) return null;
 
@@ -88,7 +115,7 @@ export const QTEOverlay: React.FC<QTEOverlayProps> = ({ active, onResult }) => {
             
             <div className="w-full h-1 bg-void overflow-hidden">
               <div 
-                className="h-full bg-destructive transition-all duration-500 linear"
+                className="h-full bg-destructive transition-all duration-75 linear"
                 style={{ width: `${timer}%` }}
               />
             </div>
