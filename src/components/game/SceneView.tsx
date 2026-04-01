@@ -54,7 +54,8 @@ export const SceneView: React.FC<SceneViewProps> = ({ phase, stats }) => {
       });
     };
 
-    const modelBase = "https://cdn.jsdelivr.net/gh/studioprotitan/Forge-Avatars@main/models/";
+    // MOAI COMPLIANCE: Using media.githubusercontent.com for Git LFS binary resolution
+    const modelBase = "https://media.githubusercontent.com/media/studioprotitan/Forge-Avatars/main/models/";
     const modelFile = "scene-mint-deploy-idle.glb";
 
     BABYLON.SceneLoader.ImportMesh(
