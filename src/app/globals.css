@@ -103,6 +103,29 @@
   animation: consoleBreathe 4s ease-in-out infinite;
 }
 
+/* Organic Telemetry Pulse */
+@keyframes telemetry-pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+.animate-telemetry-pulse {
+  animation: telemetry-pulse 2.1s ease-in-out infinite;
+}
+
+/* Cinematic Heartbeat Animation */
+@keyframes heartbeat {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.95); }
+  10% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+  20% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+  30% { opacity: 1; transform: translate(-50%, -50%) scale(1.02); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+}
+
+.animate-heartbeat {
+  animation: heartbeat var(--heartbeat-speed, 1s) ease-in-out infinite;
+}
+
 canvas {
   outline: none;
 }

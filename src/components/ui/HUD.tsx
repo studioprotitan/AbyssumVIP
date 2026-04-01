@@ -1,7 +1,6 @@
-
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { PhaseState, OperatorStats } from '@/lib/game/types';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -11,20 +10,42 @@ import { cn } from '@/lib/utils';
 interface HUDProps {
   phase: PhaseState;
   stats: OperatorStats;
+  activeAction?: string;
   onInjectSkill?: () => void;
   isRecording?: boolean;
   onToggleRecording?: () => void;
   onToggleReport?: () => void;
 }
 
+const actionHeartbeatMap: Record<string, number> = {
+  'IDLE': 2.0,       // seconds per beat
+  'WALK': 1.2,
+  'RUN': 0.7,
+  'SPRINT': 0.45,
+  'JUMP': 0.55,
+  'ROLL': 0.6,
+  'ATTACK': 0.4,
+  'BRACE': 0.8,
+  'CLIMB': 0.9,
+  'SWIM': 1.1,
+  'FALLING': 0.3,
+  'DEFAULT': 1.0
+};
+
 export const HUD: React.FC<HUDProps> = ({ 
   phase, 
   stats, 
+  activeAction,
   onInjectSkill, 
   isRecording, 
   onToggleRecording,
   onToggleReport
 }) => {
+  const heartbeatSpeed = useMemo(() => {
+    const action = activeAction?.toUpperCase() || 'DEFAULT';
+    return actionHeartbeatMap[action] || actionHeartbeatMap['DEFAULT'];
+  }, [activeAction]);
+
   if (phase === PhaseState.LOADING) return null;
 
   return (
@@ -65,21 +86,21 @@ export const HUD: React.FC<HUDProps> = ({
               <span className="font-code text-[10px] opacity-40 uppercase">Entropy</span>
               <div className="flex items-center gap-2">
                 <Zap className="size-3" />
-                <span className="font-code text-xs">{(stats.entropyScore * 100).toFixed(1)}%</span>
+                <span className="font-code text-xs animate-telemetry-pulse">{(stats.entropyScore * 100).toFixed(1)}%</span>
               </div>
             </div>
             <div className="flex flex-col items-end">
               <span className="font-code text-[10px] opacity-40 uppercase">Sentinel Drift</span>
               <div className="flex items-center gap-2">
                 <BrainCircuit className="size-3" />
-                <span className="font-code text-xs">{(stats.driftScore * 100).toFixed(1)}%</span>
+                <span className="font-code text-xs animate-telemetry-pulse">{(stats.driftScore * 100).toFixed(1)}%</span>
               </div>
             </div>
             <div className="flex flex-col items-end col-span-2 mt-2">
               <span className="font-code text-[10px] opacity-40 uppercase">Tactical AI Array</span>
               <div className="flex items-center gap-2 text-primary">
                 <Cpu className="size-3" />
-                <span className="font-code text-xs">ANALYZING WAVE DYNAMICS</span>
+                <span className="font-code text-xs animate-telemetry-pulse">ANALYZING WAVE DYNAMICS</span>
               </div>
             </div>
           </div>
@@ -120,9 +141,20 @@ export const HUD: React.FC<HUDProps> = ({
         </div>
       </div>
 
-      {/* Center Reticle */}
+      {/* Center Reticle & State Flash Heartbeat */}
       {phase === PhaseState.STREAMING && (
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-20">
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center">
+          {/* State Flash Heartbeat Text */}
+          {activeAction && (
+            <div 
+              key={activeAction}
+              className="absolute font-headline text-3xl text-primary uppercase tracking-[0.2em] pointer-events-none animate-heartbeat drop-shadow-[0_0_15px_rgba(255,140,51,0.4)]"
+              style={{ '--heartbeat-speed': `${heartbeatSpeed}s` } as React.CSSProperties}
+            >
+              {activeAction}
+            </div>
+          )}
+
           <div className="relative size-24 flex items-center justify-center">
             <div className="absolute inset-0 border border-ember/10 rounded-full animate-ping" />
             <div className="absolute inset-4 border border-ember/20 rounded-full animate-pulse" />
@@ -135,7 +167,7 @@ export const HUD: React.FC<HUDProps> = ({
               <div className="h-10 w-px bg-ember/20 animate-pulse" />
               <div className="bg-void/80 px-2 py-1 border border-ember/20 backdrop-blur-md">
                 <span className="font-code text-[8px] whitespace-nowrap uppercase text-ember/60">
-                  Target Lock: [{ (Math.random()*100).toFixed(1) }, { (Math.random()*100).toFixed(1) }] :: SSOT Validated
+                  Target Lock :: SSOT Validated :: {activeAction || 'CALIBRATING'}
                 </span>
               </div>
             </div>
@@ -151,7 +183,7 @@ export const HUD: React.FC<HUDProps> = ({
               <span className="font-code text-[10px] text-ember/40 uppercase">Cognitive Coherence</span>
               <span className="font-headline text-sm tracking-tighter text-ember uppercase">Bond Resonance</span>
             </div>
-            <span className="font-code text-lg font-bold text-ember">{stats.bondLevel}%</span>
+            <span className="font-code text-lg font-bold text-ember animate-telemetry-pulse">{stats.bondLevel}%</span>
           </div>
           <div className="relative h-2 bg-void/60 border border-ember/20 rounded-none overflow-hidden">
             <div 
@@ -168,15 +200,15 @@ export const HUD: React.FC<HUDProps> = ({
         <div className="flex gap-12 pb-1">
           <div className="flex flex-col items-center gap-1 opacity-60">
             <Shield className="size-5 text-ember" />
-            <span className="font-code text-[8px] uppercase tracking-tighter text-center">Persistence<br/>Oversight</span>
+            <span className="font-code text-[8px] uppercase tracking-tighter text-center animate-telemetry-pulse">Persistence<br/>Oversight</span>
           </div>
           <div className="flex flex-col items-center gap-1 opacity-60">
              <Waves className="size-5 text-primary" />
-             <span className="font-code text-[8px] uppercase tracking-tighter text-center">Negotiate<br/>Terrain</span>
+             <span className="font-code text-[8px] uppercase tracking-tighter text-center animate-telemetry-pulse">Negotiate<br/>Terrain</span>
           </div>
           <div className="flex flex-col items-center gap-1 opacity-60">
              <Activity className="size-5 text-secondary" />
-             <span className="font-code text-[8px] uppercase tracking-tighter text-center">Tactical AI<br/>Array</span>
+             <span className="font-code text-[8px] uppercase tracking-tighter text-center animate-telemetry-pulse">Tactical AI<br/>Array</span>
           </div>
         </div>
       </div>

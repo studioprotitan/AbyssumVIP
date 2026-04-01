@@ -64,6 +64,7 @@ export default function Home() {
       <HUD 
         phase={phase} 
         stats={stats} 
+        activeAction={behaviors[0]?.name}
         onInjectSkill={injectSkill} 
         isRecording={isRecording}
         onToggleRecording={toggleRecording}
