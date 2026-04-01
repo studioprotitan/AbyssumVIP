@@ -9,7 +9,7 @@ import { QTEOverlay } from '@/components/ui/QTEOverlay';
 import { useGameEngine } from '@/hooks/use-game-engine';
 import { PhaseState } from '@/lib/game/types';
 import { Toaster } from '@/components/ui/toaster';
-import { Loader2 } from 'lucide-react';
+import { Loader2, BrainCircuit } from 'lucide-react';
 
 export default function Home() {
   const {
@@ -17,6 +17,7 @@ export default function Home() {
     stats,
     qteActive,
     behaviors,
+    oracleIntel,
     startLaunch,
     handleQTEResult
   } = useGameEngine();
@@ -35,9 +36,9 @@ export default function Home() {
           </div>
           <div className="text-center space-y-2">
             <h2 className="font-headline text-3xl text-ember uppercase tracking-[0.3em] animate-pulse">
-              Initializing Sentinel
+              Calibrating Brain
             </h2>
-            <p className="font-code text-xs text-ember/40">CALIBRATING DRIFT SENTRY... [MOAI SSOT ACTIVE]</p>
+            <p className="font-code text-xs text-ember/40">ORACLE NODE CONNECTING... [GOAP ACTIVE]</p>
           </div>
         </div>
       )}
@@ -53,19 +54,37 @@ export default function Home() {
       {/* Persistent HUD */}
       <HUD phase={phase} stats={stats} />
 
-      {/* AI Behavior Guidance (Bottom Left Info) */}
-      {phase === PhaseState.STREAMING && behaviors.length > 0 && (
-        <div className="absolute bottom-32 left-8 z-30 max-w-xs space-y-1 animate-in slide-in-from-left-4 fade-in duration-500">
-          <span className="font-code text-[10px] text-ember/40 uppercase">Companion Intent Detected</span>
-          <div className="p-3 bg-void/60 border-l-2 border-ember backdrop-blur-md">
-            <p className="font-headline text-sm text-ember uppercase">
-              Action: {behaviors[0].name}
-            </p>
-            <p className="font-body text-[10px] text-ember/60 mt-1">
-              Weight: {behaviors[0].signalPulseWeight.toFixed(2)} | Priority: {behaviors[0].priority}
-            </p>
-          </div>
-        </div>
+      {/* Oracle Guidance & AI Behaviors Overlay */}
+      {phase === PhaseState.STREAMING && (
+        <>
+          {/* Top Left Oracle Assessment */}
+          {oracleIntel && (
+            <div className="absolute top-32 left-8 z-30 max-w-sm p-4 bg-void/60 border-l-2 border-primary backdrop-blur-md animate-in slide-in-from-left-4 duration-500">
+              <div className="flex items-center gap-2 mb-2">
+                <BrainCircuit className="size-4 text-primary animate-pulse" />
+                <span className="font-code text-[10px] text-primary uppercase">Oracle Strategic Analysis</span>
+              </div>
+              <p className="font-body text-xs text-ember/80 italic leading-relaxed">
+                "{oracleIntel.riskAssessment}"
+              </p>
+            </div>
+          )}
+
+          {/* Bottom Left GOAP Action Intent */}
+          {behaviors.length > 0 && (
+            <div className="absolute bottom-32 left-8 z-30 max-w-xs space-y-1 animate-in slide-in-from-left-4 fade-in duration-500">
+              <span className="font-code text-[10px] text-ember/40 uppercase">Avatar Intent Proposed</span>
+              <div className="p-3 bg-void/60 border-l-2 border-ember backdrop-blur-md">
+                <p className="font-headline text-sm text-ember uppercase">
+                  Action: {behaviors[0].name}
+                </p>
+                <p className="font-body text-[10px] text-ember/60 mt-1">
+                  Weight: {behaviors[0].signalPulseWeight.toFixed(2)} | Directive: {stats.activeDirective}
+                </p>
+              </div>
+            </div>
+          )}
+        </>
       )}
 
       {/* Post-Process Film Grain / Glitch Overlay */}

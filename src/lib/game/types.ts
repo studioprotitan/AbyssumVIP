@@ -10,7 +10,9 @@ export enum Locomotion {
   walk = 'walk',
   sprint = 'sprint',
   vault = 'vault',
-  brace = 'brace'
+  brace = 'brace',
+  climb = 'climb',
+  swim = 'swim'
 }
 
 export enum Environment {
@@ -18,7 +20,8 @@ export enum Environment {
   exterior = 'exterior',
   railcar = 'railcar',
   rooftop = 'rooftop',
-  tunnel = 'tunnel'
+  tunnel = 'tunnel',
+  water = 'water'
 }
 
 export enum MissionContext {
@@ -42,13 +45,43 @@ export enum Personality {
   aggressive = 'aggressive'
 }
 
+export enum SurvivalDirective {
+  FIGHT = 'FIGHT',
+  FLIGHT = 'FLIGHT',
+  SURVIVAL = 'SURVIVAL',
+  EMERGENCY = 'EMERGENCY'
+}
+
+export enum ThreatLevel {
+  LOW = 'LOW',
+  MODERATE = 'MODERATE',
+  HIGH = 'HIGH',
+  CRITICAL = 'CRITICAL'
+}
+
 export interface AdaptiveAICompanionBehaviorInput {
   locomotion: Locomotion;
   environment: Environment;
   missionContext: MissionContext;
   pilotIntent: PilotIntent;
   personality: Personality;
+  threatLevel: ThreatLevel;
+  entropyScore: number;
   timestamp: number;
+}
+
+export interface OracleIntelOutput {
+  suggestedDirective: SurvivalDirective;
+  tacticalWeights: Record<string, number>;
+  riskAssessment: string;
+}
+
+export interface BehaviorAction {
+  name: string;
+  conditions: string[];
+  animationRange: [number, number];
+  priority: number;
+  signalPulseWeight: number;
 }
 
 export interface QTEStatus {
@@ -61,4 +94,6 @@ export interface QTEStatus {
 export interface OperatorStats {
   bondLevel: number;
   mountingStatus: 'unmounted' | 'mounting' | 'mounted';
+  activeDirective: SurvivalDirective;
+  threatLevel: ThreatLevel;
 }

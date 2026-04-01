@@ -1,10 +1,12 @@
+
 import { 
   AdaptiveAICompanionBehaviorInput, 
   Locomotion, 
   Environment, 
   MissionContext, 
   PilotIntent, 
-  Personality 
+  Personality,
+  ThreatLevel
 } from '@/lib/game/types';
 
 export class PseudoMemory {
@@ -17,6 +19,8 @@ export class PseudoMemory {
       missionContext: MissionContext.launchPrep,
       pilotIntent: PilotIntent.forward,
       personality: Personality.efficient,
+      threatLevel: ThreatLevel.LOW,
+      entropyScore: 0.1,
       timestamp: Date.now(),
     };
   }

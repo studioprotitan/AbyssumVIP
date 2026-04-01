@@ -3,9 +3,8 @@
 
 import React from 'react';
 import { PhaseState, OperatorStats } from '@/lib/game/types';
-import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { Activity, Zap, Shield, Target } from 'lucide-react';
+import { Activity, Zap, Shield, Target, AlertTriangle } from 'lucide-react';
 
 interface HUDProps {
   phase: PhaseState;
@@ -23,15 +22,15 @@ export const HUD: React.FC<HUDProps> = ({ phase, stats }) => {
           <div className="flex items-center gap-3">
             <div className="w-3 h-3 rounded-full bg-ember animate-pulse shadow-[0_0_8px_#FF8C33]" />
             <h2 className="font-headline text-xl tracking-widest text-ember uppercase glitch-text">
-              Operator Sentinel
+              Oracle Intel Node
             </h2>
           </div>
           <div className="flex gap-4">
-            <Badge variant="outline" className="border-ember/50 text-ember/80 font-code text-[10px] bg-void/40">
-              STATE: {phase}
+            <Badge variant="outline" className="border-ember/50 text-ember/80 font-code text-[10px] bg-void/40 uppercase">
+              Directive: {stats.activeDirective}
             </Badge>
-            <Badge variant="outline" className="border-destructive/50 text-destructive/80 font-code text-[10px] bg-void/40">
-              MOUNT: {stats.mountingStatus.toUpperCase()}
+            <Badge variant="outline" className="border-destructive/50 text-destructive/80 font-code text-[10px] bg-void/40 uppercase">
+              Threat: {stats.threatLevel}
             </Badge>
           </div>
         </div>
@@ -39,11 +38,11 @@ export const HUD: React.FC<HUDProps> = ({ phase, stats }) => {
         <div className="grid grid-cols-2 gap-4 text-ember/70">
           <div className="flex items-center gap-2">
             <Activity className="size-4" />
-            <span className="font-code text-xs">DRIFT: STABLE</span>
+            <span className="font-code text-xs">SENTINEL: SYNCED</span>
           </div>
           <div className="flex items-center gap-2">
             <Zap className="size-4" />
-            <span className="font-code text-xs">PULSE: 104hz</span>
+            <span className="font-code text-xs">ENTROPY: LOW</span>
           </div>
         </div>
       </div>
@@ -53,10 +52,9 @@ export const HUD: React.FC<HUDProps> = ({ phase, stats }) => {
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
           <div className="relative size-16 flex items-center justify-center border border-ember/20 rounded-full animate-pulse">
             <div className="absolute size-1 bg-ember rounded-full" />
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-2 bg-ember" />
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[1px] h-2 bg-ember" />
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 h-[1px] w-2 bg-ember" />
-            <div className="absolute right-0 top-1/2 -translate-y-1/2 h-[1px] w-2 bg-ember" />
+            <div className="flex items-center justify-center p-1 bg-void/20 rounded">
+               <Target className="size-4 text-ember/40" />
+            </div>
           </div>
         </div>
       )}
@@ -65,7 +63,7 @@ export const HUD: React.FC<HUDProps> = ({ phase, stats }) => {
       <div className="flex justify-between items-end gap-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <div className="flex-1 max-w-xs space-y-3">
           <div className="flex justify-between items-end">
-            <span className="font-headline text-xs tracking-tighter text-ember uppercase">Mount Bond Resonance</span>
+            <span className="font-headline text-xs tracking-tighter text-ember uppercase">Bond Resonance</span>
             <span className="font-code text-lg font-bold text-ember">{stats.bondLevel}%</span>
           </div>
           <div className="relative h-2 bg-void/60 border border-ember/20 rounded-none overflow-hidden">
@@ -82,8 +80,8 @@ export const HUD: React.FC<HUDProps> = ({ phase, stats }) => {
             <span className="font-code text-[8px]">GUARD</span>
           </div>
           <div className="flex flex-col items-center gap-1">
-            <Target className="size-5 text-ember" />
-            <span className="font-code text-[8px]">FOCUS</span>
+             <AlertTriangle className="size-5 text-destructive/40" />
+             <span className="font-code text-[8px]">SURVIVAL</span>
           </div>
         </div>
       </div>
