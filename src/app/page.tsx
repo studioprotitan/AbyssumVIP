@@ -1,7 +1,6 @@
-
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { SceneView } from '@/components/game/SceneView';
 import { HUD } from '@/components/ui/HUD';
 import { LandingScreen } from '@/components/ui/LandingScreen';
@@ -30,10 +29,12 @@ export default function Home() {
     toggleReport
   } = useGameEngine();
 
+  const [isWarmed, setIsWarmed] = useState(false);
+
   return (
     <main className="relative w-screen h-screen bg-void-dark">
       {/* 3D Core */}
-      <SceneView phase={phase} stats={stats} />
+      <SceneView phase={phase} stats={stats} isWarmed={isWarmed} />
 
       {/* Loading Screen Overlay */}
       {phase === PhaseState.LOADING && (
@@ -51,9 +52,9 @@ export default function Home() {
         </div>
       )}
 
-      {/* Landing Phase UI */}
+      {/* Landing Phase UI (Forge Confirm) */}
       {phase === PhaseState.LANDING && !qteActive && (
-        <LandingScreen onLaunch={startLaunch} />
+        <LandingScreen onLaunch={startLaunch} onWarmUp={setIsWarmed} />
       )}
 
       {/* QTE Layer */}
