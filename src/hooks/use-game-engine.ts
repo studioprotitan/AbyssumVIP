@@ -33,6 +33,7 @@ export const useGameEngine = () => {
   const [behaviors, setBehaviors] = useState<AdaptiveAICompanionBehaviorOutput>([]);
   const [oracleIntel, setOracleIntel] = useState<OracleIntelOutput | null>(null);
   const [isRecording, setIsRecording] = useState(false);
+  const [showReport, setShowReport] = useState(false);
   const [artifactLog, setArtifactLog] = useState<ArtifactSnapshot[]>([]);
   const [currentWave, setCurrentWave] = useState(1);
   
@@ -51,14 +52,13 @@ export const useGameEngine = () => {
     });
   }, []);
 
-  // Agentic Advanced Simulation Tick — Wave Stress Test Logic
+  // Agentic Advanced Simulation Tick
   useEffect(() => {
     if (phase !== PhaseState.STREAMING) return;
 
     const agentTick = async () => {
       tickCount.current++;
       
-      // Wave Logic
       let wave = 1;
       if (tickCount.current > 12) wave = 3;
       else if (tickCount.current > 6) wave = 2;
@@ -70,18 +70,14 @@ export const useGameEngine = () => {
       let forceDirective: SurvivalDirective | null = null;
       let forceLocomotion: Locomotion | null = null;
 
-      // Phase-Specific Emergent Hazards
       if (wave === 1) {
-        // Light exploration / Combat
         companionMemory.update({ threatLevel: ThreatLevel.LOW, missionContext: MissionContext.launchPrep });
       } else if (wave === 2) {
-        // Mixed Combat + Terrain
         if (tickCount.current % 3 === 0) {
           forceLocomotion = Locomotion.vault;
           companionMemory.update({ environment: Environment.railcar });
         }
       } else if (wave === 3) {
-        // Heavy Stress + Hazards
         if (tickCount.current % 2 === 0) {
           currentHazard = tickCount.current % 4 === 0 ? "CRITICAL FALL DETECTED" : "IMMINENT DROWNING";
           forceDirective = SurvivalDirective.EMERGENCY;
@@ -144,7 +140,6 @@ export const useGameEngine = () => {
           hazardDetected: currentHazard
         }));
 
-        // Artifact Logging — Capture rich state data
         if (isRecording) {
           setArtifactLog(prev => [
             {
@@ -169,11 +164,11 @@ export const useGameEngine = () => {
         }
 
       } catch (e) {
-        // Central error handling through provider/listener
+        // Error handling through central listener
       }
     };
 
-    const interval = setInterval(agentTick, 4000); // Faster tick for stress testing
+    const interval = setInterval(agentTick, 4000);
     agentTick();
     return () => clearInterval(interval);
   }, [phase, stats.entropyScore, stats.driftScore, isRecording]);
@@ -215,7 +210,6 @@ export const useGameEngine = () => {
       description: "Injecting Tactical Shield into Combat Memory...",
     });
     setStats(prev => ({ ...prev, driftScore: 0.01, activeDirective: SurvivalDirective.FIGHT }));
-    // Simulate immediate skill effect in log
     if (isRecording) {
       setArtifactLog(prev => [
         {
@@ -248,6 +242,10 @@ export const useGameEngine = () => {
     }
   }, [isRecording, artifactLog.length]);
 
+  const toggleReport = useCallback(() => {
+    setShowReport(prev => !prev);
+  }, []);
+
   return {
     phase,
     stats,
@@ -255,11 +253,13 @@ export const useGameEngine = () => {
     behaviors,
     oracleIntel,
     isRecording,
+    showReport,
     artifactLog,
     currentWave,
     startLaunch,
     handleQTEResult,
     injectSkill,
-    toggleRecording
+    toggleRecording,
+    toggleReport
   };
 };

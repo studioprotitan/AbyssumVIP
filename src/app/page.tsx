@@ -7,6 +7,7 @@ import { HUD } from '@/components/ui/HUD';
 import { LandingScreen } from '@/components/ui/LandingScreen';
 import { QTEOverlay } from '@/components/ui/QTEOverlay';
 import { SimulationLog } from '@/components/ui/SimulationLog';
+import { SystemsReport } from '@/components/ui/SystemsReport';
 import { useGameEngine } from '@/hooks/use-game-engine';
 import { PhaseState } from '@/lib/game/types';
 import { Toaster } from '@/components/ui/toaster';
@@ -20,11 +21,13 @@ export default function Home() {
     behaviors,
     oracleIntel,
     isRecording,
+    showReport,
     artifactLog,
     startLaunch,
     handleQTEResult,
     injectSkill,
-    toggleRecording
+    toggleRecording,
+    toggleReport
   } = useGameEngine();
 
   return (
@@ -63,16 +66,24 @@ export default function Home() {
         onInjectSkill={injectSkill} 
         isRecording={isRecording}
         onToggleRecording={toggleRecording}
+        onToggleReport={toggleReport}
       />
 
       {/* Artifact Log Sidebar */}
       <SimulationLog logs={artifactLog} active={isRecording && phase === PhaseState.STREAMING} />
 
+      {/* Systems Diagnostics Overlay */}
+      <SystemsReport 
+        active={showReport} 
+        stats={stats} 
+        onClose={toggleReport} 
+      />
+
       {/* Oracle Guidance & AI Behaviors Overlay */}
       {phase === PhaseState.STREAMING && (
         <>
           {/* Top Left Oracle Assessment */}
-          {oracleIntel && !isRecording && (
+          {oracleIntel && !isRecording && !showReport && (
             <div className="absolute top-32 left-8 z-30 max-w-sm p-4 bg-void/80 border-l-2 border-primary backdrop-blur-md animate-in slide-in-from-left-4 duration-500">
               <div className="flex items-center justify-between gap-2 mb-2">
                 <div className="flex items-center gap-2">
@@ -88,7 +99,7 @@ export default function Home() {
           )}
 
           {/* Bottom Left GOAP Action Intent */}
-          {behaviors.length > 0 && (
+          {behaviors.length > 0 && !showReport && (
             <div className="absolute bottom-32 left-8 z-30 max-w-xs space-y-1 animate-in slide-in-from-left-4 fade-in duration-500">
               <span className="font-code text-[10px] text-ember/40 uppercase">Avatar Intent Proposed</span>
               <div className="p-3 bg-void/60 border-l-2 border-ember backdrop-blur-md">

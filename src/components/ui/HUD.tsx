@@ -5,7 +5,7 @@ import React from 'react';
 import { PhaseState, OperatorStats } from '@/lib/game/types';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Activity, Zap, Shield, Target, AlertTriangle, Cpu, BrainCircuit, Waves, Radio, Crosshair } from 'lucide-react';
+import { Activity, Zap, Shield, Target, AlertTriangle, Cpu, BrainCircuit, Waves, Radio, Crosshair, ClipboardList } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface HUDProps {
@@ -14,6 +14,7 @@ interface HUDProps {
   onInjectSkill?: () => void;
   isRecording?: boolean;
   onToggleRecording?: () => void;
+  onToggleReport?: () => void;
 }
 
 export const HUD: React.FC<HUDProps> = ({ 
@@ -21,7 +22,8 @@ export const HUD: React.FC<HUDProps> = ({
   stats, 
   onInjectSkill, 
   isRecording, 
-  onToggleRecording 
+  onToggleRecording,
+  onToggleReport
 }) => {
   if (phase === PhaseState.LOADING) return null;
 
@@ -87,6 +89,15 @@ export const HUD: React.FC<HUDProps> = ({
               <Button 
                 variant="outline" 
                 size="sm" 
+                onClick={onToggleReport}
+                className="border-ember/30 text-ember hover:bg-ember/20 bg-void/40 font-code text-[10px] tracking-widest h-8"
+              >
+                <ClipboardList className="size-3 mr-2" />
+                SYSTEMS_REPORT
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
                 onClick={onToggleRecording}
                 className={cn(
                   "border-ember/30 font-code text-[10px] tracking-widest h-8 px-4",
@@ -109,7 +120,7 @@ export const HUD: React.FC<HUDProps> = ({
         </div>
       </div>
 
-      {/* Center Reticle - Dynamic Loot-At Targeting */}
+      {/* Center Reticle */}
       {phase === PhaseState.STREAMING && (
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-20">
           <div className="relative size-24 flex items-center justify-center">
@@ -147,7 +158,6 @@ export const HUD: React.FC<HUDProps> = ({
               className="h-full bg-ember shadow-[0_0_12px_#FF8C33] transition-all duration-500 ease-out"
               style={{ width: `${stats.bondLevel}%` }}
             />
-            {/* Drift overlay */}
             <div 
               className="absolute top-0 right-0 h-full bg-destructive/40 transition-all duration-1000"
               style={{ width: `${stats.driftScore * 50}%` }}
