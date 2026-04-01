@@ -10,12 +10,12 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 import { 
+  AdaptiveAICompanionBehaviorInput,
   Locomotion, 
   Environment, 
   MissionContext, 
   PilotIntent, 
-  Personality,
-  AdaptiveAICompanionBehaviorInput
+  Personality
 } from '@/lib/game/types';
 
 // 1. Zod Schemas for input and output
@@ -57,7 +57,37 @@ const adaptiveAICompanionPrompt = ai.definePrompt({
   name: 'adaptiveAICompanionPrompt',
   input: { schema: PseudoMemorySnapshotSchema },
   output: { schema: z.array(BehaviorActionSchema) },
-  prompt: `You are an intelligent agent responsible for determining the next set of adaptive behaviors for an AI companion based on its current state and a repository of possible actions.\n\nGiven the current pseudo-memory snapshot of the AI companion and a list of available behavior actions, you must determine the most suitable next actions.\n\nHere's the process you need to follow:\n1.  **Filter Actions**: From the Behavior Repository, select only those actions where:\n    -   The action's 'conditions' array includes the companion's current 'environment'.\n    -   AND the action's 'conditions' array includes either the companion's current 'missionContext' OR the specific condition 'postCombat'.\n\n2.  **Apply Personality Weights**: For each of the filtered actions, adjust its 'signalPulseWeight' based on the companion's 'personality' from the current pseudo-memory:\n    -   If the companion's personality is 'cautious' AND the action's 'name' is 'vault', reduce its 'signalPulseWeight' by 50% (multiply by 0.5).\n    -   If the companion's personality is 'efficient' AND the action's 'name' is 'walk', increase its 'signalPulseWeight' by 50% (multiply by 1.5).\n    -   If the companion's personality is 'aggressive' AND the action's 'name' is 'sprint', increase its 'signalPulseWeight' by 50% (multiply by 1.5).\n    -   For all other cases, the 'signalPulseWeight' remains unchanged.\n\n3.  **Sort Actions**: Sort the adjusted actions in descending order based on the sum of their 'priority' and their (potentially adjusted) 'signalPulseWeight'. The action with the highest sum should be first.\n\n4.  **Return Sorted Actions**: Provide the full sorted list of \`BehaviorAction\` objects in JSON format.\n\nCurrent Pseudo-Memory Snapshot:\n\`\`\`json\n{{{JSON.stringify input}}}\n\`\`\`\n\nBehavior Repository (available actions):\n\`\`\`json\n${JSON.stringify(BehaviorRepo, null, 2)}\n\`\`\`\n`
+  prompt: `You are an intelligent agent responsible for determining the next set of adaptive behaviors for an AI companion based on its current state and a repository of possible actions.
+
+Given the current pseudo-memory snapshot of the AI companion and a list of available behavior actions, you must determine the most suitable next actions.
+
+Here's the process you need to follow:
+1.  **Filter Actions**: From the Behavior Repository, select only those actions where:
+    -   The action's 'conditions' array includes the companion's current 'environment'.
+    -   AND the action's 'conditions' array includes either the companion's current 'missionContext' OR the specific condition 'postCombat'.
+
+2.  **Apply Personality Weights**: For each of the filtered actions, adjust its 'signalPulseWeight' based on the companion's 'personality' from the current pseudo-memory:
+    -   If the companion's personality is 'cautious' AND the action's 'name' is 'vault', reduce its 'signalPulseWeight' by 50% (multiply by 0.5).
+    -   If the companion's personality is 'efficient' AND the action's 'name' is 'walk', increase its 'signalPulseWeight' by 50% (multiply by 1.5).
+    -   If the companion's personality is 'aggressive' AND the action's 'name' is 'sprint', increase its 'signalPulseWeight' by 50% (multiply by 1.5).
+    -   For all other cases, the 'signalPulseWeight' remains unchanged.
+
+3.  **Sort Actions**: Sort the adjusted actions in descending order based on the sum of their 'priority' and their (potentially adjusted) 'signalPulseWeight'. The action with the highest sum should be first.
+
+4.  **Return Sorted Actions**: Provide the full sorted list of BehaviorAction objects in JSON format.
+
+Current Pseudo-Memory Snapshot:
+- Locomotion: {{{locomotion}}}
+- Environment: {{{environment}}}
+- Mission Context: {{{missionContext}}}
+- Pilot Intent: {{{pilotIntent}}}
+- Personality: {{{personality}}}
+
+Behavior Repository (available actions):
+\`\`\`json
+${JSON.stringify(BehaviorRepo, null, 2)}
+\`\`\`
+`
 });
 
 // 4. Flow Definition

@@ -33,11 +33,9 @@ const assetGenerationPrompt = ai.definePrompt({
 
 Based on the following natural language description, provide a text summary of the envisioned 3D model and generate a placeholder URL for the GLB model.
 
-The URL should follow the format: 'https://tripo3d.com/models/{{sanitized_description}}.glb', where 'sanitized_description' replaces spaces with hyphens and removes special characters from the input description.
-
 Description: {{{description}}}
 
-`,
+The response should describe the visual features in detail.`,
 });
 
 const onDemand3DAssetGenerationFlow = ai.defineFlow(
