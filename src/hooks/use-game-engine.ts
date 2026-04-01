@@ -21,6 +21,13 @@ import { toast } from '@/hooks/use-toast';
 
 const FLASH_COOLDOWN_MS = 800;
 
+/**
+ * Fuzzy Membership Utility
+ * Calculates the membership degree of a value within a specified range.
+ */
+const fuzzyMembership = (value: number, low: number, high: number) => 
+  Math.max(0, Math.min(1, (value - low) / (high - low)));
+
 export const useGameEngine = () => {
   const [phase, setPhase] = useState<PhaseState>(PhaseState.LOADING);
   const [stats, setStats] = useState<OperatorStats>({
@@ -60,7 +67,7 @@ export const useGameEngine = () => {
     });
   }, []);
 
-  // Agentic Advanced Simulation Tick (Audit Layer Integrated)
+  // Agentic Advanced Simulation Tick (Fuzzy Math Integrated)
   useEffect(() => {
     if (phase !== PhaseState.STREAMING) return;
 
@@ -83,28 +90,45 @@ export const useGameEngine = () => {
         let forceLocomotion: Locomotion | null = null;
         let auditLog: string | undefined = undefined;
 
+        // Fuzzy Math: Calculate Entropy Delta and New State
+        const entropyDelta = (Math.random() * 0.1 - 0.04) * (1 + tickCount.current * 0.02);
+        const newEntropy = Math.min(1, Math.max(0, stats.entropyScore + entropyDelta));
+        const newDrift = Math.min(1, Math.max(0, stats.driftScore + (Math.random() * 0.08 - 0.03)));
+
+        // Fuzzy Threat Assessment: Hazards fire based on cognitive state, not just a clock
+        const criticalMembership = fuzzyMembership(newEntropy, 0.6, 1.0);
+        const shouldTriggerHazard = wave === 3 && Math.random() < criticalMembership;
+
         // Hazard Simulation
         if (wave === 1) {
-          companionMemory.update({ threatLevel: ThreatLevel.LOW, missionContext: MissionContext.launchPrep });
+          companionMemory.update({ 
+            threatLevel: ThreatLevel.LOW, 
+            missionContext: MissionContext.launchPrep,
+            entropyScore: newEntropy
+          });
         } else if (wave === 2) {
           if (tickCount.current % 3 === 0) {
             forceLocomotion = Locomotion.vault;
-            companionMemory.update({ environment: Environment.railcar });
-          }
-        } else if (wave === 3) {
-          if (tickCount.current % 2 === 0) {
-            currentHazard = tickCount.current % 4 === 0 ? "CRITICAL FALL DETECTED" : "IMMINENT DROWNING";
-            forceDirective = SurvivalDirective.EMERGENCY;
-            forceLocomotion = tickCount.current % 4 === 0 ? Locomotion.falling : Locomotion.swim;
             companionMemory.update({ 
-              environment: tickCount.current % 4 === 0 ? Environment.rooftop : Environment.water,
-              threatLevel: ThreatLevel.CRITICAL 
+              environment: Environment.railcar,
+              entropyScore: newEntropy 
             });
           }
+        } else if (wave === 3 && shouldTriggerHazard) {
+          currentHazard = newEntropy > 0.8 
+            ? "CRITICAL FALL DETECTED" 
+            : "IMMINENT DROWNING";
+          forceDirective = SurvivalDirective.EMERGENCY;
+          forceLocomotion = newEntropy > 0.8 ? Locomotion.falling : Locomotion.swim;
+          
+          companionMemory.update({ 
+            environment: newEntropy > 0.8 ? Environment.rooftop : Environment.water,
+            threatLevel: ThreatLevel.CRITICAL,
+            entropyScore: newEntropy
+          });
+        } else {
+          companionMemory.update({ entropyScore: newEntropy });
         }
-
-        const newEntropy = Math.min(1, Math.max(0, stats.entropyScore + (Math.random() * 0.15 - 0.05)));
-        const newDrift = Math.min(1, Math.max(0, stats.driftScore + (Math.random() * 0.08 - 0.03)));
 
         const intel = await getOracleIntel({
           environment: snapshot.environment,
