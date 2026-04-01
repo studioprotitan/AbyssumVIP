@@ -9,11 +9,18 @@
     "Integration of Oracle AI Intel Node predictive guidance",
     "Implementation of GOAP (Goal-Oriented Action Planner)",
     "Deployment of Forge Confirm v1.0 Dieselpunk Boot Sequence",
-    "Standardization of Investor-Grade Artifact Recording"
+    "Standardization of Investor-Grade Artifact Recording",
+    "Sentinel Drift Reasoning Audit Integration"
   ],
   "activeThreads": [
     "Phase 8.5: Station City Expansion",
-    "UE5 Parkour Pak integration",
-    "Negotiate Terrain locomotion refinements"
-  ]
+    "Draco Export Pipeline Compliance Fix",
+    "Adaptive Memory Persistence (Supabase Bridge)"
+  ],
+  "compliance": {
+    "ssot": "AUTHORITATIVE",
+    "state_machine": "ABSOLUTE",
+    "moai": "ACTIVE",
+    "persistence": "PARTIAL (RUNTIME ONLY)"
+  }
 }

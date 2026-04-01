@@ -110,4 +110,5 @@ export interface ArtifactSnapshot {
   drift: number;
   action: string;
   riskAssessment: string;
+  audit?: string; // New: Sentinel Audit tracking
 }

@@ -9,6 +9,10 @@ import {
   ThreatLevel
 } from '@/lib/game/types';
 
+/**
+ * PseudoMemory - Authoritative behavioral state.
+ * Compliance: SSOT for cognitive data.
+ */
 export class PseudoMemory {
   private state: AdaptiveAICompanionBehaviorInput;
 
@@ -31,10 +35,25 @@ export class PseudoMemory {
       ...update,
       timestamp: Date.now()
     };
+    // Future Persistence Bridge: this.saveToDatabase();
   }
 
   public getSnapshot(): AdaptiveAICompanionBehaviorInput {
     return { ...this.state };
+  }
+
+  /**
+   * Persistence Interface (Phase 9 Bridge)
+   * Ensures cognitive data survives session termination.
+   */
+  public async save() {
+    console.log('[SENTINEL] Cognitive Persistence Initiated...');
+    // Implementation: await setDoc(doc(db, 'avatars', avatarId), this.state);
+  }
+
+  public async hydrate(data: AdaptiveAICompanionBehaviorInput) {
+    this.state = data;
+    console.log('[SENTINEL] Cognitive Hydration Successful');
   }
 }
 

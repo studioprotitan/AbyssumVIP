@@ -52,7 +52,7 @@ export const useGameEngine = () => {
     });
   }, []);
 
-  // Agentic Advanced Simulation Tick
+  // Agentic Advanced Simulation Tick (Audit Layer Integrated)
   useEffect(() => {
     if (phase !== PhaseState.STREAMING) return;
 
@@ -69,7 +69,9 @@ export const useGameEngine = () => {
       let currentHazard: string | undefined = undefined;
       let forceDirective: SurvivalDirective | null = null;
       let forceLocomotion: Locomotion | null = null;
+      let auditLog: string | undefined = undefined;
 
+      // Hazard Simulation
       if (wave === 1) {
         companionMemory.update({ threatLevel: ThreatLevel.LOW, missionContext: MissionContext.launchPrep });
       } else if (wave === 2) {
@@ -115,16 +117,24 @@ export const useGameEngine = () => {
         setBehaviors(nextBehaviors);
 
         let activeAction = "idle";
+        
+        // Deterministic Transition (Audit Layer)
         if (forceLocomotion) {
-          globalStateMachine.transition(forceLocomotion);
-          companionMemory.update({ locomotion: forceLocomotion });
-          activeAction = forceLocomotion;
+          const success = globalStateMachine.transition(forceLocomotion);
+          if (success) {
+            companionMemory.update({ locomotion: forceLocomotion });
+            activeAction = forceLocomotion;
+          } else {
+            auditLog = `ILLEGAL TRANSITION BLOCKED: ${globalStateMachine.getCurrentState()} -> ${forceLocomotion}`;
+          }
         } else if (nextBehaviors.length > 0) {
           const topAction = nextBehaviors[0];
           activeAction = topAction.name;
           const locomotionType = Locomotion[topAction.name as keyof typeof Locomotion] || Locomotion.idle;
           if (globalStateMachine.transition(locomotionType)) {
             companionMemory.update({ locomotion: locomotionType });
+          } else {
+            auditLog = `GOAP DRIFT: ${globalStateMachine.getCurrentState()} -> ${locomotionType} REJECTED`;
           }
         }
 
@@ -149,7 +159,8 @@ export const useGameEngine = () => {
               entropy: newEntropy,
               drift: newDrift,
               action: activeAction,
-              riskAssessment: intel.riskAssessment
+              riskAssessment: intel.riskAssessment,
+              audit: auditLog
             },
             ...prev
           ].slice(0, 50));
@@ -164,7 +175,7 @@ export const useGameEngine = () => {
         }
 
       } catch (e) {
-        // Error handling through central listener
+        // [MOAI:ERROR] Oracle Sync Failure
       }
     };
 
