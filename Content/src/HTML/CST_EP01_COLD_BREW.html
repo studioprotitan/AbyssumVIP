@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CST // COLD BREW — MYSTICS OF MAYHEM EP.01</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#020306;
+  --panel:#080d18;
+  --panel2:#0d1525;
+  --border:#1a2a40;
+  --gold:#c8920a;
+  --gold-bright:#f0b030;
+  --cyan:#00d4ff;
+  --red:#ff2a2a;
+  --green:#00ff88;
+  --purple:#9d4dff;
+  --text:#dde8f0;
+  --dim:#5a7090;
+  --scan:#ffffff08;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+
+body{
+  background:var(--void);
+  color:var(--text);
+  font-family:'Rajdhani',sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* SCANLINES */
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,var(--scan) 2px,var(--scan) 4px);
+  pointer-events:none;
+  z-index:9999;
+}
+
+/* TOPBAR HUD */
+#hud{
+  position:fixed;top:0;left:0;right:0;
+  background:#00000099;
+  border-bottom:1px solid var(--gold);
+  backdrop-filter:blur(8px);
+  padding:0 20px;
+  height:52px;
+  display:flex;align-items:center;justify-content:space-between;
+  z-index:500;
+  font-family:'Share Tech Mono',monospace;
+  font-size:11px;
+  gap:12px;
+}
+.hud-brand{color:var(--gold);font-size:13px;font-weight:700;letter-spacing:3px;}
+.hud-center{display:flex;gap:20px;align-items:center;}
+.hud-stat{display:flex;flex-direction:column;align-items:center;gap:2px;}
+.hud-label{color:var(--dim);font-size:9px;letter-spacing:2px;}
+.hud-val{color:var(--cyan);font-size:12px;}
+.hud-right{display:flex;gap:10px;align-items:center;}
+
+/* THREAT BAR */
+.threat-wrap{width:120px;}
+.threat-track{height:4px;background:#111;border:1px solid #333;border-radius:2px;overflow:hidden;}
+.threat-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--red));width:0%;transition:width 0.8s cubic-bezier(.4,0,.2,1);}
+
+/* MAIN READER */
+#main{
+  max-width:780px;
+  margin:0 auto;
+  padding:70px 20px 200px;
+}
+
+/* SCENE PANEL */
+#scene-wrap{
+  position:relative;
+}
+
+.scene-header{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:16px;
+  border-bottom:1px solid var(--border);
+  padding-bottom:10px;
+}
+.scene-id{
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+  color:var(--dim);
+  letter-spacing:3px;
+}
+.scene-status{
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+  color:var(--green);
+  letter-spacing:2px;
+}
+
+/* VISUAL PANEL */
+.vis-panel{
+  width:100%;
+  height:280px;
+  border:1px solid var(--border);
+  margin-bottom:16px;
+  position:relative;
+  overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+.vis-bg{
+  position:absolute;inset:0;
+}
+.vis-label{
+  position:absolute;
+  font-family:'Orbitron',monospace;
+  font-size:11px;
+  letter-spacing:4px;
+  color:rgba(255,255,255,0.12);
+  text-align:center;
+  padding:20px;
+  z-index:1;
+}
+.vis-icon{
+  font-size:72px;
+  z-index:2;
+  filter:drop-shadow(0 0 20px currentColor);
+}
+.vis-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to bottom, transparent 40%, var(--void) 100%);
+  z-index:3;
+}
+
+/* NARRATION */
+#narration-box{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-left:3px solid var(--gold);
+  padding:20px 24px;
+  margin-bottom:16px;
+  min-height:80px;
+  position:relative;
+}
+#narration-text{
+  font-size:16px;
+  line-height:1.7;
+  font-weight:400;
+  color:#c8d8e8;
+}
+.narration-cursor{
+  display:inline-block;
+  width:2px;height:16px;
+  background:var(--gold);
+  margin-left:2px;
+  animation:blink 0.8s infinite;
+  vertical-align:middle;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+.narration-read-btn{
+  position:absolute;top:12px;right:12px;
+  background:transparent;border:1px solid var(--border);
+  color:var(--dim);font-size:14px;
+  width:28px;height:28px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;border-radius:2px;
+  transition:all 0.2s;
+}
+.narration-read-btn:hover{color:var(--gold);border-color:var(--gold);}
+
+/* ALERT BANNER */
+#alert-banner{
+  display:none;
+  background:#ff2a2a18;
+  border:1px solid var(--red);
+  border-left:3px solid var(--red);
+  padding:10px 16px;
+  margin-bottom:12px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:11px;
+  color:var(--red);
+  letter-spacing:2px;
+}
+
+/* CHOICES */
+#choices-panel{
+  display:flex;flex-direction:column;gap:8px;
+  margin-bottom:32px;
+  scroll-margin-bottom:120px;
+}
+.choice-btn{
+  background:var(--panel);
+  border:1px solid var(--border);
+  color:var(--text);
+  padding:14px 20px;
+  font-family:'Rajdhani',sans-serif;
+  font-size:15px;
+  font-weight:600;
+  cursor:pointer;
+  text-align:left;
+  position:relative;
+  transition:all 0.2s;
+  display:flex;align-items:center;gap:12px;
+  letter-spacing:1px;
+}
+.choice-btn:hover{
+  background:var(--panel2);
+  border-color:var(--gold);
+  color:var(--gold-bright);
+  padding-left:28px;
+}
+.choice-btn::before{
+  content:'▸';
+  color:var(--gold);
+  opacity:0;
+  transition:opacity 0.2s;
+}
+.choice-btn:hover::before{opacity:1;}
+.choice-btn.card-gated{border-color:#9d4dff44;color:#c0a0ff;}
+.choice-btn.card-gated::after{
+  content:attr(data-card);
+  position:absolute;right:14px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px;
+  color:var(--purple);
+  letter-spacing:2px;
+}
+.choice-btn.card-gated:hover{border-color:var(--purple);color:#ddc0ff;}
+.choice-btn:disabled{opacity:0.4;cursor:not-allowed;}
+
+/* BOTTOM ROSTER */
+#roster-bar{
+  position:fixed;bottom:0;left:0;right:0;
+  background:#000000cc;
+  border-top:1px solid var(--border);
+  backdrop-filter:blur(8px);
+  padding:8px 20px;
+  display:flex;gap:8px;align-items:center;
+  z-index:500;
+  overflow-x:auto;
+}
+.roster-label{
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px;
+  color:var(--dim);
+  letter-spacing:2px;
+  white-space:nowrap;
+  margin-right:4px;
+}
+.unit-chip{
+  background:var(--panel);
+  border:1px solid var(--border);
+  padding:5px 10px 5px 8px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+  cursor:pointer;
+  white-space:nowrap;
+  transition:all 0.2s;
+  display:flex;align-items:center;gap:6px;
+  border-radius:2px;
+  position:relative;
+}
+.unit-chip:hover{border-color:var(--gold);color:var(--gold);}
+.unit-chip.unlocked{border-color:#333;}
+.unit-chip.locked{opacity:0.4;cursor:default;}
+.unit-chip .chip-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--dim);flex-shrink:0;
+}
+.unit-chip.unlocked .chip-dot{background:var(--green);}
+.unit-chip.locked .chip-dot{background:#333;}
+
+/* UNIT DB MODAL */
+#unit-modal{
+  position:fixed;top:0;right:-500px;width:460px;height:100%;
+  background:#050a14;
+  border-left:1px solid var(--gold);
+  z-index:800;
+  overflow-y:auto;
+  transition:right 0.4s cubic-bezier(.4,0,.2,1);
+  display:flex;flex-direction:column;
+}
+#unit-modal.open{right:0;}
+#modal-close{
+  position:sticky;top:0;
+  background:#050a14;
+  border-bottom:1px solid var(--border);
+  padding:12px 16px;
+  display:flex;justify-content:space-between;align-items:center;
+  z-index:10;
+}
+#modal-close-btn{
+  background:transparent;border:1px solid var(--border);
+  color:var(--dim);font-size:16px;
+  width:30px;height:30px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;border-radius:2px;transition:all 0.2s;
+}
+#modal-close-btn:hover{color:var(--red);border-color:var(--red);}
+.modal-title{
+  font-family:'Share Tech Mono',monospace;
+  font-size:11px;color:var(--dim);letter-spacing:3px;
+}
+
+/* UNIT PORTRAIT */
+.unit-portrait{
+  width:100%;
+  height:200px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:80px;
+  position:relative;
+  overflow:hidden;
+}
+.unit-portrait::before{
+  content:'';
+  position:absolute;inset:0;
+  opacity:0.15;
+}
+.portrait-overlay{
+  position:absolute;bottom:0;left:0;right:0;
+  background:linear-gradient(transparent,#050a14);
+  height:60px;
+}
+
+/* UNIT INFO SECTIONS */
+.unit-section{padding:16px 20px;border-bottom:1px solid var(--border);}
+.unit-name{
+  font-family:'Orbitron',monospace;
+  font-size:18px;font-weight:900;
+  margin-bottom:4px;
+}
+.unit-class{
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;letter-spacing:3px;color:var(--dim);
+}
+.unit-lore{
+  font-size:14px;line-height:1.6;color:#9ab0c8;
+  margin-top:10px;
+}
+
+/* STATUS BADGE */
+.status-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:4px 10px;
+  border:1px solid;
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px;letter-spacing:2px;
+  margin-top:10px;border-radius:2px;
+}
+.status-badge.active{border-color:var(--green);color:var(--green);}
+.status-badge.locked{border-color:var(--dim);color:var(--dim);}
+.status-badge.boss{border-color:var(--red);color:var(--red);}
+
+/* LOADOUT */
+.loadout-list{list-style:none;display:flex;flex-direction:column;gap:8px;margin-top:12px;}
+.loadout-item{
+  display:flex;align-items:center;gap:10px;
+  background:var(--panel);
+  border:1px solid var(--border);
+  padding:8px 12px;
+  font-size:13px;
+}
+.loadout-icon{font-size:16px;}
+.loadout-name{font-weight:600;color:var(--text);}
+.loadout-desc{font-size:11px;color:var(--dim);margin-top:2px;}
+
+/* SKILL TREE */
+.skill-tree{
+  display:flex;flex-direction:column;gap:4px;
+  margin-top:12px;
+}
+.skill-row{
+  display:flex;align-items:center;gap:0;
+}
+.skill-node{
+  background:var(--panel);
+  border:1px solid var(--border);
+  padding:10px 14px;
+  flex:1;
+  cursor:default;
+  position:relative;
+  transition:all 0.2s;
+}
+.skill-node.active{border-color:currentColor;}
+.skill-node.locked{opacity:0.45;}
+.skill-node-name{font-size:12px;font-weight:700;letter-spacing:1px;}
+.skill-node-desc{font-size:10px;color:var(--dim);margin-top:3px;}
+.skill-node-type{
+  position:absolute;top:6px;right:8px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:8px;letter-spacing:1px;
+  color:var(--dim);
+}
+.skill-connector{
+  width:24px;height:1px;
+  background:var(--border);
+  flex-shrink:0;
+}
+.skill-connector.active{background:currentColor;opacity:0.5;}
+
+/* SECTION LABEL */
+.section-label{
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px;letter-spacing:3px;color:var(--gold);
+  margin-bottom:10px;
+  display:flex;align-items:center;gap:8px;
+}
+.section-label::after{
+  content:'';flex:1;height:1px;background:var(--border);
+}
+
+/* ENDING SCREEN */
+#ending{
+  display:none;
+  position:fixed;inset:0;
+  background:var(--void);
+  z-index:900;
+  flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:40px;
+  text-align:center;
+}
+#ending.show{display:flex;}
+.ending-type{
+  font-family:'Share Tech Mono',monospace;
+  font-size:11px;letter-spacing:5px;
+  margin-bottom:20px;
+}
+.ending-title{
+  font-family:'Orbitron',monospace;
+  font-size:36px;font-weight:900;
+  margin-bottom:20px;
+  line-height:1.2;
+}
+.ending-body{
+  font-size:17px;color:#9ab0c8;max-width:500px;
+  line-height:1.7;margin-bottom:40px;
+}
+.ending-restart{
+  background:transparent;
+  border:1px solid var(--gold);
+  color:var(--gold);
+  padding:12px 30px;
+  font-family:'Orbitron',monospace;
+  font-size:12px;letter-spacing:3px;
+  cursor:pointer;
+  transition:all 0.2s;
+}
+.ending-restart:hover{background:var(--gold);color:#000;}
+
+/* CARD EARN POPUP */
+#card-popup{
+  position:fixed;top:70px;right:20px;
+  background:var(--panel);
+  border:1px solid var(--gold);
+  padding:14px 18px;
+  display:none;
+  z-index:700;
+  max-width:260px;
+  animation:slideIn 0.3s ease;
+}
+@keyframes slideIn{from{transform:translateX(20px);opacity:0}to{transform:translateX(0);opacity:1}}
+.popup-header{
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px;color:var(--gold);letter-spacing:3px;margin-bottom:8px;
+}
+.popup-name{font-size:14px;font-weight:700;margin-bottom:4px;}
+.popup-desc{font-size:11px;color:var(--dim);}
+
+/* SCREEN SHAKE */
+@keyframes shake{
+  0%{transform:translate(0,0)}
+  20%{transform:translate(-4px,3px)}
+  40%{transform:translate(4px,-3px)}
+  60%{transform:translate(-3px,4px)}
+  80%{transform:translate(3px,-2px)}
+  100%{transform:translate(0,0)}
+}
+.shaking{animation:shake 0.4s ease;}
+
+/* SCENE TRANSITION */
+@keyframes sceneFade{
+  0%{opacity:0;filter:brightness(3) saturate(0)}
+  30%{opacity:1;filter:brightness(1.2)}
+  100%{opacity:1;filter:brightness(1)}
+}
+#scene-wrap{animation:sceneFade 0.6s ease;}
+
+/* GLITCH PULSE */
+@keyframes glitchPulse{
+  0%{clip-path:inset(0 0 100% 0)}
+  10%{clip-path:inset(30% 0 40% 0)}
+  20%{clip-path:inset(70% 0 10% 0)}
+  30%{clip-path:inset(10% 0 80% 0)}
+  40%{clip-path:inset(0 0 100% 0)}
+  100%{clip-path:inset(0 0 100% 0)}
+}
+
+#glitch-overlay{
+  position:fixed;inset:0;pointer-events:none;z-index:9998;
+  background:rgba(0,212,255,0.03);
+  opacity:0;transition:opacity 0.1s;
+}
+#glitch-overlay.active{opacity:1;animation:glitchPulse 0.15s steps(1);}
+
+/* HUD AUDIO INDICATOR */
+.audio-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--dim);
+  display:inline-block;
+  transition:background 0.3s;
+}
+.audio-dot.active{background:var(--green);animation:audioPulse 1s infinite;}
+@keyframes audioPulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:#000;}
+::-webkit-scrollbar-thumb{background:var(--border);}
+::-webkit-scrollbar-thumb:hover{background:var(--gold);}
+
+/* RESPONSIVE */
+@media(max-width:500px){
+  .vis-panel{height:200px;}
+  .unit-modal{width:100%;}
+  #hud{padding:0 10px;}
+  .hud-center{gap:12px;}
+}
+
+/* MISC */
+.highlight{color:var(--gold);}
+.text-cyan{color:var(--cyan);}
+.text-red{color:var(--red);}
+.text-green{color:var(--green);}
+.text-purple{color:var(--purple);}
+</style>
+</head>
+<body>
+
+<!-- GLITCH OVERLAY -->
+<div id="glitch-overlay"></div>
+
+<!-- TOP HUD -->
+<div id="hud">
+  <div class="hud-brand">CST // EP.01</div>
+  <div class="hud-center">
+    <div class="hud-stat">
+      <div class="hud-label">MISSION</div>
+      <div class="hud-val" id="hud-mission">COLD BREW</div>
+    </div>
+    <div class="hud-stat">
+      <div class="hud-label">THREAT</div>
+      <div class="threat-wrap">
+        <div class="threat-track"><div class="threat-fill" id="threat-fill"></div></div>
+      </div>
+    </div>
+    <div class="hud-stat">
+      <div class="hud-label">CARDS</div>
+      <div class="hud-val" id="hud-cards">0/6</div>
+    </div>
+    <div class="hud-stat">
+      <div class="hud-label">STATUS</div>
+      <div class="hud-val" id="hud-status">ACTIVE</div>
+    </div>
+  </div>
+  <div class="hud-right">
+    <span class="audio-dot" id="audio-dot"></span>
+    <button onclick="toggleNarration()" style="background:transparent;border:1px solid var(--border);color:var(--dim);padding:4px 10px;font-family:'Share Tech Mono',monospace;font-size:10px;cursor:pointer;letter-spacing:2px;" id="narr-btn">NARR OFF</button>
+  </div>
+</div>
+
+<!-- MAIN SCENE -->
+<div id="main">
+  <div id="scene-wrap">
+    <div class="scene-header">
+      <div class="scene-id" id="scene-id-label">SCENE_INTRO</div>
+      <div class="scene-status" id="scene-status">● LIVE</div>
+    </div>
+
+    <!-- VISUAL PANEL -->
+    <div class="vis-panel" id="vis-panel">
+      <div class="vis-bg" id="vis-bg"></div>
+      <div class="vis-icon" id="vis-icon">🚁</div>
+      <div class="vis-label" id="vis-label">SWAMP WARDS — SECTOR 7</div>
+      <div class="vis-overlay"></div>
+    </div>
+
+    <!-- ALERT BANNER -->
+    <div id="alert-banner" id="alert"></div>
+
+    <!-- NARRATION -->
+    <div id="narration-box">
+      <div id="narration-text"></div>
+      <button class="narration-read-btn" onclick="speakNarration()" title="Read aloud">🔊</button>
+    </div>
+
+    <!-- CHOICES -->
+    <div id="choices-panel"></div>
+
+    <!-- CARD UNLOCK AREA -->
+    <div id="unlock-info" style="display:none;background:var(--panel);border:1px solid #9d4dff44;border-left:3px solid var(--purple);padding:14px 18px;margin-bottom:12px;">
+      <div class="section-label">FIELD INTELLIGENCE</div>
+      <div id="unlock-text" style="font-size:13px;color:#c0a0ff;line-height:1.6;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM ROSTER -->
+<div id="roster-bar">
+  <div class="roster-label">UNIT DB ▸</div>
+  <div id="roster-chips"></div>
+</div>
+
+<!-- UNIT DATABASE MODAL -->
+<div id="unit-modal">
+  <div id="modal-close">
+    <div class="modal-title">// UNIT DOSSIER</div>
+    <button id="modal-close-btn" onclick="closeModal()">✕</button>
+  </div>
+  <div id="modal-body"></div>
+</div>
+
+<!-- CARD UNLOCK POPUP -->
+<div id="card-popup">
+  <div class="popup-header">▲ UNIT CARD ACQUIRED</div>
+  <div class="popup-name" id="popup-name"></div>
+  <div class="popup-desc" id="popup-desc"></div>
+</div>
+
+<!-- ENDING SCREEN -->
+<div id="ending">
+  <div class="ending-type" id="ending-type"></div>
+  <div class="ending-title" id="ending-title"></div>
+  <div class="ending-body" id="ending-body"></div>
+  <button class="ending-restart" onclick="restartGame()">⟳ RESTART MISSION</button>
+</div>
+
+<script>
+/* =============================================
+   CST EPISODE 01 — COLD BREW ENGINE
+   Version: FULL DEPLOYMENT
+   Systems: Scene Engine, Card DB, Audio, Cinematic
+   ============================================= */
+
+// ── UNIT DATABASE ──────────────────────────────
+const UNITS = {
+  forge_mystic: {
+    id:'forge_mystic',
+    name:'FORGE MYSTIC',
+    icon:'⚙️',
+    class:'ARCANE-MECHANICAL SPECIALIST',
+    rank:'SENIOR OPERATIVE',
+    color:'#c8920a',
+    lore:"Born in the Corgemon furnace districts, the Forge Mystic bridges ancient glyph-work with diesel-era mechanics. They do not fight the environment — they become it. Pipe systems obey their will, steam becomes a weapon, and arcane cores bend to their touch.",
+    loadout:[
+      {icon:'🔧',name:'Glyph Wrench',desc:'Rewrites mechanical behavior at contact. Can reverse enemy turrets.'},
+      {icon:'🔥',name:'Core Siphon',desc:'Drains power from arcane machinery, redirects to squad systems.'},
+      {icon:'🛡️',name:'Steam Aegis',desc:'Deploys pressurized steam wall. Blocks projectiles and Rift surges.'}
+    ],
+    skills:[
+      {name:'CORE FLOW',desc:'Stabilize or redirect arcane machinery.',type:'ACTIVE',active:true},
+      {name:'STEAM WALL',desc:'Tactical steam barrier. -40% projectile damage.',type:'PASSIVE',active:true},
+      {name:'FORGE COMMUNION',desc:'Full machine control in radius. Boss-tier interaction.',type:'ULTIMATE',active:false,locked:true}
+    ]
+  },
+  rail_worker: {
+    id:'rail_worker',
+    name:'RAIL WORKER',
+    icon:'🚂',
+    class:'INFRASTRUCTURE SPECIALIST',
+    rank:'FIELD OPERATIVE',
+    color:'#00d4ff',
+    lore:"They know every submerged tunnel, rusted switching station, and maintenance bypass in the Swamp Wards. Rail Workers don't walk into a location — they were already there, waiting. Their maps live in muscle memory, not databanks.",
+    loadout:[
+      {icon:'🗺️',name:'Ward Map Implant',desc:'Neural-mapped tunnel network. Reveals all hidden routes.'},
+      {icon:'🔩',name:'Track Spike Launcher',desc:'Fires electrified rail spikes. Stuns mechanical enemies.'},
+      {icon:'🚇',name:'Rail Authority Badge',desc:'Opens any CST-maintained gate, lock, or access shaft.'}
+    ],
+    skills:[
+      {name:'TUNNEL SENSE',desc:'Detect hidden passages and maintenance shafts.',type:'PASSIVE',active:true},
+      {name:'RAIL BYPASS',desc:'Open restricted infrastructure routes.',type:'ACTIVE',active:true},
+      {name:'GHOST TRANSIT',desc:'Move entire squad undetected through rail network.',type:'ULTIMATE',active:false,locked:true}
+    ]
+  },
+  drone_pilot: {
+    id:'drone_pilot',
+    name:'DRONE PILOT',
+    icon:'🛸',
+    class:'AERIAL RECONNAISSANCE',
+    rank:'FIELD OPERATIVE',
+    color:'#00ff88',
+    lore:"Drone Pilots fly the eyes of CST-ERT. They never blink. Twelve drones per pilot, each mapped to a thumb movement. When a Drone Pilot says the path is clear — it is clear. When they say it isn't — get down.",
+    loadout:[
+      {icon:'📡',name:'Scout Swarm Array',desc:'Deploys 12 micro-drones. Full thermal map of 200m radius.'},
+      {icon:'💥',name:'Payload Drones',desc:'Strike-capable. Can eliminate targets on pilot command.'},
+      {icon:'🔋',name:'Power Relay Drone',desc:'Extends squad comm range and jams enemy sensors.'}
+    ],
+    skills:[
+      {name:'THERMAL SWEEP',desc:'Full enemy reveal in sector. No ambushes.',type:'ACTIVE',active:true},
+      {name:'RECON NET',desc:'Persistent drone coverage. Enemies flagged on move.',type:'PASSIVE',active:true},
+      {name:'SWARM STRIKE',desc:'Coordinate all drones for simultaneous multi-target strike.',type:'ULTIMATE',active:false,locked:true}
+    ]
+  },
+  alchemist: {
+    id:'alchemist',
+    name:'ALCHEMIST',
+    icon:'⚗️',
+    class:'RIFT HAZARD CONTROL',
+    rank:'SPECIALIST — CLASS 1',
+    color:'#9d4dff',
+    lore:"Rift residue is not chemistry — it's memory made toxic. The Alchemist speaks to it in a language older than words. They neutralize Rift contamination, corrupt mystic energy cycles, and have been known to turn a Siren's own resonance against her.",
+    loadout:[
+      {icon:'🧪',name:'Rift Solvent',desc:'Neutralizes Rift residue on contact. Prevents contamination ambush.'},
+      {icon:'🌀',name:'Counter-Resonance Coil',desc:'Disrupts mystic energy patterns. Slows Siren-class entities.'},
+      {icon:'💀',name:'Void Salt',desc:'Crystalline compound. Lethal to Rift-born entities on contact.'}
+    ],
+    skills:[
+      {name:'RIFT CLEANSE',desc:'Remove hazardous Rift residue from environment.',type:'ACTIVE',active:true},
+      {name:'ENERGY DISRUPT',desc:'Slow mystic attacks by 40%. Breaks energy cycle.',type:'ACTIVE',active:true},
+      {name:'RESONANCE INVERT',desc:'Turn a Siren\'s own power against her. Catastrophic damage.',type:'ULTIMATE',active:false,locked:true}
+    ]
+  },
+  phase_spy: {
+    id:'phase_spy',
+    name:'PHASE SPY',
+    icon:'👁️',
+    class:'CLOAKED INFILTRATION',
+    rank:'SHADOW OPERATIVE',
+    color:'#00c8a0',
+    lore:"Phase Spies do not exist in official CST records. They exist in the space between heartbeats — partially out of phase with local reality. They see cloaked enemies, walk through laser grids, and can deliver a Phase Strike that bypasses all known armor.",
+    loadout:[
+      {icon:'🌫️',name:'Phase Cloak',desc:'Personal phase-shift generator. Renders operator invisible at cost.'},
+      {icon:'⚡',name:'Phase Blade',desc:'Vibrates at inter-dimensional frequency. Bypasses all armor.'},
+      {icon:'🔍',name:'Resonance Scanner',desc:'Detects phase-shifted entities. No cloaking survives this.'}
+    ],
+    skills:[
+      {name:'PHASE DETECT',desc:'Reveal all cloaked entities in range.',type:'PASSIVE',active:true},
+      {name:'PHASE STRIKE',desc:'Bypass armor. Direct health damage to any target.',type:'ACTIVE',active:true},
+      {name:'GHOST PROTOCOL',desc:'Squad-wide phase shift. Full invisibility for 60 seconds.',type:'ULTIMATE',active:false,locked:true}
+    ]
+  },
+  anchor_gunner: {
+    id:'anchor_gunner',
+    name:'ANCHOR GUNNER',
+    icon:'🔫',
+    class:'HEAVY SUPPRESSION',
+    rank:'FIELD SERGEANT',
+    color:'#ff4444',
+    lore:"An Anchor Gunner is an immovable object. They deploy, they dig in, and they do not move. Their auto-rail cannon chews through bulkheads, Glitch Goblins, corrupted turrets, and Rift creatures with identical efficiency — and identical indifference.",
+    loadout:[
+      {icon:'🔫',name:'Auto-Rail Cannon',desc:'Continuous fire suppression. Armor-piercing rounds.'},
+      {icon:'🪤',name:'Suppression Turret',desc:'Deployable. Auto-targets all hostiles. 180° arc.'},
+      {icon:'🛡️',name:'Ballistic Plate',desc:'Squad damage shield when Gunner is deployed.'}
+    ],
+    skills:[
+      {name:'DIG IN',desc:'Deploy position. +60% firepower while stationary.',type:'ACTIVE',active:true},
+      {name:'SUPPRESSION FIELD',desc:'Pinned enemies deal -50% damage.',type:'PASSIVE',active:true},
+      {name:'IRON CURTAIN',desc:'Rapid deploy of 4 linked turrets. No entry.',type:'ULTIMATE',active:false,locked:true}
+    ]
+  },
+  warden_guard: {
+    id:'warden_guard',
+    name:'WARDEN GUARD',
+    icon:'🛡️',
+    class:'SQUAD PROTECTION',
+    rank:'SENIOR OPERATIVE',
+    color:'#4488ff',
+    lore:"The Warden Guard is the wall that lets everyone else fight. Tactical shield arrays, emergency extraction protocols, and a bone-deep refusal to let a squadmate fall. The Swamp Wards have chewed up better squads than yours — not while the Warden still breathes.",
+    loadout:[
+      {icon:'🛡️',name:'Kinetic Shield Array',desc:'Personal + squad energy barrier. Absorbs direct hits.'},
+      {icon:'🩺',name:'Combat Stims',desc:'Emergency health restoration for downed operatives.'},
+      {icon:'⚓',name:'Anchor Spike',desc:'Plants position marker. Auto-reroutes squad if overrun.'}
+    ],
+    skills:[
+      {name:'SHIELD WALL',desc:'Deploy squad-wide kinetic shield. Block incoming surge.',type:'ACTIVE',active:true},
+      {name:'GUARDIAN',desc:'When squad member falls, intercept damage. They live.',type:'PASSIVE',active:true},
+      {name:'EVACUATION PROTOCOL',desc:'Emergency extraction beacon. Entire squad out in 8 seconds.',type:'ULTIMATE',active:false,locked:true}
+    ]
+  },
+  taur_nuphari: {
+    id:'taur_nuphari',
+    name:'TAUR-NUPHARI',
+    icon:'🌊',
+    class:'SIREN WITCH — BOSS ENTITY',
+    rank:'RIFT-BONDED SOVEREIGN',
+    color:'#ff44aa',
+    isBoss:true,
+    lore:"She was a singer once. Then the Rift found her voice and decided to live in it. Taur-Nuphari does not guard the Engine Hall — she IS the Engine now, her biology merged with the arcane-mechanical core. Her song warps reality. The flood rises when she exhales.",
+    loadout:[
+      {icon:'🎵',name:'Reality Distortion Song',desc:'Warps local space. Disorients all hostiles. No cure.'},
+      {icon:'🐀',name:'Rift Rat Summoning',desc:'Calls swarms from dimensional tears. Endless respawn.'},
+      {icon:'🌊',name:'Flood Surge Pulse',desc:'Tidal wave of arcane water. Knockback + Rift contamination.'}
+    ],
+    skills:[
+      {name:'SIREN SONG',desc:'Reality distortion field. All squad perception compromised.',type:'ACTIVE',active:true},
+      {name:'RIFT ANCHOR',desc:'Fused to Engine core. Cannot be moved. Damage resistance +80%.',type:'PASSIVE',active:true},
+      {name:'ENGINE SCREAM',desc:'Full Rift detonation. Lethal radius. Triggers Nuclear Forge Protocol.',type:'ULTIMATE',active:true}
+    ]
+  }
+};
+
+// ── SCENE DATA ─────────────────────────────────
+const SCENES = {
+
+  INTRO:{
+    id:'INTRO',
+    label:'SCENE 01 — DROP INTO THE SWAMP WARDS',
+    status:'BLACKOUT PROTOCOL',
+    icon:'🚁',
+    bg:'linear-gradient(160deg,#020610,#0a0520,#0d1a0a)',
+    iconColor:'#00d4ff',
+    sublabel:'SWAMP WARDS — SECTOR 7 — ELEVATION -40M',
+    alert:null,
+    narration:`The Swamp Wards breathe like a dying machine.\n\nCST-ERT deploys under blackout protocol. Dropship running dark — no lights, no comms above encrypted band. Below, flooded ruins swallow the skyline whole. Lightning splits the Rift distortions on the horizon.\n\nIn the distance — a silhouette. Floating. Waiting.\n\nTarget: Engine Hall.\nStatus: Compromised.\n\nCommander — what's the insertion vector?`,
+    threat:30,
+    unlockInfo:null,
+    choices:[
+      {label:'HOT DROP — Explosive insertion. No stealth.',next:'INSERTION_HARD',gated:false},
+      {label:'GHOST ENTRY — Submerged rail. Silent approach.',next:'INSERTION_STEALTH',gated:false}
+    ]
+  },
+
+  INSERTION_HARD:{
+    id:'INSERTION_HARD',
+    label:'SCENE 02A — HARD INSERTION',
+    status:'CONTACT IMMINENT',
+    icon:'💥',
+    bg:'linear-gradient(160deg,#1a0505,#0d0202,#0a0810)',
+    iconColor:'#ff4444',
+    sublabel:'LOWER WARD ENTRY — HOT ZONE',
+    alert:'⚠ ENEMY AWARE — STEALTH COMPROMISED',
+    narration:`The squad hits the mud at full velocity.\n\nAnchor Gunner deploys the suppression cannon before the dust clears — the auto-rail chewing through a patrol line that never had a chance to report. They know you're here. The question is how many of them know.\n\nYellow muzzle flash in the ruins east. Glitch Goblins. Maybe six, maybe twenty — the Rift distortion scrambles the count.\n\nAnchor Gunner looks back. Waiting for the call.`,
+    threat:65,
+    unlockCard:'anchor_gunner',
+    unlockInfo:`ANCHOR GUNNER card acquired. You can now deploy suppression turrets and access heavy-assault choice gates in future scenes.`,
+    choices:[
+      {label:'Scan the area — assess before pushing.',next:'SCAN',gated:false},
+      {label:'Push through the pressure — we keep moving.',next:'SCAN',flag:'aggressive',gated:false}
+    ]
+  },
+
+  INSERTION_STEALTH:{
+    id:'INSERTION_STEALTH',
+    label:'SCENE 02B — GHOST ENTRY',
+    status:'DARK PROTOCOL',
+    icon:'🌊',
+    bg:'linear-gradient(160deg,#020a10,#000d18,#030a0d)',
+    iconColor:'#00d4ff',
+    sublabel:'MAINTENANCE RAIL — SUBMERGED TRACK 7',
+    alert:null,
+    narration:`The maintenance rail is flooded knee-deep, silent as a grave.\n\nDrone Pilot deploys the forward scouts — twelve micro-drones threading through collapsed infrastructure, painting thermal signatures on the tactical overlay. Nothing breathes that you don't know about.\n\nThe water smells wrong. Rift-warm. Something has been living in this tunnel.\n\nDrone Pilot flags two contacts ahead. Stationary. Unaware.\n\nThe path to the Engine Hall is through them — or around them. Your call.`,
+    threat:25,
+    unlockCard:'drone_pilot',
+    unlockInfo:`DRONE PILOT card acquired. Deploy drone swarm to reveal enemy positions and access surveillance-gated choices in future scenes.`,
+    choices:[
+      {label:'Scan the area — map the full layout.',next:'SCAN',gated:false},
+      {label:'Move quietly — stay in the shadow.',next:'SCAN',flag:'shadow_mode',gated:false}
+    ]
+  },
+
+  SCAN:{
+    id:'SCAN',
+    label:'SCENE 03 — SCAN THE UNKNOWN',
+    status:'RECON ACTIVE',
+    icon:'📡',
+    bg:'linear-gradient(160deg,#05080f,#080a15,#06100d)',
+    iconColor:'#00ff88',
+    sublabel:'BROKEN STATION INTERIOR — RIFT RESIDUE DETECTED',
+    alert:null,
+    narration:`The station interior breathes wrong.\n\nGlyph-tech walls flicker between active and dead — ancient CST infrastructure corrupted by Rift bleed. The residue coats surfaces in a faint phosphorescent film. Toxic. Unstable. A trip wire waiting for someone to breathe on it too hard.\n\nSomething moved through here recently. Displaced the residue in a pattern no machine makes.\n\nEngine Hall is ahead — sixty meters, two collapsed corridors, one flooded junction.\n\nHow does the squad move?`,
+    threat:50,
+    unlockInfo:null,
+    choices:[
+      {label:'Advance toward Engine Hall — direct route.',next:'FORCE_ROUTE',gated:false},
+      {label:'Hold position — gather more intel.',next:'SCAN_HOLD',gated:false},
+      {label:'Access maintenance rail tunnel.',next:'STEALTH_ROUTE',gated:true,card:'rail_worker',cardLabel:'RAIL WORKER'},
+      {label:'Deploy drone swarm — full contact reveal.',next:'SCAN_DRONE',gated:true,card:'drone_pilot',cardLabel:'DRONE PILOT'},
+      {label:'Neutralize Rift residue — prevent ambush.',next:'SCAN_ALCHEMIST',gated:true,card:'alchemist',cardLabel:'ALCHEMIST'}
+    ]
+  },
+
+  SCAN_HOLD:{
+    id:'SCAN_HOLD',
+    label:'SCENE 03B — HOLD POSITION',
+    status:'INTEL GATHERING',
+    icon:'🔍',
+    bg:'linear-gradient(160deg,#050810,#080b18,#040a08)',
+    iconColor:'#c8920a',
+    sublabel:'STATION INTERIOR — HOLDING',
+    alert:null,
+    narration:`The squad freezes.\n\nGood call. Thirty seconds of silence reveals a patrol pattern — two Rift-corrupted sentries moving a predictable loop through the corridor ahead. They move like they're dreaming. Slow. Wrong.\n\nBeyond them, the junction to Engine Hall opens. And in that junction — you can see the Forge Mystic's domain. The pipes are breathing. Something is using the building itself as a body.\n\nFront door. Or find another way?`,
+    threat:45,
+    unlockCard:'warden_guard',
+    unlockInfo:`Warden Guard card acquired while holding position. The defensive posture reveals a Warden unit embedded in the station structure.`,
+    choices:[
+      {label:'Direct approach — we take the corridor.',next:'FORCE_ROUTE',gated:false},
+      {label:'Access maintenance rail tunnel.',next:'STEALTH_ROUTE',gated:true,card:'rail_worker',cardLabel:'RAIL WORKER'},
+      {label:'Deploy drone swarm — mark those sentries.',next:'SCAN_DRONE',gated:true,card:'drone_pilot',cardLabel:'DRONE PILOT'}
+    ]
+  },
+
+  SCAN_DRONE:{
+    id:'SCAN_DRONE',
+    label:'SCENE 03C — DRONE SWEEP',
+    status:'FULL SPECTRUM SCAN',
+    icon:'🛸',
+    bg:'linear-gradient(160deg,#020c08,#030f0a,#050810)',
+    iconColor:'#00ff88',
+    sublabel:'DRONE NETWORK — THERMAL ACTIVE',
+    alert:null,
+    narration:`The drone swarm paints the sector in green-white thermal.\n\nSixteen contacts. Four patrol routes. Two blind spots.\n\nThe left flank — a collapsed maintenance corridor — shows zero heat signature. Clean path. Either empty, or very well-hidden.\n\nThe direct route shows a kill box. Three turrets, two Glitch Goblin clusters, and something large near the Engine Hall entrance. Something that radiates cold.\n\nYou have the intelligence. Choose the approach.`,
+    threat:40,
+    unlockInfo:`Full battlefield intelligence acquired. Enemy positions revealed. Choose your approach with full situational awareness.`,
+    choices:[
+      {label:'Take the clean flank — stealth corridor.',next:'STEALTH_ROUTE',gated:false},
+      {label:'Direct assault — we know where they are.',next:'FORCE_ROUTE',gated:false}
+    ]
+  },
+
+  SCAN_ALCHEMIST:{
+    id:'SCAN_ALCHEMIST',
+    label:'SCENE 03D — RIFT CLEANSE',
+    status:'HAZARD CONTROL',
+    icon:'⚗️',
+    bg:'linear-gradient(160deg,#080210,#0a0318,#050208)',
+    iconColor:'#9d4dff',
+    sublabel:'STATION INTERIOR — RIFT NEUTRALIZATION',
+    alert:null,
+    narration:`The Alchemist moves through the residue like a doctor through a ward.\n\nCompound deployed. The phosphorescent film hisses and goes dark — the trip-wire tension in the air releasing like a held breath. What was a guaranteed ambush trigger becomes a clean floor.\n\nIn the process, the Alchemist reads the residue pattern. Tracks it like a scent.\n\n"She's been feeding the Engine with Rift energy for weeks," they report. "The core is saturated. If we hit it right — we can invert the cycle."\n\nAmbush neutralized. The path forward is clear.`,
+    threat:35,
+    flag:'ambush_prevented',
+    unlockInfo:`Rift neutralized. Ambush prevented. Additionally, Alchemist intelligence reveals boss weakness — energy cycle can be inverted at the Engine Hall.`,
+    choices:[
+      {label:'Advance to Engine Hall — front approach.',next:'FORCE_ROUTE',gated:false},
+      {label:'Find the stealth route — exploit the clean path.',next:'STEALTH_ROUTE',gated:false}
+    ]
+  },
+
+  STEALTH_ROUTE:{
+    id:'STEALTH_ROUTE',
+    label:'SCENE 04A — STEALTH ROUTE',
+    status:'GHOST PROTOCOL',
+    icon:'👁️',
+    bg:'linear-gradient(160deg,#020810,#01060d,#040808)',
+    iconColor:'#00c8a0',
+    sublabel:'MAINTENANCE TUNNEL — WATER + DARKNESS',
+    alert:null,
+    narration:`The tunnel narrows until shoulders brush both walls.\n\nWater drips in a rhythm that sounds almost intentional. Almost like breathing. Somewhere ahead, voices — not words, not language — just tone. Resonance. Siren bleed.\n\nPhase Spy's sensors flicker.\n\n"Three cloaked contacts, ten meters. They're waiting for us. Whatever's in Engine Hall — it knows we're here."\n\nEliminate them silently, or route around. Every second costs something.`,
+    threat:60,
+    unlockCard:'phase_spy',
+    unlockInfo:`Phase Spy card acquired. Phase Strike ability now available — bypasses all armor for direct damage to Taur-Nuphari in the boss encounter.`,
+    choices:[
+      {label:'Bypass silently — route around the contacts.',next:'ENGINE_HALL',flag:'stealth_preserved',gated:false},
+      {label:'Eliminate the cloaked targets — leave nothing behind.',next:'ENGINE_HALL',flag:'contacts_cleared',gated:false}
+    ]
+  },
+
+  FORCE_ROUTE:{
+    id:'FORCE_ROUTE',
+    label:'SCENE 04B — FORCE ROUTE',
+    status:'ASSAULT ACTIVE',
+    icon:'💥',
+    bg:'linear-gradient(160deg,#150302,#0d0101,#0f0510)',
+    iconColor:'#ff4444',
+    sublabel:'OPEN CHAMBER — DEFENSE GRID HOT',
+    alert:'⚠ DEFENSE GRID ACTIVE — TURRET LOCK',
+    narration:`The chamber opens like a wound.\n\nThree modified turret units — the Siren's work visible in the Rift-glow welded into their housings. Glitch Goblins swarm the flanks, chittering at frequencies that make the Rift residue vibrate.\n\nAnchor Gunner digs in left. Forge Mystic moves to the pipe junction center-right — eyes on the mechanical infrastructure, already reading it.\n\n"I can reverse those turrets," Forge Mystic says. "Give me forty seconds."\n\nForty seconds is a long time in a room like this.`,
+    threat:75,
+    unlockCard:'forge_mystic',
+    unlockInfo:`Forge Mystic card acquired. Core stabilization ability now available — weakens Taur-Nuphari's engine fusion in the boss encounter.`,
+    choices:[
+      {label:'Push forward — cover Forge Mystic while she works.',next:'ENGINE_HALL',flag:'turrets_reversed',gated:false},
+      {label:'Fortify position — make the room ours first.',next:'ENGINE_HALL',flag:'fortified',gated:false}
+    ]
+  },
+
+  ENGINE_HALL:{
+    id:'ENGINE_HALL',
+    label:'SCENE 05 — ENGINE HALL',
+    status:'BOSS CONTACT',
+    icon:'🌊',
+    bg:'linear-gradient(160deg,#100518,#0a0220,#060114)',
+    iconColor:'#ff44aa',
+    sublabel:'ARCANE-MECHANICAL CORE — FLOOD RISING',
+    alert:'⚠ SIREN ENTITY DETECTED — REALITY DISTORTION ACTIVE',
+    narration:`The Engine Hall swallows all sound.\n\nThe arcane-mechanical core — the size of a building — pulses with Rift energy in a rhythm that matches a heartbeat. Floodwaters rise around its base, already knee-high and climbing. The air tastes of ozone and something older.\n\nTaur-Nuphari floats above the core.\n\nShe does not move to attack. She is already everywhere — in the pipes, in the water, in the Rift tears opening and closing across the chamber like breathing.\n\n"She does not guard the Engine," Phase Spy says quietly. "She IS the Engine now."\n\nChoose how CST-ERT engages.`,
+    threat:90,
+    unlockInfo:null,
+    choices:[
+      {label:'Stabilize core flow — weaken the Siren from within.',next:'FINAL',flag:'core_stabilized',gated:true,card:'forge_mystic',cardLabel:'FORGE MYSTIC'},
+      {label:'Disrupt energy cycle — slow her attacks.',next:'FINAL',flag:'disrupted',gated:true,card:'alchemist',cardLabel:'ALCHEMIST'},
+      {label:'Phase Strike — direct damage through all armor.',next:'FINAL',flag:'phase_hit',gated:true,card:'phase_spy',cardLabel:'PHASE SPY'},
+      {label:'Direct assault — all units engage full force.',next:'FINAL',gated:false}
+    ]
+  },
+
+  FINAL:{
+    id:'FINAL',
+    label:'CONVERGENCE — FINAL',
+    status:'OUTCOME LOCKED',
+    icon:'⚡',
+    bg:'linear-gradient(160deg,#020306,#050210,#020306)',
+    iconColor:'#c8920a',
+    sublabel:'POST-ENGAGEMENT — MISSION ASSESSMENT',
+    alert:null,
+    narration:``,
+    threat:100,
+    unlockInfo:null,
+    choices:[]
+  }
+};
+
+// ── GAME STATE ──────────────────────────────────
+const STATE = {
+  currentScene:'INTRO',
+  unlocks: new Set(),
+  flags: new Set(),
+  narrationOn: false,
+  typewriterActive: false,
+  typewriterTimeout: null
+};
+
+// Cards earned via specific scene progression
+const SCENE_UNLOCK_MAP = {
+  INSERTION_HARD:'anchor_gunner',
+  INSERTION_STEALTH:'drone_pilot',
+  STEALTH_ROUTE:'phase_spy',
+  FORCE_ROUTE:'forge_mystic',
+  SCAN_HOLD:'warden_guard',
+  SCAN_ALCHEMIST:'alchemist'
+};
+
+// Give player starting units based on selections later
+// For now track what they earn
+
+// ── AUDIO ENGINE ────────────────────────────────
+let audioCtx = null;
+function getAudioCtx(){
+  if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  return audioCtx;
+}
+
+function playTone(freq,dur,type='sine',vol=0.08,delay=0){
+  try{
+    const ctx = getAudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type=type; osc.frequency.value=freq;
+    gain.gain.setValueAtTime(0,ctx.currentTime+delay);
+    gain.gain.linearRampToValueAtTime(vol,ctx.currentTime+delay+0.05);
+    gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+delay+dur);
+    osc.start(ctx.currentTime+delay);
+    osc.stop(ctx.currentTime+delay+dur+0.1);
+  }catch(e){}
+}
+
+function playUIClick(){playTone(440,0.08,'square',0.05);}
+function playCardUnlock(){
+  playTone(523,0.2,'sine',0.1);
+  playTone(659,0.2,'sine',0.1,0.15);
+  playTone(784,0.4,'sine',0.12,0.3);
+}
+function playSceneTransition(){
+  playTone(80,0.6,'sawtooth',0.04);
+  playTone(120,0.3,'sine',0.06,0.1);
+}
+function playBossAlert(){
+  playTone(220,0.3,'sawtooth',0.08);
+  playTone(110,0.5,'sawtooth',0.06,0.2);
+  playTone(55,0.8,'square',0.05,0.4);
+}
+function playEndingSuccess(){
+  [523,659,784,1047].forEach((f,i)=>playTone(f,0.4,'sine',0.1,i*0.2));
+}
+function playEndingFailure(){
+  [220,196,174,130].forEach((f,i)=>playTone(f,0.5,'sawtooth',0.08,i*0.25));
+}
+
+// ── NARRATION ───────────────────────────────────
+let currentSpeech = null;
+function speakNarration(){
+  if(!window.speechSynthesis) return;
+  speechSynthesis.cancel();
+  const text = document.getElementById('narration-text').innerText.replace(/\n/g,' ');
+  if(!text.trim()) return;
+  currentSpeech = new SpeechSynthesisUtterance(text);
+  currentSpeech.rate = 0.88;
+  currentSpeech.pitch = 0.85;
+  currentSpeech.volume = 0.9;
+  const dot = document.getElementById('audio-dot');
+  dot.classList.add('active');
+  currentSpeech.onend = ()=>dot.classList.remove('active');
+  speechSynthesis.speak(currentSpeech);
+}
+
+function toggleNarration(){
+  STATE.narrationOn = !STATE.narrationOn;
+  document.getElementById('narr-btn').innerText = STATE.narrationOn ? 'NARR ON' : 'NARR OFF';
+  document.getElementById('narr-btn').style.color = STATE.narrationOn ? 'var(--green)' : 'var(--dim)';
+  if(!STATE.narrationOn && speechSynthesis) speechSynthesis.cancel();
+}
+
+// ── TYPEWRITER ──────────────────────────────────
+function typeWrite(text, el, speed=18, callback){
+  if(STATE.typewriterTimeout) clearTimeout(STATE.typewriterTimeout);
+  el.innerHTML='';
+  const cursor = document.createElement('span');
+  cursor.className='narration-cursor';
+  let i=0;
+  STATE.typewriterActive=true;
+  function step(){
+    if(i<text.length){
+      const ch=text[i];
+      if(ch==='\n'){el.appendChild(document.createElement('br'));}
+      else{el.appendChild(document.createTextNode(ch));}
+      i++;
+      STATE.typewriterTimeout=setTimeout(step,ch==='\n'?speed*6:speed);
+    } else {
+      STATE.typewriterActive=false;
+      el.removeChild(cursor);
+      if(callback) callback();
+    }
+  }
+  el.appendChild(cursor);
+  step();
+}
+
+// ── GLITCH EFFECT ────────────────────────────────
+function triggerGlitch(duration=150){
+  const g=document.getElementById('glitch-overlay');
+  g.classList.add('active');
+  setTimeout(()=>g.classList.remove('active'),duration);
+}
+
+function screenShake(dur=400){
+  const el=document.getElementById('main');
+  el.classList.add('shaking');
+  setTimeout(()=>el.classList.remove('shaking'),dur);
+}
+
+// ── SCENE TRANSITION ─────────────────────────────
+function triggerTransition(cb){
+  triggerGlitch(200);
+  playSceneTransition();
+  setTimeout(()=>{
+    document.getElementById('scene-wrap').style.opacity='0';
+    setTimeout(()=>{
+      if(cb) cb();
+      document.getElementById('scene-wrap').style.transition='none';
+      document.getElementById('scene-wrap').style.opacity='1';
+      setTimeout(()=>document.getElementById('scene-wrap').style.transition='',50);
+    },200);
+  },50);
+}
+
+// ── CARD UNLOCK ──────────────────────────────────
+function unlockCard(cardId){
+  if(STATE.unlocks.has(cardId)) return;
+  STATE.unlocks.add(cardId);
+  playCardUnlock();
+  const unit = UNITS[cardId];
+  if(!unit) return;
+  // Show popup
+  const p = document.getElementById('card-popup');
+  document.getElementById('popup-name').innerText = unit.name;
+  document.getElementById('popup-desc').innerText = unit.class;
+  p.style.borderColor = unit.color;
+  p.style.display='block';
+  setTimeout(()=>{p.style.display='none';},3500);
+  updateRoster();
+  updateHUD();
+}
+
+// ── ROSTER BAR ───────────────────────────────────
+function updateRoster(){
+  const bar = document.getElementById('roster-chips');
+  bar.innerHTML='';
+  Object.values(UNITS).forEach(u=>{
+    const chip = document.createElement('div');
+    const isUnlocked = STATE.unlocks.has(u.id);
+    chip.className = `unit-chip ${isUnlocked?'unlocked':'locked'}`;
+    chip.innerHTML = `<span class="chip-dot"></span>${u.icon} ${u.name.split(' ')[0]}${u.isBoss?' ⚠':''}`;
+    chip.style.borderColor = isUnlocked ? u.color+'44' : '';
+    chip.style.color = isUnlocked ? u.color : '';
+    if(isUnlocked){
+      chip.onclick=()=>{playUIClick();openModal(u.id);};
+    }
+    bar.appendChild(chip);
+  });
+}
+
+// ── HUD UPDATE ───────────────────────────────────
+function updateHUD(){
+  const totalCards = Object.keys(UNITS).filter(k=>!UNITS[k].isBoss).length;
+  document.getElementById('hud-cards').innerText = `${STATE.unlocks.size}/${totalCards}`;
+}
+
+function setThreat(pct){
+  document.getElementById('threat-fill').style.width=pct+'%';
+  const hud = document.getElementById('hud-status');
+  if(pct>80){hud.innerText='CRITICAL';hud.style.color='var(--red)';}
+  else if(pct>50){hud.innerText='ELEVATED';hud.style.color='#ff8844';}
+  else{hud.innerText='ACTIVE';hud.style.color='var(--green)';}
+}
+
+// ── UNIT MODAL ───────────────────────────────────
+function openModal(unitId){
+  const u = UNITS[unitId];
+  if(!u) return;
+  const modal = document.getElementById('unit-modal');
+  const body = document.getElementById('modal-body');
+  const isUnlocked = STATE.unlocks.has(unitId) || u.isBoss;
+  const statusClass = u.isBoss?'boss':(isUnlocked?'active':'locked');
+  const statusText = u.isBoss?'⚠ HOSTILE — BOSS ENTITY':(isUnlocked?'● ACTIVE — FIELD DEPLOYED':'○ LOCKED — NOT ACQUIRED');
+
+  const loadoutHTML = u.loadout.map(l=>`
+    <li class="loadout-item">
+      <span class="loadout-icon">${l.icon}</span>
+      <div>
+        <div class="loadout-name">${l.name}</div>
+        <div class="loadout-desc">${l.desc}</div>
+      </div>
+    </li>`).join('');
+
+  const skillsHTML = u.skills.map((s,i)=>{
+    const isLast = i===u.skills.length-1;
+    const nodeStyle = `color:${u.color}`;
+    return `
+      <div class="skill-row">
+        <div class="skill-node ${s.locked?'locked':'active'}" style="${isUnlocked||u.isBoss?nodeStyle:''}">
+          <div class="skill-node-name" style="${isUnlocked||u.isBoss?'color:'+u.color:''}">${s.name}</div>
+          <div class="skill-node-desc">${s.desc}</div>
+          <div class="skill-node-type">${s.type}</div>
+        </div>
+        ${!isLast?`<div class="skill-connector ${!s.locked?'active':''}" style="${isUnlocked?'background:'+u.color:''}"></div>`:''}
+      </div>`;
+  }).join('');
+
+  body.innerHTML=`
+    <div class="unit-portrait" style="background:linear-gradient(160deg,${u.color}15,${u.color}05);">
+      <div style="font-size:90px;filter:drop-shadow(0 0 30px ${u.color});">${u.icon}</div>
+      <div class="portrait-overlay"></div>
+    </div>
+
+    <div class="unit-section">
+      <div class="unit-name" style="color:${u.color};">${u.name}</div>
+      <div class="unit-class">${u.class}</div>
+      <div class="unit-class" style="margin-top:3px;color:${u.color}88;">${u.rank}</div>
+      <div class="status-badge ${statusClass}">${statusText}</div>
+      <div class="unit-lore">${u.lore}</div>
+    </div>
+
+    <div class="unit-section">
+      <div class="section-label">LOADOUT</div>
+      <ul class="loadout-list">${loadoutHTML}</ul>
+    </div>
+
+    <div class="unit-section">
+      <div class="section-label">SKILL TREE</div>
+      <div class="skill-tree">${skillsHTML}</div>
+    </div>
+  `;
+
+  modal.classList.add('open');
+  playUIClick();
+}
+
+function closeModal(){
+  document.getElementById('unit-modal').classList.remove('open');
+  playUIClick();
+}
+
+// ── SCENE RENDERER ────────────────────────────────
+function goTo(sceneId, extraFlag){
+  if(extraFlag) STATE.flags.add(extraFlag);
+
+  triggerTransition(()=>{
+    STATE.currentScene = sceneId;
+    renderScene(sceneId);
+  });
+}
+
+function renderScene(sceneId){
+  const scene = SCENES[sceneId];
+  if(!scene) return;
+
+  // Handle FINAL scene specially
+  if(sceneId === 'FINAL'){
+    triggerFinal();
+    return;
+  }
+
+  // Check for card unlock from this scene
+  const cardToUnlock = scene.unlockCard || SCENE_UNLOCK_MAP[sceneId];
+  if(cardToUnlock && !STATE.unlocks.has(cardToUnlock)){
+    setTimeout(()=>unlockCard(cardToUnlock), 1200);
+  }
+
+  // Update scene header
+  document.getElementById('scene-id-label').innerText = scene.id;
+  document.getElementById('scene-status').innerText = '● '+scene.status;
+
+  // Update HUD
+  document.getElementById('hud-mission').innerText = scene.label.split('—')[0].trim().substring(0,15);
+  setThreat(scene.threat);
+
+  // Visual panel
+  document.getElementById('vis-bg').style.background = scene.bg;
+  document.getElementById('vis-icon').innerText = scene.icon;
+  document.getElementById('vis-icon').style.color = scene.iconColor;
+  document.getElementById('vis-label').innerText = scene.sublabel;
+
+  // Alert
+  const alertEl = document.getElementById('alert-banner');
+  if(scene.alert){
+    alertEl.style.display='block';
+    alertEl.innerText=scene.alert;
+    if(scene.id==='ENGINE_HALL'){screenShake(600);playBossAlert();}
+  } else {
+    alertEl.style.display='none';
+  }
+
+  // Narration typewriter
+  const narEl = document.getElementById('narration-text');
+  typeWrite(scene.narration, narEl, 16, ()=>{
+    if(STATE.narrationOn) speakNarration();
+  });
+
+  // Unlock info box
+  const uiBox = document.getElementById('unlock-info');
+  const uiText = document.getElementById('unlock-text');
+  if(scene.unlockInfo){
+    uiBox.style.display='block';
+    uiText.innerText=scene.unlockInfo;
+  } else {
+    uiBox.style.display='none';
+  }
+
+  // Render choices
+  renderChoices(scene.choices, scene.flag);
+
+  // Scroll to top
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function renderChoices(choices, sceneFlag){
+  const panel = document.getElementById('choices-panel');
+  panel.innerHTML='';
+  if(!choices || choices.length===0) return;
+
+  choices.forEach(c=>{
+    if(c.gated && !STATE.unlocks.has(c.card)) return; // Hide locked choices player doesn't have
+
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn' + (c.gated?' card-gated':'');
+    btn.innerText = c.label;
+    if(c.cardLabel) btn.setAttribute('data-card',c.cardLabel);
+    btn.onclick = ()=>{
+      playUIClick();
+      const nextFlag = c.flag || sceneFlag || null;
+      goTo(c.next, nextFlag);
+    };
+    panel.appendChild(btn);
+  });
+}
+
+// ── FINAL SCENE / ENDINGS ────────────────────────
+function triggerFinal(){
+  // Determine ending based on flags
+  const flags = STATE.flags;
+  const hasCore = flags.has('core_stabilized');
+  const hasDisrupt = flags.has('disrupted');
+  const hasPhase = flags.has('phase_hit');
+  const hasStealth = flags.has('stealth_preserved') || flags.has('contacts_cleared');
+
+  let ending;
+  const specialCount = [hasCore,hasDisrupt,hasPhase].filter(Boolean).length;
+
+  if(specialCount >= 2){
+    ending = 'SUCCESS';
+  } else if(specialCount === 1 || hasStealth){
+    ending = 'PARTIAL';
+  } else {
+    ending = 'FAILURE';
+  }
+
+  setTimeout(()=>showEnding(ending), 800);
+}
+
+function showEnding(type){
+  const el = document.getElementById('ending');
+  const typeEl = document.getElementById('ending-type');
+  const titleEl = document.getElementById('ending-title');
+  const bodyEl = document.getElementById('ending-body');
+
+  if(type==='SUCCESS'){
+    el.style.background='linear-gradient(160deg,#020a04,#020306)';
+    typeEl.style.color='var(--green)';
+    typeEl.innerText='// MISSION SUCCESS — FULL OBJECTIVE ACHIEVED';
+    titleEl.style.color='var(--green)';
+    titleEl.innerText='ENGINE STABILIZED.\nSIREN CONTAINED.';
+    bodyEl.innerText="The arcane-mechanical core falls silent. Taur-Nuphari — what remains of her — collapses into the receding floodwater, voice finally extinguished. CST-ERT holds the Engine Hall. The Swamp Wards stop breathing. For the first time in months, the silence is the right kind.";
+    playEndingSuccess();
+  } else if(type==='PARTIAL'){
+    el.style.background='linear-gradient(160deg,#0a0700,#020306)';
+    typeEl.style.color='var(--gold)';
+    typeEl.innerText='// PARTIAL SUCCESS — OBJECTIVE COMPROMISED';
+    titleEl.style.color='var(--gold)';
+    titleEl.innerText='ENGINE DISABLED.\nSIREN ESCAPED.';
+    bodyEl.innerText="The Engine goes dark — flooding recedes, Rift tears close. A victory. But Taur-Nuphari tears through a dimensional breach before CST-ERT can close the net. Her voice fades into the Rift static. She'll be back. She's always back. You bought time. Use it.";
+    playTone(440,0.5,'sine',0.1); playTone(330,0.8,'sine',0.08,0.4);
+  } else {
+    el.style.background='linear-gradient(160deg,#0a0202,#020306)';
+    typeEl.style.color='var(--red)';
+    typeEl.innerText='// MISSION FAILURE — NUCLEAR FORGE PROTOCOL TRIGGERED';
+    titleEl.style.color='var(--red)';
+    titleEl.innerText='ENGINE OVERLOAD.\nSWAMP WARDS LOST.';
+    bodyEl.innerText="The Engine screams. Taur-Nuphari's final song detonates the arcane-mechanical core in a Rift cascade that liquefies everything within four hundred meters. The Nuclear Forge Protocol triggers automatically. CST-ERT extracts with seconds to spare. The Swamp Wards are gone. A new Rift zone blooms in their place.";
+    screenShake(800); triggerGlitch(500);
+    playEndingFailure();
+  }
+
+  el.classList.add('show');
+}
+
+function restartGame(){
+  STATE.currentScene='INTRO';
+  STATE.unlocks.clear();
+  STATE.flags.clear();
+  STATE.typewriterActive=false;
+  if(STATE.typewriterTimeout) clearTimeout(STATE.typewriterTimeout);
+  if(speechSynthesis) speechSynthesis.cancel();
+  document.getElementById('ending').classList.remove('show');
+  updateRoster();
+  updateHUD();
+  renderScene('INTRO');
+  playUIClick();
+}
+
+// ── AUTO-UNLOCK ALCHEMIST CARD ON SCAN_ALCHEMIST ──
+// (Player selects alchemist option, but needs alchemist card to access it — so give them one more card to start)
+// Solution: give player alchemist card if they navigate to that scene via specific route
+// Actually for the scan scene — alchemist is a gated choice. Player needs the card. 
+// Let's seed one starting card based on the insertion choice.
+// We handle this by unlocking in the insertion scenes.
+
+// ── INIT ─────────────────────────────────────────
+function init(){
+  // Unlock boss dossier always (enemy intel)
+  STATE.unlocks.add('taur_nuphari');
+  updateRoster();
+  updateHUD();
+  renderScene('INTRO');
+
+  // Periodic glitch ambience
+  setInterval(()=>{
+    if(Math.random()<0.15) triggerGlitch(80);
+  }, 8000);
+
+  // Close modal on outside click
+  document.addEventListener('click',e=>{
+    const modal=document.getElementById('unit-modal');
+    if(modal.classList.contains('open') && !modal.contains(e.target)){
+      const chips=document.getElementById('roster-bar');
+      if(!chips.contains(e.target)) closeModal();
+    }
+  });
+}
+
+window.addEventListener('load',init);
+</script>
+</body>
+</html>

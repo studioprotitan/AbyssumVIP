@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIESEL CITY — CLASSIFIED CODEX</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=Cinzel+Decorative:wght@400;700&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal:       #00e5cc;
+    --teal-dark:  #007a6e;
+    --teal-dim:   #00e5cc22;
+    --gold:       #c8a84b;
+    --gold-dim:   #c8a84b22;
+    --green:      #2aff7a;
+    --green-dark: #0a4020;
+    --red:        #cc1a2e;
+    --red-bright: #ff2244;
+    --red-dim:    #cc1a2e22;
+    --purple:     #8a2be2;
+    --orange:     #ff6d00;
+    --silver:     #b8c8d8;
+    --navy:       #0a1628;
+    --navy-mid:   #0d1e38;
+    --navy-light: #162848;
+    --ink:        #060c18;
+    --text:       #c8d8e8;
+    --text-dim:   #6888a8;
+    --border:     #1a3050;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--ink);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    overflow-x: hidden;
+  }
+
+  /* SCANLINE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.08) 2px,
+      rgba(0,0,0,0.08) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* NOISE TEXTURE */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9998;
+    opacity: 0.4;
+  }
+
+  /* ── NAVIGATION ── */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: rgba(6,12,24,0.92);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    height: 56px;
+  }
+
+  .nav-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 0.2em;
+    color: var(--teal);
+    text-shadow: 0 0 20px var(--teal);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    text-decoration: none;
+    letter-spacing: 0.12em;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--teal); }
+
+  .nav-status {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--teal);
+    letter-spacing: 0.1em;
+    animation: blink 2s infinite;
+  }
+
+  @keyframes blink {
+    0%, 90%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding-top: 56px;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 30%, rgba(0,229,204,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 20% 80%, rgba(200,168,75,0.05) 0%, transparent 50%),
+      radial-gradient(ellipse 40% 60% at 80% 70%, rgba(138,43,226,0.04) 0%, transparent 50%),
+      linear-gradient(180deg, #060c18 0%, #0a1628 50%, #060c18 100%);
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,204,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,204,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 80%);
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 900px;
+    padding: 2rem;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.4em;
+    color: var(--teal);
+    margin-bottom: 1.5rem;
+    opacity: 0.8;
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(4rem, 12vw, 10rem);
+    line-height: 0.9;
+    letter-spacing: 0.05em;
+    color: #fff;
+    text-shadow:
+      0 0 60px rgba(0,229,204,0.4),
+      0 0 120px rgba(0,229,204,0.2);
+    margin-bottom: 0.5rem;
+  }
+
+  .hero-sub {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(1.5rem, 4vw, 3rem);
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-shadow: 0 0 30px rgba(200,168,75,0.5);
+    margin-bottom: 2rem;
+  }
+
+  .hero-divider {
+    width: 200px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--teal), transparent);
+    margin: 0 auto 2rem;
+  }
+
+  .hero-desc {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--text-dim);
+    max-width: 600px;
+    margin: 0 auto 3rem;
+    letter-spacing: 0.03em;
+  }
+
+  .hero-classify {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    border: 1px solid var(--red);
+    padding: 0.5rem 1.5rem;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    color: var(--red);
+    text-shadow: 0 0 10px var(--red);
+    box-shadow: 0 0 20px rgba(204,26,46,0.2), inset 0 0 20px rgba(204,26,46,0.05);
+  }
+
+  .hero-classify::before, .hero-classify::after {
+    content: '▮';
+    animation: blink 1.5s infinite;
+  }
+
+  /* ── SECTION COMMON ── */
+  section {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 6rem 2rem;
+  }
+
+  .section-header {
+    margin-bottom: 4rem;
+    position: relative;
+  }
+
+  .section-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.4em;
+    color: var(--teal);
+    margin-bottom: 0.75rem;
+    opacity: 0.7;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    letter-spacing: 0.05em;
+    line-height: 1;
+  }
+
+  .section-line {
+    width: 80px;
+    height: 2px;
+    margin-top: 1rem;
+  }
+
+  /* ── LORE BLOCK ── */
+  .lore-block {
+    background: linear-gradient(135deg, var(--navy-mid), var(--navy));
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--teal);
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .lore-block::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, var(--teal-dim), transparent 70%);
+    pointer-events: none;
+  }
+
+  .lore-block h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: 0.1em;
+    color: var(--teal);
+    margin-bottom: 1rem;
+  }
+
+  .lore-block p {
+    color: var(--text);
+    line-height: 1.9;
+    font-size: 1rem;
+    font-weight: 300;
+  }
+
+  /* ── FACTION CARDS ── */
+  .faction-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .faction-card {
+    position: relative;
+    border: 1px solid var(--border);
+    background: var(--navy-mid);
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: default;
+  }
+
+  .faction-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+
+  .faction-card-header {
+    padding: 1.5rem 1.5rem 1rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .faction-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    border: 1px solid currentColor;
+  }
+
+  .faction-card-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.08em;
+  }
+
+  .faction-alignment {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    margin-top: 0.25rem;
+    opacity: 0.7;
+  }
+
+  .faction-card-body {
+    padding: 1.5rem;
+  }
+
+  .faction-card-body p {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--text-dim);
+    margin-bottom: 1rem;
+  }
+
+  .faction-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    padding: 0.2rem 0.6rem;
+    border: 1px solid currentColor;
+    opacity: 0.7;
+  }
+
+  .faction-card-glow {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  /* FACTION COLORS */
+  .c-teal  { color: var(--teal);   border-color: var(--teal-dark); }
+  .c-gold  { color: var(--gold);   border-color: rgba(200,168,75,0.3); }
+  .c-green { color: var(--green);  border-color: rgba(42,255,122,0.2); }
+  .c-red   { color: var(--red-bright); border-color: rgba(255,34,68,0.2); }
+  .c-purple{ color: var(--purple); border-color: rgba(138,43,226,0.2); }
+  .c-orange{ color: var(--orange); border-color: rgba(255,109,0,0.2); }
+  .c-silver{ color: var(--silver); border-color: rgba(184,200,216,0.2); }
+
+  .glow-teal   { background: linear-gradient(90deg, var(--teal), transparent); }
+  .glow-gold   { background: linear-gradient(90deg, var(--gold), transparent); }
+  .glow-green  { background: linear-gradient(90deg, var(--green), transparent); }
+  .glow-red    { background: linear-gradient(90deg, var(--red-bright), transparent); }
+  .glow-purple { background: linear-gradient(90deg, var(--purple), transparent); }
+  .glow-orange { background: linear-gradient(90deg, var(--orange), transparent); }
+  .glow-silver { background: linear-gradient(90deg, var(--silver), transparent); }
+
+  /* ── CHARACTER ROSTER ── */
+  .roster-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  .roster-table th {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--teal);
+    text-align: left;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--teal-dark);
+    background: rgba(0,229,204,0.04);
+  }
+
+  .roster-table td {
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+
+  .roster-table tr:hover td {
+    background: rgba(255,255,255,0.02);
+  }
+
+  .char-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.05em;
+  }
+
+  .char-faction-pill {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    padding: 0.15rem 0.5rem;
+    border: 1px solid currentColor;
+    white-space: nowrap;
+  }
+
+  .energy-dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-right: 0.4rem;
+    box-shadow: 0 0 6px currentColor;
+  }
+
+  /* ── POWER CORE SECTION ── */
+  .core-display {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .core-visual {
+    aspect-ratio: 1;
+    max-width: 400px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .core-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid;
+    animation: spin 8s linear infinite;
+  }
+
+  .core-ring:nth-child(1) {
+    width: 90%; height: 90%;
+    border-color: rgba(255,109,0,0.6);
+    animation-duration: 12s;
+  }
+
+  .core-ring:nth-child(2) {
+    width: 72%; height: 72%;
+    border-color: rgba(255,109,0,0.4);
+    animation-direction: reverse;
+    animation-duration: 8s;
+  }
+
+  .core-ring:nth-child(3) {
+    width: 54%; height: 54%;
+    border-color: rgba(0,229,204,0.5);
+    animation-duration: 5s;
+  }
+
+  .core-center {
+    width: 36%; height: 36%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,229,204,0.8), rgba(0,229,204,0.1));
+    box-shadow:
+      0 0 40px rgba(0,229,204,0.6),
+      0 0 80px rgba(0,229,204,0.3),
+      inset 0 0 20px rgba(0,229,204,0.4);
+    animation: pulse 3s ease-in-out infinite;
+    z-index: 1;
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 40px rgba(0,229,204,0.6), 0 0 80px rgba(0,229,204,0.3); }
+    50%       { box-shadow: 0 0 60px rgba(0,229,204,0.9), 0 0 120px rgba(0,229,204,0.5); }
+  }
+
+  .core-specs {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .spec-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    background: var(--navy-mid);
+  }
+
+  .spec-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--text-dim);
+  }
+
+  .spec-value {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--teal);
+  }
+
+  /* ── ENERGY LEGEND ── */
+  .energy-legend {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .energy-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    background: var(--navy-mid);
+  }
+
+  .energy-swatch {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    box-shadow: 0 0 16px currentColor;
+  }
+
+  .energy-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+  }
+
+  .energy-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  /* ── THREAT MATRIX ── */
+  .threat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+
+  .threat-card {
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    background: var(--navy-mid);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .threat-tier {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    margin-bottom: 0.5rem;
+    opacity: 0.7;
+  }
+
+  .threat-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.5rem;
+  }
+
+  .threat-desc {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  .threat-meter {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .meter-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+  }
+
+  .meter-bar {
+    flex: 1;
+    height: 3px;
+    background: var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .meter-fill {
+    height: 100%;
+    border-radius: 2px;
+    animation: meter-in 1.5s ease-out forwards;
+  }
+
+  @keyframes meter-in {
+    from { width: 0; }
+  }
+
+  /* ── CLASSIFIED FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 3rem 2rem;
+    text-align: center;
+    background: linear-gradient(180deg, transparent, rgba(0,229,204,0.02));
+  }
+
+  .footer-mark {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 0.3em;
+    color: var(--teal);
+    opacity: 0.3;
+    margin-bottom: 1rem;
+  }
+
+  .footer-text {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--text-dim);
+    line-height: 2;
+  }
+
+  /* ── DIVIDER ── */
+  .sep {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 0 2rem;
+  }
+
+  /* ── SCROLL REVEALS ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── MOBILE ── */
+  @media (max-width: 768px) {
+    .core-display { grid-template-columns: 1fr; }
+    .threat-grid  { grid-template-columns: 1fr; }
+    .nav-links    { display: none; }
+    .roster-table { font-size: 0.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav>
+  <div class="nav-brand">D/CITY CODEX</div>
+  <ul class="nav-links">
+    <li><a href="#lore">LORE</a></li>
+    <li><a href="#factions">FACTIONS</a></li>
+    <li><a href="#roster">ROSTER</a></li>
+    <li><a href="#power">POWER CORE</a></li>
+    <li><a href="#threats">THREAT MATRIX</a></li>
+    <li><a href="#energy">ENERGY KEY</a></li>
+  </ul>
+  <div class="nav-status">● LIVE — CLEARANCE LEVEL: COMMAND</div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">CLASSIFIED FIELD DOCUMENT // ISSUE 001 // DIESEL CITY AUTHORITY</div>
+    <h1 class="hero-title">DIESEL<br>CITY</h1>
+    <div class="hero-sub">ARCANE INDUSTRIAL CODEX</div>
+    <div class="hero-divider"></div>
+    <p class="hero-desc">
+      A complete intelligence file on the factions, operatives, threats, and power architecture 
+      of the subterranean Diesel City megastructure. Compiled for Command-level authorization only.
+    </p>
+    <div class="hero-classify">CLASSIFICATION: EYES ONLY — COMMAND TIER</div>
+  </div>
+</div>
+
+<div class="sep"></div>
+
+<!-- LORE -->
+<section id="lore">
+  <div class="section-header reveal">
+    <div class="section-label">// FILE 001 — ORIGIN INTELLIGENCE</div>
+    <h2 class="section-title" style="color: var(--teal);">WORLD LORE</h2>
+    <div class="section-line glow-teal"></div>
+  </div>
+
+  <div class="lore-block reveal">
+    <h3>THE UNDERGROUND — DIESEL CITY</h3>
+    <p>
+      Beneath the smog-choked surface streets lies the true city — a subterranean megastructure 
+      of arcane-industrial engineering spanning hundreds of kilometers of tunnels, vaulted 
+      chambers, and engine-halls. Diesel City was built around the <strong style="color:var(--teal)">Golem Power Cores</strong> — 
+      ancient arcane reactors that convert dimensional energy into usable force. The city grew 
+      outward from these Cores like rings around a tree. Everything runs on Core energy: 
+      the lights, the vehicles, the weapons, the witches.
+    </p>
+  </div>
+
+  <div class="lore-block reveal" style="border-left-color: var(--gold);">
+    <h3 style="color: var(--gold);">THE ASH — ORIGIN OF THE WITCHES</h3>
+    <p>
+      Long before Diesel City was fortified, the first Core overloaded. The explosion of raw 
+      arcane energy — known as <strong style="color:var(--gold)">The Ash Event</strong> — transformed 
+      a generation of survivors. Those women who absorbed the Ash without dying became the 
+      first Ash-Born Witches. The Ash rewrote their biology: enhanced perception, arcane 
+      attunement, and the ability to interface directly with Core technology. The S.W.A.T. 
+      program was built around them. Every Witch carries Ash in her cells. It is both her 
+      power and her curse.
+    </p>
+  </div>
+
+  <div class="lore-block reveal" style="border-left-color: var(--green);">
+    <h3 style="color: var(--green);">THE GLITCH — CORRUPTION OF THE GREEN</h3>
+    <p>
+      Some Ash-Born did not align with S.W.A.T. They went deeper — studying the Ash not as 
+      a tool but as a <em>living system</em>. These practitioners discovered that Ash energy, 
+      left unregulated, begins to merge with organic matter — growing through bone, animating 
+      moss, dissolving the boundary between the living and the dead. They called this process 
+      <strong style="color:var(--green)">The Glitch</strong>. Those consumed by it became the 
+      Glitch Witches — still recognizably Ash-Born (the natural afro is the ancestral marker 
+      that never disappears), but transformed into architects of life-death duality magic. 
+      Their green bioluminescence is Ash energy running wild through exposed bone.
+    </p>
+  </div>
+
+  <div class="lore-block reveal" style="border-left-color: var(--red-bright);">
+    <h3 style="color: var(--red-bright);">THE RED SCHISM — BLOOD COVENANT</h3>
+    <p>
+      A second divergence from the Ash-Born line occurred when a group of Glitch Witches 
+      attempted to weaponize the Glitch against the Rift itself. The experiment failed — 
+      catastrophically. The Rift energy inverted their Glitch corruption, turning green 
+      bioluminescence to crimson and accelerating vampiric decay. These <strong style="color:var(--red-bright)">Blood Covenant Witches</strong> 
+      retain some ancestral afro hair but their faces are stripped to white bone, their 
+      eyes bleed red light, and their power is predatory rather than cultivating. They are 
+      faster than Glitch Witches, less rooted, and infinitely more dangerous in direct combat. 
+      The moss they stand on is not their ally — it is the last trace of what they used to be.
+    </p>
+  </div>
+
+  <div class="lore-block reveal" style="border-left-color: var(--purple);">
+    <h3 style="color: var(--purple);">THE RIFT — DIMENSIONAL INVASION</h3>
+    <p>
+      The Cores do not generate energy — they <em>extract</em> it from adjacent dimensions. 
+      For centuries this process was stable. Then something on the other side began pushing back. 
+      The <strong style="color:var(--purple)">Rift-Born</strong> are the inhabitants of those 
+      dimensions — beings of pale teal energy and exposed bone, armored in scale-that-grew-from-skin, 
+      who enter through unstable Core extraction points. They do not invade out of malice. 
+      They invade because from their perspective, the Cores are <em>consuming their world</em>. 
+      The tragedy of Diesel City is that both sides have legitimate grievances. S.W.A.T. 
+      fights to survive. The Rift-Born fight to reclaim. Purple energy is volatile Rift 
+      matter — explosive and dimensionally unstable on contact with Core-attuned technology.
+    </p>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- FACTIONS -->
+<section id="factions">
+  <div class="section-header reveal">
+    <div class="section-label">// FILE 002 — FACTION INTELLIGENCE</div>
+    <h2 class="section-title" style="color: var(--gold);">FACTIONS</h2>
+    <div class="section-line glow-gold"></div>
+  </div>
+
+  <div class="faction-grid">
+
+    <!-- S.W.A.T. -->
+    <div class="faction-card c-teal reveal">
+      <div class="faction-card-header">
+        <div class="faction-icon c-teal" style="border-color: var(--teal);">⊕</div>
+        <div>
+          <div class="faction-card-title c-teal">S.W.A.T. WITCHES</div>
+          <div class="faction-alignment">ALIGNMENT: DEFENDER // ARCANE TACTICAL</div>
+        </div>
+      </div>
+      <div class="faction-card-body">
+        <p>Elite arcane-tactical operatives of Diesel City. Each Witch is Ash-Born — a survivor 
+        of the original Core event who carries the Ash in her biology. S.W.A.T. Witches 
+        are simultaneously combat medics, field alchemists, and living weapons systems. 
+        Their four-vial belt system carries elemental alchemical compounds keyed to 
+        earth (green), fire (red), water (blue), and lightning (yellow). The S.W.A.T. 
+        designation is permanently inscribed in their armor in teal — both identification 
+        and ward.</p>
+        <div class="faction-tags">
+          <span class="tag c-teal">ARCANE-TACTICAL</span>
+          <span class="tag c-teal">ASH-BORN</span>
+          <span class="tag c-teal">FIELD ALCHEMIST</span>
+          <span class="tag c-teal">CORE-ATTUNED</span>
+        </div>
+      </div>
+      <div class="faction-card-glow glow-teal"></div>
+    </div>
+
+    <!-- SILVER SENTINEL -->
+    <div class="faction-card c-silver reveal">
+      <div class="faction-card-header">
+        <div class="faction-icon c-silver" style="border-color: var(--silver);">◈</div>
+        <div>
+          <div class="faction-card-title c-silver">THE SILVER SENTINEL</div>
+          <div class="faction-alignment">ALIGNMENT: COMMAND // ADMINISTRATIVE</div>
+        </div>
+      </div>
+      <div class="faction-card-body">
+        <p>The masked Director of Diesel City. The Sentinel operates from a gold-bronze 
+        throne room at the city's administrative core — surrounded by the machinery of 
+        governance itself. The featureless silver mask conceals identity, rendering 
+        the Director a symbol rather than a person. Commands S.W.A.T., CST, and all 
+        city operations. The silver domino and chain-cape are walking archives of 
+        inscribed city law. The Sentinel sees all and says little.</p>
+        <div class="faction-tags">
+          <span class="tag c-silver">COMMAND TIER</span>
+          <span class="tag c-silver">ADMINISTRATIVE</span>
+          <span class="tag c-silver">UNKNOWN ORIGIN</span>
+        </div>
+      </div>
+      <div class="faction-card-glow glow-silver"></div>
+    </div>
+
+    <!-- CST -->
+    <div class="faction-card c-orange reveal">
+      <div class="faction-card-header">
+        <div class="faction-icon c-orange" style="border-color: var(--orange);">⬡</div>
+        <div>
+          <div class="faction-card-title c-orange">CST OPERATIVES</div>
+          <div class="faction-alignment">ALIGNMENT: LAW ENFORCEMENT // SURFACE</div>
+        </div>
+      </div>
+      <div class="faction-card-body">
+        <p>City Surface Tactical — the ground-level law enforcement corps patrolling 
+        the above-ground districts of Diesel City. Where S.W.A.T. handles Rift-level 
+        threats underground, CST maintains order on the burning surface streets. 
+        Their horned tactical helmets and orange eye-lenses indicate augmented-vision 
+        implants tuned to a different frequency than Core energy. CST operatives are 
+        potentially the guardians of the Power Core access points at surface level.</p>
+        <div class="faction-tags">
+          <span class="tag c-orange">SURFACE OPS</span>
+          <span class="tag c-orange">AUGMENTED</span>
+          <span class="tag c-orange">CORE GUARDIAN</span>
+        </div>
+      </div>
+      <div class="faction-card-glow glow-orange"></div>
+    </div>
+
+    <!-- RELIC MYSTIC -->
+    <div class="faction-card c-gold reveal">
+      <div class="faction-card-header">
+        <div class="faction-icon c-gold" style="border-color: var(--gold);">✦</div>
+        <div>
+          <div class="faction-card-title c-gold">ASH-BORN RELIC MYSTIC</div>
+          <div class="faction-alignment">ALIGNMENT: ALLIED // ARCANE KNOWLEDGE</div>
+        </div>
+      </div>
+      <div class="faction-card-body">
+        <p>The oldest living Ash-Born operative. The Relic Mystic predates S.W.A.T. — 
+        he was present at the original Ash Event and has been studying its implications 
+        for generations. His alchemy wheel interface projects twelve nodes simultaneously, 
+        each representing a force in the elemental catalogue. His single blue eye sees 
+        the Rift directly. His mechanical rifle is larger than his body and tuned to 
+        dimensional frequencies. He knows things about the Rift-Born that S.W.A.T. 
+        command refuses to acknowledge.</p>
+        <div class="faction-tags">
+          <span class="tag c-gold">ANCIENT</span>
+          <span class="tag c-gold">RIFT-SIGHTED</span>
+          <span class="tag c-gold">12-NODE ALCHEMY</span>
+        </div>
+      </div>
+      <div class="faction-card-glow glow-gold"></div>
+    </div>
+
+    <!-- KRAKEN PILOTS -->
+    <div class="faction-card reveal" style="border-color: rgba(0,160,200,0.3);">
+      <div class="faction-card-header">
+        <div class="faction-icon" style="color: #00c8e0; border-color: #00c8e0;">⊗</div>
+        <div>
+          <div class="faction-card-title" style="color: #00c8e0;">KRAKEN PILOTS</div>
+          <div class="faction-alignment">ALIGNMENT: ALLIED // NAVIGATION & DEEP FIELD</div>
+        </div>
+      </div>
+      <div class="faction-card-body">
+        <p>A non-human species of cephalopod-biomechanical beings — dome-skulled, 
+        tentacle-faced, armored in glacial teal plating threaded with gold. Kraken 
+        Pilots are the navigators, helmsmen, and deep-field operators of Diesel City's 
+        outlying operations. They pilot the Kraken Vehicle — a dome-shelled, 
+        building-sized land crawler — through Rift-adjacent terrain that would destroy 
+        conventional S.W.A.T. vehicles. Their goggles see in spectrums beyond human range.</p>
+        <div class="faction-tags">
+          <span class="tag" style="color:#00c8e0; border-color:#00c8e0;">NON-HUMAN</span>
+          <span class="tag" style="color:#00c8e0; border-color:#00c8e0;">DEEP FIELD</span>
+          <span class="tag" style="color:#00c8e0; border-color:#00c8e0;">NAVIGATOR CLASS</span>
+        </div>
+      </div>
+      <div class="faction-card-glow" style="background: linear-gradient(90deg, #00c8e0, transparent);"></div>
+    </div>
+
+    <!-- GLITCH WITCHES -->
+    <div class="faction-card c-green reveal">
+      <div class="faction-card-header">
+        <div class="faction-icon c-green" style="border-color: var(--green);">☠</div>
+        <div>
+          <div class="faction-card-title c-green">GREEN GLITCH WITCHES</div>
+          <div class="faction-alignment">ALIGNMENT: ANTAGONIST // BIO-CORRUPTION</div>
+        </div>
+      </div>
+      <div class="faction-card-body">
+        <p>Ash-Born who surrendered to the Glitch — unregulated Ash energy growing through 
+        their bone, lighting them green from within. They cultivate and corrupt slowly, 
+        like disease. The natural afro is their undeniable ancestral marker — they cannot 
+        shed their lineage even in death. They are rooted: the moss at their feet grows 
+        thicker the longer they hold a location, until they become part of the landscape. 
+        They don't attack cities — they <em>become</em> them.</p>
+        <div class="faction-tags">
+          <span class="tag c-green">ROOTED</span>
+          <span class="tag c-green">BIO-CORRUPTION</span>
+          <span class="tag c-green">GLITCH-CONSUMED</span>
+          <span class="tag c-green">ASH LINEAGE</span>
+        </div>
+      </div>
+      <div class="faction-card-glow glow-green"></div>
+    </div>
+
+    <!-- BLOOD COVENANT -->
+    <div class="faction-card c-red reveal">
+      <div class="faction-card-header">
+        <div class="faction-icon c-red" style="border-color: var(--red-bright);">✸</div>
+        <div>
+          <div class="faction-card-title c-red">RED BLOOD COVENANT</div>
+          <div class="faction-alignment">ALIGNMENT: ANTAGONIST // BLOOD MAGIC</div>
+        </div>
+      </div>
+      <div class="faction-card-body">
+        <p>Glitch Witches who attempted to weaponize the Glitch against the Rift and 
+        paid the price. Rift energy inverted their corruption: green became crimson, 
+        cultivation became predation, roots became fangs. Blood Covenant Witches are 
+        the fastest and most volatile of all antagonist factions. They hunt rather than 
+        spread. Their white-bone faces bleed red light. The moss at their feet is the 
+        last ghost of their former nature. Some retain the ancestral afro — the bridge 
+        between factions that S.W.A.T. intelligence has never fully explained.</p>
+        <div class="faction-tags">
+          <span class="tag c-red">PREDATORY</span>
+          <span class="tag c-red">VAMPIRIC</span>
+          <span class="tag c-red">RIFT-INVERTED</span>
+          <span class="tag c-red">MOBILE</span>
+        </div>
+      </div>
+      <div class="faction-card-glow glow-red"></div>
+    </div>
+
+    <!-- RIFT-BORN -->
+    <div class="faction-card c-purple reveal">
+      <div class="faction-card-header">
+        <div class="faction-icon c-purple" style="border-color: var(--purple);">⬟</div>
+        <div>
+          <div class="faction-card-title c-purple">THE RIFT-BORN</div>
+          <div class="faction-alignment">ALIGNMENT: ANTAGONIST // DIMENSIONAL</div>
+        </div>
+      </div>
+      <div class="faction-card-body">
+        <p>Inhabitants of the dimensions being drained by the Golem Power Cores. 
+        They enter Diesel City through unstable extraction points — dimensional tears 
+        disguised as portal arches. Rift-Born armor grows from their bodies; it is not 
+        worn. Their hierarchy ranges from shock-troops to storm-callers to named divine 
+        entities of terrifying power. The tragedy: they are not evil. They are defending 
+        their home from a city that has been consuming their world for centuries.</p>
+        <div class="faction-tags">
+          <span class="tag c-purple">DIMENSIONAL</span>
+          <span class="tag c-purple">SCALE-ARMOR</span>
+          <span class="tag c-purple">PURPLE ENERGY</span>
+          <span class="tag c-purple">LEGITIMATE GRIEVANCE</span>
+        </div>
+      </div>
+      <div class="faction-card-glow glow-purple"></div>
+    </div>
+
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- CHARACTER ROSTER -->
+<section id="roster">
+  <div class="section-header reveal">
+    <div class="section-label">// FILE 003 — OPERATIVE REGISTRY</div>
+    <h2 class="section-title" style="color: var(--teal);">CHARACTER ROSTER</h2>
+    <div class="section-line glow-teal"></div>
+  </div>
+
+  <div style="overflow-x: auto;" class="reveal">
+  <table class="roster-table">
+    <thead>
+      <tr>
+        <th>DESIGNATION</th>
+        <th>FACTION</th>
+        <th>ROLE</th>
+        <th>ENERGY SIG.</th>
+        <th>SIGNATURE WEAPON/TRAIT</th>
+        <th>STATUS</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="char-name">S.W.A.T. WITCH #1</span><br><small style="color:var(--text-dim); font-family:'Share Tech Mono',monospace; font-size:0.6rem;">THE FIRST ASH-BORN</small></td>
+        <td><span class="char-faction-pill c-teal">S.W.A.T.</span></td>
+        <td>Field Alchemist / Combat Medic</td>
+        <td><span class="energy-dot" style="background:var(--teal); color:var(--teal)"></span>Teal/Blue</td>
+        <td>4-Vial Belt · Blue Baton · Neural Afro HUD</td>
+        <td style="color:var(--green)">● ACTIVE</td>
+      </tr>
+      <tr>
+        <td><span class="char-name">ENGINEER WITCH</span><br><small style="color:var(--text-dim); font-family:'Share Tech Mono',monospace; font-size:0.6rem;">THE ARMORER</small></td>
+        <td><span class="char-faction-pill c-teal">S.W.A.T.</span></td>
+        <td>Weapons Systems / Arcane Engineer</td>
+        <td><span class="energy-dot" style="background:var(--green); color:var(--green)"></span>Green/Multi-State</td>
+        <td>Multi-State Cannon · Scorpion-Tail Wing · Crown Plate</td>
+        <td style="color:var(--green)">● ACTIVE</td>
+      </tr>
+      <tr>
+        <td><span class="char-name">GUNNER WITCH</span><br><small style="color:var(--text-dim); font-family:'Share Tech Mono',monospace; font-size:0.6rem;">RIFT RECON</small></td>
+        <td><span class="char-faction-pill c-teal">S.W.A.T.</span></td>
+        <td>Heavy Assault / Rift Recon</td>
+        <td><span class="energy-dot" style="background:#40e0d0; color:#40e0d0"></span>Teal (Rift-touched)</td>
+        <td>Aetheric Cannon · Jellyfish Drone · Silver Afro</td>
+        <td style="color:var(--gold)">● FIELD</td>
+      </tr>
+      <tr>
+        <td><span class="char-name">THE SILVER SENTINEL</span><br><small style="color:var(--text-dim); font-family:'Share Tech Mono',monospace; font-size:0.6rem;">THE DIRECTOR</small></td>
+        <td><span class="char-faction-pill c-silver">COMMAND</span></td>
+        <td>City Administrator / Director</td>
+        <td><span class="energy-dot" style="background:var(--silver); color:var(--silver)"></span>Silver/Gold</td>
+        <td>Command Scepter · Inscribed Chainmail · Silver Mask</td>
+        <td style="color:var(--silver)">● COMMAND</td>
+      </tr>
+      <tr>
+        <td><span class="char-name">RELIC MYSTIC</span><br><small style="color:var(--text-dim); font-family:'Share Tech Mono',monospace; font-size:0.6rem;">THE ORIGINAL</small></td>
+        <td><span class="char-faction-pill c-gold">ALLIED</span></td>
+        <td>Arcane Lorekeeper / Rift Scholar</td>
+        <td><span class="energy-dot" style="background:var(--gold); color:var(--gold)"></span>Gold/Blue (1 eye)</td>
+        <td>12-Node Alchemy Wheel · Oversized Dimensional Rifle</td>
+        <td style="color:var(--gold)">● CLASSIFIED</td>
+      </tr>
+      <tr>
+        <td><span class="char-name">CST OPERATIVE</span><br><small style="color:var(--text-dim); font-family:'Share Tech Mono',monospace; font-size:0.6rem;">SURFACE UNIT</small></td>
+        <td><span class="char-faction-pill c-orange">CST</span></td>
+        <td>Surface Law Enforcement</td>
+        <td><span class="energy-dot" style="background:var(--orange); color:var(--orange)"></span>Orange</td>
+        <td>Horned Helm · Augmented Eyes · Ceremonial Lance</td>
+        <td style="color:var(--green)">● ACTIVE</td>
+      </tr>
+      <tr>
+        <td><span class="char-name">KRAKEN NAVIGATOR</span><br><small style="color:var(--text-dim); font-family:'Share Tech Mono',monospace; font-size:0.6rem;">WITNA-EU</small></td>
+        <td><span class="char-faction-pill" style="color:#00c8e0; border-color:#00c8e0;">KRAKEN</span></td>
+        <td>Deep Field Navigator / Helmsman</td>
+        <td><span class="energy-dot" style="background:#00c8e0; color:#00c8e0"></span>Ice-Blue/Gold</td>
+        <td>Ship's Compass Wheel · Tentacle Interface · Dome Skull</td>
+        <td style="color:var(--green)">● ACTIVE</td>
+      </tr>
+      <tr>
+        <td><span class="char-name">GLITCH WITCH ELDER</span><br><small style="color:var(--text-dim); font-family:'Share Tech Mono',monospace; font-size:0.6rem;">THE CHANCELLOR</small></td>
+        <td><span class="char-faction-pill c-green">GLITCH</span></td>
+        <td>Glitch Coven Leader</td>
+        <td><span class="energy-dot" style="background:var(--green); color:var(--green)"></span>Green/Bone</td>
+        <td>Baroque Crown · Living Moss Field · Green Skull Face</td>
+        <td style="color:var(--red-bright)">● HOSTILE</td>
+      </tr>
+      <tr>
+        <td><span class="char-name">BLOOD COVENANT QUEEN</span><br><small style="color:var(--text-dim); font-family:'Share Tech Mono',monospace; font-size:0.6rem;">THE ENTHRONED</small></td>
+        <td><span class="char-faction-pill c-red">BLOOD</span></td>
+        <td>Blood Covenant Sovereign</td>
+        <td><span class="energy-dot" style="background:var(--red-bright); color:var(--red-bright)"></span>Crimson</td>
+        <td>Bat-Wing Throne · Red Bead Chains · Intact Face</td>
+        <td style="color:var(--red-bright)">● HOSTILE</td>
+      </tr>
+      <tr>
+        <td><span class="char-name">RIFT VALKYRIE</span><br><small style="color:var(--text-dim); font-family:'Share Tech Mono',monospace; font-size:0.6rem;">NAMED ENTITY</small></td>
+        <td><span class="char-faction-pill c-purple">RIFT-BORN</span></td>
+        <td>Rift-Born General / Divine Entity</td>
+        <td><span class="energy-dot" style="background:var(--purple); color:var(--purple)"></span>Pale Teal/Pink Eyes</td>
+        <td>Ceremonial Helm · Runic Spear · Rift Script Flanking</td>
+        <td style="color:var(--red-bright)">● HOSTILE</td>
+      </tr>
+      <tr>
+        <td><span class="char-name">RIFT LICH / BANSHEE</span><br><small style="color:var(--text-dim); font-family:'Share Tech Mono',monospace; font-size:0.6rem;">STORM-CALLER</small></td>
+        <td><span class="char-faction-pill c-purple">RIFT-BORN</span></td>
+        <td>Rift High Caster / Herald</td>
+        <td><span class="energy-dot" style="background:#cc44ff; color:#cc44ff"></span>Purple/Storm</td>
+        <td>Crown-Engine Headdress · Conjured Lance · Purple Gems</td>
+        <td style="color:var(--red-bright)">● HOSTILE</td>
+      </tr>
+      <tr>
+        <td><span class="char-name">RIFT WANDERER</span><br><small style="color:var(--text-dim); font-family:'Share Tech Mono',monospace; font-size:0.6rem;">THE ENVOY</small></td>
+        <td><span class="char-faction-pill c-purple">RIFT-BORN</span></td>
+        <td>Advance Scout / Emissary</td>
+        <td><span class="energy-dot" style="background:var(--teal); color:var(--teal)"></span>Pale Teal/Reactor Core</td>
+        <td>Circuit Trench Coat · Reactor-Heart · No Weapon Needed</td>
+        <td style="color:var(--gold)">⚠ INSIDE CITY</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- POWER CORE -->
+<section id="power">
+  <div class="section-header reveal">
+    <div class="section-label">// FILE 004 — INFRASTRUCTURE INTELLIGENCE</div>
+    <h2 class="section-title" style="color: var(--orange);">ARCANE GOLEM POWER CORE</h2>
+    <div class="section-line" style="background: linear-gradient(90deg, var(--orange), transparent);"></div>
+  </div>
+
+  <div class="core-display">
+    <div class="core-visual reveal">
+      <div class="core-ring"></div>
+      <div class="core-ring"></div>
+      <div class="core-ring"></div>
+      <div class="core-center"></div>
+    </div>
+
+    <div class="core-specs reveal">
+      <div class="lore-block" style="border-left-color: var(--orange); margin-bottom: 1.5rem;">
+        <h3 style="color: var(--orange);">CLASSIFICATION: ARCANE-INDUSTRIAL REACTOR</h3>
+        <p>The Golem Power Core is the engine of Diesel City — a spherical arcane-industrial 
+        reactor that extracts dimensional energy from adjacent planes and converts it into 
+        usable force. The outer orange rings process raw dimensional intake. The inner blue 
+        eye is the stable Core consciousness — a semi-sentient monitoring system that has 
+        been running since the city's founding. Everything in Diesel City runs on Core energy: 
+        lights, vehicles, weapons, the Witches themselves.</p>
+      </div>
+
+      <div class="spec-row">
+        <span class="spec-label">OUTER RING ENERGY</span>
+        <span class="spec-value" style="color: var(--orange);">DIMENSIONAL INTAKE // ORANGE BAND</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">INNER EYE FUNCTION</span>
+        <span class="spec-value">CORE CONSCIOUSNESS // BLUE STABLE</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">CONTAINMENT ARCH</span>
+        <span class="spec-value">RIFT-PORTAL ADJACENT STRUCTURE</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">THREAT VECTOR</span>
+        <span class="spec-value" style="color: var(--red-bright);">PRIMARY TARGET — ALL FACTIONS</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">LINKED SYSTEMS</span>
+        <span class="spec-value">SWAT WEAPONS · CST EYES · WITCHES</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">RIFT CONNECTION</span>
+        <span class="spec-value" style="color: var(--purple);">DRAINING ADJACENT DIMENSIONS</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- THREAT MATRIX -->
+<section id="threats">
+  <div class="section-header reveal">
+    <div class="section-label">// FILE 005 — THREAT ASSESSMENT</div>
+    <h2 class="section-title" style="color: var(--red-bright);">THREAT MATRIX</h2>
+    <div class="section-line glow-red"></div>
+  </div>
+
+  <div class="threat-grid">
+
+    <div class="threat-card reveal" style="border-color: rgba(42,255,122,0.3);">
+      <div class="threat-tier" style="color: var(--green);">THREAT CLASS // ALPHA — SLOW BURN</div>
+      <div class="threat-name" style="color: var(--green);">GREEN GLITCH WITCHES</div>
+      <div class="threat-desc">They don't attack — they infect. A single Glitch Witch establishing 
+      root contact with Diesel City infrastructure can corrupt an entire district in weeks. 
+      Conventional weapons have reduced effect against bio-corruption fields.</div>
+      <div class="threat-meter">
+        <div class="meter-row">COMBAT SPEED
+          <div class="meter-bar"><div class="meter-fill" style="width:35%; background:var(--green);"></div></div>
+        </div>
+        <div class="meter-row">CORRUPTION SPREAD
+          <div class="meter-bar"><div class="meter-fill" style="width:95%; background:var(--green);"></div></div>
+        </div>
+        <div class="meter-row">CORE THREAT
+          <div class="meter-bar"><div class="meter-fill" style="width:75%; background:var(--green);"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="threat-card reveal" style="border-color: rgba(255,34,68,0.3);">
+      <div class="threat-tier" style="color: var(--red-bright);">THREAT CLASS // ALPHA — PREDATOR</div>
+      <div class="threat-name" style="color: var(--red-bright);">BLOOD COVENANT</div>
+      <div class="threat-desc">Fast, mobile, predatory. Blood Covenant Witches hunt operatives 
+      individually. A Blood Queen has been confirmed inside the city perimeter. 
+      The Rift-inversion makes their energy signature unreadable by standard Core sensors.</div>
+      <div class="threat-meter">
+        <div class="meter-row">COMBAT SPEED
+          <div class="meter-bar"><div class="meter-fill" style="width:92%; background:var(--red-bright);"></div></div>
+        </div>
+        <div class="meter-row">CORRUPTION SPREAD
+          <div class="meter-bar"><div class="meter-fill" style="width:45%; background:var(--red-bright);"></div></div>
+        </div>
+        <div class="meter-row">CORE THREAT
+          <div class="meter-bar"><div class="meter-fill" style="width:80%; background:var(--red-bright);"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="threat-card reveal" style="border-color: rgba(138,43,226,0.3);">
+      <div class="threat-tier" style="color: var(--purple);">THREAT CLASS // OMEGA — DIMENSIONAL</div>
+      <div class="threat-name" style="color: var(--purple);">THE RIFT-BORN</div>
+      <div class="threat-desc">Dimensional entities with legitimate claim to the energy the Cores 
+      consume. Their highest entities — the Valkyrie and the Banshee — operate at a 
+      scale that conventional S.W.A.T. cannot engage. The Rift Wanderer has been 
+      confirmed inside the city. Its purpose is unknown.</div>
+      <div class="threat-meter">
+        <div class="meter-row">COMBAT SPEED
+          <div class="meter-bar"><div class="meter-fill" style="width:70%; background:var(--purple);"></div></div>
+        </div>
+        <div class="meter-row">DIMENSIONAL POWER
+          <div class="meter-bar"><div class="meter-fill" style="width:100%; background:var(--purple);"></div></div>
+        </div>
+        <div class="meter-row">CORE THREAT
+          <div class="meter-bar"><div class="meter-fill" style="width:100%; background:var(--purple);"></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- ENERGY KEY -->
+<section id="energy">
+  <div class="section-header reveal">
+    <div class="section-label">// FILE 006 — ENERGY SIGNATURE REGISTRY</div>
+    <h2 class="section-title" style="color: var(--silver);">ENERGY SIGNATURES</h2>
+    <div class="section-line glow-silver"></div>
+  </div>
+
+  <div class="energy-legend reveal">
+    <div class="energy-item">
+      <div class="energy-swatch" style="background: var(--teal); color: var(--teal);"></div>
+      <div>
+        <div class="energy-name" style="color:var(--teal)">TEAL / CYAN</div>
+        <div class="energy-label" style="color:var(--text-dim)">S.W.A.T. Core-Attuned Energy<br>Standard operational frequency</div>
+      </div>
+    </div>
+    <div class="energy-item">
+      <div class="energy-swatch" style="background: var(--gold); color: var(--gold);"></div>
+      <div>
+        <div class="energy-name" style="color:var(--gold)">GOLD / BRONZE</div>
+        <div class="energy-label" style="color:var(--text-dim)">Command & Administrative Tier<br>Silver Sentinel domain</div>
+      </div>
+    </div>
+    <div class="energy-item">
+      <div class="energy-swatch" style="background: var(--orange); color: var(--orange);"></div>
+      <div>
+        <div class="energy-name" style="color:var(--orange)">ORANGE</div>
+        <div class="energy-label" style="color:var(--text-dim)">Golem Core Intake Rings<br>CST operative augmentation</div>
+      </div>
+    </div>
+    <div class="energy-item">
+      <div class="energy-swatch" style="background: var(--green); color: var(--green);"></div>
+      <div>
+        <div class="energy-name" style="color:var(--green)">GREEN</div>
+        <div class="energy-label" style="color:var(--text-dim)">Glitch Corruption / Engineer Gems<br>Bridge energy — both sides use it</div>
+      </div>
+    </div>
+    <div class="energy-item">
+      <div class="energy-swatch" style="background: var(--red-bright); color: var(--red-bright);"></div>
+      <div>
+        <div class="energy-name" style="color:var(--red-bright)">CRIMSON / RED</div>
+        <div class="energy-label" style="color:var(--text-dim)">Blood Covenant energy<br>Rift-inverted Glitch corruption</div>
+      </div>
+    </div>
+    <div class="energy-item">
+      <div class="energy-swatch" style="background: var(--purple); color: var(--purple);"></div>
+      <div>
+        <div class="energy-name" style="color:var(--purple)">PURPLE / VIOLET</div>
+        <div class="energy-label" style="color:var(--text-dim)">Rift-Born dimensional energy<br>Volatile on Core contact</div>
+      </div>
+    </div>
+    <div class="energy-item">
+      <div class="energy-swatch" style="background: #00c8e0; color: #00c8e0;"></div>
+      <div>
+        <div class="energy-name" style="color:#00c8e0">ICE BLUE</div>
+        <div class="energy-label" style="color:var(--text-dim)">Kraken Pilot biology<br>Cold-origin dimensional species</div>
+      </div>
+    </div>
+    <div class="energy-item">
+      <div class="energy-swatch" style="background: var(--silver); color: var(--silver);"></div>
+      <div>
+        <div class="energy-name" style="color:var(--silver)">SILVER / WHITE</div>
+        <div class="energy-label" style="color:var(--text-dim)">The Sentinel mask / Neutral authority<br>Identity concealment</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-mark">DIESEL CITY // ARCANE INDUSTRIAL AUTHORITY</div>
+  <div class="footer-text">
+    CODEX ISSUE 001 // COMPILED FOR COMMAND-TIER AUTHORIZATION ONLY<br>
+    DISTRIBUTION: S.W.A.T. COMMAND · SENTINEL OFFICE · RELIC ARCHIVE<br>
+    UNAUTHORIZED ACCESS IS A VIOLATION OF CITY STATUTE 7-DELTA<br><br>
+    ALL FACTION DATA SUBJECT TO CHANGE AS INTELLIGENCE DEVELOPS<br>
+    RIFT BREACH COUNT: [CLASSIFIED] // CORE STATUS: NOMINAL // THREAT LEVEL: ELEVATED
+  </div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Stagger faction cards
+  document.querySelectorAll('.faction-card').forEach((card, i) => {
+    card.style.transitionDelay = `${i * 0.06}s`;
+  });
+
+  // Live timestamp
+  const status = document.querySelector('.nav-status');
+  setInterval(() => {
+    const now = new Date();
+    const t = now.toISOString().slice(11,19);
+    status.textContent = `● LIVE — ${t} // CLEARANCE: COMMAND`;
+  }, 1000);
+</script>
+</body>
+</html>

@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GENESIS VERSE // CHARACTER VIEWER</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+<!-- BABYLON.JS CORE -->
+<script src="https://cdn.babylonjs.com/babylon.js"></script>
+<script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+<script src="https://cdn.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
+
+<style>
+:root {
+  --void: #03050a;
+  --panel: #080d1a;
+  --panel2: #0d1525;
+  --border: #1a2a40;
+  --gold: #c8920a;
+  --gold-bright: #f0b030;
+  --cyan: #00d4ff;
+  --red: #ff2a2a;
+  --green: #00ff88;
+  --orange: #ff7730;
+  --text: #dde8f0;
+  --dim: #4a6080;
+  --scan: #ffffff06;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--void);
+  color: var(--text);
+  font-family: 'Rajdhani', sans-serif;
+  min-height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* SCANLINES */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, var(--scan) 2px, var(--scan) 4px);
+  pointer-events: none; z-index: 9999;
+}
+
+/* ── TOP HUD ── */
+#top-hud {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: 50px;
+  background: #030508cc;
+  border-bottom: 1px solid var(--gold);
+  backdrop-filter: blur(10px);
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  z-index: 100;
+  font-family: 'Share Tech Mono', monospace;
+}
+.hud-brand { color: var(--gold); font-size: 13px; font-weight: 700; letter-spacing: 3px; }
+.hud-center { display: flex; gap: 24px; align-items: center; }
+.hud-stat { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+.hud-label { font-size: 8px; color: var(--dim); letter-spacing: 2px; }
+.hud-val { font-size: 11px; color: var(--cyan); }
+.hud-right { display: flex; gap: 10px; align-items: center; }
+
+/* ── CANVAS ── */
+#renderCanvas {
+  width: 100%;
+  height: 100vh;
+  display: block;
+  background: transparent;
+  touch-action: none;
+}
+
+/* ── LEFT PANEL — ANIMATION CONTROLS ── */
+#anim-panel {
+  position: fixed;
+  top: 60px; left: 16px;
+  width: 200px;
+  background: #030508cc;
+  border: 1px solid var(--border);
+  backdrop-filter: blur(10px);
+  z-index: 50;
+  padding: 14px;
+}
+.panel-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px; letter-spacing: 3px;
+  color: var(--gold); margin-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+}
+.anim-btn {
+  display: block; width: 100%;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 8px 12px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 13px; font-weight: 600;
+  cursor: pointer; text-align: left;
+  margin-bottom: 5px;
+  transition: all 0.2s;
+  letter-spacing: 1px;
+}
+.anim-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+.anim-btn.active { border-color: var(--gold); color: var(--gold); background: var(--panel2); }
+
+.speed-row {
+  display: flex; align-items: center; gap: 8px;
+  margin-top: 10px;
+}
+.speed-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px; color: var(--dim); letter-spacing: 1px;
+  white-space: nowrap;
+}
+#speed-slider {
+  flex: 1; -webkit-appearance: none; appearance: none;
+  height: 3px; background: var(--border); border-radius: 2px; outline: none;
+}
+#speed-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 12px; height: 12px;
+  border-radius: 50%; background: var(--gold); cursor: pointer;
+}
+#speed-val {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px; color: var(--cyan); width: 28px; text-align: right;
+}
+
+.toggle-btn {
+  display: flex; align-items: center; gap: 8px;
+  background: transparent; border: none;
+  color: var(--dim); font-family: 'Share Tech Mono', monospace;
+  font-size: 10px; letter-spacing: 1px; cursor: pointer;
+  padding: 5px 0; width: 100%; text-align: left;
+  transition: color 0.2s;
+}
+.toggle-btn:hover { color: var(--cyan); }
+.toggle-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--border); flex-shrink: 0;
+  transition: background 0.2s;
+}
+.toggle-btn.on .toggle-dot { background: var(--green); }
+.toggle-btn.on { color: var(--text); }
+
+/* ── RIGHT PANEL — CHARACTER INFO ── */
+#char-panel {
+  position: fixed;
+  top: 60px; right: 16px;
+  width: 220px;
+  background: #030508cc;
+  border: 1px solid var(--border);
+  backdrop-filter: blur(10px);
+  z-index: 50;
+  padding: 14px;
+}
+.char-name {
+  font-family: 'Orbitron', monospace;
+  font-size: 14px; font-weight: 900;
+  color: var(--gold); margin-bottom: 4px;
+}
+.char-class {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px; color: var(--dim); letter-spacing: 2px; margin-bottom: 12px;
+}
+.stat-row {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-bottom: 6px;
+}
+.stat-name {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px; color: var(--dim); letter-spacing: 1px;
+}
+.stat-bar {
+  width: 100px; height: 3px;
+  background: var(--border); border-radius: 2px; overflow: hidden;
+}
+.stat-fill { height: 100%; border-radius: 2px; transition: width 0.5s; }
+.stat-val {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px; color: var(--cyan); width: 24px; text-align: right;
+}
+
+.skin-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px; color: var(--gold); letter-spacing: 2px;
+  margin: 14px 0 8px;
+}
+.skin-grid { display: flex; gap: 6px; flex-wrap: wrap; }
+.skin-swatch {
+  width: 28px; height: 28px; border-radius: 3px;
+  border: 2px solid transparent; cursor: pointer;
+  transition: all 0.2s;
+}
+.skin-swatch:hover { transform: scale(1.1); }
+.skin-swatch.active { border-color: var(--gold); }
+
+/* ── BOTTOM — TIMELINE ── */
+#timeline {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: #030508cc;
+  border-top: 1px solid var(--border);
+  backdrop-filter: blur(10px);
+  padding: 8px 20px;
+  display: flex; align-items: center; gap: 16px;
+  z-index: 50;
+  height: 48px;
+}
+#play-btn {
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  width: 30px; height: 30px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 14px;
+  border-radius: 2px; flex-shrink: 0;
+  transition: all 0.2s;
+}
+#play-btn:hover { background: var(--gold); color: #000; }
+#timeline-track {
+  flex: 1; height: 4px; background: var(--border);
+  border-radius: 2px; position: relative; cursor: pointer;
+}
+#timeline-fill {
+  height: 100%; background: linear-gradient(90deg, var(--gold), var(--cyan));
+  border-radius: 2px; width: 0%;
+  transition: width 0.1s linear;
+  pointer-events: none;
+}
+#timeline-thumb {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--gold); left: 0%;
+  pointer-events: none; margin-left: -6px;
+}
+.tl-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px; color: var(--dim); letter-spacing: 1px;
+  white-space: nowrap;
+}
+#frame-count { color: var(--cyan); }
+
+/* ── LOAD ZONE ── */
+#drop-zone {
+  position: fixed; inset: 0;
+  background: #03050aee;
+  z-index: 200;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 24px;
+}
+#drop-zone.hidden { display: none; }
+.drop-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 28px; font-weight: 900;
+  color: var(--gold); letter-spacing: 4px;
+}
+.drop-sub {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px; color: var(--dim); letter-spacing: 3px;
+}
+.drop-box {
+  width: 400px; height: 180px;
+  border: 2px dashed var(--border);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 12px;
+  cursor: pointer; transition: all 0.2s;
+  padding: 20px;
+}
+.drop-box:hover, .drop-box.drag-over { border-color: var(--gold); background: #ffffff05; }
+.drop-icon { font-size: 40px; }
+.drop-text {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 15px; color: var(--dim); text-align: center; letter-spacing: 1px;
+}
+.drop-hint {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px; color: var(--dim); letter-spacing: 2px;
+}
+#file-input { display: none; }
+
+.load-divider {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px; color: var(--dim); letter-spacing: 3px;
+}
+.use-default-btn {
+  background: transparent; border: 1px solid var(--cyan);
+  color: var(--cyan); padding: 10px 28px;
+  font-family: 'Orbitron', monospace; font-size: 11px;
+  letter-spacing: 3px; cursor: pointer; transition: all 0.2s;
+}
+.use-default-btn:hover { background: var(--cyan); color: #000; }
+
+/* ── LOAD BAR ── */
+#loader {
+  position: fixed; inset: 0;
+  background: #03050aee;
+  z-index: 190;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 20px;
+  display: none;
+}
+.loader-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 16px; color: var(--gold); letter-spacing: 4px;
+}
+.loader-bar-wrap {
+  width: 300px; height: 4px;
+  background: var(--border); border-radius: 2px; overflow: hidden;
+}
+#loader-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--cyan));
+  width: 0%; transition: width 0.3s;
+}
+.loader-status {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px; color: var(--dim); letter-spacing: 2px;
+}
+
+/* ── FX ── */
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.5} }
+.pulse { animation: pulse 2s infinite; }
+</style>
+</head>
+<body>
+
+<!-- TOP HUD -->
+<div id="top-hud">
+  <div class="hud-brand">GENESIS VERSE // CHARACTER VIEWER</div>
+  <div class="hud-center">
+    <div class="hud-stat">
+      <div class="hud-label">MESH</div>
+      <div class="hud-val" id="hud-mesh">—</div>
+    </div>
+    <div class="hud-stat">
+      <div class="hud-label">ANIMATION</div>
+      <div class="hud-val" id="hud-anim">—</div>
+    </div>
+    <div class="hud-stat">
+      <div class="hud-label">BONES</div>
+      <div class="hud-val" id="hud-bones">—</div>
+    </div>
+    <div class="hud-stat">
+      <div class="hud-label">POLYS</div>
+      <div class="hud-val" id="hud-polys">—</div>
+    </div>
+    <div class="hud-stat">
+      <div class="hud-label">FPS</div>
+      <div class="hud-val" id="hud-fps">—</div>
+    </div>
+  </div>
+  <div class="hud-right">
+    <button onclick="loadNewFile()" style="background:transparent;border:1px solid var(--border);color:var(--dim);padding:4px 12px;font-family:'Share Tech Mono',monospace;font-size:10px;cursor:pointer;letter-spacing:2px;">LOAD GLB</button>
+    <button onclick="toggleInspector()" style="background:transparent;border:1px solid var(--border);color:var(--dim);padding:4px 12px;font-family:'Share Tech Mono',monospace;font-size:10px;cursor:pointer;letter-spacing:2px;">INSPECTOR</button>
+  </div>
+</div>
+
+<!-- CANVAS -->
+<canvas id="renderCanvas"></canvas>
+
+<!-- LEFT PANEL -->
+<div id="anim-panel">
+  <div class="panel-title">// ANIMATIONS</div>
+  <div id="anim-list">
+    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:1px;">No animations loaded</div>
+  </div>
+  <div class="speed-row">
+    <span class="speed-label">SPEED</span>
+    <input type="range" id="speed-slider" min="0.1" max="3" step="0.1" value="1" oninput="setSpeed(this.value)">
+    <span id="speed-val">1.0x</span>
+  </div>
+  <div style="margin-top:12px;border-top:1px solid var(--border);padding-top:10px;display:flex;flex-direction:column;gap:6px;">
+    <button class="toggle-btn on" id="loop-btn" onclick="toggleLoop()">
+      <div class="toggle-dot"></div>LOOP
+    </button>
+    <button class="toggle-btn on" id="wire-btn" onclick="toggleWireframe()">
+      <div class="toggle-dot"></div>WIREFRAME
+    </button>
+    <button class="toggle-btn on" id="skel-btn" onclick="toggleSkeleton()">
+      <div class="toggle-dot"></div>SKELETON
+    </button>
+    <button class="toggle-btn on" id="grid-btn" onclick="toggleGrid()">
+      <div class="toggle-dot"></div>GRID
+    </button>
+  </div>
+</div>
+
+<!-- RIGHT PANEL -->
+<div id="char-panel">
+  <div class="char-name" id="char-name">—</div>
+  <div class="char-class" id="char-class">LOAD A GLB TO BEGIN</div>
+
+  <div id="stat-block">
+    <div class="stat-row">
+      <span class="stat-name">MESH</span>
+      <div class="stat-bar"><div class="stat-fill" id="sf-mesh" style="background:var(--cyan);width:0%"></div></div>
+      <span class="stat-val" id="sv-mesh">—</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-name">BONES</span>
+      <div class="stat-bar"><div class="stat-fill" id="sf-bones" style="background:var(--gold);width:0%"></div></div>
+      <span class="stat-val" id="sv-bones">—</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-name">ANIMS</span>
+      <div class="stat-bar"><div class="stat-fill" id="sf-anims" style="background:var(--green);width:0%"></div></div>
+      <span class="stat-val" id="sv-anims">—</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-name">MATS</span>
+      <div class="stat-bar"><div class="stat-fill" id="sf-mats" style="background:var(--orange);width:0%"></div></div>
+      <span class="stat-val" id="sv-mats">—</span>
+    </div>
+  </div>
+
+  <div class="skin-label">// LIGHT RIG</div>
+  <div class="skin-grid" id="light-grid">
+    <div class="skin-swatch active" style="background:linear-gradient(135deg,#ff8844,#ff4422)" title="Orange — Combat" onclick="setLightRig('combat',this)"></div>
+    <div class="skin-swatch" style="background:linear-gradient(135deg,#00d4ff,#0044ff)" title="Blue — Aquila" onclick="setLightRig('aquila',this)"></div>
+    <div class="skin-swatch" style="background:linear-gradient(135deg,#00ff88,#008844)" title="Green — Field" onclick="setLightRig('field',this)"></div>
+    <div class="skin-swatch" style="background:linear-gradient(135deg,#9d4dff,#440088)" title="Purple — Mystic" onclick="setLightRig('mystic',this)"></div>
+    <div class="skin-swatch" style="background:linear-gradient(135deg,#ffffff,#aaaaaa)" title="White — Studio" onclick="setLightRig('studio',this)"></div>
+    <div class="skin-swatch" style="background:linear-gradient(135deg,#333333,#111111)" title="Dark — Void" onclick="setLightRig('void',this)"></div>
+  </div>
+
+  <div class="skin-label">// CAMERA</div>
+  <div style="display:flex;flex-direction:column;gap:5px;">
+    <button class="anim-btn" onclick="setCameraPreset('full')">FULL BODY</button>
+    <button class="anim-btn" onclick="setCameraPreset('bust')">BUST SHOT</button>
+    <button class="anim-btn" onclick="setCameraPreset('detail')">DETAIL MODE</button>
+    <button class="anim-btn" onclick="resetCamera()">RESET VIEW</button>
+  </div>
+</div>
+
+<!-- TIMELINE -->
+<div id="timeline">
+  <button id="play-btn" onclick="togglePlay()">▶</button>
+  <span class="tl-label" id="anim-name-tl">—</span>
+  <div id="timeline-track" onclick="seekTimeline(event)">
+    <div id="timeline-fill"></div>
+    <div id="timeline-thumb"></div>
+  </div>
+  <span class="tl-label"><span id="frame-count">0</span> / <span id="frame-total">0</span></span>
+</div>
+
+<!-- DROP ZONE -->
+<div id="drop-zone">
+  <div class="drop-title">CHARACTER VIEWER</div>
+  <div class="drop-sub">// GENESIS VERSE — 3D ASSET PIPELINE</div>
+  <div class="drop-box" id="drop-box" onclick="document.getElementById('file-input').click()">
+    <div class="drop-icon">⬆</div>
+    <div class="drop-text">Drop your <strong style="color:var(--gold)">scene.glb</strong> here<br>or click to browse</div>
+    <div class="drop-hint">GLB · GLTF · BIN (binary) supported</div>
+  </div>
+  <input type="file" id="file-input" accept=".glb,.gltf" onchange="handleFileSelect(event)">
+  <div class="load-divider">— or —</div>
+  <button class="use-default-btn" onclick="loadDefaultScene()">USE UPLOADED scene.glb</button>
+  <div class="drop-sub" style="font-size:9px;margin-top:8px;">Files: scene.glb + anim_Idle.bin detected in session</div>
+</div>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-title">LOADING ASSET</div>
+  <div class="loader-bar-wrap"><div id="loader-fill"></div></div>
+  <div class="loader-status" id="loader-status">Initializing...</div>
+</div>
+
+<script>
+/* =====================================================
+   GENESIS VERSE — CHARACTER VIEWER ENGINE
+   Babylon.js 6.x — Production Build
+   Supports: GLB/GLTF + Animations + Skeleton Debug
+   ===================================================== */
+
+let engine, scene, camera, currentAnimatable = null;
+let skeletonViewer = null, gridMesh = null, ground = null;
+let lights = {};
+let isPlaying = false, isLooping = true;
+let wireframeOn = false, skelOn = false, gridOn = true;
+let currentAnim = null;
+let inspectorOpen = false;
+let loadedMeshes = [], loadedSkeletons = [];
+let animationGroups = [];
+let fpsInterval;
+
+const canvas = document.getElementById('renderCanvas');
+
+// ── ENGINE INIT ──────────────────────────────────────
+function initEngine() {
+  engine = new BABYLON.Engine(canvas, true, {
+    preserveDrawingBuffer: true,
+    stencil: true,
+    antialias: true
+  });
+  scene = new BABYLON.Scene(engine);
+  scene.clearColor = new BABYLON.Color4(0.012, 0.016, 0.028, 1);
+  scene.useRightHandedSystem = false;
+
+  setupCamera();
+  setupLights('combat');
+  setupGrid();
+  setupEnvironment();
+
+  engine.runRenderLoop(() => {
+    scene.render();
+    updateTimeline();
+  });
+
+  window.addEventListener('resize', () => engine.resize());
+
+  // FPS counter
+  fpsInterval = setInterval(() => {
+    document.getElementById('hud-fps').innerText = Math.round(engine.getFps());
+  }, 500);
+
+  setupDragDrop();
+}
+
+// ── CAMERA ───────────────────────────────────────────
+function setupCamera() {
+  camera = new BABYLON.ArcRotateCamera('cam', -Math.PI / 2, Math.PI / 2.4, 4.5, new BABYLON.Vector3(0, 1, 0), scene);
+  camera.attachControl(canvas, true);
+  camera.lowerRadiusLimit = 0.5;
+  camera.upperRadiusLimit = 20;
+  camera.wheelDeltaPercentage = 0.01;
+  camera.panningSensibility = 100;
+  camera.minZ = 0.01;
+}
+
+function setCameraPreset(type) {
+  if(type === 'full') {
+    camera.setTarget(new BABYLON.Vector3(0, 0.9, 0));
+    camera.radius = 3.5; camera.alpha = -Math.PI/2; camera.beta = Math.PI/2.2;
+  } else if(type === 'bust') {
+    camera.setTarget(new BABYLON.Vector3(0, 1.5, 0));
+    camera.radius = 1.8; camera.alpha = -Math.PI/2; camera.beta = Math.PI/2.5;
+  } else if(type === 'detail') {
+    camera.radius = 0.8;
+  }
+}
+
+function resetCamera() {
+  camera.setTarget(new BABYLON.Vector3(0, 1, 0));
+  camera.radius = 4.5; camera.alpha = -Math.PI/2; camera.beta = Math.PI/2.4;
+}
+
+// ── LIGHTS ───────────────────────────────────────────
+const RIGS = {
+  combat: { key:[1.2,0.6,0.4], fill:[0.3,0.4,0.6], rim:[0.8,0.3,0.1] },
+  aquila: { key:[0.3,0.7,1.2], fill:[0.2,0.4,0.8], rim:[0.0,0.5,1.0] },
+  field:  { key:[0.3,1.0,0.4], fill:[0.2,0.6,0.3], rim:[0.0,0.8,0.4] },
+  mystic: { key:[0.6,0.2,1.2], fill:[0.3,0.1,0.6], rim:[0.5,0.0,0.9] },
+  studio: { key:[1.0,1.0,1.0], fill:[0.7,0.7,0.8], rim:[0.5,0.5,0.6] },
+  void:   { key:[0.15,0.15,0.2], fill:[0.05,0.05,0.1], rim:[0.1,0.0,0.2] }
+};
+
+function setupLights(rig) {
+  // Clear existing
+  scene.lights.forEach(l => l.dispose());
+  lights = {};
+  const r = RIGS[rig] || RIGS.combat;
+
+  const keyLight = new BABYLON.DirectionalLight('key', new BABYLON.Vector3(-1,-2,-1), scene);
+  keyLight.intensity = 2.5;
+  keyLight.diffuse = new BABYLON.Color3(...r.key);
+
+  const fillLight = new BABYLON.HemisphericLight('fill', new BABYLON.Vector3(0,1,0), scene);
+  fillLight.intensity = 1.2;
+  fillLight.diffuse = new BABYLON.Color3(...r.fill);
+  fillLight.groundColor = new BABYLON.Color3(0.05, 0.05, 0.08);
+
+  const rimLight = new BABYLON.DirectionalLight('rim', new BABYLON.Vector3(1,-1,2), scene);
+  rimLight.intensity = 1.8;
+  rimLight.diffuse = new BABYLON.Color3(...r.rim);
+
+  lights = { key: keyLight, fill: fillLight, rim: rimLight };
+}
+
+function setLightRig(rig, el) {
+  setupLights(rig);
+  document.querySelectorAll('.skin-swatch').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ── ENVIRONMENT ──────────────────────────────────────
+function setupEnvironment() {
+  const env = scene.createDefaultEnvironment({
+    createGround: false,
+    createSkybox: false,
+    enableGroundShadow: false
+  });
+}
+
+function setupGrid() {
+  // Simple ground plane with grid material effect
+  ground = BABYLON.MeshBuilder.CreateGround('ground', { width: 20, height: 20 }, scene);
+  const mat = new BABYLON.StandardMaterial('groundMat', scene);
+  mat.diffuseColor = new BABYLON.Color3(0.04, 0.07, 0.12);
+  mat.specularColor = new BABYLON.Color3(0, 0, 0);
+  mat.wireframe = false;
+  ground.material = mat;
+  ground.isPickable = false;
+
+  // Grid lines via GreasedLine or manual lines
+  // Use a grid texture effect instead for performance
+  mat.emissiveColor = new BABYLON.Color3(0.02, 0.05, 0.08);
+}
+
+// ── DRAG & DROP ──────────────────────────────────────
+function setupDragDrop() {
+  const box = document.getElementById('drop-box');
+  const zone = document.getElementById('drop-zone');
+
+  box.addEventListener('dragover', e => { e.preventDefault(); box.classList.add('drag-over'); });
+  box.addEventListener('dragleave', () => box.classList.remove('drag-over'));
+  box.addEventListener('drop', e => {
+    e.preventDefault(); box.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if(file && (file.name.endsWith('.glb') || file.name.endsWith('.gltf'))) loadGLBFile(file);
+  });
+}
+
+function handleFileSelect(e) {
+  const file = e.target.files[0];
+  if(file) loadGLBFile(file);
+}
+
+function loadNewFile() {
+  document.getElementById('drop-zone').classList.remove('hidden');
+  document.getElementById('file-input').click();
+}
+
+// ── LOAD DEFAULT (uploaded scene.glb) ────────────────
+function loadDefaultScene() {
+  showLoader('Connecting to session assets...');
+  document.getElementById('drop-zone').classList.add('hidden');
+  // Load from the uploads path available in this session
+  const glbUrl = '/mnt/user-data/uploads/scene.glb';
+  // Since browser can't access /mnt directly, load via blob approach
+  // Try fetch first, fall back gracefully
+  fetch(glbUrl)
+    .then(r => {
+      if(!r.ok) throw new Error('File not accessible via fetch');
+      return r.blob();
+    })
+    .then(blob => {
+      const file = new File([blob], 'scene.glb', { type: 'model/gltf-binary' });
+      loadGLBFile(file);
+    })
+    .catch(() => {
+      // Fallback: prompt user to drag-drop
+      hideLoader();
+      document.getElementById('drop-zone').classList.remove('hidden');
+      alert('Please drag and drop your scene.glb file onto the drop zone — browser security prevents direct file system access.');
+    });
+}
+
+// ── GLB LOADER ───────────────────────────────────────
+function loadGLBFile(file) {
+  showLoader('Parsing GLB asset...');
+  document.getElementById('drop-zone').classList.add('hidden');
+
+  // Clear previous
+  clearScene();
+
+  const url = URL.createObjectURL(file);
+  const fileName = file.name;
+
+  setLoaderProgress(15, 'Decoding mesh data...');
+
+  BABYLON.SceneLoader.ImportMeshAsync('', '', url, scene, (event) => {
+    if(event.lengthComputable) {
+      const pct = Math.round((event.loaded / event.total) * 60) + 15;
+      setLoaderProgress(pct, 'Loading geometry...');
+    }
+  }, '.glb').then(result => {
+    setLoaderProgress(80, 'Setting up skeleton...');
+    URL.revokeObjectURL(url);
+
+    loadedMeshes = result.meshes;
+    loadedSkeletons = result.skeletons;
+    animationGroups = result.animationGroups;
+
+    // Auto-center
+    if(loadedMeshes.length > 0) autoCenter(loadedMeshes);
+
+    setLoaderProgress(90, 'Building animation library...');
+    setupAnimationControls(animationGroups);
+    updateStats(loadedMeshes, loadedSkeletons, animationGroups, result.materials || []);
+    updateCharPanel(fileName);
+
+    // Play first animation
+    if(animationGroups.length > 0) {
+      playAnimGroup(animationGroups[0]);
+    }
+
+    setLoaderProgress(100, 'Complete.');
+    setTimeout(hideLoader, 600);
+
+  }).catch(err => {
+    console.error('GLB load error:', err);
+    hideLoader();
+    document.getElementById('drop-zone').classList.remove('hidden');
+    alert('Load failed: ' + err.message + '\n\nMake sure you are dropping a valid .glb file.');
+  });
+}
+
+function clearScene() {
+  // Stop animations
+  scene.stopAllAnimations();
+  animationGroups.forEach(ag => ag.stop());
+  animationGroups = [];
+  currentAnim = null;
+
+  // Dispose meshes
+  loadedMeshes.forEach(m => m.dispose && m.dispose());
+  loadedMeshes = [];
+
+  // Dispose skeletons
+  if(skeletonViewer) { skeletonViewer.dispose(); skeletonViewer = null; }
+  loadedSkeletons = [];
+
+  // Reset UI
+  document.getElementById('anim-list').innerHTML = '<div style="font-family:\'Share Tech Mono\',monospace;font-size:10px;color:var(--dim);letter-spacing:1px;">No animations loaded</div>';
+  document.getElementById('timeline-fill').style.width = '0%';
+  document.getElementById('timeline-thumb').style.left = '0%';
+  document.getElementById('frame-count').innerText = '0';
+  document.getElementById('frame-total').innerText = '0';
+  document.getElementById('anim-name-tl').innerText = '—';
+}
+
+// ── AUTO-CENTER ───────────────────────────────────────
+function autoCenter(meshes) {
+  let minY = Infinity, maxY = -Infinity;
+  meshes.forEach(m => {
+    if(!m.getBoundingInfo) return;
+    const bb = m.getBoundingInfo().boundingBox;
+    minY = Math.min(minY, bb.minimumWorld.y);
+    maxY = Math.max(maxY, bb.maximumWorld.y);
+  });
+  const height = maxY - minY;
+  const rootMesh = meshes.find(m => !m.parent) || meshes[0];
+  if(rootMesh && minY < 0) rootMesh.position.y -= minY;
+
+  // Auto-fit camera
+  const targetRadius = Math.max(height * 1.5, 2.5);
+  camera.radius = targetRadius;
+  camera.setTarget(new BABYLON.Vector3(0, height * 0.45, 0));
+}
+
+// ── ANIMATION CONTROLS ────────────────────────────────
+function setupAnimationControls(groups) {
+  const list = document.getElementById('anim-list');
+  list.innerHTML = '';
+
+  if(groups.length === 0) {
+    // Check scene-level animation clips
+    list.innerHTML = '<div style="font-family:\'Share Tech Mono\',monospace;font-size:10px;color:var(--dim);">No animation groups found</div>';
+    return;
+  }
+
+  groups.forEach((ag, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'anim-btn' + (i === 0 ? ' active' : '');
+    btn.innerText = ag.name || ('ANIM_' + i);
+    btn.title = `Frames: ${Math.round(ag.from)} – ${Math.round(ag.to)}`;
+    btn.onclick = () => {
+      document.querySelectorAll('.anim-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      playAnimGroup(ag);
+    };
+    list.appendChild(btn);
+  });
+}
+
+function playAnimGroup(ag) {
+  animationGroups.forEach(g => g.stop());
+  currentAnim = ag;
+  ag.start(isLooping, parseFloat(document.getElementById('speed-slider').value));
+  isPlaying = true;
+  document.getElementById('play-btn').innerText = '⏸';
+  document.getElementById('anim-name-tl').innerText = ag.name;
+  document.getElementById('frame-total').innerText = Math.round(ag.to - ag.from);
+  document.getElementById('hud-anim').innerText = ag.name;
+}
+
+function togglePlay() {
+  if(!currentAnim) return;
+  if(isPlaying) {
+    currentAnim.pause();
+    isPlaying = false;
+    document.getElementById('play-btn').innerText = '▶';
+  } else {
+    currentAnim.play(isLooping);
+    isPlaying = true;
+    document.getElementById('play-btn').innerText = '⏸';
+  }
+}
+
+function setSpeed(val) {
+  document.getElementById('speed-val').innerText = parseFloat(val).toFixed(1) + 'x';
+  if(currentAnim) {
+    currentAnim.speedRatio = parseFloat(val);
+  }
+}
+
+function updateTimeline() {
+  if(!currentAnim || !isPlaying) return;
+  const ag = currentAnim;
+  const range = ag.to - ag.from;
+  if(range <= 0) return;
+
+  // Get current frame from first targeted animation
+  let currentFrame = 0;
+  if(ag.targetedAnimations && ag.targetedAnimations.length > 0) {
+    const ta = ag.targetedAnimations[0];
+    if(ta.animation && ta.animation.currentFrame !== undefined) {
+      currentFrame = ta.animation.currentFrame - ag.from;
+    }
+  }
+
+  const pct = Math.max(0, Math.min(100, (currentFrame / range) * 100));
+  document.getElementById('timeline-fill').style.width = pct + '%';
+  document.getElementById('timeline-thumb').style.left = pct + '%';
+  document.getElementById('frame-count').innerText = Math.round(currentFrame);
+}
+
+function seekTimeline(e) {
+  if(!currentAnim) return;
+  const track = document.getElementById('timeline-track');
+  const rect = track.getBoundingClientRect();
+  const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  const frame = currentAnim.from + pct * (currentAnim.to - currentAnim.from);
+  currentAnim.goToFrame(frame);
+}
+
+// ── TOGGLES ───────────────────────────────────────────
+function toggleLoop() {
+  isLooping = !isLooping;
+  const btn = document.getElementById('loop-btn');
+  btn.classList.toggle('on', isLooping);
+  if(currentAnim && isPlaying) {
+    currentAnim.stop();
+    currentAnim.start(isLooping, parseFloat(document.getElementById('speed-slider').value));
+  }
+}
+
+function toggleWireframe() {
+  wireframeOn = !wireframeOn;
+  document.getElementById('wire-btn').classList.toggle('on', !wireframeOn);
+  loadedMeshes.forEach(m => {
+    if(m.material) m.material.wireframe = wireframeOn;
+  });
+}
+
+function toggleSkeleton() {
+  skelOn = !skelOn;
+  document.getElementById('skel-btn').classList.toggle('on', !skelOn);
+  if(skelOn && loadedSkeletons.length > 0) {
+    if(!skeletonViewer) {
+      skeletonViewer = new BABYLON.Debug.SkeletonViewer(loadedSkeletons[0], loadedMeshes[0], scene, true, 3, {
+        pauseAnimations: false,
+        returnToRest: false,
+        computeBonesUsingShaders: true,
+        scaleTo: 1,
+        displayMode: BABYLON.Debug.SkeletonViewer.DISPLAY_SPHERE_AND_SPURS,
+        sphereBaseSize: 0.003,
+        sphereScaleUnit: 5,
+        sphereFactor: 0.65,
+        midStep: 0.25,
+        midStepFactor: 0.05
+      });
+    }
+    skeletonViewer.isEnabled = true;
+  } else if(skeletonViewer) {
+    skeletonViewer.isEnabled = false;
+  }
+}
+
+function toggleGrid() {
+  gridOn = !gridOn;
+  document.getElementById('grid-btn').classList.toggle('on', !gridOn);
+  if(ground) ground.isVisible = gridOn;
+}
+
+// ── STATS ─────────────────────────────────────────────
+function updateStats(meshes, skeletons, anims, mats) {
+  const polyCount = meshes.reduce((acc, m) => acc + (m.getTotalVertices ? m.getTotalVertices() : 0), 0);
+  const boneCount = skeletons.reduce((acc, s) => acc + (s.bones ? s.bones.length : 0), 0);
+
+  document.getElementById('hud-mesh').innerText = meshes.filter(m=>m.getTotalVertices&&m.getTotalVertices()>0).length + ' mesh';
+  document.getElementById('hud-bones').innerText = boneCount;
+  document.getElementById('hud-polys').innerText = polyCount > 999 ? (polyCount/1000).toFixed(1)+'k' : polyCount;
+
+  // Stat bars (normalized visually)
+  const meshCount = meshes.filter(m=>m.getTotalVertices&&m.getTotalVertices()>0).length;
+  setStatBar('mesh', meshCount, Math.max(meshCount,10));
+  setStatBar('bones', boneCount, Math.max(boneCount,200));
+  setStatBar('anims', anims.length, Math.max(anims.length,20));
+  setStatBar('mats', mats.length, Math.max(mats.length,20));
+}
+
+function setStatBar(id, val, max) {
+  const pct = Math.round(Math.min(val/max*100, 100));
+  document.getElementById('sf-'+id).style.width = pct+'%';
+  document.getElementById('sv-'+id).innerText = val;
+}
+
+function updateCharPanel(fileName) {
+  const name = fileName.replace('.glb','').replace('.gltf','').replace(/_/g,' ').toUpperCase();
+  document.getElementById('char-name').innerText = name;
+  document.getElementById('char-class').innerText = '// GLB ASSET — LIVE';
+}
+
+// ── INSPECTOR ────────────────────────────────────────
+function toggleInspector() {
+  if(inspectorOpen) {
+    scene.debugLayer.hide();
+    inspectorOpen = false;
+  } else {
+    scene.debugLayer.show({ embedMode: false });
+    inspectorOpen = true;
+  }
+}
+
+// ── LOADER UI ────────────────────────────────────────
+function showLoader(msg) {
+  const el = document.getElementById('loader');
+  el.style.display = 'flex';
+  document.getElementById('loader-status').innerText = msg;
+  document.getElementById('loader-fill').style.width = '5%';
+}
+function setLoaderProgress(pct, msg) {
+  document.getElementById('loader-fill').style.width = pct + '%';
+  document.getElementById('loader-status').innerText = msg;
+}
+function hideLoader() {
+  document.getElementById('loader').style.display = 'none';
+}
+
+// ── START ────────────────────────────────────────────
+window.addEventListener('load', () => {
+  initEngine();
+});
+</script>
+</body>
+</html>

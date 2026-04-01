@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABYSSUM — Cross-Chat Summary: Arcology × Cosmology × Brae's Story</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --forge:#c46a1a;--forge-d:#6b3510;--forge-dd:#190e05;
+  --gold:#a67c2a;--gold-l:#d4a84a;
+  --teal:#1a9490;--teal-d:#0d3836;--teal-l:#3abcb8;
+  --mal:#2a7a3a;--mal-d:#0d2a12;--mal-l:#4aaa5a;
+  --cst:#1a4a8a;--cst-d:#0a1e3a;--cst-l:#4a8adc;
+  --sf:#8a5a1a;--sf-l:#c47c2a;
+  --red:#7a2020;--red-l:#c08080;
+  --ash:#8b7d6b;--ash-l:#b0a090;
+  --bg:#070806;--bg2:#0e0f0a;--bg3:#151612;
+  --rule:#252820;--rule-l:#2e3020;
+  --text:#c8b898;--white:#f0e8d4;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'EB Garamond',Georgia,serif;font-size:16px;line-height:1.85;overflow-x:hidden;}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;width:220px;height:100vh;background:var(--bg2);border-right:1px solid var(--rule);overflow-y:auto;z-index:200;padding-bottom:80px;}
+nav::-webkit-scrollbar{width:2px;}
+nav::-webkit-scrollbar-thumb{background:var(--forge-d);}
+.nl{padding:20px 16px 16px;border-bottom:1px solid var(--rule);}
+.nl-t{font-family:'Cinzel Decorative',serif;font-size:15px;color:var(--forge);letter-spacing:.1em;}
+.nl-s{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--ash);letter-spacing:3px;margin-top:5px;text-transform:uppercase;line-height:1.7;}
+.ns{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:4px;text-transform:uppercase;padding:12px 16px 4px;color:var(--forge);}
+.ns.teal{color:var(--teal);}
+.ns.gold{color:var(--gold-l);}
+.ns.cst{color:var(--cst-l);}
+.ns.mal{color:var(--mal-l);}
+nav a{display:block;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--ash);text-decoration:none;padding:5px 16px 5px 26px;letter-spacing:1px;border-left:2px solid transparent;transition:all .2s;line-height:1.5;}
+nav a:hover{color:var(--white);background:rgba(196,106,26,.06);border-left-color:var(--forge);}
+
+/* MAIN */
+main{margin-left:220px;}
+
+/* COVER */
+.cover{padding:80px 80px 60px;border-bottom:1px solid var(--rule);background:radial-gradient(ellipse at 30% 50%,rgba(26,148,144,.03) 0%,transparent 50%),radial-gradient(ellipse at 70% 50%,rgba(196,106,26,.03) 0%,transparent 50%);}
+.cv-eye{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:6px;color:var(--forge);text-transform:uppercase;margin-bottom:10px;}
+.cv-logo{font-family:'Cinzel Decorative',serif;font-size:clamp(36px,5vw,64px);font-weight:700;background:linear-gradient(135deg,var(--gold) 0%,var(--forge) 35%,#f0dca0 55%,var(--forge) 75%,var(--gold) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:.14em;line-height:.95;margin-bottom:10px;}
+.cv-rule{width:80px;height:2px;background:linear-gradient(90deg,var(--forge),transparent);margin-bottom:12px;}
+.cv-title{font-family:'Cinzel',serif;font-size:clamp(14px,2vw,20px);font-weight:600;color:var(--white);letter-spacing:.06em;margin-bottom:6px;}
+.cv-sub{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--ash);letter-spacing:3px;text-transform:uppercase;margin-bottom:32px;}
+.cv-thread-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;border:1px solid var(--rule);max-width:640px;}
+.cvt{padding:18px 20px;background:var(--bg2);}
+.cvt-label{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:3px;text-transform:uppercase;margin-bottom:5px;}
+.cvt-label.forge{color:var(--forge);}
+.cvt-label.teal{color:var(--teal);}
+.cvt-label.gold{color:var(--gold-l);}
+.cvt-title{font-family:'Cinzel',serif;font-size:13px;color:var(--white);line-height:1.4;}
+.cvt-sub{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--ash);margin-top:4px;letter-spacing:1px;}
+
+/* SECTION */
+.sb{padding:60px 80px 12px;position:relative;}
+.sb::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.sb.forge::before{background:linear-gradient(90deg,var(--forge),var(--forge-d) 50%,transparent);}
+.sb.teal::before{background:linear-gradient(90deg,var(--teal),var(--teal-d) 50%,transparent);}
+.sb.gold::before{background:linear-gradient(90deg,var(--gold-l),var(--gold) 50%,transparent);}
+.sb.cst::before{background:linear-gradient(90deg,var(--cst-l),var(--cst-d) 50%,transparent);}
+.sb.mal::before{background:linear-gradient(90deg,var(--mal-l),var(--mal-d) 50%,transparent);}
+.sb-eye{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:5px;text-transform:uppercase;margin-bottom:8px;}
+.sb-eye.forge{color:var(--forge);}
+.sb-eye.teal{color:var(--teal);}
+.sb-eye.gold{color:var(--gold-l);}
+.sb-eye.cst{color:var(--cst-l);}
+.sb-eye.mal{color:var(--mal-l);}
+.sb-title{font-family:'Cinzel',serif;font-size:clamp(20px,3vw,34px);font-weight:700;color:var(--white);letter-spacing:.06em;margin-bottom:6px;}
+.sb-line{width:40px;height:3px;margin-top:10px;}
+.sb-line.forge{background:linear-gradient(90deg,var(--forge),transparent);}
+.sb-line.teal{background:linear-gradient(90deg,var(--teal),transparent);}
+.sb-line.gold{background:linear-gradient(90deg,var(--gold-l),transparent);}
+.ct{padding:0 80px 60px;}
+
+/* BODY */
+p{color:var(--text);margin-bottom:14px;line-height:1.9;}
+h3{font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--gold-l);letter-spacing:.04em;margin:28px 0 10px;}
+h4{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--forge);margin:20px 0 8px;}
+
+/* CANONICAL LAW BLOCK */
+.canon{border:1px solid var(--rule-l);background:var(--bg2);margin:16px 0;overflow:hidden;}
+.canon-head{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--rule);}
+.canon-num{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--forge);min-width:60px;}
+.canon-title{font-family:'Cinzel',serif;font-size:14px;color:var(--white);}
+.canon-body{padding:12px 16px;font-size:14px;color:var(--ash-l);line-height:1.8;}
+.canon-body strong{color:var(--white);}
+
+/* PIVOT TABLE */
+.pivot-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px;}
+.pivot-table th{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--forge);padding:8px 14px;background:var(--bg2);border:1px solid var(--rule);text-align:left;}
+.pivot-table td{padding:10px 14px;border:1px solid var(--rule);color:var(--text);vertical-align:top;line-height:1.7;}
+.pivot-table tr:nth-child(even) td{background:rgba(255,255,255,.015);}
+.pivot-table td.ep{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--forge);white-space:nowrap;}
+.pivot-table td.label{font-family:'Cinzel',serif;font-size:13px;color:var(--white);}
+.pivot-table td.note{font-size:13px;color:var(--ash-l);}
+.pivot-table td.impact{font-size:12px;}
+.tag{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:7px;letter-spacing:2px;padding:2px 6px;border-radius:2px;margin:2px 2px 2px 0;text-transform:uppercase;}
+.tag.arch{background:rgba(196,106,26,.15);color:var(--forge);border:1px solid rgba(196,106,26,.25);}
+.tag.cosm{background:rgba(26,148,144,.15);color:var(--teal-l);border:1px solid rgba(26,148,144,.25);}
+.tag.char{background:rgba(166,124,42,.15);color:var(--gold-l);border:1px solid rgba(166,124,42,.25);}
+.tag.fac{background:rgba(42,122,58,.15);color:var(--mal-l);border:1px solid rgba(42,122,58,.25);}
+.tag.crit{background:rgba(122,32,32,.2);color:var(--red-l);border:1px solid rgba(122,32,32,.35);}
+
+/* ENTITY ROW */
+.entity-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0;}
+.ent{border:1px solid var(--rule);background:var(--bg2);padding:16px 18px;}
+.ent-label{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:3px;text-transform:uppercase;margin-bottom:4px;}
+.ent-label.forge{color:var(--forge);}
+.ent-label.teal{color:var(--teal);}
+.ent-label.cst{color:var(--cst-l);}
+.ent-label.mal{color:var(--mal-l);}
+.ent-label.sf{color:var(--sf-l);}
+.ent-label.red{color:var(--red-l);}
+.ent-name{font-family:'Cinzel',serif;font-size:14px;font-weight:600;color:var(--white);margin-bottom:8px;}
+.ent-body{font-size:13px;color:var(--ash-l);line-height:1.75;}
+.ent-body strong{color:var(--ash-l);font-weight:700;}
+
+/* FLOOR MAP */
+.floor-map{border:1px solid var(--rule);background:var(--bg2);overflow:hidden;margin:16px 0;}
+.fm-head{padding:12px 18px;background:var(--bg3);border-bottom:1px solid var(--rule);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--teal);text-transform:uppercase;}
+.fm-levels{display:flex;flex-direction:column;gap:1px;}
+.fm-level{display:grid;grid-template-columns:120px 1fr;gap:0;}
+.fm-badge{padding:14px 16px;display:flex;align-items:center;justify-content:center;text-align:center;}
+.fm-desc{padding:14px 18px;border-left:1px solid var(--rule);font-size:13px;color:var(--ash-l);line-height:1.7;}
+.fm-desc strong{color:var(--white);}
+.fml-surface .fm-badge{background:rgba(196,106,26,.1);}
+.fml-1 .fm-badge{background:rgba(74,138,96,.08);}
+.fml-2 .fm-badge{background:rgba(26,112,148,.08);}
+.fml-3 .fm-badge{background:rgba(26,52,148,.08);}
+.fml-dry .fm-badge{background:rgba(139,107,42,.08);}
+.fm-lname{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;margin-bottom:2px;}
+.fm-lname.surface{color:var(--forge);}
+.fm-lname.fl1{color:#4a8a60;}
+.fm-lname.fl2{color:#1a7094;}
+.fm-lname.fl3{color:#1a3494;color:#6080e0;}
+.fm-lname.dry{color:var(--gold-l);}
+.fm-ldepth{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--ash);}
+
+/* THREAD LINK */
+.thread-link{display:flex;gap:16px;padding:14px 18px;background:var(--bg2);border:1px solid var(--rule);margin:12px 0;align-items:flex-start;}
+.tl-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Share Tech Mono',monospace;font-size:9px;font-weight:700;}
+.tl-icon.arch{background:rgba(196,106,26,.15);color:var(--forge);}
+.tl-icon.cosm{background:rgba(26,148,144,.15);color:var(--teal);}
+.tl-icon.char{background:rgba(166,124,42,.15);color:var(--gold-l);}
+.tl-body{}
+.tl-label{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:3px;text-transform:uppercase;margin-bottom:3px;}
+.tl-label.arch{color:var(--forge);}
+.tl-label.cosm{color:var(--teal);}
+.tl-label.char{color:var(--gold-l);}
+.tl-text{font-size:14px;color:var(--ash-l);line-height:1.7;}
+.tl-text strong{color:var(--white);}
+
+/* WARN / NOTE */
+.warn{margin:14px 0;padding:12px 18px;background:rgba(122,32,32,.05);border-left:3px solid var(--red);font-family:'Share Tech Mono',monospace;font-size:11px;line-height:1.9;color:var(--red-l);}
+.warn strong{color:#e06060;}
+.note{margin:14px 0;padding:12px 18px;background:rgba(26,148,144,.04);border-left:3px solid var(--teal-d);font-family:'Share Tech Mono',monospace;font-size:11px;line-height:1.9;color:var(--ash-l);}
+.note strong{color:var(--teal-l);}
+.note.gold{background:rgba(166,124,42,.04);border-left-color:var(--gold);color:var(--ash-l);}
+.note.gold strong{color:var(--gold-l);}
+.note.forge{background:rgba(196,106,26,.04);border-left-color:var(--forge-d);}
+.note.forge strong{color:var(--forge);}
+
+/* OPEN QUESTIONS */
+.oq{border:1px solid var(--rule-l);border-top:3px solid var(--gold-l);padding:24px 28px;margin:20px 0;background:var(--bg2);}
+.oq-label{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:5px;color:var(--gold-l);text-transform:uppercase;margin-bottom:14px;}
+.oq-list{list-style:none;}
+.oq-list li{padding:7px 0;border-bottom:1px solid var(--rule);font-size:14px;color:var(--ash-l);padding-left:20px;position:relative;line-height:1.65;}
+.oq-list li::before{content:'?';position:absolute;left:0;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:1px;}
+.oq-list li strong{color:var(--white);}
+
+footer{padding:40px 80px;border-top:1px solid var(--rule);text-align:center;}
+footer p{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--rule-l);text-transform:uppercase;margin-bottom:4px;}
+
+@media(max-width:900px){
+  nav{display:none;}main{margin-left:0;}
+  .ct,.sb,.cover{padding-left:20px;padding-right:20px;}
+  .cv-thread-grid,.entity-grid{grid-template-columns:1fr;}
+  .fm-level{grid-template-columns:80px 1fr;}
+  footer{padding:28px 20px;}
+}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nl"><div class="nl-t">ABYSSUM</div><div class="nl-s">Cross-Chat Summary<br>Game Dev Thread</div></div>
+  <div class="ns">Cosmology</div>
+  <a href="#cosmology">The Two Origins</a>
+  <a href="#forge-network">The Forge Network</a>
+  <a href="#gateways">Gateways</a>
+  <a href="#mother">Mother</a>
+  <div class="ns teal">Arcology</div>
+  <a href="#arcology">World Structure</a>
+  <a href="#flood-levels">Flood Levels</a>
+  <a href="#stations">Station Profiles</a>
+  <a href="#apothecary">The Apothecary</a>
+  <div class="ns gold">Brae's Story</div>
+  <a href="#brae-arc">Character Arc</a>
+  <a href="#arc1">Arc One: I–VII</a>
+  <a href="#arc2">Arc Two: VIII–XII</a>
+  <a href="#pivots">Pivotal Moments</a>
+  <div class="ns">Entities</div>
+  <a href="#sirens">Sirens</a>
+  <a href="#factions">All Factions</a>
+  <a href="#canon">Canon Rules</a>
+  <div class="ns gold">Open Questions</div>
+  <a href="#open">Unresolved Threads</a>
+</nav>
+<main>
+
+<!-- COVER -->
+<div class="cover" id="top">
+  <div class="cv-eye">Game Dev Thread — Cross-Chat Coherence Document</div>
+  <div class="cv-logo">ABYSSUM</div>
+  <div class="cv-rule"></div>
+  <div class="cv-title">Arcology × Cosmology × Brae's Story</div>
+  <div class="cv-sub">Unified Reference — All Sessions Synthesized</div>
+  <div class="cv-thread-grid">
+    <div class="cvt"><div class="cvt-label forge">Thread A</div><div class="cvt-title">Arcology</div><div class="cvt-sub">Physical world, stations, infrastructure, flood system</div></div>
+    <div class="cvt"><div class="cvt-label teal">Thread B</div><div class="cvt-title">Cosmology</div><div class="cvt-sub">Forge Network, Gateways, Enigmatic Universe, Mother</div></div>
+    <div class="cvt"><div class="cvt-label gold">Thread C</div><div class="cvt-title">Brae's Story</div><div class="cvt-sub">Character arc, pivots, episodes I–XII</div></div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- COSMOLOGY -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="sb teal" id="cosmology">
+  <div class="sb-eye teal">— Thread B — Foundation Layer —</div>
+  <div class="sb-title">Cosmology: The Two Origins</div>
+  <div class="sb-line teal"></div>
+</div>
+<div class="ct">
+  <p>The galaxy has always had two co-existing forms of sentience. They did not arise together, do not communicate directly, and are not in conflict — they are simply operating at such different scales that most civilizations have never perceived both simultaneously.</p>
+
+  <div class="thread-link">
+    <div class="tl-icon cosm">FN</div>
+    <div class="tl-body">
+      <div class="tl-label cosm">Forge Network — The Deep System</div>
+      <div class="tl-text">Born at or before planetary formation. <strong>Geological, cosmic, patient.</strong> Communicates through system behavior only — never language. Node stone formations predate all civilization. Predates surface rail by geological epochs. The rail system is the nervous system of a sentience so large it was never perceived as alive by anything small enough to live inside it.</div>
+    </div>
+  </div>
+
+  <div class="thread-link">
+    <div class="tl-icon cosm">EU</div>
+    <div class="tl-body">
+      <div class="tl-label cosm">Enigmatic Universe — The Other Side</div>
+      <div class="tl-text">What exists beyond the Forge Network's substrate. Not another galaxy. Not another dimension. The <strong>other half of existence</strong> — the thing that preceded the event that created the Forge Network. Where the Forge Network is structure and continuity, the Enigmatic Universe is the vast indifferent ocean that structural reality sits inside. Gateways are the points where they interface. Heaven and Hell are <strong>named Gateways.</strong> Styx Station is a Gateway. They are not metaphors. They are load-bearing infrastructure.</div>
+    </div>
+  </div>
+
+  <h3 id="forge-network">The Forge Network as Neural Architecture</h3>
+  <p>The analogy is exact, not metaphorical:</p>
+  <div class="entity-grid">
+    <div class="ent"><div class="ent-label forge">Rail Lines</div><div class="ent-name">Dendrites</div><div class="ent-body">Signal transmission routes. The rail system is how the network sends and receives across planetary distance.</div></div>
+    <div class="ent"><div class="ent-label forge">Stations</div><div class="ent-name">Nodes</div><div class="ent-body">Processing points. Each station is a site where the network integrates information and reroutes signal.</div></div>
+    <div class="ent"><div class="ent-label forge">Deep Forge</div><div class="ent-name">Substrate</div><div class="ent-body">The geological base. The network's actual body. The rail system sits atop it the way roads sit atop ground.</div></div>
+    <div class="ent"><div class="ent-label forge">Ley Lines</div><div class="ent-name">Signal / Current</div><div class="ent-body">The energy that runs through everything. What Sirens perceive. What Forge Mystics learned to read. What the Affiliate operation is draining.</div></div>
+    <div class="ent"><div class="ent-label forge">Station City</div><div class="ent-name">Metro Center / Brain Stem</div><div class="ent-body">Where multiple Gateway convergences occur. The densest node cluster. The functional center of network intelligence. Not the "capital" — the brainstem.</div></div>
+    <div class="ent"><div class="ent-label forge">Gateway Stations</div><div class="ent-name">Synaptic Interfaces</div><div class="ent-body">Where the Forge Network meets the Enigmatic Universe. Styx, Heaven, Hell — all Gateways. Natural signal exchange occurs here. Forced extraction corrupts the interface.</div></div>
+  </div>
+
+  <div class="note"><strong>The Unmappable Rule:</strong> The network cannot be mapped because there is no reference point outside it. Every chart is local. Every map shows the network as perceived from one node. No character — no faction — has a complete map. This is structural, not a story convenience.</div>
+
+  <h3 id="gateways">Gateways — Natural vs. Corrupted State</h3>
+  <div class="thread-link">
+    <div class="tl-icon cosm">N</div>
+    <div class="tl-body">
+      <div class="tl-label cosm">Natural Gateway State</div>
+      <div class="tl-text"><strong>Energy signature: Forge amber and teal.</strong> Natural interface flow: the Enigmatic Universe and the Forge Network exchange signal bidirectionally, neither forced nor extracted. The Gateway is open in both directions. What passes through it is the normal metabolic exchange of two co-existing systems. A healthy Gateway node looks like slow weather.</div>
+    </div>
+  </div>
+  <div class="thread-link">
+    <div class="tl-icon cosm">!</div>
+    <div class="tl-body">
+      <div class="tl-label cosm">Corrupted Gateway — Affiliate Extraction Operation</div>
+      <div class="tl-text"><strong>Energy signature: Green.</strong> Malvek's operation forces the Gateway open in the wrong direction — pulling FROM the Enigmatic Universe rather than allowing natural exchange. The green energy is Enigmatic Universe contamination bleeding back through the forced aperture. <strong>The skull entity at the portal center is not a demon or creature</strong> — it is what the Enigmatic Universe looks like when forced through an aperture shaped like a skull arch. It takes the shape of the opening. It is being extracted from. It is not hostile yet.</div>
+    </div>
+  </div>
+
+  <div class="warn"><strong>Arc Two Critical:</strong> Station City has a second extraction site — smaller, newer, but identical type. Malvek used Styx to perfect the methodology. Station City is the production scale operation. If the Styx Gateway was a door being forced open, the Station City Gateway is the door he intends to walk through from the other side. 14-day window before it reaches Styx extraction levels.</div>
+
+  <h3 id="mother">Mother — The Network's Voice</h3>
+  <div class="note forge"><strong>Mother Protocol — Hard Rule:</strong> Mother does NOT speak in Arc One. No terminal messages. No personification. The hum is toneless and patient. The Forge Network's presence is felt through system behavior only — rerouting, node brightening, the Hyperchamber connecting to the Apothecary. <strong>Mother's first word arrives at the end of Episode XII,</strong> directed at Brae's Core from Station City. That word has not been written yet. It must be earned by everything that precedes it. When we know what the word is, we know the story.</div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- ARCOLOGY -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="sb forge" id="arcology">
+  <div class="sb-eye forge">— Thread A — Physical World —</div>
+  <div class="sb-title">Arcology: The Built World</div>
+  <div class="sb-line forge"></div>
+</div>
+<div class="ct">
+  <p>The physical world of ABYSSUM is a dieselpunk-industrial space crossed with a geology that has always been alive. The architecture that civilizations built exists on top of infrastructure that predates it by geological epochs. The rail lines are dendrites. The stations are nodes. The communities built around those nodes are, from the network's perspective, irrelevant — and from the story's perspective, the entire reason any of this matters.</p>
+
+  <h3 id="flood-levels">The Rift Flood — Vertical Zone System</h3>
+  <p>The Rift Flood is the defining physical crisis of the southern line. A slow, massive inundation of the lower station districts. It did not happen suddenly. It has been rising. Communities that could not evacuate are still in it. The Swamp Wards are the flooded districts below the evacuation tier.</p>
+
+  <div class="floor-map">
+    <div class="fm-head">Flood Zone Levels — Southern Line / Vertical Orientation</div>
+    <div class="fm-levels">
+      <div class="fm-level fml-surface">
+        <div class="fm-badge"><div><div class="fm-lname surface">Surface</div><div class="fm-ldepth">Above water</div></div></div>
+        <div class="fm-desc"><strong>Fog, decay, wrong-yellow light.</strong> Railbone Crawlers, Affiliate presence, Goblin swarms, fog predators. The stations that still function operationally exist here — barely. Light is wrong because the Forge node draw is reduced. The fog is wrong because the Rift Flood's moisture hangs in air that was never designed to hold it.</div>
+      </div>
+      <div class="fm-level fml-1">
+        <div class="fm-badge"><div><div class="fm-lname fl1">Level 1</div><div class="fm-ldepth">0 – 0.6m</div></div></div>
+        <div class="fm-desc"><strong>Ankle to shin depth. Standing black water.</strong> Phosphorescent mold beginning on walls and ceiling. Bilge Scuttlers. Corrupted small automatons. The first layer of the flooded zone — passable but wrong. The bioluminescence makes it visible. That is not comforting.</div>
+      </div>
+      <div class="fm-level fml-2">
+        <div class="fm-badge"><div><div class="fm-lname fl2">Level 2</div><div class="fm-ldepth">1 – 2m</div></div></div>
+        <div class="fm-desc"><strong>Chest deep. Full bioluminescent colonization.</strong> Drowned equipment still partially running. Archive Wardens. Larger corrupted units. Drowned Goblin husks (still operational in Kaiju-alloy chassis). The water is warm here from the Forge node activity below. It feels like the water is alive. It is not. The things in it are.</div>
+      </div>
+      <div class="fm-level fml-3">
+        <div class="fm-badge"><div><div class="fm-lname fl3">Level 3</div><div class="fm-ldepth">Submerged</div></div></div>
+        <div class="fm-desc"><strong>Fully submerged. Node stones still pulsing.</strong> Complete ecosystem replacement — bioluminescent, ancient, operating on its own logic. The Depth Current inhabits the Level 3 transit shafts. Kaiju-adjacent organisms. Deep Warden variants. <strong>A Siren can survive Level 3 traverse — it is not safe, it is survivable.</strong></div>
+      </div>
+      <div class="fm-level fml-dry">
+        <div class="fm-badge"><div><div class="fm-lname dry">Dry Deep</div><div class="fm-ldepth">Below flood base</div></div></div>
+        <div class="fm-desc"><strong>Ancient, still running, no corrosion.</strong> The Forge substrate operating at pre-Network quality. Scale, not hostility — things too old to register as threats. The Ancient Siren Apothecary exists here. Node stone formation alcoves. The Ley line structural column. Infrastructure that preexists the civilization that built the stations above it.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note"><strong>The Swamp Wards:</strong> Flooded districts. Severed rail connections. Communities below evacuation tier. The Affiliates exploited the severance — they did not cause it. <strong>Winning at Styx does not save the Swamp Wards.</strong> The network's Ley line feed to those nodes is still degraded after Vex falls. This is the story's central unresolved injustice and must remain unresolved through Arc Two.</div>
+
+  <h3 id="stations">Station Profiles — Key Locations</h3>
+  <table class="pivot-table">
+    <tr><th>Station</th><th>Type</th><th>Function</th><th>Story Role</th></tr>
+    <tr>
+      <td class="label">Corgemont</td>
+      <td><span class="tag arch">Peripheral Node</span></td>
+      <td class="note">Freight dock. Minor transit. Not significant — proximate. Wrong-yellow light, fog that moves wrong.</td>
+      <td class="note">Where Brae happens to be. Not chosen. That is the point.</td>
+    </tr>
+    <tr>
+      <td class="label">Stones Throw</td>
+      <td><span class="tag arch">Condemned Node</span></td>
+      <td class="note">Three towers over open water. Train was never supposed to reach it. Lights wrong colors.</td>
+      <td class="note">First major combat. Lyra reads the terminal. Brae Grindstone / Siren Class Active.</td>
+    </tr>
+    <tr>
+      <td class="label">Styx Station</td>
+      <td><span class="tag cosm">Gateway Node</span></td>
+      <td class="note">Built around the junction where Forge Network meets Enigmatic Universe. Affiliate extraction site. Corrupted Portal active.</td>
+      <td class="note">Arc One climax. Vex falls. Gateway still running. Nothing is resolved.</td>
+    </tr>
+    <tr>
+      <td class="label">Voss Bridge</td>
+      <td><span class="tag arch">Transit Viaduct</span></td>
+      <td class="note">Collapsed rail bridge. Key chokepoint between Styx and mid-line.</td>
+      <td class="note">Witch Commander's blocking position. The formation that parts for Brae.</td>
+    </tr>
+    <tr>
+      <td class="label">Mid-Line Station</td>
+      <td><span class="tag arch">Working Node</span></td>
+      <td class="note">Operating transit node. Forge node degraded by Signal Alchemist interference.</td>
+      <td class="note">Hyperchamber access point to the Apothecary. The network routes her there.</td>
+    </tr>
+    <tr>
+      <td class="label">Station City</td>
+      <td><span class="tag cosm">Metro Center</span><span class="tag arch">Multi-Gateway</span></td>
+      <td class="note">Multiple Gateway convergence. Density beyond comprehension. Steamfitters calibration presence. Second extraction site active.</td>
+      <td class="note">Arc Two destination. Mother's first word originates here. Arc Three territory.</td>
+    </tr>
+  </table>
+
+  <h3 id="apothecary">The Ancient Siren Apothecary</h3>
+  <p>Below the Rift Flood's base. In the dry deep zone. Accessible only through an uncharted Hyperchamber connection that the network opens when a Siren of sufficient Core sensitivity reaches the correct node. It was here before the surface rail existed. The classical marble elements were added by civilization. The Forge infrastructure was original — the architecture was built around what was already there.</p>
+  <div class="entity-grid">
+    <div class="ent"><div class="ent-label teal">Armillary Court</div><div class="ent-name">Grand Entrance</div><div class="ent-body">Armillary sphere showing network as perceived from this node. Globe pedestal (local reader). Fire circle (node stone thermal maintenance). The white statues: three-dimensional operational records of historical Siren configurations — not decorative.</div></div>
+    <div class="ent"><div class="ent-label teal">Archive Chambers</div><div class="ent-name">Automaton History</div><div class="ent-body">Historical automaton specimens in illuminated cases. Forge Mystic library. Ley line structural column (a Ley line that became load-bearing over centuries). Stone sarcophagus — a node stone the size of a sarcophagus. Do not open.</div></div>
+    <div class="ent"><div class="ent-label teal">Instrument Gallery</div><div class="ent-name">Active Laboratory</div><div class="ent-body">Ley Line Extraction Station — currently running, instruments left mid-process 41 days before Brae's visit. The open book, last entry 41 days ago. Someone has been here recently. Two candidates: the network routing white cells here, or the Steamfitters.</div></div>
+    <div class="ent"><div class="ent-label teal">Alchemy Board Alcove</div><div class="ent-name">Navigation Instruments</div><div class="ent-body">Blank board (unactivated) and active board (synchronized). When Brae touches the active board, the map expands beyond gauntlet range — Station City visible, Swamp Ward nodes visible, second extraction site visible. The full picture for the first time.</div></div>
+    <div class="ent"><div class="ent-label teal">Mint Card Pedestal</div><div class="ent-name">Unknown Authorization</div><div class="ent-body">A Mint Card made here, in old Forge script. Not for a Goblin. Not for a standard Forge construct. The authorization target's designation is a classification Brae doesn't have vocabulary for. She takes it. The destination of that authorization is an open story question.</div></div>
+    <div class="ent"><div class="ent-label teal">Engine Vault</div><div class="ent-name">Forge Substrate Chamber</div><div class="ent-body">The oldest chamber. The Forge engine on the rear wall is not a displayed artifact — it is running infrastructure. Has been running since before surface rail. The blue ceiling is the flood water pressed against the outer structure. The Apothecary sits at the exact boundary between dry deep and the Rift Flood's base.</div></div>
+  </div>
+
+  <h3>Hyperchamber System</h3>
+  <p>Transit nodes in a sub-network predating surface rail. A Siren with Core integration perceives all Hyperchambers simultaneously. Traverse = tuning Core frequency to target chamber's resonance. The network executes transit. Traverse threat levels mirror flood levels — corrupted network sections cause wrong-destination arrival. The Depth Current inhabits Level 3 transit shafts and evaluates Siren Core frequency. It has made the decision <em>not today</em> twice — once at Corgemont-side shafts, once at Styx-side. The second appearance confirms a pattern. It is more frightening than attack.</p>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- BRAE'S STORY -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="sb gold" id="brae-arc">
+  <div class="sb-eye gold">— Thread C — Character Engine —</div>
+  <div class="sb-title">Brae's Story Arc</div>
+  <div class="sb-line gold"></div>
+</div>
+<div class="ct">
+  <p><strong>Brae Grindstone.</strong> Siren, Immune Response Unit. Mechanic. A traitor who didn't complete her betrayal. She was generated by proximity and compatibility — the network needed a white cell at Corgemont and she was there, with the right Core sensitivity, at the moment the Affiliate operation created the infection. Not chosen. Proximate.</p>
+
+  <div class="thread-link">
+    <div class="tl-icon char">B</div>
+    <div class="tl-body">
+      <div class="tl-label char">The Central Tension</div>
+      <div class="tl-text">The network generated her as a functional unit — an immune response, no more personal than a white blood cell. <strong>Her arc is the negotiation between the network's definition of her function and her own personhood.</strong> The network does not care about her survival. It cares about the infection being resolved. She has to decide what she cares about and whether those two things can coexist.</div>
+    </div>
+  </div>
+
+  <h3>Character Voice</h3>
+  <p>Practical. Sardonic. Tired in the way of someone who has been doing a hard job for a long time. Post-Hyperchamber: add the alertness of someone who now has more information than they know what to do with. Never heroic in register. Never chosen-one language. The network didn't pick her because she was special. It picked her because she was there.</p>
+
+  <h3 id="arc1">Arc One — Episodes I–VII: From Corgemont to Styx</h3>
+  <table class="pivot-table">
+    <tr><th>Episode</th><th>Title</th><th>Zone</th><th>Pivot / What Changes</th></tr>
+    <tr>
+      <td class="ep">I</td>
+      <td class="label">"Ash Before Dawn"</td>
+      <td><span class="tag arch">Surface</span></td>
+      <td class="note">Brae mid-betrayal snaps the Mint Card. She watches herself decide not to complete it in real time. The platform opens. <strong>The story begins not with heroism but with an incomplete act of cowardice.</strong></td>
+    </tr>
+    <tr>
+      <td class="ep">II</td>
+      <td class="label">"Below the Bone"</td>
+      <td><span class="tag arch">FL1</span></td>
+      <td class="note">Descent. Bilge Scuttlers. Archive Tomb corridor. The Goblin's route map reveals unmappable node patterns. Hyperchamber door visible — Level 2 water between her and it. She has to go through to go deeper.</td>
+    </tr>
+    <tr>
+      <td class="ep">III</td>
+      <td class="label">"The Stone That Remembers"</td>
+      <td><span class="tag arch">FL2</span><span class="tag arch">Dry Deep</span></td>
+      <td class="note">Archive Warden encounter. Node stone found — already synchronized with her, already waiting. <strong>Hyperchamber transformation: painful, not triumphant.</strong> Siren awakening. Discovery: all paths to Stones Throw are Level 3. Something moved in the shaft when she tuned to it.</td>
+    </tr>
+    <tr>
+      <td class="ep">IV</td>
+      <td class="label">"What Lives in Level Three"</td>
+      <td><span class="tag arch">FL3</span></td>
+      <td class="note"><strong>The Depth Current: "not today."</strong> More frightening than attack. She survives two Level 3 traverses. Surfaces below Stones Throw. Goblin swarm ignites — hundreds of optics at once. The network has been waiting for her.</td>
+    </tr>
+    <tr>
+      <td class="ep">V</td>
+      <td class="label">"The Train That Should Not"</td>
+      <td><span class="tag arch">Surface</span></td>
+      <td class="note">Railbone Crawler on viaduct. Machines kneel as she approaches. Lyra reads the terminal: <strong>BRAE GRINDSTONE / SIREN CLASS ACTIVE / ORIGIN NODE: CORGEMONT.</strong> The network knows her name before she does. CST team established.</td>
+    </tr>
+    <tr>
+      <td class="ep">VI</td>
+      <td class="label">"The Song of Iron"</td>
+      <td><span class="tag arch">Surface</span><span class="tag arch">FL2</span></td>
+      <td class="note">Gantry confrontation with CST team (not enemies, not allies). Affiliate Furnace chambers. <strong>First Glitch Witch encounter — Brae reads the broken Core through Siren perception.</strong> The distinction between Witch and Goblin is made visceral. Vex on intercom. Choice: corrupted Level 3 traverse to Styx.</td>
+    </tr>
+    <tr>
+      <td class="ep">VII</td>
+      <td class="label">"What the Gateway Drinks"</td>
+      <td><span class="tag arch">Surface</span><span class="tag cosm">Gateway</span></td>
+      <td class="note">Corrupted Level 3 traverse. The Signal Alchemist running interference. Deep Warden variant. <strong>Vex falls.</strong> THE SCENE: Brae before the Gateway — Swamp Wards still dark, network unchanged, new threats registering. She turns away. The Goblin follows. <strong>Nothing is resolved. The story has barely started.</strong></td>
+    </tr>
+  </table>
+
+  <h3 id="arc2">Arc Two — Episodes VIII–XII: Styx South to Station City</h3>
+  <table class="pivot-table">
+    <tr><th>Episode</th><th>Title</th><th>Zone</th><th>Pivot / What Changes</th></tr>
+    <tr>
+      <td class="ep">VIII</td>
+      <td class="label">"The Fitted King"</td>
+      <td><span class="tag arch">Surface</span><span class="tag fac">Ops Intercut</span></td>
+      <td class="note">Cold open: the War Golem fitted with the Furnace Shield. The Hand's first order. New threat classification registered: <strong>WITCH COHORT — ORGANIZED.</strong> Abandoned relay station reveals what unauthorized Furnace use leaves behind in a community. The full human cost, specific and unclassified.</td>
+    </tr>
+    <tr>
+      <td class="ep">IX</td>
+      <td class="label">"Organized"</td>
+      <td><span class="tag arch">Surface</span><span class="tag arch">FL1</span></td>
+      <td class="note"><strong>The Witch Commander's formation at Voss Bridge.</strong> 23 Witches in tactical arrangement — wrong for Witches. The corridor opening. The Core frequency introduction. Brae reads: a senior Siren, cracked in a specific direction, Gateway signal filling the fractures. <strong>The Goblin discovers the Commander's frequency was in the Styx transit shaft.</strong> She was tracking Brae from the beginning.</td>
+    </tr>
+    <tr>
+      <td class="ep">X</td>
+      <td class="label">"The Reading Room"</td>
+      <td><span class="tag arch">Surface</span><span class="tag arch">Dry Deep</span></td>
+      <td class="note"><strong>The Ancient Siren Apothecary.</strong> The Alchemy Board — the full network map, the second extraction site visible. The open book: last entry 41 days ago. The Mint Card of unknown authorization. The network routed her here. Whether it placed those things here for her is a different question.</td>
+    </tr>
+    <tr>
+      <td class="ep">XI</td>
+      <td class="label">"Altitude"</td>
+      <td><span class="tag arch">Surface</span><span class="tag cst">Elevated</span></td>
+      <td class="note"><strong>The Tengu Golem lands on the rail car.</strong> The Steamfitters have been tracking Siren Core frequency since the first unauthorized Furnace activation. The full corruption map — not a southern line event but a network being shut off systematically. <strong>14 days before Station City reaches Styx extraction levels.</strong> The War Golem: 30km south, moving north.</td>
+    </tr>
+    <tr>
+      <td class="ep">XII</td>
+      <td class="label">"The Hand Moves"</td>
+      <td><span class="tag arch">FL1</span><span class="tag fac">War Golem</span></td>
+      <td class="note"><strong>The Hand's transaction offer.</strong> The Hand reveals: Station City is not a second Styx — it is the production-scale operation, a Gate Malvek intends to open from the other side. Brae refuses. <strong>The Goblin's solution: broadcasts Brae's Core frequency at MTD frequency, network asserts priority, War Golem holds.</strong> The Goblin's first act of something other than logic. Station City on the horizon. <strong>Mother's first word arrives.</strong></td>
+    </tr>
+  </table>
+
+  <h3 id="pivots">Pivotal Moments — The Irreversible Beats</h3>
+  <div class="canon">
+    <div class="canon-head"><div class="canon-num">Pivot 1</div><div class="canon-title">The Mint Card — Corgemont (Ep. I)</div></div>
+    <div class="canon-body">She doesn't complete the betrayal. She snaps the card instead. The entire story exists because of this non-action. She didn't become a Siren because she was brave. She became a Siren because she was ambivalent. <strong>The network works with what is proximate and compatible, not what is heroic.</strong></div>
+  </div>
+  <div class="canon">
+    <div class="canon-head"><div class="canon-num">Pivot 2</div><div class="canon-title">The Rare Node Stone — Already Synchronized (Ep. III)</div></div>
+    <div class="canon-body">The stone was already tuned to her before she found it. She didn't choose it. It was waiting. This is the first moment the network's active agency — not passive infrastructure but something that prepared — becomes visible. It is alarming, not comforting. <strong>The network has been planning something she wasn't consulted about.</strong></div>
+  </div>
+  <div class="canon">
+    <div class="canon-head"><div class="canon-num">Pivot 3</div><div class="canon-title">The Terminal at Stones Throw — "Brae Grindstone / Siren Class Active" (Ep. V)</div></div>
+    <div class="canon-body">The network knew her name before she did. CST systems — built on Forge-adjacent technology — have her classified before she has classified herself. This is the moment she stops being a person who is confused about what happened to her and starts being a person who has to decide what to do with what she is. <strong>The network didn't ask permission. It also didn't explain.</strong></div>
+  </div>
+  <div class="canon">
+    <div class="canon-head"><div class="canon-num">Pivot 4</div><div class="canon-title">The Gateway Scene — Brae Turns Away (Ep. VII)</div></div>
+    <div class="canon-body">Vex is down. The Swamp Wards are still dark. New threats are already registering. She perceives the Gateway's scale. She turns away anyway. This is the story's first completed arc beat: not a victory, not a defeat, but a decision to continue. <strong>She is not yet done with this. The network is certainly not done with her.</strong></div>
+  </div>
+  <div class="canon">
+    <div class="canon-head"><div class="canon-num">Pivot 5</div><div class="canon-title">The Commander's Frequency in the Styx Shaft (Ep. IX)</div></div>
+    <div class="canon-body">The Commander was in the transit shaft during Brae's Level 3 traverse. She was there. She chose not to interfere. Then she organized a formal introduction. <strong>She has been making deliberate choices about Brae since before Brae was a Siren.</strong> The question of what she wants — and whether the network recognizes her as something other than a Glitch Witch — becomes the central unresolved question of Arc Two.</div>
+  </div>
+  <div class="canon">
+    <div class="canon-head"><div class="canon-num">Pivot 6</div><div class="canon-title">The Goblin's Solution — MTD Override (Ep. XII)</div></div>
+    <div class="canon-body">The Goblin broadcasts Brae's Core frequency at MTD frequency to assert Forge Network priority over the War Golem. It works. But what it cost the Goblin — whether this action consumed something finite in its logic architecture — is not explained. <strong>The Goblin has been at her left shoulder since Corgemont. This is the first moment it acts on something other than tactical logic. The story must not over-explain what this means.</strong></div>
+  </div>
+  <div class="canon">
+    <div class="canon-head"><div class="canon-num">Pivot 7</div><div class="canon-title">Mother's First Word — Station City Horizon (Ep. XII End)</div></div>
+    <div class="canon-body">A single deliberate signal from Station City, aimed precisely at Brae's Core. One word. The word is not written yet. It must be earned by the twelve episodes that precede it. <strong>This is the moment the network stops communicating through behavior and communicates through language for the first time.</strong> What that costs the network to do — whether it can sustain it — is an Arc Three question.</div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- ENTITIES -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="sb cst" id="sirens">
+  <div class="sb-eye cst">— Entity Codex — All Factions —</div>
+  <div class="sb-title">Entities & Factions</div>
+  <div class="sb-line cst"></div>
+</div>
+<div class="ct">
+
+  <h4>Forge Network Entities</h4>
+  <div class="entity-grid">
+    <div class="ent"><div class="ent-label forge">Forge Network Units</div><div class="ent-name">Sirens</div><div class="ent-body">Biological-mechanical integration. Node stone Core = identity anchor. Generated by the network when foreign elements threaten system integrity. <strong>Immune response logic.</strong> Not chosen. Proximate. Capabilities: Ley line perception, machine interface, golem command, Furnace compatibility, node stone retrieval. Rare node stone = significantly elevated capacity.</div></div>
+    <div class="ent"><div class="ent-label forge">Forge Manufactured</div><div class="ent-name">Glitch Goblins</div><div class="ent-body"><strong>MANUFACTURED. NEVER ALIVE.</strong> Kaiju bone ash + rare Cenote ore, burned at extreme Furnace temp. Alloy: harder than rail steel, permanent residual heat, copper nerve-lines. Mint-to-Deploy authorization. Forge Network asserts override priority. Tone: mechanical horror. Purposeful. No tragedy. NOT the same as Glitch Witches.</div></div>
+    <div class="ent"><div class="ent-label red">Furnace Failure State</div><div class="ent-name">Glitch Witches</div><div class="ent-body"><strong>CORRUPTED SIRENS. NOT MANUFACTURED.</strong> Entered the Furnace critically damaged. The process continued around the broken signal and produced something wrong. Retains Siren capability with corrupted network connection. Remembers being a Siren — memory is the source of malfunction. Tone: tragic horror. Organic wrongness. <strong>Cannot be restored through standard Furnace processing. Distinct from Goblins in every way.</strong></div></div>
+    <div class="ent"><div class="ent-label forge">The Furnace</div><div class="ent-name">Forge Processing System</div><div class="ent-body">Three authorized functions: Hardening (routine) / Repair (Core substantially intact) / Resurrection (Core must survive). Failure state: Damaged Core → Glitch Witch. The Furnace does not abort — it continues around broken signal. Affiliates exploit unauthorized access. Malvek ran living Forge Mystics through it to produce Deadman Alchemists.</div></div>
+  </div>
+
+  <h4 id="factions">All Faction Entities</h4>
+  <div class="entity-grid">
+    <div class="ent"><div class="ent-label cst">CST — Central Station Transit</div><div class="ent-name">Line Operations & Special Ops</div><div class="ent-body">Standard deployment: gantry teams (Lyra, Rael, Torch). Special Operations: Ghostface Assassin Golem — the Witch Hunter unit. Blue core signature, resonance staff, designed to be unresolvable to Witch targeting systems. Institutional history may trace to Apothecary records. Allegiance to the organization, not to Brae.</div></div>
+    <div class="ent"><div class="ent-label mal">Affiliates</div><div class="ent-name">Southern Line Operation</div><div class="ent-body">Malvek's organization. Exploit Forge Network infrastructure for Gateway extraction. Mint-to-Deploy Goblin authorization chains. Unauthorized Furnace installations at relay stations. Their operation is a slow deliberate shutdown of the southern Ley line network — each unauthorized Furnace cycle drained energy that never returned.</div></div>
+    <div class="ent"><div class="ent-label sf">Steamfitters Guild</div><div class="ent-name">Independent — Pre-Affiliate</div><div class="ent-body">Independent engineering guild predating both Affiliates and CST. Forge-adjacent but clean signal — not exploitation, respectful adjacency. Tengu Golems: aerial survey, Station City calibration. Have been tracking the southern corruption from elevation for three years. Chose to brief a Siren rather than CST. That choice is itself information.</div></div>
+    <div class="ent"><div class="ent-label mal">Malvek's Field Assets</div><div class="ent-name">The Hand / Alchemists / War Golem</div><div class="ent-body"><strong>The Hand:</strong> Malvek's direct proxy. Cleanest Alchemist process. Siren-adjacent orange eye. Operational after Styx. <strong>Four Alchemist types:</strong> Composite (Furnace operation), Duplex (corruption interpretation), The Signal (network interference — caused the Styx shaft lateral pull), The Hand (field targeting). <strong>War Golem:</strong> 4+ stories. Equipped Furnace Shield: 12 MTD ports, field Furnace processing, network interference broadcast. Mobile operations hub.</div></div>
+  </div>
+
+  <h4>Key Individuals</h4>
+  <table class="pivot-table">
+    <tr><th>Character</th><th>Faction</th><th>Function in Story</th><th>Status</th></tr>
+    <tr><td class="label">Brae Grindstone</td><td><span class="tag cosm">Forge Network</span></td><td class="note">Protagonist. Immune response unit. Siren Class Active, Operational Class Undefined. Rare node stone Core.</td><td class="note">Active. En route to Station City. Arc Two complete.</td></tr>
+    <tr><td class="label">The Goblin (Corgemont)</td><td><span class="tag arch">Forge Network Override</span></td><td class="note">Has been at Brae's left shoulder since Freight Bay 17. Tactical logic engine — and then, in Ep. XII, something else.</td><td class="note">Active. Ep. XII cost unknown.</td></tr>
+    <tr><td class="label">Lyra</td><td><span class="tag cst">CST</span></td><td class="note">Dual blade. First to ID Brae by name at the Stones Throw terminal. Allegiance to CST, not Brae. Cold and professional.</td><td class="note">Stones Throw last confirmed.</td></tr>
+    <tr><td class="label">Rael</td><td><span class="tag cst">CST</span></td><td class="note">Heavy specialist. First to correctly read Goblin swarm as searching not attacking. Pragmatic — works with Brae when rational.</td><td class="note">Stones Throw last confirmed.</td></tr>
+    <tr><td class="label">Torch</td><td><span class="tag cst">CST</span></td><td class="note">Tactical. Acts first, processes after. Voice: instinctive, accurate, wants situations to be manageable.</td><td class="note">Stones Throw last confirmed.</td></tr>
+    <tr><td class="label">Marrow Vex</td><td><span class="tag fac">Affiliate Field Cmd</span></td><td class="note">The face of the operation. Cold, measured, red-tinged Furnace proximity scarring. Never raised his voice. The heat of other people's transformations lived in his skin.</td><td class="note"><strong>Fallen — Episode VII.</strong></td></tr>
+    <tr><td class="label">The Hand</td><td><span class="tag fac">Affiliate / Alchemist</span></td><td class="note">Malvek's direct proxy. Deadman Alchemist Type IV. In Ep. XII, offers a transaction and reveals the Station City Gateway is not a second Styx — it is the destination. Operational. Moving north on foot.</td><td class="note">Active. Station City approach.</td></tr>
+    <tr><td class="label">Witch Commander</td><td><span class="tag red">Gateway-Coherent</span></td><td class="note">Former senior Siren. Cracked Core fills with Gateway signal. Organized 23 Witches across southern line. Was in the Styx transit shaft during Brae's Level 3 traverse. Chose not to interfere. Sent a formal introduction. What she wants is the question.</td><td class="note">Active. Invitation open.</td></tr>
+    <tr><td class="label">Overseer Malvek</td><td><span class="tag fac">Affiliate Comptroller</span></td><td class="note">Hidden architect. Does not appear in the field. Visible only in negative space — terminal records, operational architecture, the assets he built. <strong>Protect the gap. His visual introduction must cost the audience something.</strong></td><td class="note">Unobserved. Station City.</td></tr>
+  </table>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- CANON RULES -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="sb mal" id="canon">
+  <div class="sb-eye mal">— Governing Rules — Hard Canon —</div>
+  <div class="sb-title">Canon Rules That Cannot Break</div>
+  <div class="sb-line" style="background:linear-gradient(90deg,var(--mal-l),transparent);"></div>
+</div>
+<div class="ct">
+  <div class="canon"><div class="canon-head"><div class="canon-num">Rule 1</div><div class="canon-title">The Network Cannot Be Mapped</div></div><div class="canon-body">No reference point exists outside it. Every chart is local. Every map shows the network from one node's perspective. This is structural and must never be violated for convenience. The Alchemy Board doesn't break this rule — it shows a wider local view. It does not show the whole.</div></div>
+  <div class="canon"><div class="canon-head"><div class="canon-num">Rule 2</div><div class="canon-title">The Goblin / Witch / Alchemist Distinction Is Absolute</div></div><div class="canon-body">Goblins: manufactured, never alive. Witches: Sirens broken by the Furnace — tragic, memory as wound. Alchemists: Forge Mystics transformed by the Furnace while alive — voluntary horror, functional coherence. These are never conflated. Not even in description, not even in metaphor.</div></div>
+  <div class="canon"><div class="canon-head"><div class="canon-num">Rule 3</div><div class="canon-title">Mother Does Not Speak in Arc One</div></div><div class="canon-body">The Forge Network's presence in Arc One is system behavior only: rerouting, node brightening, the Hyperchamber connections. No terminal messages from Mother. No personification. The hum is toneless and patient. Her first word arrives at the end of Episode XII and has not yet been written.</div></div>
+  <div class="canon"><div class="canon-head"><div class="canon-num">Rule 4</div><div class="canon-title">Styx Is Not a Resolution</div></div><div class="canon-body">Vex falls. The Swamp Wards are still flooding. The Gateway is still running extraction. Malvek's operation continues. No victory music. The story has barely started at the end of Episode VII. This applies to all future climaxes — winning a battle in ABYSSUM does not fix the structural condition that caused the battle.</div></div>
+  <div class="canon"><div class="canon-head"><div class="canon-num">Rule 5</div><div class="canon-title">Brae Is Immune Response, Not Chosen One</div></div><div class="canon-body">The network generated her because she was proximate and compatible. Not because she is special. Not because destiny selected her. White cell logic: generated by the presence of the infection, not by any quality of the cell itself. Her arc is negotiating between those two facts — that she was functionally generated and that she is also a person.</div></div>
+  <div class="canon"><div class="canon-head"><div class="canon-num">Rule 6</div><div class="canon-title">Scale Felt Before Named</div></div><div class="canon-body">Feel → understand as infrastructure → perceive as cosmic. No character gets the cosmological framing of the Forge Network before they have felt it physically. The network is a rail system first, always. The sentience is the revelation. Not the premise.</div></div>
+  <div class="canon"><div class="canon-head"><div class="canon-num">Rule 7</div><div class="canon-title">Malvek's Absence Is Protected</div></div><div class="canon-body">We see everything he built. We do not see him. His visual introduction — when it comes — must cost the audience something. Protect the gap between his assets and his person. Do not fill it with inference, with partial reveals, with stand-ins. When he appears, it must land at the scale of what his architecture has been establishing.</div></div>
+  <div class="canon"><div class="canon-head"><div class="canon-num">Rule 8</div><div class="canon-title">The Gateway Contamination Is Green</div></div><div class="canon-body">Natural Gateway energy: Forge amber and teal. Contamination from forced extraction: green. The Witch Commander's Core contamination: the same green. The Styx Goblins' shifted optic signature: the same green. The second Station City site: the same green. This color is a system. It must be consistent across all assets, all media, all visualization.</div></div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- OPEN QUESTIONS -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="sb gold" id="open">
+  <div class="sb-eye gold">— Arc Three Territory — Open Threads —</div>
+  <div class="sb-title">Unresolved Questions</div>
+  <div class="sb-line gold"></div>
+</div>
+<div class="ct">
+  <div class="oq">
+    <div class="oq-label">Threads Requiring Resolution — Arc Three +</div>
+    <ul class="oq-list">
+      <li><strong>Mother's first word:</strong> Not written. Must be earned by Episodes I–XII. When we know what it is, we know the story's spine.</li>
+      <li><strong>The Apothecary's visitor:</strong> Someone was there 41 days ago. The book entry, the running extraction, the Mint Card. Two candidates — the network routing white cells, or the Steamfitters. Both have implications that change the story.</li>
+      <li><strong>The Mint Card authorization:</strong> Made at the Apothecary. Not for a Goblin. Not for any classified construct. The target designation is a classification Brae doesn't have vocabulary for yet.</li>
+      <li><strong>The Witch Commander's goal:</strong> She organized 23 Witches. She tracked Brae through the Styx shaft and chose not to interfere. She sent a formal introduction. What she wants from Brae — and whether it aligns or collides with what the network wants — is Arc Two's unresolved question going into Arc Three.</li>
+      <li><strong>Whether the Ghostface / blue core works on the Commander:</strong> Blue core is unresolvable to standard Witch targeting. The Commander receives both broken Forge signal AND Gateway signal simultaneously. The first encounter between a Ghostface unit and the Commander is a scene that needs to be written.</li>
+      <li><strong>The Steamfitters' choice:</strong> They briefed Brae, not CST. CST and Steamfitters are independently tracking the same problem. Neither has shared data with the other. Brae is positioned to connect them. Whether she does so by design, accident, or network routing is the structural choice for Arc Three.</li>
+      <li><strong>The Hand's partial alignment:</strong> In Ep. XII it says: "The Overseer's objective and the network's survival are not aligned. I am aware of this discrepancy." What it intends to do about that discrepancy — and whether Brae can use it — is unresolved.</li>
+      <li><strong>The Goblin's Ep. XII cost:</strong> What the MTD broadcast consumed. The story leaves this unaddressed. It must remain open until the right moment to resolve it.</li>
+      <li><strong>The Swamp Wards:</strong> Still flooding. Still dark. No arc resolves this. It is the story's conscience. How the network's Ley line degradation is reversed — and whether it can be — is the structural condition under every other question.</li>
+      <li><strong>Malvek's direct appearance:</strong> Protect the gap. His introduction must cost the audience something. When, where, and under what conditions he first appears is Arc Three's most important production decision.</li>
+      <li><strong>What the Station City Gateway, fully opened from the other side, looks like:</strong> Full corrupted state. The entity being extracted from, at scale. Arc Three's central visual and narrative challenge.</li>
+    </ul>
+  </div>
+
+  <div class="note gold"><strong>The Coherence Test:</strong> Any new asset, mechanic, or story beat must satisfy: (1) Does it exist within the Forge Network's physical logic? (2) Does it respect the cosmological rules — unmappable network, two origins, Gateway as infrastructure? (3) Does it serve Brae's arc without resolving it prematurely? (4) Does it preserve the distinctions — Goblin / Witch / Alchemist, natural / corrupted Gateway energy, Mother's silence? If it violates any of these, revise before committing.</div>
+</div>
+
+<footer>
+  <p>ABYSSUM — Cross-Chat Summary — Arcology × Cosmology × Brae's Story — All Sessions</p>
+  <p>Forge Network Active &nbsp;·&nbsp; Mother Signal: Transmitted &nbsp;·&nbsp; Station City: Arc Three Pending</p>
+</footer>
+
+</main>
+</body>
+</html>

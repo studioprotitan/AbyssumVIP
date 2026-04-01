@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CST MISSION HUB v2 — COLD BREW: MYSTICS OF MAYHEM</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#07070b;--bg2:#0e0e16;--bg3:#14141e;--bg4:#1a1a26;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.11);
+  --amber:#EF9F27;--amber-d:rgba(239,159,39,0.12);--amber-b:rgba(239,159,39,0.28);
+  --red:#E24B4A;--red-d:rgba(226,75,74,0.1);--red-b:rgba(226,75,74,0.28);
+  --teal:#1D9E75;--teal-d:rgba(29,158,117,0.1);--teal-b:rgba(29,158,117,0.28);
+  --purple:#7F77DD;--blue:#378ADD;
+  --text:#e8e6e0;--td:rgba(232,230,224,0.55);--tm:rgba(232,230,224,0.28);--tx:rgba(232,230,224,0.12);
+  --mono:'JetBrains Mono','Courier New',monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --r:6px;
+}
+
+html,body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.02) 2px,rgba(0,0,0,.02) 4px);pointer-events:none;z-index:9990}
+
+/* ─── FUEL GAUGE ─── */
+#fuel-bar{background:var(--bg2);border-bottom:1px solid var(--border);padding:7px 20px;display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.fuel-cell{display:flex;flex-direction:column;gap:2px;min-width:120px}
+.fuel-label{font-family:var(--mono);font-size:8px;letter-spacing:.22em;color:var(--tm);text-transform:uppercase}
+.fuel-val{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--amber);letter-spacing:.05em;line-height:1}
+.fuel-val.live{animation:flicker 4s infinite}
+.fuel-sep{width:1px;height:28px;background:var(--border);flex-shrink:0}
+.fuel-status{font-family:var(--mono);font-size:8px;color:var(--tm);letter-spacing:.1em;margin-top:2px}
+.fuel-status.green{color:var(--teal)}
+.fuel-status.red{color:var(--red)}
+#fuel-bar .fuel-tag{margin-left:auto;font-family:var(--mono);font-size:8px;color:var(--tx);letter-spacing:.15em;cursor:pointer;padding:4px 8px;border:1px solid var(--border);border-radius:3px;transition:all .13s;white-space:nowrap}
+#fuel-bar .fuel-tag:hover{border-color:var(--border2);color:var(--tm)}
+@keyframes flicker{0%,89%,100%{opacity:1}90%{opacity:.6}92%{opacity:1}95%{opacity:.75}97%{opacity:1}}
+
+/* ─── HEADER ─── */
+.header{padding:22px 20px 18px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--border)}
+.header-tag{font-family:var(--mono);font-size:9px;letter-spacing:.22em;color:var(--amber);text-transform:uppercase;margin-bottom:3px}
+.header-title{font-size:21px;font-weight:700;letter-spacing:.06em;color:var(--text);text-transform:uppercase;line-height:1}
+.header-title span{color:var(--amber)}
+.header-sub{font-family:var(--mono);font-size:9px;color:var(--td);margin-top:4px;letter-spacing:.07em}
+.header-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.classification{font-family:var(--mono);font-size:9px;letter-spacing:.2em;border:1px solid var(--red);color:var(--red);padding:3px 8px;text-transform:uppercase}
+.session-id{font-family:var(--mono);font-size:9px;color:var(--tm);letter-spacing:.1em}
+
+/* ─── NAV TABS ─── */
+.tab-nav{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:100}
+.tab-btn{background:transparent;border:none;border-bottom:2px solid transparent;color:var(--tm);padding:11px 18px;font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:all .14s;white-space:nowrap}
+.tab-btn:hover{color:var(--td);background:rgba(255,255,255,.02)}
+.tab-btn.active{color:var(--amber);border-bottom-color:var(--amber);background:rgba(239,159,39,.04)}
+.tab-badge{display:inline-block;background:var(--red-d);border:1px solid var(--red-b);color:var(--red);font-size:7px;padding:1px 4px;border-radius:2px;margin-left:5px;vertical-align:middle;line-height:1.4}
+
+/* ─── LAYOUT ─── */
+.hub{max-width:1160px;margin:0 auto;padding:0 20px 80px}
+.section{display:none;padding-top:28px}.section.active{display:block}
+.sec-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.sec-label{font-family:var(--mono);font-size:9px;letter-spacing:.22em;color:var(--amber);text-transform:uppercase;white-space:nowrap}
+.sec-line{flex:1;height:1px;background:var(--border)}
+.sec-right{font-family:var(--mono);font-size:9px;color:var(--tm);white-space:nowrap}
+
+/* ─── EPISODE CARDS ─── */
+.ep-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:660px){.ep-grid{grid-template-columns:1fr}}
+.ep-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:18px;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden;transition:border-color .2s;cursor:pointer}
+.ep-card:hover{border-color:var(--amber-b)}
+.ep-card.cleared{border-color:rgba(29,158,117,.35)}
+.ep-bar{position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--amber),transparent);opacity:0;transition:opacity .3s}
+.ep-card:hover .ep-bar,.ep-card.cleared .ep-bar{opacity:1}
+.ep-card.cleared .ep-bar{background:linear-gradient(90deg,transparent,var(--teal),transparent)}
+.ep-num{font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--tm)}
+.ep-title{font-size:15px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.04em}
+.ep-location{font-family:var(--mono);font-size:9px;color:var(--td);letter-spacing:.07em}
+.ep-boss-l{font-family:var(--mono);font-size:8px;color:var(--tm);letter-spacing:.1em}
+.ep-boss-n{font-family:var(--mono);font-size:10px;color:var(--amber);letter-spacing:.04em}
+.ep-row{display:flex;align-items:center;gap:7px}
+.ep-dot{width:6px;height:6px;border-radius:50%;background:var(--tm);flex-shrink:0}
+.ep-dot.ok{background:var(--teal);box-shadow:0 0 8px var(--teal);animation:pteal 2s infinite}
+.ep-dot.part{background:var(--amber)}.ep-dot.fail{background:var(--red)}
+@keyframes pteal{0%,100%{box-shadow:0 0 4px var(--teal)}50%{box-shadow:0 0 12px var(--teal)}}
+.ep-stxt{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--tm)}
+.ep-badge{font-family:var(--mono);font-size:8px;padding:2px 6px;border-radius:3px;text-transform:uppercase;letter-spacing:.1em;border:1px solid;margin-left:auto}
+.ep-badge.ok{background:var(--teal-d);color:var(--teal);border-color:var(--teal-b)}
+.ep-badge.partial{background:var(--amber-d);color:var(--amber);border-color:var(--amber-b)}
+.ep-badge.failure{background:var(--red-d);color:var(--red);border-color:var(--red-b)}
+.ep-btn{background:transparent;border:1px solid var(--amber);color:var(--amber);padding:8px 14px;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;border-radius:4px;width:100%;transition:all .14s;margin-top:4px}
+.ep-btn:hover{background:var(--amber);color:var(--bg)}
+.ep-btn.replay{border-color:var(--teal);color:var(--teal)}
+.ep-btn.replay:hover{background:var(--teal);color:var(--bg)}
+
+/* ─── EP04 ─── */
+.ep04-wrap{margin-top:10px;display:none}
+.ep04-card{background:var(--bg2);border:1px solid var(--red-b);border-radius:8px;padding:18px;cursor:pointer;transition:border-color .2s;position:relative;overflow:hidden}
+.ep04-card:hover{border-color:rgba(226,75,74,.65)}
+.ep04-bar{position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--red),transparent)}
+.ep04-inner{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.ep04-num{font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--red)}
+.ep04-title{font-size:20px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.06em;margin:3px 0}
+.ep04-op{font-family:var(--mono);font-size:9px;color:var(--red)}
+.ep04-dot{width:6px;height:6px;border-radius:50%;background:var(--red);box-shadow:0 0 8px var(--red);animation:pred 1.5s infinite;display:inline-block}
+@keyframes pred{0%,100%{box-shadow:0 0 4px var(--red)}50%{box-shadow:0 0 14px var(--red)}}
+.ep04-btn{background:transparent;border:1px solid var(--red);color:var(--red);padding:10px 22px;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;border-radius:4px;white-space:nowrap;transition:all .14s;flex-shrink:0}
+.ep04-btn:hover{background:var(--red);color:#fff}
+
+/* ─── CARD CAPTOR ─── */
+.cc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:10px}
+.cc-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden;display:flex;flex-direction:column;transition:all .2s;position:relative}
+.cc-card.captured{border-color:rgba(239,159,39,.2)}
+.cc-card.captured:hover{border-color:rgba(239,159,39,.45);transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.cc-card.ert-cell.captured{border-color:rgba(226,75,74,.4)}
+.cc-card.ert-cell.captured:hover{border-color:rgba(226,75,74,.7)}
+.cc-card-art{height:80px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.cc-card-art-inner{font-family:var(--mono);font-size:28px;line-height:1;opacity:.65;user-select:none}
+.cc-card-art-overlay{position:absolute;inset:0;background:linear-gradient(0deg,var(--bg2) 0%,transparent 60%)}
+.cc-card-body{padding:11px;display:flex;flex-direction:column;gap:5px;flex:1}
+.cc-ep-badge{font-family:var(--mono);font-size:8px;letter-spacing:.14em;color:var(--tm);text-transform:uppercase}
+.cc-name{font-size:12px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.04em;line-height:1.2}
+.cc-card.locked .cc-name{color:var(--tm)}
+.cc-role{font-family:var(--mono);font-size:8px;color:var(--amber);letter-spacing:.06em;line-height:1.3}
+.cc-card.locked .cc-role{color:var(--tx)}
+.cc-ert{font-family:var(--mono);font-size:8px;color:var(--red);letter-spacing:.1em;margin-top:2px}
+.cc-indicator{position:absolute;top:8px;right:8px;width:6px;height:6px;border-radius:50%}
+.cc-minted{position:absolute;top:8px;left:8px;font-family:var(--mono);font-size:7px;background:var(--amber-d);border:1px solid var(--amber-b);color:var(--amber);padding:1px 5px;border-radius:2px;letter-spacing:.08em}
+.cc-actions{display:flex;gap:6px;padding:10px 11px;border-top:1px solid var(--border)}
+.cc-btn{flex:1;background:transparent;border:1px solid var(--border2);color:var(--td);padding:5px 4px;font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;border-radius:3px;transition:all .13s;text-align:center}
+.cc-btn:hover{border-color:var(--amber-b);color:var(--amber)}
+.cc-btn.mint-btn:hover{border-color:var(--teal-b);color:var(--teal)}
+.cc-btn.intel-btn:hover{border-color:var(--purple);color:var(--purple)}
+.cc-card.locked .cc-btn{opacity:.35;pointer-events:none}
+
+/* ─── DECK PANEL ─── */
+#deck-panel{position:fixed;top:0;right:-440px;width:440px;height:100vh;background:var(--bg2);border-left:1px solid var(--border2);z-index:500;display:flex;flex-direction:column;transition:right .3s cubic-bezier(.4,0,.2,1);box-shadow:-8px 0 32px rgba(0,0,0,.5)}
+#deck-panel.open{right:0}
+.deck-header{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(--bg2)}
+.deck-title{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--amber);text-transform:uppercase}
+.deck-close{background:transparent;border:none;color:var(--tm);font-size:18px;cursor:pointer;padding:0 4px;line-height:1;transition:color .13s}
+.deck-close:hover{color:var(--text)}
+.deck-body{flex:1;overflow-y:auto;padding:0}
+.deck-squad{padding:14px 18px;border-bottom:1px solid var(--border)}
+.deck-squad-label{font-family:var(--mono);font-size:8px;letter-spacing:.18em;color:var(--tm);text-transform:uppercase;margin-bottom:10px}
+.deck-squad-grid{display:flex;flex-wrap:wrap;gap:7px}
+.ds-chip{background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:5px 9px;font-family:var(--mono);font-size:9px;letter-spacing:.06em;color:var(--td);cursor:pointer;transition:all .13s;white-space:nowrap}
+.ds-chip:hover,.ds-chip.selected{border-color:var(--amber-b);color:var(--amber);background:var(--amber-d)}
+.ds-chip.ert-chip{border-color:var(--red-b);color:var(--red)}
+
+/* AI Intel pane */
+.intel-pane{padding:18px;display:flex;flex-direction:column;gap:14px}
+.intel-header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.intel-card-name{font-size:15px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.04em}
+.intel-card-role{font-family:var(--mono);font-size:9px;color:var(--amber);letter-spacing:.06em;margin-top:2px}
+.intel-label{font-family:var(--mono);font-size:8px;letter-spacing:.18em;color:var(--tm);text-transform:uppercase;margin-bottom:8px}
+.intel-key-input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padding:6px 10px;font-family:var(--mono);font-size:9px;color:var(--td);letter-spacing:.06em;outline:none;transition:border-color .13s}
+.intel-key-input:focus{border-color:var(--amber-b);color:var(--text)}
+.intel-key-input::placeholder{color:var(--tx)}
+.intel-fetch-btn{width:100%;background:transparent;border:1px solid var(--purple);color:var(--purple);padding:8px;font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;border-radius:4px;transition:all .14s;margin-top:4px}
+.intel-fetch-btn:hover{background:rgba(127,119,221,.12)}
+.intel-fetch-btn:disabled{opacity:.35;pointer-events:none}
+.intel-output{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:14px;font-family:var(--mono);font-size:10px;color:var(--td);line-height:1.8;letter-spacing:.03em;min-height:140px;white-space:pre-wrap}
+.intel-output.loading{color:var(--tm);animation:flicker 1s infinite}
+.intel-output.error{color:var(--red);border-color:var(--red-b)}
+
+.deck-mint-btn{margin:0 18px 18px;background:transparent;border:1px solid var(--teal-b);color:var(--teal);padding:10px;font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;border-radius:4px;transition:all .14s;width:calc(100% - 36px)}
+.deck-mint-btn:hover{background:var(--teal-d)}
+.deck-mint-btn:disabled{opacity:.35;pointer-events:none}
+
+/* ─── MINT MODAL ─── */
+#mint-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:600;align-items:center;justify-content:center;padding:20px}
+#mint-modal.open{display:flex}
+.mint-inner{background:var(--bg2);border:1px solid var(--border2);border-radius:10px;width:100%;max-width:480px;overflow:hidden;position:relative}
+.mint-inner::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--teal),transparent)}
+.mint-head{padding:20px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.mint-head-title{font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--teal);text-transform:uppercase}
+.mint-close-btn{background:transparent;border:none;color:var(--tm);font-size:18px;cursor:pointer;line-height:1}
+.mint-close-btn:hover{color:var(--text)}
+.mint-body{padding:22px}
+.mint-card-preview{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:20px;display:flex;align-items:center;gap:16px}
+.mint-card-art{width:60px;height:80px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.mint-card-info{flex:1;min-width:0}
+.mint-card-name{font-size:14px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.04em}
+.mint-card-role{font-family:var(--mono);font-size:9px;color:var(--amber);letter-spacing:.06em;margin-top:3px}
+.mint-card-std{font-family:var(--mono);font-size:8px;color:var(--tm);margin-top:5px;letter-spacing:.06em}
+.mint-field-label{font-family:var(--mono);font-size:8px;letter-spacing:.18em;color:var(--tm);text-transform:uppercase;margin-bottom:6px;display:block}
+.mint-input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padding:9px 12px;font-family:var(--mono);font-size:10px;color:var(--text);letter-spacing:.06em;outline:none;transition:border-color .13s;margin-bottom:16px}
+.mint-input:focus{border-color:var(--teal-b)}
+.mint-input::placeholder{color:var(--tx)}
+.mint-gas-row{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:12px 14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px}
+.mint-gas-cell{display:flex;flex-direction:column;gap:3px}
+.mint-gas-label{font-family:var(--mono);font-size:7px;letter-spacing:.18em;color:var(--tm);text-transform:uppercase}
+.mint-gas-val{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--text)}
+.mint-gas-val.amber{color:var(--amber)}
+.mint-btn{width:100%;background:var(--teal);border:none;color:#fff;padding:12px;font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;border-radius:5px;transition:all .14s;font-weight:500}
+.mint-btn:hover{background:#1fb888;transform:translateY(-1px)}
+.mint-btn:disabled{background:var(--bg3);border:1px solid var(--border);color:var(--tm);cursor:default;transform:none}
+.mint-success{display:none;padding:20px;text-align:center;flex-direction:column;align-items:center;gap:12px}
+.mint-success.show{display:flex}
+.mint-success-icon{font-size:36px;color:var(--teal)}
+.mint-success-title{font-size:16px;font-weight:700;color:var(--text)}
+.mint-success-hash{font-family:var(--mono);font-size:9px;color:var(--td);letter-spacing:.07em;word-break:break-all;background:var(--bg3);padding:8px 12px;border-radius:4px;width:100%}
+.mint-tx-id{font-family:var(--mono);font-size:11px;color:var(--teal);letter-spacing:.08em}
+
+/* ─── VIEWER MODAL ─── */
+#viewer-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:700;flex-direction:column}
+#viewer-modal.open{display:flex}
+.viewer-head{padding:12px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg2);flex-shrink:0}
+.viewer-head-title{font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--amber);text-transform:uppercase}
+.viewer-close-btn{background:transparent;border:none;color:var(--tm);font-size:20px;cursor:pointer;line-height:1}
+.viewer-close-btn:hover{color:var(--text)}
+#viewer-frame{flex:1;border:none;background:var(--bg)}
+
+/* ─── ERT PANEL ─── */
+.ert-panel{background:var(--bg2);border:1px solid rgba(226,75,74,.15);border-radius:8px;padding:20px;position:relative;overflow:hidden}
+.ert-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--red),transparent)}
+.ert-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+.ert-title{font-family:var(--mono);font-size:9px;color:var(--red);letter-spacing:.22em;text-transform:uppercase;margin-bottom:5px}
+.ert-desc{font-size:12px;color:var(--td);line-height:1.6}
+.ert-sig{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--tm);white-space:nowrap}
+.ert-locks{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:640px){.ert-locks{grid-template-columns:1fr}}
+.ert-lock{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:14px;display:flex;flex-direction:column;gap:5px;transition:all .3s}
+.ert-lock.cleared{border-color:var(--teal-b);background:var(--teal-d)}
+.ert-lock-top{display:flex;align-items:center;gap:8px}
+.ert-lock-icon{width:18px;height:18px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--tm);transition:all .3s;flex-shrink:0;font-family:var(--mono)}
+.ert-lock.cleared .ert-lock-icon{border-color:var(--teal);background:var(--teal-d);color:var(--teal)}
+.ert-lock-name{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--td);transition:color .3s}
+.ert-lock.cleared .ert-lock-name{color:var(--teal)}
+.ert-lock-desc{font-size:11px;color:var(--tm);line-height:1.55}
+.ert-lock.cleared .ert-lock-desc{color:var(--td)}
+.ert-bar-wrap{margin-top:16px}
+.ert-bar{height:2px;background:var(--bg3);border-radius:1px;overflow:hidden}
+.ert-bar-fill{height:100%;background:linear-gradient(90deg,var(--red),var(--amber));border-radius:1px;transition:width 1s ease}
+.ert-counter{font-family:var(--mono);font-size:9px;color:var(--tm);text-align:right;margin-top:7px;letter-spacing:.1em}
+.ert-counter span{color:var(--amber)}
+
+/* ─── FOOTER ─── */
+.footer{border-top:1px solid var(--border);margin-top:48px;padding-top:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.footer-text{font-family:var(--mono);font-size:8px;color:var(--tm);letter-spacing:.09em}
+.footer-hint{font-family:var(--mono);font-size:8px;letter-spacing:.09em;color:rgba(226,75,74,.2);cursor:default;transition:color .4s}
+
+/* ─── DEBUG ─── */
+.debug-panel{display:none;background:rgba(0,0,0,.75);border:1px solid var(--amber-b);border-radius:8px;padding:14px;margin-top:22px}
+.debug-panel.visible{display:block}
+.debug-label{font-family:var(--mono);font-size:8px;color:var(--amber);letter-spacing:.2em;margin-bottom:10px;text-transform:uppercase}
+.debug-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px}
+.debug-btn{background:rgba(239,159,39,.07);border:1px solid rgba(239,159,39,.22);color:var(--amber);padding:5px 10px;font-family:var(--mono);font-size:9px;letter-spacing:.09em;cursor:pointer;border-radius:3px;text-align:left;transition:background .12s}
+.debug-btn:hover{background:rgba(239,159,39,.16)}
+
+/* ─── TRANSMISSION ─── */
+#tx-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:9999;align-items:center;justify-content:center;flex-direction:column;overflow-y:auto}
+#tx-overlay.active{display:flex}
+.tx-inner{max-width:600px;width:100%;padding:48px 24px;text-align:center}
+.tx-static{font-family:var(--mono);font-size:9px;color:rgba(226,75,74,.45);letter-spacing:.05em;margin-bottom:18px;animation:glitch .12s infinite}
+.tx-hdr{font-family:var(--mono);font-size:10px;letter-spacing:.3em;color:var(--red);text-transform:uppercase;margin-bottom:8px}
+.tx-title{font-size:40px;font-weight:800;color:var(--text);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;line-height:1}
+.tx-title span{color:var(--red)}
+.tx-sub{font-family:var(--mono);font-size:10px;color:var(--td);letter-spacing:.18em;margin-bottom:28px}
+.tx-rule{width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--red),transparent);margin:22px 0}
+.tx-body{font-family:var(--mono);font-size:11px;color:var(--td);line-height:1.9;text-align:left;border-left:2px solid rgba(226,75,74,.3);padding-left:18px;margin-bottom:28px;letter-spacing:.03em}
+.tx-line{display:block;opacity:0;animation:fadeUp .3s forwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.tx-cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;opacity:0;transition:opacity .5s}
+.tx-cta.visible{opacity:1}
+.tx-btn{padding:12px 28px;font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;border-radius:4px;transition:all .14s;border:none}
+.tx-btn-primary{background:var(--red);color:#fff}
+.tx-btn-primary:hover{background:#ff5c5b;transform:translateY(-1px)}
+.tx-btn-secondary{background:transparent;border:1px solid rgba(255,255,255,.15);color:var(--td)}
+.tx-btn-secondary:hover{border-color:rgba(255,255,255,.3);color:var(--text)}
+@keyframes glitch{0%,88%,100%{transform:none}89%{transform:skewX(1.5deg) translateX(2px)}91%{transform:skewX(-1deg) translateX(-2px)}94%{transform:none}97%{transform:skewX(.5deg) translateX(1px)}}
+@keyframes shake{0%,100%{transform:none}15%{transform:translate(-3px,2px)}30%{transform:translate(3px,-2px)}45%{transform:translate(-2px,-1px)}65%{transform:translate(2px,1px)}80%{transform:translate(-1px,0)}}
+.shake{animation:shake .45s ease}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:2px}
+</style>
+</head>
+<body>
+
+<!-- FUEL GAUGE -->
+<div id="fuel-bar">
+  <div class="fuel-cell">
+    <div class="fuel-label">ABEX // BASE L2</div>
+    <div class="fuel-val live" id="fuel-base">—.— gwei</div>
+    <div class="fuel-status" id="fuel-base-st">FETCHING...</div>
+  </div>
+  <div class="fuel-sep"></div>
+  <div class="fuel-cell">
+    <div class="fuel-label">GDEX // ETH MAINNET</div>
+    <div class="fuel-val live" id="fuel-eth">—.— gwei</div>
+    <div class="fuel-status" id="fuel-eth-st">FETCHING...</div>
+  </div>
+  <div class="fuel-sep"></div>
+  <div class="fuel-cell">
+    <div class="fuel-label">FUEL TO DEPLOY</div>
+    <div class="fuel-val" id="fuel-deploy" style="color:var(--teal)">CALCULATING</div>
+    <div class="fuel-status" id="fuel-deploy-st">ERC-1155 · 180K GAS</div>
+  </div>
+  <div class="fuel-sep"></div>
+  <div class="fuel-cell">
+    <div class="fuel-label">ETH / USD</div>
+    <div class="fuel-val" id="fuel-usd" style="color:var(--td)">$—</div>
+    <div class="fuel-status" id="fuel-usd-st">COINGECKO FEED</div>
+  </div>
+  <span class="fuel-tag" onclick="fetchGas()" title="Refresh gas prices">↻ REFRESH</span>
+</div>
+
+<!-- HEADER -->
+<header class="header">
+  <div>
+    <div class="header-tag">// CST MISSION HUB v2 · CARD CAPTOR + MINT TO DEPLOY</div>
+    <div class="header-title">COLD BREW: <span>MYSTICS OF MAYHEM</span></div>
+    <div class="header-sub">BOUNDARY OPS · DEEP TRANSIT CONFLICT · VAEL'KHARI INCURSION</div>
+  </div>
+  <div class="header-right">
+    <div class="classification">OMEGA CLEARANCE</div>
+    <div class="session-id" id="session-id">SESSION: ——</div>
+  </div>
+</header>
+
+<!-- TAB NAV -->
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="setTab('ops')"    data-tab="ops">OPERATIONS</button>
+  <button class="tab-btn"        onclick="setTab('cards')"  data-tab="cards">CARD CAPTOR <span id="card-tab-badge"></span></button>
+  <button class="tab-btn"        onclick="setTab('ert')"    data-tab="ert">ERT STATUS</button>
+  <button class="tab-btn"        onclick="openViewer()"     data-tab="viewer">CHARACTER VIEWER</button>
+</nav>
+
+<div class="hub">
+
+  <!-- ── OPERATIONS ── -->
+  <div class="section active" id="sec-ops">
+    <div class="sec-header">
+      <span class="sec-label">// ACTIVE OPERATIONS</span>
+      <div class="sec-line"></div>
+    </div>
+    <div class="ep-grid">
+      <div class="ep-card" id="ep01-card">
+        <div class="ep-bar"></div>
+        <div><div class="ep-num">EP.01</div><div class="ep-title">Cold Brew</div><div class="ep-location">// ENGINE HALL</div></div>
+        <div><div class="ep-boss-l">BOSS //</div><div class="ep-boss-n">TAUR-NUPHARI — SIREN WITCH</div></div>
+        <div class="ep-row"><div class="ep-dot" id="ep01-dot"></div><span class="ep-stxt" id="ep01-txt">UNPLAYED</span><span id="ep01-badge"></span></div>
+        <button class="ep-btn" id="ep01-btn" onclick="launchEp(1)">LAUNCH EPISODE ▶</button>
+      </div>
+      <div class="ep-card" id="ep02-card">
+        <div class="ep-bar"></div>
+        <div><div class="ep-num">EP.02</div><div class="ep-title">Dead Stone</div><div class="ep-location">// DEAD STONE STATION</div></div>
+        <div><div class="ep-boss-l">BOSS //</div><div class="ep-boss-n">TERROR KING — ANCIENT SOVEREIGN</div></div>
+        <div class="ep-row"><div class="ep-dot" id="ep02-dot"></div><span class="ep-stxt" id="ep02-txt">UNPLAYED</span><span id="ep02-badge"></span></div>
+        <button class="ep-btn" id="ep02-btn" onclick="launchEp(2)">LAUNCH EPISODE ▶</button>
+      </div>
+      <div class="ep-card" id="ep03-card">
+        <div class="ep-bar"></div>
+        <div><div class="ep-num">EP.03</div><div class="ep-title">Styx Station</div><div class="ep-location">// BOUNDARY PORTAL 7</div></div>
+        <div><div class="ep-boss-l">BOSS //</div><div class="ep-boss-n">OSSUARY WARDEN — DEATH SOVEREIGN</div></div>
+        <div class="ep-row"><div class="ep-dot" id="ep03-dot"></div><span class="ep-stxt" id="ep03-txt">UNPLAYED</span><span id="ep03-badge"></span></div>
+        <button class="ep-btn" id="ep03-btn" onclick="launchEp(3)">LAUNCH EPISODE ▶</button>
+      </div>
+    </div>
+    <div class="ep04-wrap" id="ep04-wrap">
+      <div class="ep04-card" onclick="launchEp(4)">
+        <div class="ep04-bar"></div>
+        <div class="ep04-inner">
+          <div style="flex:1">
+            <div class="ep04-num">EP.04 — CLASSIFIED</div>
+            <div class="ep04-title">SWAT</div>
+            <div class="ep04-op">OPERATION // CST-ERT DEPLOYMENT · PORTAL 4 CONVERGENCE</div>
+            <div style="display:flex;align-items:center;gap:7px;margin-top:9px">
+              <span class="ep04-dot"></span>
+              <span style="font-family:var(--mono);font-size:9px;color:var(--red);letter-spacing:.1em">TRANSMISSION RECEIVED — AWAITING DEPLOYMENT</span>
+            </div>
+          </div>
+          <button class="ep04-btn">ACCESS EP.04 ▶</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CARD CAPTOR ── -->
+  <div class="section" id="sec-cards">
+    <div class="sec-header">
+      <span class="sec-label">// CARD CAPTOR — OPERATIVE COLLECTION</span>
+      <div class="sec-line"></div>
+      <span class="sec-right" id="cc-count">0 / 12 CAPTURED</span>
+    </div>
+    <div class="cc-grid" id="cc-grid"></div>
+    <div class="sec-header" style="margin-top:28px">
+      <span class="sec-label">// DECK OPERATIONS</span>
+      <div class="sec-line"></div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="ep-btn" style="width:auto;padding:10px 22px" onclick="openDeck()">PULL DECK + AI INTEL ▶</button>
+    </div>
+  </div>
+
+  <!-- ── ERT ── -->
+  <div class="section" id="sec-ert">
+    <div class="sec-header">
+      <span class="sec-label">// ERT SIGNAL STATUS</span>
+      <div class="sec-line"></div>
+    </div>
+    <div class="ert-panel">
+      <div class="ert-top">
+        <div>
+          <div class="ert-title">CLASSIFIED SIGNAL — ACTIVE MONITORING</div>
+          <div class="ert-desc">Three convergence locks must align before the channel opens.<br>All conditions must be met simultaneously to receive the transmission.</div>
+        </div>
+        <div class="ert-sig" id="ert-sig">SIGNAL: DORMANT</div>
+      </div>
+      <div class="ert-locks">
+        <div class="ert-lock" id="lock-card">
+          <div class="ert-lock-top"><div class="ert-lock-icon" id="icon-card">■</div><div class="ert-lock-name">Card convergence</div></div>
+          <div class="ert-lock-desc">ERT cell fully assembled — Phase Spy, Glitch Witch, Echo Witch.</div>
+        </div>
+        <div class="ert-lock" id="lock-ending">
+          <div class="ert-lock-top"><div class="ert-lock-icon" id="icon-ending">■</div><div class="ert-lock-name">Ending convergence</div></div>
+          <div class="ert-lock-desc">Clean success arc across all three stations.</div>
+        </div>
+        <div class="ert-lock" id="lock-code">
+          <div class="ert-lock-top"><div class="ert-lock-icon" id="icon-code">■</div><div class="ert-lock-name">Operator code</div></div>
+          <div class="ert-lock-desc">The channel frequency requires a broadcast designation code.</div>
+        </div>
+      </div>
+      <div class="ert-bar-wrap">
+        <div class="ert-bar"><div class="ert-bar-fill" id="ert-fill" style="width:0%"></div></div>
+        <div class="ert-counter"><span id="ert-count">0</span> / 3 LOCKS CLEARED</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEBUG -->
+  <div class="debug-panel" id="debug-panel">
+    <div class="debug-label">// DEBUG OVERRIDE — TYPE "DEBUG" TO TOGGLE</div>
+    <div class="debug-grid">
+      <button class="debug-btn" onclick="dbEp('ep01','success',EP01_CARDS)">EP01: SUCCESS + all cards</button>
+      <button class="debug-btn" onclick="dbEp('ep02','success',EP02_CARDS)">EP02: SUCCESS + all cards</button>
+      <button class="debug-btn" onclick="dbEp('ep03','success',EP03_CARDS)">EP03: SUCCESS + all cards</button>
+      <button class="debug-btn" onclick="dbAll()">UNLOCK ALL + SET CODE</button>
+      <button class="debug-btn" onclick="dbClear()">CLEAR ALL SAVES</button>
+      <button class="debug-btn" onclick="fireTx()">FORCE TRANSMISSION</button>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-text">CST MISSION HUB v2 · CARD CAPTOR + MINT TO DEPLOY · SAME DIRECTORY AS EPISODES</div>
+    <div class="footer-hint" id="footer-hint">···</div>
+  </div>
+</div>
+
+<!-- DECK PANEL -->
+<div id="deck-panel">
+  <div class="deck-header">
+    <div class="deck-title">// OPERATIVE DECK + AI INTEL</div>
+    <button class="deck-close" onclick="closeDeck()">✕</button>
+  </div>
+  <div class="deck-body">
+    <div class="deck-squad" id="deck-squad">
+      <div class="deck-squad-label">CAPTURED OPERATIVES — SELECT FOR INTEL</div>
+      <div class="deck-squad-grid" id="deck-chips"></div>
+    </div>
+    <div class="intel-pane" id="intel-pane">
+      <div class="intel-header">
+        <div>
+          <div class="intel-card-name" id="intel-name">SELECT AN OPERATIVE</div>
+          <div class="intel-card-role" id="intel-role">—</div>
+        </div>
+      </div>
+      <div>
+        <div class="intel-label">ORACLE AVX API KEY</div>
+        <input class="intel-key-input" id="intel-key" type="password" placeholder="sk-ant-api03-...  (stored in session only)" autocomplete="off">
+        <button class="intel-fetch-btn" id="intel-fetch-btn" onclick="fetchIntel()" disabled>GENERATE TACTICAL INTEL ▶</button>
+      </div>
+      <div>
+        <div class="intel-label">TACTICAL ASSESSMENT</div>
+        <div class="intel-output" id="intel-output">Select an operative from the squad list above, then generate their tactical intel report.</div>
+      </div>
+    </div>
+    <button class="deck-mint-btn" id="deck-mint-btn" onclick="openMintFromDeck()" disabled>MINT SELECTED OPERATIVE TO DEPLOY ▶</button>
+  </div>
+</div>
+
+<!-- MINT MODAL -->
+<div id="mint-modal">
+  <div class="mint-inner">
+    <div class="mint-head">
+      <div class="mint-head-title">// MINT TO DEPLOY — CST OPERATIVES</div>
+      <button class="mint-close-btn" onclick="closeMint()">✕</button>
+    </div>
+    <div class="mint-body" id="mint-body">
+      <div class="mint-card-preview">
+        <div class="mint-card-art" id="mint-art" style="background:var(--bg4)">—</div>
+        <div class="mint-card-info">
+          <div class="mint-card-name" id="mint-name">—</div>
+          <div class="mint-card-role" id="mint-role">—</div>
+          <div class="mint-card-std">ERC-1155 · BASE L2 · CST OPERATIVES #001</div>
+          <div class="mint-card-std" id="mint-token-id" style="color:var(--amber);margin-top:4px">TOKEN ID: —</div>
+        </div>
+      </div>
+      <label class="mint-field-label">WALLET ADDRESS (BASE MAINNET)</label>
+      <input class="mint-input" id="mint-wallet" placeholder="0x..." maxlength="42">
+      <div class="mint-gas-row">
+        <div class="mint-gas-cell"><div class="mint-gas-label">BASE GAS</div><div class="mint-gas-val" id="mint-gas-base">—</div></div>
+        <div class="mint-gas-cell"><div class="mint-gas-label">ESTIMATED GAS</div><div class="mint-gas-val amber" id="mint-gas-est">—</div></div>
+        <div class="mint-gas-cell"><div class="mint-gas-label">DEPLOY COST</div><div class="mint-gas-val" id="mint-gas-total" style="color:var(--teal)">—</div></div>
+      </div>
+      <button class="mint-btn" id="mint-execute-btn" onclick="executeMint()">INITIATE MINT ▶</button>
+    </div>
+    <div class="mint-success" id="mint-success">
+      <div class="mint-success-icon">✓</div>
+      <div class="mint-success-title">OPERATIVE MINTED + DEPLOYED</div>
+      <div class="mint-tx-id" id="mint-tx-display">TOKEN ID: —</div>
+      <div class="mint-success-hash" id="mint-tx-hash">TX: —</div>
+      <button class="mint-btn" style="margin-top:8px;background:var(--bg3);border:1px solid var(--border2);color:var(--td)" onclick="closeMint()">CLOSE ▶</button>
+    </div>
+  </div>
+</div>
+
+<!-- VIEWER MODAL -->
+<div id="viewer-modal">
+  <div class="viewer-head">
+    <div class="viewer-head-title">// CHARACTER VIEWER — CST OPERATIVE DOSSIER</div>
+    <button class="viewer-close-btn" onclick="closeViewer()">✕</button>
+  </div>
+  <iframe id="viewer-frame" src="CST_CHARACTER_VIEWER_DARK.html" title="Character Viewer"></iframe>
+</div>
+
+<!-- TRANSMISSION -->
+<div id="tx-overlay">
+  <div class="tx-inner">
+    <div class="tx-static">////// SIGNAL ACQUIRED /// CHANNEL DECRYPTING /// AUTHENTICATION COMPLETE //////</div>
+    <div class="tx-hdr">INCOMING TRANSMISSION — CST-ERT COMMAND RELAY</div>
+    <div class="tx-title">OPERATION <span>SWAT</span></div>
+    <div class="tx-sub">// CLEARANCE VERIFIED // CHANNEL AUTHENTICATED // DEPLOYING NOW //</div>
+    <div class="tx-rule"></div>
+    <div class="tx-body" id="tx-body"></div>
+    <div class="tx-cta" id="tx-cta">
+      <button class="tx-btn tx-btn-primary" onclick="acceptTx()">REPORT FOR DUTY ▶</button>
+      <button class="tx-btn tx-btn-secondary" onclick="closeTx()">STAND BY</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════
+   CST MISSION HUB v2 — FULL SYSTEM
+   ════════════════════════════════════════ */
+
+/* ── DATA ── */
+const EP_FILES = {1:'CST_EP01_COLD_BREW.html',2:'CST_EP02_DEAD_STONE.html',3:'CST_EP03_STYX_STATION.html',4:'CST_EP04_SWAT.html'};
+const ERT_CELL = ['phase_spy','glitch_witch','echo_witch'];
+const ERT_CODE = 'ERT';
+const EP01_CARDS = ['forge_mystic','rail_worker','drone_pilot','alchemist','phase_spy','anchor_gunner'];
+const EP02_CARDS = ['steamfitter','raijin_colossus','glitch_witch'];
+const EP03_CARDS = ['echo_witch','bone_mechanic','styx_navigator'];
+const EP_COLS   = {1:'#EF9F27',2:'#7F77DD',3:'#1D9E75'};
+const UNIT_ICONS= {forge_mystic:'⚒',rail_worker:'🛤',drone_pilot:'✈',alchemist:'⚗',phase_spy:'👁',anchor_gunner:'⚓',steamfitter:'♨',raijin_colossus:'⚡',glitch_witch:'◈',echo_witch:'◉',bone_mechanic:'☠',styx_navigator:'⛵'};
+
+const ALL_UNITS = [
+  {id:'forge_mystic',   name:'Forge Mystic',    role:'FIRE / CONSTRUCTION',   ep:1,ert:false,tokenId:1},
+  {id:'rail_worker',    name:'Rail Worker',     role:'INFRASTRUCTURE',        ep:1,ert:false,tokenId:2},
+  {id:'drone_pilot',    name:'Drone Pilot',     role:'RECON / AIR OPS',       ep:1,ert:false,tokenId:3},
+  {id:'alchemist',      name:'Alchemist',       role:'TRANSMUTATION',         ep:1,ert:false,tokenId:4},
+  {id:'phase_spy',      name:'Phase Spy',       role:'INFILTRATION / INTEL',  ep:1,ert:true, tokenId:5},
+  {id:'anchor_gunner',  name:'Anchor Gunner',   role:'HEAVY WEAPONS',         ep:1,ert:false,tokenId:6},
+  {id:'steamfitter',    name:'Steamfitter',     role:'MECHANICAL / STEAM',    ep:2,ert:false,tokenId:7},
+  {id:'raijin_colossus',name:'Raijin Colossus', role:'LIGHTNING / TITAN',     ep:2,ert:false,tokenId:8},
+  {id:'glitch_witch',   name:'Glitch Witch',    role:'DIGITAL DISRUPTION',    ep:2,ert:true, tokenId:9},
+  {id:'echo_witch',     name:'Echo Witch',      role:'RESONANCE / SOUND',     ep:3,ert:true, tokenId:10},
+  {id:'bone_mechanic',  name:'Bone Mechanic',   role:'NECROTIC REPAIR',       ep:3,ert:false,tokenId:11},
+  {id:'styx_navigator', name:'Styx Navigator',  role:'PORTAL TRAVERSAL',      ep:3,ert:false,tokenId:12},
+];
+
+/* ── STATE ── */
+const S = {
+  saves:{ep01:null,ep02:null,ep03:null},
+  locks:{card:false,ending:false,code:false},
+  ertUnlocked:false, ep04Access:false,
+  gas:{base:null,eth:null,ethUsd:null},
+  selectedUnit:null,
+};
+
+let keyBuf='', dbgBuf='';
+
+/* ── AUDIO ── */
+let actx=null;
+const AC=()=>actx||(actx=new(window.AudioContext||window.webkitAudioContext)());
+function tone(f,t,d,v=.1){try{const c=AC(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type=t;o.frequency.value=f;g.gain.setValueAtTime(v,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d);o.start();o.stop(c.currentTime+d);}catch(e){}}
+function playUnlock(){tone(880,'sine',.07,.1);setTimeout(()=>tone(1320,'sine',.12,.09),75);setTimeout(()=>tone(1760,'sine',.18,.07),150);}
+function playERT(){[220,330,440,660,880,1320].forEach((f,i)=>setTimeout(()=>tone(f,'sawtooth',.14,.07),i*70));setTimeout(()=>[1760,1320,880,660].forEach((f,i)=>setTimeout(()=>tone(f,'square',.12,.08),i*90)),520);}
+function playStatic(){try{const c=AC(),n=c.sampleRate*.35,buf=c.createBuffer(1,n,c.sampleRate),d=buf.getChannelData(0);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*.18;const s=c.createBufferSource(),g=c.createGain();s.buffer=buf;s.connect(g);g.connect(c.destination);g.gain.setValueAtTime(.5,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.35);s.start();}catch(e){}}
+
+/* ── LOCALSTORAGE ── */
+function readSave(ep){
+  const keys=[`cst_${ep}_save`,`cst_${ep}`,`${ep}_save`,`cst_${ep}_progress`];
+  for(const k of keys){const r=localStorage.getItem(k);if(r)try{return JSON.parse(r);}catch(e){}}
+  const ending=localStorage.getItem(`cst_${ep}_ending`),rawCards=localStorage.getItem(`cst_${ep}_unlocks`),complete=localStorage.getItem(`cst_${ep}_complete`);
+  if(ending||rawCards||complete){let u=[];try{u=JSON.parse(rawCards||'[]');}catch(e){}return{ending,unlocks:u,complete:complete==='true'};}
+  return null;
+}
+function writeSave(ep,data){localStorage.setItem(`cst_${ep}_save`,JSON.stringify(data));}
+const norm=s=>(s||'').toLowerCase().replace(/[\s\-_]+/g,'');
+
+function load(){
+  S.saves.ep01=readSave('ep01');S.saves.ep02=readSave('ep02');S.saves.ep03=readSave('ep03');
+  S.ertUnlocked=localStorage.getItem('cst_ert_unlocked')==='true';
+  S.ep04Access=localStorage.getItem('cst_ep04_access')==='true';
+}
+
+function getMintedIds(){try{return JSON.parse(localStorage.getItem('cst_minted')||'[]');}catch(e){return[];}}
+function setMintedIds(ids){localStorage.setItem('cst_minted',JSON.stringify(ids));}
+
+/* ── COLLECTED CARDS ── */
+function getAllCards(){
+  return[...(S.saves.ep01?.unlocks||[]),...(S.saves.ep02?.unlocks||[]),...(S.saves.ep03?.unlocks||[])].map(norm);
+}
+function isUnlocked(id){return getAllCards().some(u=>u.includes(norm(id)));}
+function isMinted(id){return getMintedIds().includes(id);}
+
+/* ── LOCKS ── */
+function checkLocks(){
+  const prev1=S.locks.card,prev2=S.locks.ending;
+  S.locks.card=ERT_CELL.every(id=>isUnlocked(id));
+  const ok=['success','complete','win'];
+  S.locks.ending=ok.includes(norm(S.saves.ep01?.ending||''))&&ok.includes(norm(S.saves.ep02?.ending||''))&&!!(S.saves.ep03?.complete||S.saves.ep03?.ending);
+  if(!prev1&&S.locks.card){playUnlock();}
+  if(!prev2&&S.locks.ending){playUnlock();}
+}
+
+function checkAll(){
+  checkLocks();
+  if(S.locks.card&&S.locks.ending&&S.locks.code&&!S.ertUnlocked){
+    S.ertUnlocked=true;localStorage.setItem('cst_ert_unlocked','true');
+    setTimeout(fireTx,400);
+  }
+  renderERT();
+}
+
+/* ── KEY LISTENER ── */
+document.addEventListener('keydown',e=>{
+  if(e.key.length!==1)return;
+  const ch=e.key.toUpperCase();
+  keyBuf=(keyBuf+ch).slice(-ERT_CODE.length);
+  if(keyBuf===ERT_CODE&&!S.locks.code){S.locks.code=true;hintSet('OPERATOR CODE ACCEPTED','var(--teal)');checkAll();}
+  dbgBuf=(dbgBuf+ch).slice(-5);
+  if(dbgBuf==='DEBUG'){const p=document.getElementById('debug-panel');p.classList.toggle('visible');dbgBuf='';}
+});
+
+/* ── TABS ── */
+function setTab(tab){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+  const sec=document.getElementById(`sec-${tab}`);if(sec)sec.classList.add('active');
+  if(tab==='cards')renderCardCaptor();
+}
+
+/* ── EPISODE RENDER ── */
+function renderEps(){
+  [{key:'ep01',n:1},{key:'ep02',n:2},{key:'ep03',n:3}].forEach(({key,n})=>{
+    const save=S.saves[key],card=document.getElementById(`${key}-card`),dot=document.getElementById(`${key}-dot`),txt=document.getElementById(`${key}-txt`),bdg=document.getElementById(`${key}-badge`),btn=document.getElementById(`${key}-btn`);
+    if(!save){card.className='ep-card';dot.className='ep-dot';txt.textContent='UNPLAYED';txt.style.color='var(--tm)';bdg.innerHTML='';btn.textContent='LAUNCH EPISODE ▶';btn.className='ep-btn';}
+    else{const end=(save.ending||'partial').toLowerCase(),isOk=['success','complete','win'].includes(end);
+    card.className=`ep-card${isOk?' cleared':''}`;dot.className=`ep-dot ${isOk?'ok':end==='failure'?'fail':'part'}`;txt.textContent=isOk?'MISSION COMPLETE':end==='failure'?'MISSION FAILED':'PARTIAL CLEAR';txt.style.color=isOk?'var(--teal)':end==='failure'?'var(--red)':'var(--amber)';bdg.innerHTML=`<span class="ep-badge ${isOk?'ok':end}">${end.toUpperCase()}</span>`;btn.textContent='REPLAY ↺';btn.className=`ep-btn${isOk?' replay':''}`;}
+  });
+  if(S.ertUnlocked||S.ep04Access)document.getElementById('ep04-wrap').style.display='block';
+}
+
+/* ── CARD CAPTOR RENDER ── */
+function renderCardCaptor(){
+  const minted=getMintedIds();
+  let total=0;
+  const html=ALL_UNITS.map(u=>{
+    const unlocked=isUnlocked(u.id),mintedU=minted.includes(u.id);
+    if(unlocked)total++;
+    const col=EP_COLS[u.ep];
+    const artBg=unlocked?`background:linear-gradient(135deg,${col}22,${col}08)`:`background:var(--bg3)`;
+    const ind=unlocked?`background:${col};box-shadow:0 0 6px ${col}`:'background:rgba(255,255,255,.08)';
+    return`<div class="cc-card ${unlocked?'captured':'locked'} ${u.ert?'ert-cell':''}">
+      <div class="cc-card-art" style="${artBg}">
+        <div class="cc-card-art-inner" style="color:${unlocked?col:'rgba(255,255,255,.1)'}">${UNIT_ICONS[u.id]||'?'}</div>
+        <div class="cc-card-art-overlay"></div>
+      </div>
+      <div class="cc-indicator" style="${ind}"></div>
+      ${mintedU?`<div class="cc-minted">MINTED</div>`:''}
+      <div class="cc-card-body">
+        <div class="cc-ep-badge">EP.0${u.ep}</div>
+        <div class="cc-name">${unlocked?u.name:'[CLASSIFIED]'}</div>
+        <div class="cc-role">${unlocked?u.role:'////// LOCKED'}</div>
+        ${u.ert?`<div class="cc-ert">${unlocked?'◆ ERT CELL':'◆ [REDACTED]'}</div>`:''}
+      </div>
+      <div class="cc-actions">
+        <button class="cc-btn intel-btn" onclick="openDeckWithUnit('${u.id}')">INTEL</button>
+        <button class="cc-btn mint-btn"  onclick="openMintDirect('${u.id}')">MINT</button>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('cc-grid').innerHTML=html;
+  document.getElementById('cc-count').textContent=`${total} / 12 CAPTURED`;
+  const badge=document.getElementById('card-tab-badge');
+  if(badge)badge.innerHTML=total>0?`<span class="tab-badge">${total}</span>`:'';
+}
+
+/* ── ERT RENDER ── */
+function renderERT(){
+  const{card,ending,code}=S.locks;
+  const cleared=[card,ending,code].filter(Boolean).length;
+  const setL=(id,iconId,c)=>{document.getElementById(id).className=`ert-lock${c?' cleared':''}`;document.getElementById(iconId).textContent=c?'✓':'■';};
+  setL('lock-card','icon-card',card);setL('lock-ending','icon-ending',ending);setL('lock-code','icon-code',code);
+  document.getElementById('ert-fill').style.width=`${(cleared/3)*100}%`;
+  document.getElementById('ert-count').textContent=cleared;
+  const sig=document.getElementById('ert-sig');
+  if(!cleared){sig.textContent='SIGNAL: DORMANT';sig.style.color='var(--tm)';}
+  else if(cleared===1){sig.textContent='SIGNAL: FAINT';sig.style.color='var(--amber)';}
+  else if(cleared===2){sig.textContent='SIGNAL: STRONG — 1 LOCK REMAINING';sig.style.color='var(--amber)';}
+  else{sig.textContent='SIGNAL: ALL LOCKS CLEARED';sig.style.color='var(--red)';}
+}
+
+/* ── FULL RENDER ── */
+function render(){
+  document.getElementById('session-id').textContent=`SESSION: CST-${Date.now().toString(36).toUpperCase().slice(-6)}`;
+  renderEps();renderERT();
+  if(S.ertUnlocked||S.ep04Access)document.getElementById('ep04-wrap').style.display='block';
+}
+
+/* ── LAUNCH ── */
+function launchEp(n){tone(440,'sine',.1);setTimeout(()=>{window.location.href=EP_FILES[n];},150);}
+
+/* ── FUEL GAUGE ── */
+async function fetchGas(){
+  const baseEl=document.getElementById('fuel-base'),ethEl=document.getElementById('fuel-eth');
+  const depEl=document.getElementById('fuel-deploy'),usdEl=document.getElementById('fuel-usd');
+  const bSt=document.getElementById('fuel-base-st'),eSt=document.getElementById('fuel-eth-st');
+
+  const rpc=async(url)=>{
+    const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',method:'eth_gasPrice',params:[],id:1})});
+    const d=await r.json();return parseInt(d.result,16)/1e9;
+  };
+
+  // Base gas
+  try{
+    const bg=await rpc('https://mainnet.base.org');
+    S.gas.base=bg;
+    baseEl.textContent=`${bg.toFixed(4)} gwei`;
+    bSt.textContent='LIVE · BASE MAINNET';bSt.className='fuel-status green';
+  }catch(e){baseEl.textContent='N/A';bSt.textContent='NETWORK ERROR';bSt.className='fuel-status red';S.gas.base=0.002;}
+
+  // ETH gas
+  try{
+    const eg=await rpc('https://eth.llamarpc.com');
+    S.gas.eth=eg;
+    ethEl.textContent=`${eg.toFixed(2)} gwei`;
+    eSt.textContent='LIVE · ETH MAINNET';eSt.className='fuel-status green';
+  }catch(e){ethEl.textContent='N/A';eSt.textContent='NETWORK ERROR';eSt.className='fuel-status red';S.gas.eth=15;}
+
+  // ETH/USD
+  try{
+    const r=await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
+    const d=await r.json();
+    S.gas.ethUsd=d.ethereum?.usd||null;
+    usdEl.textContent=S.gas.ethUsd?`$${S.gas.ethUsd.toLocaleString()}`:'$—';
+    document.getElementById('fuel-usd-st').textContent='LIVE · COINGECKO';
+  }catch(e){document.getElementById('fuel-usd-st').textContent='UNAVAILABLE';}
+
+  // Deploy cost (180k gas on Base)
+  if(S.gas.base!=null){
+    const gasLimit=180000;
+    const costEth=(S.gas.base*gasLimit)/1e9;
+    const costUsd=S.gas.ethUsd?`≈ $${(costEth*S.gas.ethUsd).toFixed(4)}`:'';
+    depEl.textContent=`${costEth.toFixed(6)} ETH ${costUsd}`;
+    document.getElementById('fuel-deploy-st').textContent='180K GAS · BASE L2';
+  }
+  updateMintGas();
+}
+
+function updateMintGas(){
+  const bg=document.getElementById('mint-gas-base'),eg=document.getElementById('mint-gas-est'),tg=document.getElementById('mint-gas-total');
+  if(S.gas.base!=null){
+    const g=180000,cost=(S.gas.base*g)/1e9;
+    if(bg)bg.textContent=`${S.gas.base.toFixed(4)} gwei`;
+    if(eg)eg.textContent=`${g.toLocaleString()} gas`;
+    if(tg)tg.textContent=`${cost.toFixed(6)} ETH${S.gas.ethUsd?` ($${(cost*S.gas.ethUsd).toFixed(3)})`:''}`;
+  }
+}
+
+/* ── DECK PANEL ── */
+function openDeck(){
+  renderDeckChips();
+  document.getElementById('deck-panel').classList.add('open');
+  tone(440,'sine',.08);
+}
+function openDeckWithUnit(id){
+  setTab('cards');
+  openDeck();
+  setTimeout(()=>selectUnit(id),200);
+}
+function closeDeck(){document.getElementById('deck-panel').classList.remove('open');}
+
+function renderDeckChips(){
+  const chips=ALL_UNITS.filter(u=>isUnlocked(u.id)).map(u=>`<div class="ds-chip ${u.ert?'ert-chip':''}" id="chip-${u.id}" onclick="selectUnit('${u.id}')">${u.name}${u.ert?' ◆':''}</div>`).join('');
+  document.getElementById('deck-chips').innerHTML=chips||'<span style="font-family:var(--mono);font-size:9px;color:var(--tm)">NO OPERATIVES CAPTURED YET</span>';
+}
+
+function selectUnit(id){
+  S.selectedUnit=ALL_UNITS.find(u=>u.id===id);
+  if(!S.selectedUnit)return;
+  document.querySelectorAll('.ds-chip').forEach(c=>c.classList.remove('selected'));
+  const ch=document.getElementById(`chip-${id}`);if(ch)ch.classList.add('selected');
+  document.getElementById('intel-name').textContent=S.selectedUnit.name.toUpperCase();
+  document.getElementById('intel-role').textContent=S.selectedUnit.role;
+  document.getElementById('intel-output').textContent='Click "Generate Tactical Intel" to pull Oracle AVX assessment.';
+  document.getElementById('intel-output').className='intel-output';
+  document.getElementById('intel-fetch-btn').disabled=false;
+  document.getElementById('deck-mint-btn').disabled=false;
+  tone(660,'sine',.06);
+}
+
+document.getElementById('intel-key').addEventListener('input',function(){
+  sessionStorage.setItem('cst_api_key',this.value);
+});
+
+/* ── AI INTEL ── */
+async function fetchIntel(){
+  const key=document.getElementById('intel-key').value||sessionStorage.getItem('cst_api_key')||'';
+  const u=S.selectedUnit;if(!u)return;
+  if(!key){document.getElementById('intel-output').textContent='API key required. Enter your Anthropic key above.';document.getElementById('intel-output').className='intel-output error';return;}
+  const btn=document.getElementById('intel-fetch-btn');btn.disabled=true;btn.textContent='GENERATING...';
+  const out=document.getElementById('intel-output');out.className='intel-output loading';out.textContent='ORACLE AVX NODE — PROCESSING REQUEST...\n\nInitializing tactical synthesis...\nCross-referencing boundary portal data...\nCompiling operative assessment...';
+
+  const prompt=`You are ORACLE AVX — the tactical intelligence synthesis node for the CST (Cold Stone Transit) operations division operating in the SIMPRO universe.
+
+Generate a tactical intel report for operative: ${u.name} (${u.role})
+Episode origin: EP.0${u.ep}
+${u.ert?'ERT CELL STATUS: CONFIRMED — Critical priority operative for Channel unlock sequence.':'ERT CELL STATUS: NON-ERT DESIGNATION'}
+
+UNIVERSE CONTEXT: We operate within the Genesis Verse / Abyssum Verse dual gateway system. Hypechambers and Corridors are the transit arteries. The Vael'Khari (galaxy-conquering witch race, seat: Qir) are the primary threat vector. Boundary Portals 1-7 are active flashpoints.
+
+Generate a 200-word tactical assessment in the following format:
+- THREAT RATING: [LOW/MEDIUM/HIGH/CRITICAL]
+- FIELD STATUS: [current assessment]
+- TACTICAL STRENGTHS: [2-3 points]
+- DEPLOYMENT RECOMMENDATION: [when/how to deploy]
+- ORACLE NOTE: [one cryptic insight]
+
+Keep it grounded in the CST universe lore. Operator voice — terse, professional, no filler. Write entirely in character as ORACLE AVX.`;
+
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})
+    });
+    const d=await r.json();
+    if(d.error){throw new Error(d.error.message);}
+    const txt=d.content?.find(c=>c.type==='text')?.text||'No response.';
+    out.textContent=txt;out.className='intel-output';
+    tone(880,'sine',.12);
+  }catch(e){
+    out.textContent=`ORACLE AVX — CONNECTION ERROR\n\n${e.message||'Unknown error'}\n\nVerify API key and network connection.`;
+    out.className='intel-output error';
+  }
+  btn.disabled=false;btn.textContent='GENERATE TACTICAL INTEL ▶';
+}
+
+/* ── MINT TO DEPLOY ── */
+function openMintDirect(id){
+  const u=ALL_UNITS.find(u=>u.id===id);if(!u||!isUnlocked(id))return;
+  S.selectedUnit=u;
+  populateMintModal(u);
+  document.getElementById('mint-modal').classList.add('open');
+  document.getElementById('mint-success').classList.remove('show');
+  document.getElementById('mint-body').style.display='block';
+  tone(660,'sine',.08);
+}
+function openMintFromDeck(){
+  if(!S.selectedUnit)return;
+  closeDeck();
+  setTimeout(()=>openMintDirect(S.selectedUnit.id),300);
+}
+
+function populateMintModal(u){
+  const col=EP_COLS[u.ep];
+  document.getElementById('mint-art').style.background=`linear-gradient(135deg,${col}33,${col}11)`;
+  document.getElementById('mint-art').textContent=UNIT_ICONS[u.id]||'?';
+  document.getElementById('mint-art').style.fontSize='28px';
+  document.getElementById('mint-art').style.color=col;
+  document.getElementById('mint-name').textContent=u.name.toUpperCase();
+  document.getElementById('mint-role').textContent=u.role;
+  document.getElementById('mint-token-id').textContent=`TOKEN ID: #${u.tokenId.toString().padStart(3,'0')}`;
+  if(isMinted(u.id)){
+    document.getElementById('mint-execute-btn').textContent='ALREADY MINTED ✓';
+    document.getElementById('mint-execute-btn').disabled=true;
+  } else {
+    document.getElementById('mint-execute-btn').textContent='INITIATE MINT ▶';
+    document.getElementById('mint-execute-btn').disabled=false;
+  }
+  updateMintGas();
+}
+
+function closeMint(){document.getElementById('mint-modal').classList.remove('open');}
+
+async function executeMint(){
+  const wallet=document.getElementById('mint-wallet').value.trim();
+  if(!wallet||!wallet.startsWith('0x')||wallet.length!==42){
+    document.getElementById('mint-wallet').style.borderColor='var(--red-b)';
+    setTimeout(()=>document.getElementById('mint-wallet').style.borderColor='',1200);
+    return;
+  }
+  const btn=document.getElementById('mint-execute-btn');
+  btn.disabled=true;btn.textContent='BROADCASTING TRANSACTION...';
+  const u=S.selectedUnit;
+  // Simulate mint transaction (replace with actual wagmi/ethers call)
+  await new Promise(r=>setTimeout(r,2200));
+  // Generate mock tx hash
+  const txHash='0x'+Array.from({length:64},()=>Math.floor(Math.random()*16).toString(16)).join('');
+  const ids=getMintedIds();ids.push(u.id);setMintedIds(ids);
+  // Show success
+  document.getElementById('mint-body').style.display='none';
+  document.getElementById('mint-success').classList.add('show');
+  document.getElementById('mint-tx-display').textContent=`TOKEN ID: #${u.tokenId.toString().padStart(3,'0')} — ${u.name.toUpperCase()}`;
+  document.getElementById('mint-tx-hash').textContent=`TX: ${txHash}`;
+  playUnlock();
+  renderCardCaptor();
+}
+
+/* ── VIEWER ── */
+function openViewer(){document.getElementById('viewer-modal').classList.add('open');tone(440,'sine',.1);}
+function closeViewer(){document.getElementById('viewer-modal').classList.remove('open');}
+
+/* ── TRANSMISSION ── */
+function fireTx(){
+  playStatic();
+  document.body.classList.add('shake');
+  setTimeout(()=>document.body.classList.remove('shake'),450);
+  setTimeout(()=>{
+    playERT();
+    const overlay=document.getElementById('tx-overlay');overlay.classList.add('active');
+    const LINES=['> CHANNEL: CST-ERT SECURE FREQUENCY · NODE 7-ALPHA','> SOURCE: DEAD STONE RELAY STATION — CLASSIFIED','> RECIPIENT: CONFIRMED — OMEGA CLEARANCE VERIFIED','\u00a0','> OPERATIVE ASSESSMENT: COMPLETE.','> ARC 01–03 RESOLVED. ERT CELL FULLY ASSEMBLED.','> PHASE SPY / GLITCH WITCH / ECHO WITCH — OPERATIONAL.','\u00a0','> THREAT CLASSIFICATION: PORTAL 4 CONVERGENCE.','> BOUNDARY BREACH IMMINENT — SOVEREIGN-CLASS INCURSION.','> LOCATION: [REDACTED — COORDINATES TRANSMITTING...]','\u00a0','> OPERATION SWAT: AUTHORIZED.','> EP.04 DEPLOYMENT STATUS: IMMINENT.','> REPORT FOR DUTY. CHANNEL CLOSES WHEN YOU DO.'];
+    const body=document.getElementById('tx-body');body.innerHTML='';
+    LINES.forEach((line,i)=>{const s=document.createElement('span');s.className='tx-line';s.style.animationDelay=`${.4+i*.14}s`;s.textContent=line;body.appendChild(s);});
+    const d=(0.4+LINES.length*.14+.4)*1000;
+    setTimeout(()=>document.getElementById('tx-cta').classList.add('visible'),d);
+    render();
+  },700);
+}
+function acceptTx(){localStorage.setItem('cst_ep04_access','true');S.ep04Access=true;closeTx();document.getElementById('ep04-wrap').style.display='block';}
+function closeTx(){document.getElementById('tx-overlay').classList.remove('active');}
+
+/* ── FOOTER ── */
+function hintSet(txt,col){const h=document.getElementById('footer-hint');h.textContent=txt;h.style.color=col;}
+
+/* ── DEBUG ── */
+function dbEp(ep,ending,unlocks){writeSave(ep,{complete:true,ending,unlocks});load();checkLocks();render();renderCardCaptor();}
+function dbAll(){dbEp('ep01','success',EP01_CARDS);dbEp('ep02','success',EP02_CARDS);dbEp('ep03','success',EP03_CARDS);S.locks.code=true;checkAll();render();renderCardCaptor();}
+function dbClear(){['ep01','ep02','ep03'].forEach(ep=>['_save','','_ending','_unlocks','_complete'].forEach(s=>{localStorage.removeItem(`cst_${ep}${s}`);localStorage.removeItem(`${ep}${s}`);}));['cst_ert_unlocked','cst_ep04_access','cst_minted'].forEach(k=>localStorage.removeItem(k));S.saves={ep01:null,ep02:null,ep03:null};S.locks={card:false,ending:false,code:false};S.ertUnlocked=false;S.ep04Access=false;document.getElementById('ep04-wrap').style.display='none';hintSet('···','rgba(226,75,74,.2)');render();renderCardCaptor();}
+
+/* ── INIT ── */
+load();checkLocks();render();renderCardCaptor();
+fetchGas();setInterval(fetchGas,45000);
+const savedKey=sessionStorage.getItem('cst_api_key');if(savedKey)document.getElementById('intel-key').value=savedKey;
+</script>
+</body>
+</html>

@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VOLUME IV — FIELD CODEX: SIREN CLASSIFICATION &amp; MATERIEL REGISTRY</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:        #0a0805;
+    --parchment:  #e8dfc8;
+    --amber:      #d4820a;
+    --amber-dim:  #8a5200;
+    --orange:     #e84e12;
+    --orange-dim: #7a2800;
+    --teal:       #1a8a88;
+    --teal-dim:   #0d4a49;
+    --blue:       #1a4a8a;
+    --blue-bright:#3a7adf;
+    --gold:       #c8a84a;
+    --gold-dim:   #6a5420;
+    --rust:       #8a3a1a;
+    --off-white:  #f2ead8;
+    --mid:        #3a3028;
+    --signal-red: #cc2200;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { background: #111008; }
+
+  body {
+    font-family: 'Crimson Pro', Georgia, serif;
+    background: #111008;
+    color: var(--parchment);
+    min-height: 100vh;
+    padding: 0 0 80px;
+  }
+
+  /* ═══ COVER / HEADER ═══════════════════════════════════════════════ */
+  .cover {
+    position: relative;
+    background: var(--ink);
+    border-bottom: 4px solid var(--amber);
+    overflow: hidden;
+    padding: 60px 80px 50px;
+  }
+  .cover::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      repeating-linear-gradient(0deg, transparent, transparent 38px, rgba(212,130,10,.06) 38px, rgba(212,130,10,.06) 39px),
+      repeating-linear-gradient(90deg, transparent, transparent 38px, rgba(212,130,10,.06) 38px, rgba(212,130,10,.06) 39px);
+  }
+  .cover-stamp {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .3em;
+    color: var(--amber-dim);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .cover-vol {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 8vw, 96px);
+    letter-spacing: .12em;
+    color: var(--amber);
+    line-height: .9;
+    position: relative;
+  }
+  .cover-vol span { color: var(--orange); }
+  .cover-sub {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(16px, 2.5vw, 28px);
+    letter-spacing: .25em;
+    color: var(--off-white);
+    margin-top: 14px;
+  }
+  .cover-rule {
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--amber) 0%, var(--orange) 40%, transparent 100%);
+    margin: 28px 0 22px;
+  }
+  .cover-meta {
+    display: flex; gap: 40px; flex-wrap: wrap;
+  }
+  .cover-meta-item {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--amber-dim);
+    letter-spacing: .1em;
+  }
+  .cover-meta-item strong { color: var(--gold); }
+
+  .cover-badge {
+    position: absolute;
+    top: 40px; right: 80px;
+    width: 90px; height: 90px;
+    border: 3px solid var(--amber);
+    border-radius: 50%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: rgba(10,8,5,.7);
+    font-family: 'Bebas Neue', sans-serif;
+    text-align: center;
+  }
+  .cover-badge .badge-top { font-size: 9px; letter-spacing: .25em; color: var(--amber-dim); }
+  .cover-badge .badge-main { font-size: 22px; color: var(--amber); line-height: 1; }
+  .cover-badge .badge-bot { font-size: 8px; letter-spacing: .2em; color: var(--amber-dim); }
+
+  /* ═══ PAGE CONTAINER ════════════════════════════════════════════════ */
+  .page { max-width: 1140px; margin: 0 auto; padding: 0 40px; }
+
+  /* ═══ SECTION DIVIDERS ══════════════════════════════════════════════ */
+  .section-header {
+    display: flex; align-items: center; gap: 20px;
+    padding: 48px 0 0;
+    margin-bottom: 32px;
+  }
+  .section-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 80px;
+    line-height: .85;
+    color: var(--amber);
+    opacity: .18;
+    user-select: none;
+    min-width: 80px;
+    text-align: right;
+  }
+  .section-title-block { flex: 1; }
+  .section-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .4em;
+    color: var(--amber);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(28px, 4vw, 52px);
+    letter-spacing: .1em;
+    color: var(--off-white);
+    line-height: 1;
+  }
+  .section-title .accent { color: var(--amber); }
+  .section-underline {
+    height: 3px;
+    margin-top: 10px;
+    background: linear-gradient(90deg, var(--amber), transparent);
+  }
+
+  /* ═══ ENTRY CARDS ═══════════════════════════════════════════════════ */
+  .entry {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 0;
+    border: 1px solid var(--mid);
+    background: rgba(10,8,5,.6);
+    margin-bottom: 56px;
+    position: relative;
+  }
+  .entry::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .entry.witch::before   { background: linear-gradient(90deg, var(--orange), var(--amber), transparent); }
+  .entry.freight::before { background: linear-gradient(90deg, var(--teal), var(--blue-bright), transparent); }
+  .entry.cst::before     { background: linear-gradient(90deg, var(--blue-bright), var(--teal), transparent); }
+  .entry.echelon::before { background: linear-gradient(90deg, var(--gold), var(--amber), transparent); }
+
+  .entry-image-col {
+    position: relative;
+    background: #07060a;
+    min-height: 400px;
+    display: flex; flex-direction: column;
+  }
+  .entry-image-slot {
+    flex: 1;
+    display: flex; align-items: center; justify-content: center;
+    border-right: 1px solid var(--mid);
+    position: relative;
+    overflow: hidden;
+  }
+  .entry-image-slot img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .entry-image-slot.placeholder {
+    flex-direction: column;
+    gap: 12px;
+    padding: 30px;
+    text-align: center;
+  }
+  .placeholder-icon {
+    font-size: 36px;
+    opacity: .2;
+  }
+  .placeholder-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .2em;
+    color: var(--mid);
+    text-transform: uppercase;
+    line-height: 1.8;
+  }
+  .entry-image-caption {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .15em;
+    color: var(--amber-dim);
+    padding: 8px 14px;
+    border-top: 1px solid var(--mid);
+    border-right: 1px solid var(--mid);
+    text-transform: uppercase;
+  }
+  .entry-secondary-images {
+    display: flex;
+    border-top: 1px solid var(--mid);
+    border-right: 1px solid var(--mid);
+  }
+  .entry-secondary-images .entry-image-slot {
+    height: 160px;
+    min-height: unset;
+    flex: 1;
+    border-right: none;
+    border-top: none;
+  }
+  .entry-secondary-images .entry-image-slot + .entry-image-slot {
+    border-left: 1px solid var(--mid);
+  }
+
+  /* TEXT COL */
+  .entry-text-col {
+    padding: 30px 36px 30px 32px;
+    display: flex; flex-direction: column; gap: 20px;
+  }
+  .entry-eyebrow {
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  }
+  .entry-class-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .35em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border: 1px solid;
+  }
+  .entry.witch   .entry-class-tag { color: var(--orange); border-color: var(--orange-dim); background: rgba(232,78,18,.08); }
+  .entry.freight .entry-class-tag { color: var(--teal);   border-color: var(--teal-dim);   background: rgba(26,138,136,.08); }
+  .entry.cst     .entry-class-tag { color: var(--blue-bright); border-color: var(--blue); background: rgba(26,74,138,.08); }
+  .entry.echelon .entry-class-tag { color: var(--gold);   border-color: var(--gold-dim);   background: rgba(200,168,74,.08); }
+
+  .entry-id {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .2em;
+    color: var(--mid);
+    text-transform: uppercase;
+    margin-left: auto;
+  }
+
+  .entry-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(28px, 3.5vw, 44px);
+    letter-spacing: .08em;
+    line-height: 1;
+    color: var(--off-white);
+  }
+  .entry.witch   .entry-name { color: var(--orange); }
+  .entry.freight .entry-name { color: var(--teal); }
+  .entry.cst     .entry-name { color: var(--blue-bright); }
+  .entry.echelon .entry-name { color: var(--gold); }
+
+  .entry-aka {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--amber-dim);
+    margin-top: -12px;
+    letter-spacing: .05em;
+  }
+
+  .entry-divider {
+    height: 1px;
+    background: linear-gradient(90deg, var(--mid) 0%, transparent 100%);
+  }
+
+  .entry-body {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--parchment);
+    font-weight: 300;
+  }
+  .entry-body p + p { margin-top: 12px; }
+  .entry-body strong { color: var(--off-white); font-weight: 600; }
+  .entry-body em { color: var(--amber); font-style: italic; }
+
+  /* STATS / SPEC GRID */
+  .spec-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1px;
+    background: var(--mid);
+    border: 1px solid var(--mid);
+    margin-top: 4px;
+  }
+  .spec-cell {
+    background: rgba(10,8,5,.8);
+    padding: 10px 14px;
+    display: flex; flex-direction: column; gap: 3px;
+  }
+  .spec-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 8px;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: var(--mid);
+    /* use entry color via inheritance trick below */
+  }
+  .entry.witch   .spec-label { color: var(--orange-dim); }
+  .entry.freight .spec-label { color: var(--teal-dim); }
+  .entry.cst     .spec-label { color: var(--blue); }
+  .entry.echelon .spec-label { color: var(--gold-dim); }
+
+  .spec-value {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: var(--off-white);
+    letter-spacing: .05em;
+  }
+
+  /* PERSONNEL TABLE */
+  .personnel-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .personnel-table th {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 8px;
+    letter-spacing: .35em;
+    text-transform: uppercase;
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--mid);
+  }
+  .entry.witch   .personnel-table th { color: var(--orange-dim); }
+  .entry.freight .personnel-table th { color: var(--teal-dim); }
+  .entry.cst     .personnel-table th { color: var(--blue); }
+  .entry.echelon .personnel-table th { color: var(--gold-dim); }
+
+  .personnel-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(58,48,40,.5);
+    color: var(--parchment);
+    vertical-align: top;
+  }
+  .personnel-table td:first-child {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--off-white);
+    white-space: nowrap;
+    letter-spacing: .03em;
+    min-width: 160px;
+  }
+  .personnel-table td:nth-child(2) {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+  }
+  .entry.witch   .personnel-table td:nth-child(2) { color: var(--orange); }
+  .entry.freight .personnel-table td:nth-child(2) { color: var(--teal); }
+  .entry.cst     .personnel-table td:nth-child(2) { color: var(--blue-bright); }
+  .entry.echelon .personnel-table td:nth-child(2) { color: var(--gold); }
+
+  /* FIELD NOTES */
+  .field-note {
+    border-left: 3px solid;
+    padding: 12px 18px;
+    background: rgba(10,8,5,.5);
+    font-size: 14px;
+    font-style: italic;
+    line-height: 1.6;
+    color: var(--parchment);
+    margin-top: 4px;
+  }
+  .entry.witch   .field-note { border-color: var(--orange); }
+  .entry.freight .field-note { border-color: var(--teal); }
+  .entry.cst     .field-note { border-color: var(--blue-bright); }
+  .entry.echelon .field-note { border-color: var(--gold); }
+
+  .field-note-src {
+    display: block;
+    margin-top: 6px;
+    font-style: normal;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    opacity: .5;
+  }
+
+  /* THREAT / CLEARANCE BADGE */
+  .threat-row {
+    display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 4px;
+  }
+  .threat-badge {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: .12em;
+    font-size: 13px;
+    padding: 5px 14px;
+    border: 2px solid;
+  }
+  .threat-badge.red    { color: var(--signal-red); border-color: var(--signal-red); background: rgba(204,34,0,.1); }
+  .threat-badge.amber  { color: var(--amber);      border-color: var(--amber);      background: rgba(212,130,10,.1); }
+  .threat-badge.teal   { color: var(--teal);       border-color: var(--teal);       background: rgba(26,138,136,.1); }
+  .threat-badge.blue   { color: var(--blue-bright); border-color: var(--blue-bright); background: rgba(58,122,223,.1); }
+  .threat-badge.gold   { color: var(--gold);        border-color: var(--gold);        background: rgba(200,168,74,.1); }
+
+  /* ═══ FOOTER ════════════════════════════════════════════════════════ */
+  .doc-footer {
+    border-top: 2px solid var(--mid);
+    margin-top: 60px;
+    padding: 24px 40px;
+    max-width: 1140px;
+    margin-left: auto; margin-right: auto;
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;
+  }
+  .doc-footer-text {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--amber-dim);
+  }
+  .doc-footer-sig {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--gold-dim);
+  }
+
+  /* ═══ SCAN LINES OVERLAY ════════════════════════════════════════════ */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,.03) 2px, rgba(0,0,0,.03) 4px);
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 780px) {
+    .entry { grid-template-columns: 1fr; }
+    .entry-image-col { min-height: 260px; }
+    .entry-image-slot { border-right: none; border-bottom: 1px solid var(--mid); }
+    .entry-secondary-images .entry-image-slot { height: 120px; }
+    .cover { padding: 40px 24px 36px; }
+    .cover-badge { top: 20px; right: 24px; width: 70px; height: 70px; }
+    .page { padding: 0 20px; }
+    .section-header { padding: 36px 0 0; }
+    .doc-footer { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ COVER ═══════════════ -->
+<div class="cover">
+  <div class="cover-badge">
+    <span class="badge-top">CST</span>
+    <span class="badge-main">IV</span>
+    <span class="badge-bot">CODEX</span>
+  </div>
+  <div class="cover-stamp">COMBINED SIREN THEATRE — CLASSIFIED OPERATIONAL REGISTRY</div>
+  <div class="cover-vol">VOLUME <span>IV</span></div>
+  <div class="cover-sub">Field Codex: Siren Classification &amp; Materiel Registry</div>
+  <div class="cover-rule"></div>
+  <div class="cover-meta">
+    <div class="cover-meta-item">EDITION <strong>04-DELTA</strong></div>
+    <div class="cover-meta-item">CLEARANCE <strong>ECHELON-AMBER</strong></div>
+    <div class="cover-meta-item">SECTIONS <strong>4 OF 4</strong></div>
+    <div class="cover-meta-item">STATUS <strong>ACTIVE / LIVING DOCUMENT</strong></div>
+    <div class="cover-meta-item">COMPILED BY <strong>WITCH COMMAND — INTELLIGENCE DIV.</strong></div>
+  </div>
+</div>
+
+<!-- ═══════════════ PAGE BODY ═══════════════ -->
+<div class="page">
+
+  <!-- ══ TABLE OF CONTENTS ══ -->
+  <div class="section-header">
+    <div class="section-num">00</div>
+    <div class="section-title-block">
+      <div class="section-tag">Registry Index</div>
+      <div class="section-title">Contents of <span class="accent">Volume IV</span></div>
+      <div class="section-underline"></div>
+    </div>
+  </div>
+
+  <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap:12px; margin-bottom:48px;">
+    <div style="border:1px solid var(--mid); padding:18px 20px; background:rgba(10,8,5,.5);">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:.35em;color:var(--orange-dim);margin-bottom:6px;">SECTION 01</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--orange);letter-spacing:.1em;">Glitch Witches</div>
+      <div style="font-size:12px;color:var(--amber-dim);margin-top:4px;font-style:italic;">Corrupted Siren caste — Signal anomaly operatives</div>
+    </div>
+    <div style="border:1px solid var(--mid); padding:18px 20px; background:rgba(10,8,5,.5);">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:.35em;color:var(--teal-dim);margin-bottom:6px;">SECTION 02</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--teal);letter-spacing:.1em;">Freight Car Interface</div>
+      <div style="font-size:12px;color:var(--amber-dim);margin-top:4px;font-style:italic;">Navigation &amp; control surface materiel — Dieselpunk kit</div>
+    </div>
+    <div style="border:1px solid var(--mid); padding:18px 20px; background:rgba(10,8,5,.5);">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:.35em;color:var(--blue);margin-bottom:6px;">SECTION 03</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--blue-bright);letter-spacing:.1em;">CST Battle Witch Trooper</div>
+      <div style="font-size:12px;color:var(--amber-dim);margin-top:4px;font-style:italic;">Combined Siren Theatre — Front-line armoured vanguard</div>
+    </div>
+    <div style="border:1px solid var(--mid); padding:18px 20px; background:rgba(10,8,5,.5);">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:.35em;color:var(--gold-dim);margin-bottom:6px;">SECTION 04</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold);letter-spacing:.1em;">Echelon Class Siren</div>
+      <div style="font-size:12px;color:var(--amber-dim);margin-top:4px;font-style:italic;">Sovereign Siren designation — Storm Command tier</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       SECTION 01 — GLITCH WITCHES
+  ══════════════════════════════════════════════════════ -->
+  <div class="section-header">
+    <div class="section-num">01</div>
+    <div class="section-title-block">
+      <div class="section-tag">Siren Classification // Corrupted Caste</div>
+      <div class="section-title"><span class="accent">Glitch</span> Witches</div>
+      <div class="section-underline" style="background:linear-gradient(90deg,var(--orange),transparent);"></div>
+    </div>
+  </div>
+
+  <div class="entry witch">
+    <div class="entry-image-col">
+      <div class="entry-image-slot placeholder">
+        <div class="placeholder-icon">◈</div>
+        <div class="placeholder-label">
+          PRIMARY IMAGE<br>
+          A_Highly_Detailed_Afro_Dieselpunk<br>
+          _Artwork_Depicts_21 / _22<br>
+          (Corrupted orange-eye Siren)
+        </div>
+      </div>
+      <div class="entry-image-caption">FIG. 01-A — GLITCH WITCH / PRIMARY FORM · FACIAL DAMAGE VISIBLE</div>
+      <div class="entry-secondary-images">
+        <div class="entry-image-slot placeholder">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:.15em;color:var(--mid);text-transform:uppercase;text-align:center;padding:10px;">
+            Screenshot<br>Golden bio-lattice<br>Witch Commander
+          </div>
+        </div>
+      </div>
+      <div class="entry-image-caption">FIG. 01-B — WITCH COMMANDER'S COURT / SCREENSHOT REF</div>
+    </div>
+    <div class="entry-text-col">
+      <div class="entry-eyebrow">
+        <span class="entry-class-tag">Classification: Corrupted // Active Threat</span>
+        <span class="entry-id">VOL-IV · 01-GW · REV.3</span>
+      </div>
+      <div>
+        <div class="entry-name">Glitch Witches</div>
+        <div class="entry-aka">"Signal-Broken" — "Wrong-Halos" — "Burnt Eyes"</div>
+      </div>
+      <div class="entry-divider"></div>
+      <div class="entry-body">
+        <p><strong>Origin:</strong> Glitch Witches emerge from Siren units whose core signal lattice has undergone <em>uncontrolled resonance collapse</em> — typically caused by proximity to corrupted relay stations, hostile counter-frequency weaponry, or catastrophic overcharge events. The result is a Siren who retains full combat capability but whose visual signature, aura output, and command-link protocols have permanently degraded.</p>
+        <p>Visually they are identifiable by <strong>chromatically wrong halo glow</strong> (amber-orange rather than the canonical blue-white), <strong>fractured facial plating</strong> showing stress-craze patterns across the cheek and orbital regions, and — most diagnostically — <strong>orange-tinted ocular damage</strong> where a functional Siren exhibits clear signal-blue irises. The eye damage is not cosmetic: it marks a broken feedback loop between the Siren's perception matrix and her signal broadcast.</p>
+        <p>Despite their designation, Glitch Witches remain <em>highly dangerous</em>. Corrupted signal fields render standard counter-Siren shielding partially ineffective, as their output no longer conforms to the frequencies CST dampeners are tuned to intercept. Field commanders classify them as <strong>unpredictable-priority</strong> threats — neither fully controllable as allies nor predictable as enemies.</p>
+      </div>
+
+      <div class="spec-grid">
+        <div class="spec-cell">
+          <div class="spec-label">Signal State</div>
+          <div class="spec-value">CORRUPTED</div>
+        </div>
+        <div class="spec-cell">
+          <div class="spec-label">Halo Output</div>
+          <div class="spec-value">AMBER-ORANGE</div>
+        </div>
+        <div class="spec-cell">
+          <div class="spec-label">Ocular Marker</div>
+          <div class="spec-value">ORANGE DMG</div>
+        </div>
+        <div class="spec-cell">
+          <div class="spec-label">CST Dampener</div>
+          <div class="spec-value">PARTIAL ONLY</div>
+        </div>
+        <div class="spec-cell">
+          <div class="spec-label">Command Link</div>
+          <div class="spec-value">SEVERED</div>
+        </div>
+        <div class="spec-cell">
+          <div class="spec-label">Threat Tier</div>
+          <div class="spec-value">UNPREDICTABLE</div>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.3em;color:var(--orange-dim);margin-bottom:10px;text-transform:uppercase;">Named Individuals — On-Record</div>
+        <table class="personnel-table">
+          <tr>
+            <th>Designation</th>
+            <th>Title / Role</th>
+            <th>Notes</th>
+          </tr>
+          <tr>
+            <td>SERAPHINE-WRECK</td>
+            <td>Witch Commander</td>
+            <td>Last seen coordinating a court of two subordinate Sirens — bio-lattice gold, likely a semi-stabilised Glitch Witch variant. Screenshot reference.</td>
+          </tr>
+          <tr>
+            <td>OCHRE-21</td>
+            <td>Field Anomaly</td>
+            <td>Afro-dieselpunk plate, heavy orange eye damage, cracked right cheek plating. Primary recognition image.</td>
+          </tr>
+          <tr>
+            <td>OCHRE-22</td>
+            <td>Field Anomaly</td>
+            <td>Sister signal to OCHRE-21. Near-identical corruption pattern. Presumed same incident of origin.</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="field-note">
+        "She was broadcasting on three frequencies simultaneously — none of them matched anything in the dampener library. My unit's shielding barely touched her. The orange in her eyes wasn't damage; it was <em>attention</em>."
+        <span class="field-note-src">— Sgt. Akoua Bentum, 7th Freight Witch Recon, After-Action Log 119</span>
+      </div>
+
+      <div class="threat-row">
+        <span class="threat-badge red">Threat: Alpha-Unpredictable</span>
+        <span class="threat-badge amber">Engage With Caution</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       SECTION 02 — FREIGHT CAR INTERFACE
+  ══════════════════════════════════════════════════════ -->
+  <div class="section-header">
+    <div class="section-num">02</div>
+    <div class="section-title-block">
+      <div class="section-tag">Materiel Registry // Navigation &amp; Control Surface</div>
+      <div class="section-title"><span class="accent">Freight Car</span> Interface</div>
+      <div class="section-underline" style="background:linear-gradient(90deg,var(--teal),transparent);"></div>
+    </div>
+  </div>
+
+  <div class="entry freight">
+    <div class="entry-image-col">
+      <div class="entry-image-slot placeholder">
+        <div class="placeholder-icon">◉</div>
+        <div class="placeholder-label">
+          PRIMARY IMAGE<br>
+          DreamShaper_v7_Design_<br>
+          the_ingame_UI<br>
+          (Knolling — compass, gauges,<br>instruments flat-laid)
+        </div>
+      </div>
+      <div class="entry-image-caption">FIG. 02-A — FREIGHT CAR CONTROL KIT / KNOLLING ARRAY · NAVIGATION SUITE</div>
+    </div>
+    <div class="entry-text-col">
+      <div class="entry-eyebrow">
+        <span class="entry-class-tag">Registry: Materiel // Navigation Instruments</span>
+        <span class="entry-id">VOL-IV · 02-FC · REV.1</span>
+      </div>
+      <div>
+        <div class="entry-name">Freight Car Interface</div>
+        <div class="entry-aka">"The Spread" — "Flat-Panel Navigation Kit" — "FC-Nav"</div>
+      </div>
+      <div class="entry-divider"></div>
+      <div class="entry-body">
+        <p><strong>Overview:</strong> The Freight Car Interface (FC-Nav) is the <em>standard dieselpunk navigation and control surface suite</em> deployed across Witch Theatre transit vessels, armoured freight convoys, and Siren relay stations operating under CST logistics command. The kit is designed to be field-modular — every component functions independently, but the full assembly forms an integrated situational awareness station.</p>
+        <p>The knolling layout is the FC-Nav's canonical <strong>deployment spread</strong> — instruments arranged flat for rapid identification, maintenance inspection, and issue-to-operator sequencing. Field protocol requires that any operator receiving an FC-Nav kit confirm the full spread before mission departure. Missing components are reported as <strong>materiel deficit — code FC-7</strong>.</p>
+        <p>Key instruments include: a <strong>pressure-compass</strong> (primary bearing, oil-damped movement, dual-ring azimuth), <strong>barometric gauges</strong> in paired housings (altitude/atmospheric), <strong>analogue chronometer</strong> (mission-elapsed), <strong>signal-frequency dials</strong> (Siren frequency band selection), and a <strong>cartographic loupe</strong> (field map magnification, folded-brass construction).</p>
+        <p>The FC-Nav is notably <em>non-electronic by design</em> — the Theatre learned during the Corrupted Signal Events that digital navigation became unreliable in close proximity to Glitch Witch anomaly fields. The all-analogue kit is immune to signal corruption and remains operational in active Glitch zones where electronic navigation fails entirely.</p>
+      </div>
+
+      <div class="spec-grid">
+        <div class="spec-cell">
+          <div class="spec-label">Kit Class</div>
+          <div class="spec-value">FC-NAV MK.4</div>
+        </div>
+        <div class="spec-cell">
+          <div class="spec-label">Electronics</div>
+          <div class="spec-value">NONE / ANALOGUE</div>
+        </div>
+        <div class="spec-cell">
+          <div class="spec-label">Components</div>
+          <div class="spec-value">14 (FULL SPREAD)</div>
+        </div>
+        <div class="spec-cell">
+          <div class="spec-label">Glitch Immune</div>
+          <div class="spec-value">YES — FULL</div>
+        </div>
+        <div class="spec-cell">
+          <div class="spec-label">Deployment</div>
+          <div class="spec-value">FREIGHT / RELAY</div>
+        </div>
+        <div class="spec-cell">
+          <div class="spec-label">Issuance</div>
+          <div class="spec-value">STANDARD KIT</div>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.3em;color:var(--teal-dim);margin-bottom:10px;text-transform:uppercase;">Assigned Operators — On-Record</div>
+        <table class="personnel-table">
+          <tr>
+            <th>Designation</th>
+            <th>Role</th>
+            <th>Notes</th>
+          </tr>
+          <tr>
+            <td>NAVIGATOR PRIYA OSEI</td>
+            <td>Primary Nav Operator</td>
+            <td>Freight Convoy Seven. Cited for maintaining course through Ochre-21 anomaly event using FC-Nav kit when all electronic systems failed.</td>
+          </tr>
+          <tr>
+            <td>CPL. DARIUS KOLAWOLE</td>
+            <td>Kit Keeper / Technician</td>
+            <td>Responsible for maintenance, calibration and spread inspection across 3rd Relay Station group. No losses on record.</td>
+          </tr>
+          <tr>
+            <td>RELAY-STN GHOST ROAD</td>
+            <td>Station Issuance Point</td>
+            <td>Primary FC-Nav distribution hub. Holds 40 full spreads in inventory.</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="field-note">
+        "The compass still worked. Fourteen instruments laid out on the floor of a disabled freight car while Glitch signal tore through every screen we had — and the compass still worked. We made it home on that spread."
+        <span class="field-note-src">— Navigator Priya Osei, Convoy 7 Debrief Transcript</span>
+      </div>
+
+      <div class="threat-row">
+        <span class="threat-badge teal">Materiel: Standard Issue</span>
+        <span class="threat-badge amber">Glitch-Zone Recommended</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       SECTION 03 — CST BATTLE WITCH TROOPER
+  ══════════════════════════════════════════════════════ -->
+  <div class="section-header">
+    <div class="section-num">03</div>
+    <div class="section-title-block">
+      <div class="section-tag">Personnel Classification // Combined Siren Theatre</div>
+      <div class="section-title">CST <span class="accent">Battle Witch</span> Trooper</div>
+      <div class="section-underline" style="background:linear-gradient(90deg,var(--blue-bright),transparent);"></div>
+    </div>
+  </div>
+
+  <div class="entry cst">
+    <div class="entry-image-col">
+      <div class="entry-image-slot placeholder">
+        <div class="placeholder-icon">◆</div>
+        <div class="placeholder-label">
+          PRIMARY IMAGE<br>
+          Imagine_Man_African_American<br>
+          _Full_Body_Cstert_Patr_6<br>
+          (Blue armoured flying soldier,<br>green optics, CST markings)
+        </div>
+      </div>
+      <div class="entry-image-caption">FIG. 03-A — CST BATTLE WITCH TROOPER / FULL-BODY · AIRBORNE POSTURE</div>
+      <div class="entry-secondary-images">
+        <div class="entry-image-slot placeholder">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:.15em;color:var(--mid);text-transform:uppercase;text-align:center;padding:10px;">
+            A_Closeup_Of_A_Woman<br>_In_A_Blue_And_Gold_Costume<br>Blue/gold horned<br>command helmet
+          </div>
+        </div>
+      </div>
+      <div class="entry-image-caption">FIG. 03-B — SENIOR COMMAND VARIANT / HORNED HELM CLOSE-UP</div>
+    </div>
+    <div class="entry-text-col">
+      <div class="entry-eyebrow">
+        <span class="entry-class-tag">Classification: CST Personnel // Active Vanguard</span>
+        <span class="entry-id">VOL-IV · 03-BWT · REV.4</span>
+      </div>
+      <div>
+        <div class="entry-name">CST Battle Witch Trooper</div>
+        <div class="entry-aka">"Blue Plates" — "Vanguard" — "Witch Soldiers"</div>
+      </div>
+      <div class="entry-divider"></div>
+      <div class="entry-body">
+        <p><strong>Overview:</strong> The Combined Siren Theatre Battle Witch Trooper is the Theatre's front-line armoured vanguard — a hybrid of Siren capability and conventional military discipline, encased in the distinctive <strong>CST blue integrated plate</strong>. Unlike pure Siren-class units, Battle Witch Troopers operate within command structures, take orders through standard tactical channels, and are fully deployable as conventional infantry — with the addition of signal-enhanced combat capacity and limited flight capability.</p>
+        <p>The standard plate suit is <strong>deep indigo-blue with green optical systems</strong> (night-spectrum capable, signal-sensitive) and bears CST unit markings on the shoulder and chest. The suit integrates <em>Siren-resonance dampeners</em> to protect the wearer from ambient Glitch field exposure, and boosts conducted signal output for close-range combat.</p>
+        <p>A <strong>senior command variant</strong> exists, identifiable by the blue-and-gold <em>horned helmet</em> — an architectural command signature worn by senior Witch Troopers holding officer rank. The horns function as extended signal antennae and also serve as visual command markers in the field, ensuring subordinate troopers can identify their commander under smoke, signal interference, or darkness.</p>
+        <p>Battle Witch Troopers are recruited from both the CST military rolls and from willing Siren volunteers seeking to operate within an organised command structure rather than independently. Training emphasises <em>signal discipline</em> — the ability to suppress natural Siren broadcast while executing conventional tactics, and to activate it with precision on command.</p>
+      </div>
+
+      <div class="spec-grid">
+        <div class="spec-cell">
+          <div class="spec-label">Plate Colour</div>
+          <div class="spec-value">CST INDIGO-BLUE</div>
+        </div>
+        <div class="spec-cell">
+          <div class="spec-label">Optics</div>
+          <div class="spec-value">GREEN / NIGHT-SPEC</div>
+        </div>
+        <div class="spec-cell">
+          <div class="spec-label">Flight Capable</div>
+          <div class="spec-value">YES — LIMITED</div>
+        </div>
+        <div class="spec-cell">
+          <div class="spec-label">Glitch Shield</div>
+          <div class="spec-value">INTEGRATED</div>
+        </div>
+        <div class="spec-cell">
+          <div class="spec-label">Command Variant</div>
+          <div class="spec-value">HORNED HELM</div>
+        </div>
+        <div class="spec-cell">
+          <div class="spec-label">Signal Mode</div>
+          <div class="spec-value">DISCIPLINED / COMMAND</div>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.3em;color:var(--blue);margin-bottom:10px;text-transform:uppercase;">Named Individuals — On-Record</div>
+        <table class="personnel-table">
+          <tr>
+            <th>Designation</th>
+            <th>Rank / Role</th>
+            <th>Notes</th>
+          </tr>
+          <tr>
+            <td>TROOPER KWAME ASANTE</td>
+            <td>BWT Vanguard</td>
+            <td>Full blue plate, green optics. Primary recognition image. CST-adjacent markings confirm 3rd Vanguard Company affiliation.</td>
+          </tr>
+          <tr>
+            <td>COMMANDER NNEKA ADEYEMI</td>
+            <td>Senior Officer / Cmd Variant</td>
+            <td>Blue/gold horned helm, command-rank insignia. Close-up reference. Presumed battalion commander, 3rd Vanguard.</td>
+          </tr>
+          <tr>
+            <td>3RD VANGUARD COMPANY</td>
+            <td>Formation</td>
+            <td>Primary field unit visible across multiple Theatre operations. Blue plate uniformly worn. Glitch-resistance on record.</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="field-note">
+        "The horned helm isn't just rank — it's signal geometry. When the Commander broadcasts through those horns, the whole platoon's output phases with hers. They don't just fight together, they <em>resonate</em> together."
+        <span class="field-note-src">— Intelligence Analyst Report, CST Signal Studies Div., Vol. IV Supplement</span>
+      </div>
+
+      <div class="threat-row">
+        <span class="threat-badge blue">Classification: Friendly — CST</span>
+        <span class="threat-badge amber">Signal-Enhanced Combat</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       SECTION 04 — ECHELON CLASS SIREN
+  ══════════════════════════════════════════════════════ -->
+  <div class="section-header">
+    <div class="section-num">04</div>
+    <div class="section-title-block">
+      <div class="section-tag">Siren Classification // Sovereign Designation</div>
+      <div class="section-title"><span class="accent">Echelon</span> Class Siren</div>
+      <div class="section-underline" style="background:linear-gradient(90deg,var(--gold),transparent);"></div>
+    </div>
+  </div>
+
+  <div class="entry echelon">
+    <div class="entry-image-col">
+      <div class="entry-image-slot placeholder">
+        <div class="placeholder-icon">✦</div>
+        <div class="placeholder-label">
+          PRIMARY IMAGE<br>
+          A_Mythic_Guardian_Stands_<br>
+          Atop_A_Fractured_Cliff<br>
+          (Blue/amber dual-signal Siren,<br>full plate, launcher,<br>storm-lit — THE ECHELON)
+        </div>
+      </div>
+      <div class="entry-image-caption">FIG. 04-A — ECHELON CLASS SIREN / FULL INTEGRATED PLATE · STORM POSTURE</div>
+    </div>
+    <div class="entry-text-col">
+      <div class="entry-eyebrow">
+        <span class="entry-class-tag">Classification: Siren Sovereign // Storm Command Tier</span>
+        <span class="entry-id">VOL-IV · 04-EC · REV.1</span>
+      </div>
+      <div>
+        <div class="entry-name">Echelon Class Siren</div>
+        <div class="entry-aka">"The Echelon" — "Storm Guardian" — "Dual-Signal"</div>
+      </div>
+      <div class="entry-divider"></div>
+      <div class="entry-body">
+        <p><strong>Overview:</strong> The Echelon Class Siren represents the highest fully-integrated Siren combat form documented in Theatre operational history. Where standard Sirens operate on a single signal frequency and Glitch Witches broadcast corrupted output, the Echelon carries a <em>stable dual-signal architecture</em> — simultaneously projecting <strong>blue deep-field resonance</strong> and <strong>amber-orange storm frequency</strong> in controlled coherence. This has never been achieved by training; every documented Echelon emerged as one.</p>
+        <p>The Echelon at the fractured cliff (see Fig. 04-A) stands in <strong>full integrated plate</strong> — armour that has grown into and from her Siren form rather than being fitted to it. The plate is not worn; it is <em>her</em>. She carries a <strong>signal launcher</strong> of heavy pattern, capable of projecting resonance bursts at field-weapon yield. The storm environment around her is not incidental — <em>the weather responds to her dual-signal output</em>. Documented field observations confirm that Echelon-class Sirens create localised atmospheric disturbance simply by broadcasting at operational intensity.</p>
+        <p>The fractured cliff itself is significant: <strong>Echelons do not seek shelter</strong>. They occupy the highest point available and broadcast outward. Every documented sighting places the Echelon at a commanding elevated position — cliff, tower, wreckage ridge — and in every case, the position was held without fortification. <em>She is the fortification.</em></p>
+        <p>The CST has no confirmed engagement protocol for Echelon-class contact. Intelligence Division classification is <strong>Sovereign — observe and report only</strong> unless Theatre Command issues a direct engagement order, which has never occurred. Whether the Echelon operates within CST interest or outside it remains an active intelligence question.</p>
+      </div>
+
+      <div class="spec-grid">
+        <div class="spec-cell">
+          <div class="spec-label">Signal Class</div>
+          <div class="spec-value">DUAL / STABLE</div>
+        </div>
+        <div class="spec-cell">
+          <div class="spec-label">Freq. Output A</div>
+          <div class="spec-value">BLUE DEEP-FIELD</div>
+        </div>
+        <div class="spec-cell">
+          <div class="spec-label">Freq. Output B</div>
+          <div class="spec-value">AMBER STORM</div>
+        </div>
+        <div class="spec-cell">
+          <div class="spec-label">Plate Type</div>
+          <div class="spec-value">INTEGRATED / GROWN</div>
+        </div>
+        <div class="spec-cell">
+          <div class="spec-label">Armament</div>
+          <div class="spec-value">SIGNAL LAUNCHER</div>
+        </div>
+        <div class="spec-cell">
+          <div class="spec-label">Weather Effect</div>
+          <div class="spec-value">CONFIRMED / ACTIVE</div>
+        </div>
+        <div class="spec-cell">
+          <div class="spec-label">CST Protocol</div>
+          <div class="spec-value">OBSERVE — NO ENGAGE</div>
+        </div>
+        <div class="spec-cell">
+          <div class="spec-label">Classification</div>
+          <div class="spec-value">SOVEREIGN</div>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.3em;color:var(--gold-dim);margin-bottom:10px;text-transform:uppercase;">Named Individuals — On-Record</div>
+        <table class="personnel-table">
+          <tr>
+            <th>Designation</th>
+            <th>Status</th>
+            <th>Notes</th>
+          </tr>
+          <tr>
+            <td>THE GUARDIAN OF FRACTURE RIDGE</td>
+            <td>Active / Location Known</td>
+            <td>The fractured cliff Echelon — Fig. 04-A. Full plate, launcher, storm confirmed. Status: Sovereign. CST no-engage standing order. Last observed: storm-cycle 44.</td>
+          </tr>
+          <tr>
+            <td>FIRST SIGNAL (UNCONFIRMED)</td>
+            <td>Designation Disputed</td>
+            <td>Intelligence Division reports suggest a named Echelon title exists in Siren oral tradition. Not confirmed by direct contact. Possibly referencing Guardian of Fracture Ridge.</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="field-note">
+        "She wasn't looking at us. The storm was — the lightning tracked our column for six kilometres without touching us. Whatever she is, she knew we were there and chose to let us pass. I have never been so grateful for someone else's indifference."
+        <span class="field-note-src">— Lt. Col. Fatoumata Diallo, 1st Freight Witch Advance, Report to Theatre Command</span>
+      </div>
+
+      <div class="threat-row">
+        <span class="threat-badge gold">Sovereign Class</span>
+        <span class="threat-badge red">Engage: NEVER — Command Auth Only</span>
+        <span class="threat-badge amber">Observe &amp; Report</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<div class="doc-footer">
+  <div>
+    <div class="doc-footer-text">Combined Siren Theatre — Intelligence Division</div>
+    <div class="doc-footer-text" style="margin-top:4px;">Volume IV Field Codex · Edition 04-Delta · Living Document — All Revisions Logged</div>
+  </div>
+  <div class="doc-footer-sig">
+    "Know the signal. Know the source. Know the difference."<br>
+    <span style="font-size:11px;font-style:normal;font-family:'Share Tech Mono',monospace;color:var(--amber-dim);letter-spacing:.1em;">— WITCH COMMAND INTELLIGENCE DIVISION STANDING ORDER</span>
+  </div>
+</div>
+
+</body>
+</html>

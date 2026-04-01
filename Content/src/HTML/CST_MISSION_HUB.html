@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CST MISSION HUB — COLD BREW: MYSTICS OF MAYHEM</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#08080c;--bg2:#0f0f16;--bg3:#16161f;
+  --border:rgba(255,255,255,0.07);
+  --amber:#EF9F27;--amber-dim:rgba(239,159,39,0.12);
+  --red:#E24B4A;--red-dim:rgba(226,75,74,0.1);
+  --teal:#1D9E75;--teal-dim:rgba(29,158,117,0.1);
+  --purple:#7F77DD;
+  --text:#e8e6e0;--text-dim:rgba(232,230,224,0.55);--text-muted:rgba(232,230,224,0.28);
+  --mono:'Courier New',monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+
+html,body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;overflow-x:hidden}
+
+/* scanlines */
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.025) 2px,rgba(0,0,0,0.025) 4px);pointer-events:none;z-index:9998}
+
+.hub{max-width:1080px;margin:0 auto;padding:0 20px 72px}
+
+/* ── HEADER ── */
+.header{border-bottom:1px solid var(--border);padding:28px 0 20px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.header-tag{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--amber);text-transform:uppercase;margin-bottom:4px}
+.header-title{font-size:22px;font-weight:700;letter-spacing:.05em;color:var(--text);text-transform:uppercase}
+.header-title span{color:var(--amber)}
+.header-sub{font-family:var(--mono);font-size:10px;color:var(--text-dim);margin-top:4px;letter-spacing:.07em}
+.header-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.classification{font-family:var(--mono);font-size:9px;letter-spacing:.2em;border:1px solid var(--red);color:var(--red);padding:3px 8px;text-transform:uppercase}
+.session-id{font-family:var(--mono);font-size:9px;color:var(--text-muted);letter-spacing:.1em}
+
+/* ── SECTION HEADERS ── */
+.section-header{display:flex;align-items:center;gap:12px;margin:32px 0 14px}
+.section-label{font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--amber);text-transform:uppercase;white-space:nowrap}
+.section-line{flex:1;height:1px;background:var(--border)}
+.section-right{font-family:var(--mono);font-size:10px;color:var(--text-muted);white-space:nowrap}
+
+/* ── EPISODE GRID ── */
+.episode-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:640px){.episode-grid{grid-template-columns:1fr}}
+
+.ep-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:18px;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden;transition:border-color .2s;cursor:pointer}
+.ep-card:hover{border-color:rgba(239,159,39,.25)}
+.ep-card.success-state{border-color:rgba(29,158,117,.4)}
+.ep-card-bar{position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--amber),transparent);opacity:0;transition:opacity .3s}
+.ep-card:hover .ep-card-bar{opacity:1}
+.ep-card.success-state .ep-card-bar{background:linear-gradient(90deg,transparent,var(--teal),transparent);opacity:1}
+.ep-num{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--text-muted)}
+.ep-title{font-size:15px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.04em;line-height:1.2}
+.ep-location{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:.07em;margin-top:2px}
+.ep-boss-label{font-family:var(--mono);font-size:9px;color:var(--text-muted);letter-spacing:.08em;text-transform:uppercase}
+.ep-boss-name{font-family:var(--mono);font-size:10px;color:var(--amber);letter-spacing:.05em}
+.ep-status{display:flex;align-items:center;gap:7px;min-height:20px}
+.ep-dot{width:6px;height:6px;border-radius:50%;background:var(--text-muted);flex-shrink:0}
+.ep-dot.success{background:var(--teal);box-shadow:0 0 8px var(--teal);animation:pulse-teal 2s infinite}
+.ep-dot.partial{background:var(--amber)}
+.ep-dot.failure{background:var(--red)}
+@keyframes pulse-teal{0%,100%{box-shadow:0 0 4px var(--teal)}50%{box-shadow:0 0 12px var(--teal)}}
+.ep-status-text{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--text-muted)}
+.ep-badge{font-family:var(--mono);font-size:9px;padding:2px 6px;border-radius:3px;text-transform:uppercase;letter-spacing:.1em;border:1px solid;margin-left:auto}
+.ep-badge.success{background:rgba(29,158,117,.12);color:var(--teal);border-color:rgba(29,158,117,.3)}
+.ep-badge.partial{background:rgba(239,159,39,.1);color:var(--amber);border-color:rgba(239,159,39,.25)}
+.ep-badge.failure{background:rgba(226,75,74,.08);color:var(--red);border-color:rgba(226,75,74,.2)}
+.ep-launch-btn{background:transparent;border:1px solid var(--amber);color:var(--amber);padding:8px 14px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;border-radius:4px;width:100%;transition:all .14s}
+.ep-launch-btn:hover{background:var(--amber);color:var(--bg)}
+.ep-launch-btn.replay{border-color:var(--teal);color:var(--teal)}
+.ep-launch-btn.replay:hover{background:var(--teal);color:var(--bg)}
+
+/* ── OPERATIVE ROSTER ── */
+.roster-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:7px}
+
+.unit-card{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:11px;display:flex;flex-direction:column;gap:5px;position:relative;transition:all .18s}
+.unit-card.unlocked{border-color:rgba(239,159,39,.18)}
+.unit-card.unlocked:hover{border-color:rgba(239,159,39,.38);transform:translateY(-2px)}
+.unit-card.ert-cell{border-color:rgba(226,75,74,.3);background:rgba(226,75,74,.03)}
+.unit-card.ert-cell.unlocked{border-color:rgba(226,75,74,.55)}
+.unit-ep-badge{font-family:var(--mono);font-size:8px;letter-spacing:.14em;color:var(--text-muted);text-transform:uppercase}
+.unit-name{font-size:12px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.04em;line-height:1.2}
+.unit-card.locked .unit-name{color:var(--text-muted)}
+.unit-role{font-family:var(--mono);font-size:9px;color:var(--amber);letter-spacing:.07em;line-height:1.3}
+.unit-card.locked .unit-role{color:var(--text-muted)}
+.unit-indicator{position:absolute;top:9px;right:9px;width:6px;height:6px;border-radius:50%}
+.unit-ert-tag{font-family:var(--mono);font-size:8px;color:var(--red);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
+
+/* ── ERT PANEL ── */
+.ert-panel{background:var(--bg2);border:1px solid rgba(226,75,74,.18);border-radius:8px;padding:20px;position:relative;overflow:hidden}
+.ert-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--red),transparent)}
+
+.ert-header{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+.ert-title{font-family:var(--mono);font-size:10px;color:var(--red);letter-spacing:.2em;text-transform:uppercase;margin-bottom:5px}
+.ert-desc{font-size:12px;color:var(--text-dim);line-height:1.6}
+.ert-signal{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--text-muted);white-space:nowrap;margin-top:4px}
+
+.ert-locks{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:640px){.ert-locks{grid-template-columns:1fr}}
+
+.ert-lock{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:14px;display:flex;flex-direction:column;gap:5px;transition:all .3s}
+.ert-lock.cleared{border-color:rgba(29,158,117,.35);background:rgba(29,158,117,.04)}
+.ert-lock-top{display:flex;align-items:center;gap:8px}
+.ert-lock-icon{width:18px;height:18px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--text-muted);transition:all .3s;flex-shrink:0;font-family:var(--mono)}
+.ert-lock.cleared .ert-lock-icon{border-color:var(--teal);background:rgba(29,158,117,.18);color:var(--teal)}
+.ert-lock-name{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);transition:color .3s}
+.ert-lock.cleared .ert-lock-name{color:var(--teal)}
+.ert-lock-desc{font-size:11px;color:var(--text-muted);line-height:1.5}
+.ert-lock.cleared .ert-lock-desc{color:var(--text-dim)}
+
+.ert-bar{height:2px;background:var(--bg3);border-radius:1px;margin-top:16px;overflow:hidden}
+.ert-bar-fill{height:100%;background:linear-gradient(90deg,var(--red),var(--amber));border-radius:1px;transition:width 1s ease}
+.ert-counter{font-family:var(--mono);font-size:10px;color:var(--text-muted);text-align:right;margin-top:7px;letter-spacing:.1em}
+.ert-counter span{color:var(--amber)}
+
+/* ── EP04 CARD ── */
+.ep04-wrapper{margin-top:10px;display:none}
+.ep04-card{background:var(--bg2);border:1px solid rgba(226,75,74,.45);border-radius:8px;padding:18px;cursor:pointer;transition:border-color .2s;position:relative;overflow:hidden}
+.ep04-card:hover{border-color:rgba(226,75,74,.7)}
+.ep04-bar{position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--red),transparent)}
+.ep04-grid{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.ep04-info{flex:1;min-width:160px}
+.ep04-num{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--red)}
+.ep04-title{font-size:20px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.06em;margin:3px 0}
+.ep04-op{font-family:var(--mono);font-size:10px;color:var(--red);letter-spacing:.06em}
+.ep04-status{display:flex;align-items:center;gap:7px;margin-top:8px}
+.ep04-dot{width:6px;height:6px;border-radius:50%;background:var(--red);box-shadow:0 0 8px var(--red);animation:pulse-red 1.5s infinite}
+@keyframes pulse-red{0%,100%{box-shadow:0 0 4px var(--red)}50%{box-shadow:0 0 14px var(--red)}}
+.ep04-launch-btn{background:transparent;border:1px solid var(--red);color:var(--red);padding:10px 22px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;border-radius:4px;white-space:nowrap;transition:all .14s;flex-shrink:0}
+.ep04-launch-btn:hover{background:var(--red);color:#fff}
+
+/* ── DEBUG PANEL ── */
+.debug-panel{display:none;background:rgba(0,0,0,.75);border:1px solid rgba(239,159,39,.35);border-radius:8px;padding:16px;margin-top:28px}
+.debug-panel.visible{display:block}
+.debug-label{font-family:var(--mono);font-size:9px;color:var(--amber);letter-spacing:.2em;margin-bottom:12px;text-transform:uppercase}
+.debug-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:6px}
+.debug-btn{background:rgba(239,159,39,.08);border:1px solid rgba(239,159,39,.25);color:var(--amber);padding:6px 10px;font-family:var(--mono);font-size:10px;letter-spacing:.09em;cursor:pointer;border-radius:3px;text-align:left;transition:background .12s}
+.debug-btn:hover{background:rgba(239,159,39,.18)}
+
+/* ── FOOTER ── */
+.footer{border-top:1px solid var(--border);margin-top:48px;padding-top:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.footer-text{font-family:var(--mono);font-size:9px;color:var(--text-muted);letter-spacing:.09em}
+.footer-hint{font-family:var(--mono);font-size:9px;letter-spacing:.09em;color:rgba(226,75,74,.22);cursor:default;transition:color .4s}
+
+/* ── TRANSMISSION OVERLAY ── */
+#tx-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:9999;align-items:center;justify-content:center;flex-direction:column;overflow-y:auto}
+#tx-overlay.active{display:flex}
+
+.tx-inner{max-width:620px;width:100%;padding:48px 24px;text-align:center}
+.tx-static{font-family:var(--mono);font-size:9px;color:rgba(226,75,74,.5);letter-spacing:.05em;margin-bottom:18px;animation:glitch .12s infinite}
+.tx-header{font-family:var(--mono);font-size:10px;letter-spacing:.3em;color:var(--red);text-transform:uppercase;margin-bottom:8px;animation:glitch .09s infinite}
+.tx-title{font-size:40px;font-weight:800;color:var(--text);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;line-height:1}
+.tx-title span{color:var(--red)}
+.tx-sub{font-family:var(--mono);font-size:11px;color:var(--text-dim);letter-spacing:.18em;margin-bottom:28px}
+.tx-rule{width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--red),transparent);margin:22px 0}
+
+.tx-body{font-family:var(--mono);font-size:12px;color:var(--text-dim);line-height:1.85;text-align:left;border-left:2px solid rgba(226,75,74,.35);padding-left:18px;margin-bottom:28px;letter-spacing:.03em}
+.tx-line{display:block;opacity:0;animation:fadeUp .3s forwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+.tx-cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;opacity:0;transition:opacity .5s}
+.tx-cta.visible{opacity:1}
+.tx-btn{padding:12px 28px;font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;border-radius:4px;transition:all .14s;border:none}
+.tx-btn-primary{background:var(--red);color:#fff}
+.tx-btn-primary:hover{background:#ff5c5b;transform:translateY(-1px)}
+.tx-btn-secondary{background:transparent;border:1px solid rgba(255,255,255,.18);color:var(--text-dim)}
+.tx-btn-secondary:hover{border-color:rgba(255,255,255,.35);color:var(--text)}
+
+/* ── GLITCH + SHAKE ── */
+@keyframes glitch{0%,88%,100%{transform:none;filter:none}89%{transform:skewX(1.5deg) translateX(2px);filter:blur(.4px)}91%{transform:skewX(-1deg) translateX(-2px)}94%{transform:none}97%{transform:skewX(.5deg) translateX(1px)}}
+@keyframes shake{0%,100%{transform:none}15%{transform:translate(-3px,2px)}30%{transform:translate(3px,-2px)}45%{transform:translate(-2px,-1px)}65%{transform:translate(2px,1px)}80%{transform:translate(-1px,0)}}
+.shake{animation:shake .45s ease}
+
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
+</style>
+</head>
+<body>
+<div class="hub">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div>
+      <div class="header-tag">// CST MISSION HUB — ARC 01–03 + ERT CHANNEL</div>
+      <div class="header-title">COLD BREW: <span>MYSTICS OF MAYHEM</span></div>
+      <div class="header-sub">BOUNDARY OPERATIONS · DEEP TRANSIT CONFLICT · VAEL'KHARI INCURSION RESPONSE</div>
+    </div>
+    <div class="header-right">
+      <div class="classification">OMEGA CLEARANCE</div>
+      <div class="session-id" id="session-id">SESSION: ——</div>
+    </div>
+  </header>
+
+  <!-- EPISODE GRID -->
+  <div class="section-header">
+    <span class="section-label">// ACTIVE OPERATIONS</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="episode-grid">
+    <div class="ep-card" id="ep01-card">
+      <div class="ep-card-bar"></div>
+      <div>
+        <div class="ep-num">EP.01</div>
+        <div class="ep-title">Cold Brew</div>
+        <div class="ep-location">// ENGINE HALL</div>
+      </div>
+      <div>
+        <div class="ep-boss-label">BOSS //</div>
+        <div class="ep-boss-name">TAUR-NUPHARI — SIREN WITCH</div>
+      </div>
+      <div class="ep-status">
+        <div class="ep-dot" id="ep01-dot"></div>
+        <span class="ep-status-text" id="ep01-txt">UNPLAYED</span>
+        <span id="ep01-badge"></span>
+      </div>
+      <button class="ep-launch-btn" id="ep01-btn" onclick="launchEp(1)">LAUNCH EPISODE ▶</button>
+    </div>
+
+    <div class="ep-card" id="ep02-card">
+      <div class="ep-card-bar"></div>
+      <div>
+        <div class="ep-num">EP.02</div>
+        <div class="ep-title">Dead Stone</div>
+        <div class="ep-location">// DEAD STONE STATION</div>
+      </div>
+      <div>
+        <div class="ep-boss-label">BOSS //</div>
+        <div class="ep-boss-name">THE TERROR KING — ANCIENT SOVEREIGN</div>
+      </div>
+      <div class="ep-status">
+        <div class="ep-dot" id="ep02-dot"></div>
+        <span class="ep-status-text" id="ep02-txt">UNPLAYED</span>
+        <span id="ep02-badge"></span>
+      </div>
+      <button class="ep-launch-btn" id="ep02-btn" onclick="launchEp(2)">LAUNCH EPISODE ▶</button>
+    </div>
+
+    <div class="ep-card" id="ep03-card">
+      <div class="ep-card-bar"></div>
+      <div>
+        <div class="ep-num">EP.03</div>
+        <div class="ep-title">Styx Station</div>
+        <div class="ep-location">// BOUNDARY PORTAL 7</div>
+      </div>
+      <div>
+        <div class="ep-boss-label">BOSS //</div>
+        <div class="ep-boss-name">OSSUARY WARDEN — DEATH SOVEREIGN</div>
+      </div>
+      <div class="ep-status">
+        <div class="ep-dot" id="ep03-dot"></div>
+        <span class="ep-status-text" id="ep03-txt">UNPLAYED</span>
+        <span id="ep03-badge"></span>
+      </div>
+      <button class="ep-launch-btn" id="ep03-btn" onclick="launchEp(3)">LAUNCH EPISODE ▶</button>
+    </div>
+  </div>
+
+  <!-- EP04 CARD (hidden until ERT) -->
+  <div class="ep04-wrapper" id="ep04-wrapper">
+    <div class="ep04-card" onclick="launchEp04()">
+      <div class="ep04-bar"></div>
+      <div class="ep04-grid">
+        <div class="ep04-info">
+          <div class="ep04-num">EP.04 — CLASSIFIED</div>
+          <div class="ep04-title">SWAT</div>
+          <div class="ep04-op">OPERATION // CST-ERT DEPLOYMENT — PORTAL 4 CONVERGENCE</div>
+          <div class="ep04-status">
+            <div class="ep04-dot"></div>
+            <span style="font-family:var(--mono);font-size:10px;color:var(--red);letter-spacing:.1em;">TRANSMISSION RECEIVED — AWAITING DEPLOYMENT</span>
+          </div>
+        </div>
+        <button class="ep04-launch-btn">ACCESS EP.04 ▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPERATIVE ROSTER -->
+  <div class="section-header">
+    <span class="section-label">// OPERATIVE ROSTER — FULL COLLECTION</span>
+    <div class="section-line"></div>
+    <span class="section-right" id="roster-count">0 / 12 UNLOCKED</span>
+  </div>
+  <div class="roster-grid" id="roster-grid"></div>
+
+  <!-- ERT STATUS -->
+  <div class="section-header">
+    <span class="section-label">// ERT SIGNAL STATUS</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="ert-panel">
+    <div class="ert-header">
+      <div>
+        <div class="ert-title">CLASSIFIED SIGNAL — ACTIVE MONITORING</div>
+        <div class="ert-desc">Three convergence locks must align before the channel opens.<br>All conditions must be met simultaneously to receive the transmission.</div>
+      </div>
+      <div class="ert-signal" id="ert-signal">SIGNAL: DORMANT</div>
+    </div>
+
+    <div class="ert-locks">
+      <div class="ert-lock" id="lock-card">
+        <div class="ert-lock-top">
+          <div class="ert-lock-icon" id="icon-card">■</div>
+          <div class="ert-lock-name">Card convergence</div>
+        </div>
+        <div class="ert-lock-desc">The ERT cell must be fully assembled. Three specific operatives across the arc — their convergence unlocks the frequency.</div>
+      </div>
+      <div class="ert-lock" id="lock-ending">
+        <div class="ert-lock-top">
+          <div class="ert-lock-icon" id="icon-ending">■</div>
+          <div class="ert-lock-name">Ending convergence</div>
+        </div>
+        <div class="ert-lock-desc">The full arc must be resolved with operational success. A clean run through all three stations is required.</div>
+      </div>
+      <div class="ert-lock" id="lock-code">
+        <div class="ert-lock-top">
+          <div class="ert-lock-icon" id="icon-code">■</div>
+          <div class="ert-lock-name">Operator code</div>
+        </div>
+        <div class="ert-lock-desc">The channel frequency requires a broadcast code. Those who know the designation know the code.</div>
+      </div>
+    </div>
+
+    <div class="ert-bar"><div class="ert-bar-fill" id="ert-fill" style="width:0%"></div></div>
+    <div class="ert-counter"><span id="ert-count">0</span> / 3 LOCKS CLEARED</div>
+  </div>
+
+  <!-- DEBUG PANEL (type DEBUG to reveal) -->
+  <div class="debug-panel" id="debug-panel">
+    <div class="debug-label">// DEBUG OVERRIDE — OPERATOR ACCESS</div>
+    <div class="debug-grid">
+      <button class="debug-btn" onclick="dbSetEp('ep01','success',EP01_CARDS)">EP01: SUCCESS + all cards</button>
+      <button class="debug-btn" onclick="dbSetEp('ep02','success',EP02_CARDS)">EP02: SUCCESS + all cards</button>
+      <button class="debug-btn" onclick="dbSetEp('ep03','success',EP03_CARDS)">EP03: SUCCESS + all cards</button>
+      <button class="debug-btn" onclick="dbSetEp('ep01','partial',['forge_mystic','rail_worker'])">EP01: PARTIAL</button>
+      <button class="debug-btn" onclick="dbSetEp('ep02','failure',[])">EP02: FAILURE (no cards)</button>
+      <button class="debug-btn" onclick="dbSetAll()">UNLOCK EVERYTHING</button>
+      <button class="debug-btn" onclick="dbClear()">CLEAR ALL SAVES</button>
+      <button class="debug-btn" onclick="fireTx()">FORCE TRANSMISSION</button>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-text">CST MISSION HUB v1.0 · ALL EPISODE FILES MUST BE IN THE SAME DIRECTORY</div>
+    <div class="footer-hint" id="footer-hint">···</div>
+  </div>
+</div>
+
+<!-- TRANSMISSION OVERLAY -->
+<div id="tx-overlay">
+  <div class="tx-inner">
+    <div class="tx-static">////// SIGNAL ACQUIRED /// CHANNEL DECRYPTING /// AUTHENTICATION COMPLETE //////</div>
+    <div class="tx-header">INCOMING TRANSMISSION — CST-ERT COMMAND RELAY</div>
+    <div class="tx-title">OPERATION <span>SWAT</span></div>
+    <div class="tx-sub">// CLEARANCE VERIFIED // CHANNEL AUTHENTICATED // DEPLOYING NOW //</div>
+    <div class="tx-rule"></div>
+    <div class="tx-body" id="tx-body"></div>
+    <div class="tx-cta" id="tx-cta">
+      <button class="tx-btn tx-btn-primary" onclick="acceptTx()">REPORT FOR DUTY ▶</button>
+      <button class="tx-btn tx-btn-secondary" onclick="closeTx()">STAND BY</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════
+   CST MISSION HUB — CORE ENGINE v1.0
+   ════════════════════════════════════════════ */
+
+// ── CONFIG ──
+const EP_FILES = {
+  1: 'CST_EP01_COLD_BREW.html',
+  2: 'CST_EP02_DEAD_STONE.html',
+  3: 'CST_EP03_STYX_STATION.html',
+  4: 'CST_EP04_SWAT.html',
+};
+
+// ERT Cell — the three operatives that must be assembled
+const ERT_CELL = ['phase_spy', 'glitch_witch', 'echo_witch'];
+
+// Operator broadcast code (type anywhere on page)
+const ERT_CODE = 'ERT';
+
+const EP01_CARDS = ['forge_mystic','rail_worker','drone_pilot','alchemist','phase_spy','anchor_gunner'];
+const EP02_CARDS = ['steamfitter','raijin_colossus','glitch_witch'];
+const EP03_CARDS = ['echo_witch','bone_mechanic','styx_navigator'];
+
+const ALL_UNITS = [
+  { id:'forge_mystic',    name:'Forge Mystic',      role:'FIRE / CONSTRUCTION',    ep:1, ert:false },
+  { id:'rail_worker',     name:'Rail Worker',        role:'INFRASTRUCTURE',         ep:1, ert:false },
+  { id:'drone_pilot',     name:'Drone Pilot',        role:'RECON / AIR OPS',        ep:1, ert:false },
+  { id:'alchemist',       name:'Alchemist',          role:'TRANSMUTATION',          ep:1, ert:false },
+  { id:'phase_spy',       name:'Phase Spy',          role:'INFILTRATION / INTEL',   ep:1, ert:true  },
+  { id:'anchor_gunner',   name:'Anchor Gunner',      role:'HEAVY WEAPONS',          ep:1, ert:false },
+  { id:'steamfitter',     name:'Steamfitter',        role:'MECHANICAL / STEAM',     ep:2, ert:false },
+  { id:'raijin_colossus', name:'Raijin Colossus',    role:'LIGHTNING / TITAN',      ep:2, ert:false },
+  { id:'glitch_witch',    name:'Glitch Witch',       role:'DIGITAL DISRUPTION',     ep:2, ert:true  },
+  { id:'echo_witch',      name:'Echo Witch',         role:'RESONANCE / SOUND',      ep:3, ert:true  },
+  { id:'bone_mechanic',   name:'Bone Mechanic',      role:'NECROTIC REPAIR',        ep:3, ert:false },
+  { id:'styx_navigator',  name:'Styx Navigator',     role:'PORTAL TRAVERSAL',       ep:3, ert:false },
+];
+
+const EP_COLORS = { 1:'#EF9F27', 2:'#7F77DD', 3:'#1D9E75' };
+
+// ── STATE ──
+const S = {
+  saves: { ep01:null, ep02:null, ep03:null },
+  locks: { card:false, ending:false, code:false },
+  ertUnlocked: false,
+  ep04Access: false,
+};
+
+let keyBuf = '';
+let dbgBuf = '';
+
+// ── AUDIO ──
+let actx = null;
+const AC = () => actx || (actx = new (window.AudioContext || window.webkitAudioContext)());
+
+function tone(freq, type, dur, vol=0.12) {
+  try {
+    const c = AC(), o = c.createOscillator(), g = c.createGain();
+    o.connect(g); g.connect(c.destination);
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(vol, c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + dur);
+    o.start(); o.stop(c.currentTime + dur);
+  } catch(e) {}
+}
+
+function playUnlock() {
+  tone(880,'sine',.07,.1);
+  setTimeout(()=>tone(1320,'sine',.12,.09),75);
+  setTimeout(()=>tone(1760,'sine',.18,.07),150);
+}
+
+function playERT() {
+  [220,330,440,660,880,1320].forEach((f,i) => setTimeout(()=>tone(f,'sawtooth',.14,.07), i*70));
+  setTimeout(()=>[1760,1320,880,660].forEach((f,i)=>setTimeout(()=>tone(f,'square',.12,.08),i*90)), 520);
+}
+
+function playStatic() {
+  try {
+    const c = AC(), n = c.sampleRate * .35;
+    const buf = c.createBuffer(1,n,c.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i=0;i<n;i++) d[i]=(Math.random()*2-1)*.18;
+    const s = c.createBufferSource(), g = c.createGain();
+    s.buffer = buf; s.connect(g); g.connect(c.destination);
+    g.gain.setValueAtTime(.5, c.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001, c.currentTime+.35);
+    s.start();
+  } catch(e) {}
+}
+
+// ── LOCALSTORAGE ──
+// Reads save data gracefully across multiple possible key patterns
+// so it works with however the individual episodes wrote their saves
+function readSave(ep) {
+  const patterns = [`cst_${ep}_save`, `cst_${ep}`, `${ep}_save`, `cst_${ep}_progress`];
+  for (const k of patterns) {
+    const raw = localStorage.getItem(k);
+    if (raw) { try { return JSON.parse(raw); } catch(e) {} }
+  }
+  // Try reading individual keys (flat schema)
+  const ending   = localStorage.getItem(`cst_${ep}_ending`);
+  const rawCards = localStorage.getItem(`cst_${ep}_unlocks`);
+  const complete = localStorage.getItem(`cst_${ep}_complete`);
+  if (ending || rawCards || complete) {
+    let unlocks = [];
+    try { unlocks = JSON.parse(rawCards || '[]'); } catch(e) {}
+    return { ending, unlocks, complete: complete === 'true' };
+  }
+  return null;
+}
+
+function writeSave(ep, data) {
+  localStorage.setItem(`cst_${ep}_save`, JSON.stringify(data));
+}
+
+// ── NORMALIZE ──
+const norm = s => (s||'').toLowerCase().replace(/[\s\-_]+/g,'');
+
+// ── LOAD ──
+function load() {
+  S.saves.ep01 = readSave('ep01');
+  S.saves.ep02 = readSave('ep02');
+  S.saves.ep03 = readSave('ep03');
+  S.ertUnlocked = localStorage.getItem('cst_ert_unlocked') === 'true';
+  S.ep04Access  = localStorage.getItem('cst_ep04_access')  === 'true';
+}
+
+// ── CHECK LOCKS ──
+function checkLocks() {
+  const allCards = [
+    ...(S.saves.ep01?.unlocks || []),
+    ...(S.saves.ep02?.unlocks || []),
+    ...(S.saves.ep03?.unlocks || []),
+  ].map(norm);
+
+  // LOCK 1 — Card Convergence: Phase Spy + Glitch Witch + Echo Witch all collected
+  const prev1 = S.locks.card;
+  S.locks.card = ERT_CELL.every(id => allCards.some(u => u.includes(norm(id))));
+  if (!prev1 && S.locks.card) { playUnlock(); hintUpdate(); }
+
+  // LOCK 2 — Ending Convergence: SUCCESS on EP01 + EP02, any completion on EP03
+  const success = ['success','complete','win'];
+  const ep01ok = success.includes(norm(S.saves.ep01?.ending || ''));
+  const ep02ok = success.includes(norm(S.saves.ep02?.ending || ''));
+  const ep03ok = !!(S.saves.ep03?.complete || S.saves.ep03?.ending);
+  const prev2 = S.locks.ending;
+  S.locks.ending = ep01ok && ep02ok && ep03ok;
+  if (!prev2 && S.locks.ending) { playUnlock(); hintUpdate(); }
+}
+
+function checkAll() {
+  checkLocks();
+  if (S.locks.card && S.locks.ending && S.locks.code && !S.ertUnlocked) {
+    S.ertUnlocked = true;
+    localStorage.setItem('cst_ert_unlocked','true');
+    setTimeout(fireTx, 400);
+  }
+  renderERT();
+}
+
+// ── KEYBOARD LISTENER ──
+document.addEventListener('keydown', e => {
+  if (e.key.length === 1) {
+    const ch = e.key.toUpperCase();
+
+    // ERT code
+    keyBuf = (keyBuf + ch).slice(-ERT_CODE.length);
+    if (keyBuf === ERT_CODE && !S.locks.code) {
+      S.locks.code = true;
+      hintSet('OPERATOR CODE ACCEPTED', 'var(--teal)');
+      checkAll();
+    }
+
+    // Debug code
+    dbgBuf = (dbgBuf + ch).slice(-5);
+    if (dbgBuf === 'DEBUG') {
+      const p = document.getElementById('debug-panel');
+      p.className = 'debug-panel' + (p.classList.contains('visible') ? '' : ' visible');
+      dbgBuf = '';
+    }
+  }
+});
+
+// ── RENDER EPISODE CARDS ──
+function renderEps() {
+  const EPS = [
+    { key:'ep01', num:1 },
+    { key:'ep02', num:2 },
+    { key:'ep03', num:3 },
+  ];
+
+  EPS.forEach(({key, num}) => {
+    const save = S.saves[key];
+    const card = document.getElementById(`${key}-card`);
+    const dot  = document.getElementById(`${key}-dot`);
+    const txt  = document.getElementById(`${key}-txt`);
+    const bdg  = document.getElementById(`${key}-badge`);
+    const btn  = document.getElementById(`${key}-btn`);
+
+    if (!save) {
+      card.className = 'ep-card';
+      dot.className  = 'ep-dot';
+      txt.textContent = 'UNPLAYED';
+      txt.style.color = 'var(--text-muted)';
+      bdg.innerHTML   = '';
+      btn.textContent = 'LAUNCH EPISODE ▶';
+      btn.className   = 'ep-launch-btn';
+    } else {
+      const end = (save.ending || 'partial').toLowerCase();
+      const isSuccess = ['success','complete','win'].includes(end);
+      card.className = `ep-card ${isSuccess ? 'success-state' : ''}`;
+      dot.className  = `ep-dot ${isSuccess ? 'success' : end === 'failure' ? 'failure' : 'partial'}`;
+      txt.textContent = isSuccess ? 'MISSION COMPLETE' : end === 'failure' ? 'MISSION FAILED' : 'PARTIAL CLEAR';
+      txt.style.color = isSuccess ? 'var(--teal)' : end === 'failure' ? 'var(--red)' : 'var(--amber)';
+      bdg.innerHTML   = `<span class="ep-badge ${isSuccess ? 'success' : end}">${end.toUpperCase()}</span>`;
+      btn.textContent = 'REPLAY EPISODE ↺';
+      btn.className   = `ep-launch-btn ${isSuccess ? 'replay' : ''}`;
+    }
+  });
+}
+
+// ── RENDER ROSTER ──
+function renderRoster() {
+  const allCards = [
+    ...(S.saves.ep01?.unlocks || []),
+    ...(S.saves.ep02?.unlocks || []),
+    ...(S.saves.ep03?.unlocks || []),
+  ].map(norm);
+
+  const isUnlocked = id => allCards.some(u => u.includes(norm(id)));
+  let total = 0;
+
+  const html = ALL_UNITS.map(u => {
+    const unlocked = isUnlocked(u.id);
+    if (unlocked) total++;
+    const col = EP_COLORS[u.ep];
+    const indicatorStyle = unlocked
+      ? `background:${col};box-shadow:0 0 6px ${col}`
+      : 'background:rgba(255,255,255,.1)';
+
+    return `<div class="unit-card ${unlocked?'unlocked':'locked'} ${u.ert?'ert-cell':''}">
+      <div class="unit-indicator" style="${indicatorStyle}"></div>
+      <div class="unit-ep-badge">EP.0${u.ep}</div>
+      <div class="unit-name">${u.name}</div>
+      <div class="unit-role">${unlocked ? u.role : '////// LOCKED'}</div>
+      ${u.ert ? `<div class="unit-ert-tag">${unlocked ? '◆ ERT CELL' : '◆ [CLASSIFIED]'}</div>` : ''}
+    </div>`;
+  }).join('');
+
+  document.getElementById('roster-grid').innerHTML = html;
+  document.getElementById('roster-count').textContent = `${total} / 12 UNLOCKED`;
+}
+
+// ── RENDER ERT ──
+function renderERT() {
+  const {card, ending, code} = S.locks;
+  const cleared = [card, ending, code].filter(Boolean).length;
+
+  const setLock = (id, iconId, cleared) => {
+    document.getElementById(id).className    = `ert-lock${cleared?' cleared':''}`;
+    document.getElementById(iconId).textContent = cleared ? '✓' : '■';
+  };
+  setLock('lock-card',   'icon-card',   card);
+  setLock('lock-ending', 'icon-ending', ending);
+  setLock('lock-code',   'icon-code',   code);
+
+  document.getElementById('ert-fill').style.width = `${(cleared/3)*100}%`;
+  document.getElementById('ert-count').textContent = cleared;
+
+  const sig = document.getElementById('ert-signal');
+  if (cleared === 0) { sig.textContent = 'SIGNAL: DORMANT'; sig.style.color = 'var(--text-muted)'; }
+  else if (cleared === 1) { sig.textContent = 'SIGNAL: FAINT'; sig.style.color = 'var(--amber)'; }
+  else if (cleared === 2) { sig.textContent = 'SIGNAL: STRONG — 1 LOCK REMAINING'; sig.style.color = 'var(--amber)'; }
+  else { sig.textContent = 'SIGNAL: ALL LOCKS CLEARED'; sig.style.color = 'var(--red)'; }
+}
+
+// ── RENDER EP04 ──
+function renderEp04() {
+  if (S.ertUnlocked || S.ep04Access) {
+    document.getElementById('ep04-wrapper').style.display = 'block';
+  }
+}
+
+// ── FULL RENDER ──
+function render() {
+  document.getElementById('session-id').textContent =
+    `SESSION: CST-${Date.now().toString(36).toUpperCase().slice(-6)}`;
+  renderEps();
+  renderRoster();
+  renderERT();
+  renderEp04();
+}
+
+// ── LAUNCH ──
+function launchEp(num) {
+  tone(440,'sine',.1);
+  setTimeout(() => { window.location.href = EP_FILES[num]; }, 150);
+}
+
+function launchEp04() {
+  tone(660,'sawtooth',.2,.1);
+  localStorage.setItem('cst_ep04_access','true');
+  // Navigate when EP04 is deployed to this directory
+  window.location.href = EP_FILES[4];
+}
+
+// ── TRANSMISSION SEQUENCE ──
+function fireTx() {
+  playStatic();
+  document.body.classList.add('shake');
+  setTimeout(() => document.body.classList.remove('shake'), 450);
+
+  setTimeout(() => {
+    playERT();
+    const overlay = document.getElementById('tx-overlay');
+    overlay.classList.add('active');
+
+    const LINES = [
+      '> CHANNEL: CST-ERT SECURE FREQUENCY · NODE 7-ALPHA',
+      '> SOURCE: DEAD STONE RELAY STATION — CLASSIFIED',
+      '> RECIPIENT: CONFIRMED — OMEGA CLEARANCE VERIFIED',
+      '\u00a0',
+      '> OPERATIVE ASSESSMENT: COMPLETE.',
+      '> ARC 01–03 RESOLVED. ERT CELL FULLY ASSEMBLED.',
+      '> PHASE SPY / GLITCH WITCH / ECHO WITCH — OPERATIONAL.',
+      '\u00a0',
+      '> THREAT CLASSIFICATION: PORTAL 4 CONVERGENCE.',
+      '> BOUNDARY BREACH IMMINENT — SOVEREIGN-CLASS INCURSION.',
+      '> LOCATION: [REDACTED — COORDINATES TRANSMITTING...]',
+      '\u00a0',
+      '> OPERATION SWAT: AUTHORIZED.',
+      '> EP.04 DEPLOYMENT STATUS: IMMINENT.',
+      '> REPORT FOR DUTY. CHANNEL CLOSES WHEN YOU DO.',
+    ];
+
+    const body = document.getElementById('tx-body');
+    body.innerHTML = '';
+    LINES.forEach((line, i) => {
+      const span = document.createElement('span');
+      span.className = 'tx-line';
+      span.style.animationDelay = `${0.4 + i * 0.14}s`;
+      span.textContent = line;
+      body.appendChild(span);
+    });
+
+    const ctaDelay = (0.4 + LINES.length * 0.14 + 0.4) * 1000;
+    setTimeout(() => document.getElementById('tx-cta').classList.add('visible'), ctaDelay);
+
+    render();
+  }, 700);
+}
+
+function acceptTx() {
+  localStorage.setItem('cst_ep04_access','true');
+  S.ep04Access = true;
+  closeTx();
+  renderEp04();
+  tone(880,'sine',.2,.1);
+}
+
+function closeTx() {
+  document.getElementById('tx-overlay').classList.remove('active');
+}
+
+// ── FOOTER HINT ──
+function hintSet(txt, col) {
+  const h = document.getElementById('footer-hint');
+  h.textContent = txt; h.style.color = col;
+}
+
+function hintUpdate() {
+  const left = [!S.locks.card, !S.locks.ending, !S.locks.code].filter(Boolean).length;
+  if (left > 0) hintSet(`${left} LOCK${left>1?'S':''} REMAINING`, 'rgba(226,75,74,.3)');
+}
+
+// Periodic hint flicker
+setInterval(() => {
+  const h = document.getElementById('footer-hint');
+  if (h.style.color !== 'var(--teal)' && !S.ertUnlocked) hintUpdate();
+}, 4000);
+
+// ── DEBUG HELPERS ──
+function dbSetEp(ep, ending, unlocks) {
+  writeSave(ep, { complete:true, ending, unlocks });
+  load(); checkLocks(); render();
+}
+function dbSetAll() {
+  dbSetEp('ep01','success', EP01_CARDS);
+  dbSetEp('ep02','success', EP02_CARDS);
+  dbSetEp('ep03','success', EP03_CARDS);
+  S.locks.code = true;
+  checkAll(); render();
+}
+function dbClear() {
+  ['ep01','ep02','ep03'].forEach(ep => {
+    ['_save','','_ending','_unlocks','_complete'].forEach(s => {
+      localStorage.removeItem(`cst_${ep}${s}`);
+      localStorage.removeItem(`${ep}${s}`);
+    });
+  });
+  ['cst_ert_unlocked','cst_ep04_access'].forEach(k => localStorage.removeItem(k));
+  S.saves = {ep01:null,ep02:null,ep03:null};
+  S.locks = {card:false,ending:false,code:false};
+  S.ertUnlocked = false; S.ep04Access = false;
+  document.getElementById('ep04-wrapper').style.display = 'none';
+  hintSet('···','rgba(226,75,74,.22)');
+  render();
+}
+
+/* ════════════════════════════════════════════
+   SCHEMA NOTE FOR INDIVIDUAL EPISODES
+   ─────────────────────────────────────────
+   The launcher reads localStorage using multiple
+   key patterns. Recommended save format to write
+   from individual episodes:
+
+   localStorage.setItem('cst_ep01_save', JSON.stringify({
+     complete: true,
+     ending: 'success',   // 'success' | 'partial' | 'failure'
+     unlocks: ['phase_spy', 'forge_mystic', ...]
+   }));
+
+   ERT CELL OPERATIVES (all three required for Lock 1):
+     EP01: 'phase_spy'
+     EP02: 'glitch_witch'
+     EP03: 'echo_witch'
+
+   Lock 2 requires: ep01.ending === 'success'
+                    ep02.ending === 'success'
+                    ep03 completed (any ending)
+   Lock 3 requires: user types 'ERT' on keyboard anywhere
+   ════════════════════════════════════════════ */
+
+// ── INIT ──
+load();
+checkLocks();
+render();
+</script>
+</body>
+</html>

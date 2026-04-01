@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cold Brew: Episode III — Rail Extraction</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<!--
+  ================================================================
+  COLD BREW: MYSTICS OF MAYHEM — Episode III
+  RAIL EXTRACTION — WAMAT Division / Alt DC Operations
+  CST-ERT Department — Astronomical Society
+
+  NEW SYSTEMS THIS EPISODE:
+  • Train Escort Mission Engine (6 segments)
+  • Centipede Encounter — segmented enemy wave combat
+  • Rift Rat Invaders — Space Invader formations, hover platforms,
+    weapons turrets, repelling cables, alchemy sky-dive suits
+  • Boss Raid system — 3-phase encounters
+  • Rail Turret Activation — defensive network
+  • Card Captor Reward System — earn cards through combat
+  • WAMAT Alt DC operational context throughout
+
+  Pipeline: Zero inline style= in static HTML.
+  Dynamic panel content uses JS template literals (not linted).
+  ================================================================
+-->
+<style>
+/* ================================================================
+   TOKENS
+================================================================ */
+:root {
+  --bg:      #04050a;
+  --bg1:     #080c14;
+  --bg2:     #0c1020;
+  --rule:    #141828;
+  --rule-l:  #1e2438;
+  --ash:     #525a6a;
+  --ash-l:   #828a9a;
+  --text:    #b8c0cc;
+  --white:   #e8ecf2;
+  --gold:    #c8a84a;
+  --gold-l:  #f0cc6a;
+  --gold-d:  #7a6020;
+  --oracle:  #2affee;
+  --rift:    #8a2aff;
+  --rift-l:  #bb88ff;
+  --flood:   #2a78ff;
+  --flood-l: #6aabff;
+  --alert:   #ff4422;
+  --alert-l: #ff7755;
+  --teal:    #2aff88;
+  --swamp:   #6aaa3a;
+  --swamp-b: #aaff44;
+  --forge:   #ff8c00;
+  --forge-l: #ffcc44;
+  --rail:    #ff4488;
+  --rail-l:  #ff88bb;
+  --turret:  #44ddff;
+  --turret-l:#88eeff;
+  --wamat:   #ff6600;
+  --wamat-l: #ff9944;
+  --red:     #ff2244;
+
+  /* HUD */
+  --b-train:  0%;
+  --b-hull:   100%;
+  --b-threat: 0%;
+  --b-cards:  0%;
+}
+
+*,*::before,*::after { margin:0;padding:0;box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  background:var(--bg); color:var(--text);
+  font-family:'Rajdhani',sans-serif; font-size:15px;
+  min-height:100vh; overflow-x:hidden; cursor:crosshair;
+}
+body::before {
+  content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:
+    radial-gradient(ellipse 60% 40% at 10% 90%, rgba(255,68,136,.08) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 35% at 90% 10%, rgba(68,221,255,.06) 0%, transparent 50%),
+    radial-gradient(ellipse 35% 25% at 50% 50%, rgba(138,42,255,.03) 0%, transparent 60%);
+}
+body::after {
+  content:''; position:fixed; inset:0; z-index:9998; pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.05) 3px,rgba(0,0,0,.05) 4px);
+}
+
+/* ================================================================
+   INTRO
+================================================================ */
+.intro { position:fixed;inset:0;z-index:1000;background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
+  animation:introOut .5s ease 5s forwards; }
+.intro.gone { display:none; }
+.i-dept  { font-family:'Share Tech Mono',monospace;font-size:.55rem;letter-spacing:.38em;color:var(--ash);animation:fadeUp .6s both; }
+.i-wamat { font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:.25em;color:var(--wamat-l);animation:fadeUp .6s .15s both; }
+.i-title { font-family:'Cinzel Decorative',serif;font-size:clamp(1.5rem,4.5vw,2.8rem);color:var(--gold-l);text-align:center;line-height:1.2;text-shadow:0 0 36px rgba(200,168,74,.4);animation:fadeUp .6s .3s both; }
+.i-ep    { font-family:'Cinzel Decorative',serif;font-size:clamp(.62rem,1.4vw,.85rem);color:var(--rail-l);letter-spacing:.2em;animation:fadeUp .6s .5s both; }
+.i-bar-w { width:200px;height:2px;background:var(--rule-l);overflow:hidden;animation:fadeUp .4s .9s both; }
+.i-bar   { height:100%;background:linear-gradient(90deg,var(--rail),var(--gold-l));animation:loadBar 3.5s ease .9s forwards;width:0; }
+.i-cmd   { font-family:'Share Tech Mono',monospace;font-size:.55rem;letter-spacing:.2em;color:var(--ash);animation:fadeUp .4s 1.3s both; }
+
+/* ================================================================
+   SHELL
+================================================================ */
+.shell {
+  display:grid;
+  grid-template-columns:52px 1fr 52px;
+  grid-template-rows:44px 1fr;
+  min-height:100vh;
+  position:relative;z-index:2;
+}
+
+/* ── TOP BAR ── */
+.topbar {
+  grid-column:1/-1; display:flex;align-items:center;justify-content:space-between;
+  padding:0 14px; height:44px;
+  background:rgba(4,5,10,.97); border-bottom:1px solid var(--rule-l);
+  position:sticky;top:0;z-index:200;
+}
+.tb-left  { display:flex;align-items:center;gap:12px; }
+.tb-dept  { font-family:'Share Tech Mono',monospace;font-size:.5rem;letter-spacing:.26em;color:var(--ash); }
+.tb-div   { width:1px;height:16px;background:var(--rule-l); }
+.tb-title { font-family:'Cinzel Decorative',serif;font-size:clamp(.78rem,1.7vw,1rem);color:var(--gold-l);letter-spacing:.07em;text-shadow:0 0 12px rgba(200,168,74,.28); }
+.tb-right { display:flex;align-items:center;gap:10px; }
+.wamat-badge { padding:2px 8px;border:1px solid rgba(255,102,0,.4);background:rgba(255,102,0,.08);
+  font-family:'Share Tech Mono',monospace;font-size:.5rem;letter-spacing:.15em;color:var(--wamat-l); }
+.live-dot { width:6px;height:6px;border-radius:50%;background:var(--rail);box-shadow:0 0 6px var(--rail);animation:pulse 1.5s infinite; }
+.live-txt { font-family:'Share Tech Mono',monospace;font-size:.5rem;letter-spacing:.15em;color:var(--rail); }
+
+/* ── ICON NAV ── */
+.nav-l,.nav-r {
+  display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 0;
+  background:rgba(4,5,10,.94);border-right:1px solid var(--rule);
+  position:sticky;top:44px;height:calc(100vh - 44px);overflow:hidden;
+}
+.nav-r { border-right:none;border-left:1px solid var(--rule); }
+.ni {
+  width:32px;height:32px;display:flex;align-items:center;justify-content:center;
+  border-radius:3px;cursor:pointer;transition:all .16s;position:relative;
+  color:var(--ash);font-size:12px;flex-shrink:0;
+}
+.ni:hover,.ni.on { background:rgba(200,168,74,.08);color:var(--gold-l); }
+.ni.on::before { content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:2px;height:16px;background:var(--gold-l);box-shadow:0 0 6px var(--gold); }
+.nav-r .ni.on::before { left:auto;right:0; }
+.ni::after { content:attr(data-tip);position:absolute;left:calc(100% + 6px);top:50%;transform:translateY(-50%);
+  background:rgba(8,12,20,.97);border:1px solid var(--rule-l);color:var(--ash-l);
+  font-family:'Share Tech Mono',monospace;font-size:.48rem;letter-spacing:.1em;padding:3px 7px;
+  white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .13s;z-index:300; }
+.nav-r .ni::after { left:auto;right:calc(100% + 6px); }
+.ni:hover::after { opacity:1; }
+.nd { width:20px;height:1px;background:var(--rule-l);margin:3px 0;flex-shrink:0; }
+.ni-s { width:26px;height:26px;font-size:10px;opacity:.5; }
+.ni-s:hover,.ni-s.on { opacity:1;color:var(--oracle); }
+
+/* Mini HUD in left nav */
+.nhud { display:flex;flex-direction:column;gap:4px;padding:5px 3px;width:100%; }
+.nh-row { display:flex;flex-direction:column;gap:2px;align-items:center; }
+.nh-lbl { font-family:'Share Tech Mono',monospace;font-size:.38rem;letter-spacing:.1em;color:var(--ash); }
+.nh-track { width:28px;height:3px;background:rgba(255,255,255,.04);border-radius:2px;overflow:hidden; }
+.nh-fill  { height:100%;border-radius:2px;transition:width .55s ease; }
+.nf-train  { width:var(--b-train);  background:var(--rail); }
+.nf-hull   { width:var(--b-hull);   background:var(--teal); }
+.nf-threat { width:var(--b-threat); background:var(--alert); }
+.nf-cards  { width:var(--b-cards);  background:var(--gold); }
+.nf-crit   { animation:pulseWarn .8s infinite; }
+
+/* ================================================================
+   MAIN
+================================================================ */
+.main { grid-column:2;display:flex;flex-direction:column;min-height:calc(100vh - 44px);position:relative;overflow:hidden; }
+
+/* ── SCENE VIEWPORT ── */
+.svp { position:relative;width:100%;aspect-ratio:21/9;overflow:hidden;background:var(--bg1);flex-shrink:0; }
+.sbg { position:absolute;inset:0;background-size:cover;background-position:center;transition:opacity .5s; }
+.sbg.push { animation:scenePush .6s ease forwards; }
+.sgrad { position:absolute;inset:0;pointer-events:none;
+  background:
+    linear-gradient(to right,rgba(4,5,10,.8) 0%,transparent 20%),
+    linear-gradient(to left,rgba(4,5,10,.8) 0%,transparent 20%),
+    linear-gradient(to bottom,transparent 40%,rgba(4,5,10,.97) 100%); }
+.sscan { position:absolute;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(42,255,238,.08),transparent);animation:scanDown 4s linear infinite;pointer-events:none; }
+
+/* COMBAT OVERLAY — shows during Centipede/Invader encounters */
+.combat-overlay {
+  position:absolute;inset:0;pointer-events:none;
+  display:none;
+}
+.combat-overlay.active { display:block; }
+
+.scene-tag { position:absolute;top:11px;left:13px;font-family:'Share Tech Mono',monospace;font-size:.52rem;letter-spacing:.2em;color:var(--oracle);background:rgba(4,5,10,.78);padding:3px 10px;border-left:2px solid var(--oracle);text-shadow:0 0 7px rgba(42,255,238,.35); }
+.scene-seg { position:absolute;top:11px;right:13px;font-family:'Share Tech Mono',monospace;font-size:.52rem;letter-spacing:.2em;color:var(--ash);background:rgba(4,5,10,.78);padding:3px 10px;border-right:2px solid var(--rule-l); }
+.scene-wrap { position:absolute;bottom:0;left:0;right:0;padding:16px 20px 12px; }
+.scene-ep-lbl { font-family:'Share Tech Mono',monospace;font-size:.5rem;letter-spacing:.26em;color:var(--ash);margin-bottom:3px; }
+.scene-title  { font-family:'Cinzel Decorative',serif;font-size:clamp(.9rem,2.3vw,1.5rem);color:var(--gold-l);text-shadow:0 0 16px rgba(200,168,74,.26);letter-spacing:.05em; }
+
+/* ── THREAT TICKER ── */
+.threat-ticker {
+  display:flex;align-items:center;gap:0;
+  border-top:1px solid var(--rule-l);border-bottom:1px solid var(--rule);
+  background:rgba(4,5,10,.9);flex-shrink:0;overflow:hidden;
+  height:28px;position:relative;
+}
+.ticker-label { padding:0 10px;font-family:'Share Tech Mono',monospace;font-size:.5rem;letter-spacing:.2em;color:var(--rail);border-right:1px solid var(--rule-l);white-space:nowrap;flex-shrink:0; }
+.ticker-scroll { flex:1;overflow:hidden;position:relative;height:100%; }
+.ticker-inner  { display:flex;align-items:center;gap:40px;height:100%;animation:tickerScroll 18s linear infinite;white-space:nowrap;padding-left:20px; }
+.ticker-item   { font-family:'Share Tech Mono',monospace;font-size:.5rem;letter-spacing:.1em;color:var(--ash-l);flex-shrink:0; }
+.ticker-item.hot { color:var(--alert-l); }
+.ticker-item.warm { color:var(--wamat-l); }
+
+/* ── CONTENT STRIP ── */
+.cstrip { display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid var(--rule-l);flex:1; }
+.narr-col { padding:16px 20px;border-right:1px solid var(--rule);background:rgba(8,12,20,.65); }
+.narr-text { font-size:.88rem;line-height:1.82;color:var(--white);font-weight:400; }
+.narr-text p+p { margin-top:8px; }
+.oracle-strip { margin-top:12px;padding:8px 12px;background:rgba(4,18,22,.75);border:1px solid rgba(42,255,238,.1);border-left:2px solid var(--oracle);font-family:'Share Tech Mono',monospace;font-size:.6rem;line-height:1.85;color:var(--oracle);text-shadow:0 0 5px rgba(42,255,238,.22);min-height:52px; }
+.ocursor { display:inline-block;width:6px;height:10px;background:var(--oracle);margin-left:2px;animation:blink .75s step-end infinite;vertical-align:middle; }
+
+/* ── CHOICE COLUMN ── */
+.choice-col { padding:16px 16px;display:flex;flex-direction:column;justify-content:center;background:rgba(4,5,10,.45); }
+.choice-lbl { font-family:'Share Tech Mono',monospace;font-size:.5rem;letter-spacing:.26em;color:var(--ash);margin-bottom:9px;text-transform:uppercase; }
+.crow {
+  display:flex;align-items:stretch;gap:0;margin-bottom:8px;
+  border:1px solid var(--rule-l);transition:border-color .17s;position:relative;overflow:hidden;
+}
+.crow::before { content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(200,168,74,0),rgba(200,168,74,.05));transform:translateX(-100%);transition:transform .24s ease; }
+.crow:hover { border-color:var(--gold-d); }
+.crow:hover::before { transform:translateX(0); }
+.ckey { width:32px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:rgba(200,168,74,.06);font-family:'Cinzel Decorative',serif;font-size:.7rem;color:var(--gold);border-right:1px solid var(--rule-l);transition:all .17s; }
+.crow:hover .ckey { background:rgba(200,168,74,.16);color:var(--gold-l); }
+.cbody { flex:1;padding:9px 12px;cursor:pointer; }
+.cmain { font-size:.86rem;font-weight:600;color:var(--white);letter-spacing:.02em;transition:color .17s; }
+.crow:hover .cmain { color:var(--gold-l); }
+.cfx   { font-family:'Share Tech Mono',monospace;font-size:.5rem;color:var(--ash);letter-spacing:.1em;margin-top:2px; }
+.cdir  { width:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.72rem;color:var(--ash);border-left:1px solid var(--rule);transition:color .17s; }
+.crow:hover .cdir { color:var(--gold); }
+
+/* ── ENCOUNTER BADGES ── */
+.enc-badges { display:flex;gap:6px;flex-wrap:wrap;margin-top:10px; }
+.enc-badge { padding:3px 9px;border:1px solid;font-family:'Share Tech Mono',monospace;font-size:.5rem;letter-spacing:.12em;font-weight:600; }
+.badge-centipede { border-color:rgba(42,255,136,.35);color:var(--teal); }
+.badge-invader   { border-color:rgba(138,42,255,.4);color:var(--rift-l); }
+.badge-boss      { border-color:rgba(255,34,68,.45);color:var(--red);animation:pulseWarn 1.2s infinite; }
+.badge-turret    { border-color:rgba(68,221,255,.35);color:var(--turret-l); }
+.badge-card      { border-color:rgba(200,168,74,.4);color:var(--gold-l); }
+.badge-wamat     { border-color:rgba(255,102,0,.4);color:var(--wamat-l); }
+
+/* ================================================================
+   CARD CAPTOR REWARD MODAL
+================================================================ */
+.card-reward { display:none;position:fixed;inset:0;z-index:800;
+  background:rgba(4,5,10,.92);align-items:center;justify-content:center; }
+.card-reward.show { display:flex;animation:fadeUp .5s ease; }
+.card-reward-box { width:min(380px,90vw);padding:0;border:1px solid var(--gold);background:var(--bg1);position:relative;overflow:hidden; }
+.crb-banner { padding:14px 18px;background:rgba(200,168,74,.08);border-bottom:1px solid var(--gold-d);
+  font-family:'Share Tech Mono',monospace;font-size:.54rem;letter-spacing:.25em;color:var(--gold-l); }
+.crb-art { width:100%;aspect-ratio:3/2;background-size:cover;background-position:center top;position:relative; }
+.crb-art-grad { position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(8,12,20,.95) 100%); }
+.crb-art-name { position:absolute;bottom:10px;left:14px;font-family:'Cinzel Decorative',serif;font-size:1.1rem;color:var(--gold-l);text-shadow:0 0 14px rgba(200,168,74,.4); }
+.crb-body { padding:14px 18px; }
+.crb-stat { font-family:'Share Tech Mono',monospace;font-size:.56rem;letter-spacing:.15em;color:var(--teal);margin-bottom:8px; }
+.crb-desc { font-size:.84rem;line-height:1.7;color:var(--ash-l); }
+.crb-actions { display:flex;gap:8px;padding:12px 18px;border-top:1px solid var(--rule-l); }
+.crb-btn { flex:1;padding:9px;border:1px solid var(--gold);background:transparent;color:var(--gold-l);
+  font-family:'Rajdhani',sans-serif;font-size:.85rem;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;cursor:pointer;transition:all .18s; }
+.crb-btn:hover { background:rgba(200,168,74,.1); }
+.crb-btn.secondary { border-color:var(--rule-l);color:var(--ash-l); }
+.crb-btn.secondary:hover { border-color:var(--ash); }
+
+/* ================================================================
+   SLIDE PANELS
+================================================================ */
+.panel { position:fixed;top:44px;width:40vw;height:calc(100vh - 44px);
+  background:rgba(4,5,10,.97);border:1px solid var(--rule-l);z-index:500;
+  display:flex;flex-direction:column;transition:transform .36s cubic-bezier(.22,.8,.36,1);pointer-events:none; }
+.panel.left  { left:52px;transform:translateX(-100%); }
+.panel.right { right:52px;transform:translateX(100%); }
+.panel.open  { transform:translateX(0);pointer-events:all; }
+.pbar { display:flex;align-items:center;justify-content:space-between;padding:0 12px;height:34px;border-bottom:1px solid var(--rule-l);background:rgba(8,12,20,.96);flex-shrink:0; }
+.ptitle { font-family:'Share Tech Mono',monospace;font-size:.52rem;letter-spacing:.2em;color:var(--ash-l); }
+.pclose { width:24px;height:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ash);font-size:.76rem;border:1px solid var(--rule);border-radius:2px;background:none;transition:all .13s; }
+.pclose:hover { color:var(--gold-l);border-color:var(--gold-d); }
+.pbody { flex:1;overflow-y:auto;padding:12px 13px;display:flex;flex-direction:column;gap:10px; }
+
+/* Panel content components */
+.p-section-title { font-family:'Cinzel Decorative',serif;font-size:.78rem;color:var(--gold-l);border-bottom:1px solid var(--rule-l);padding-bottom:6px;margin-bottom:2px; }
+.p-entry { padding:7px 10px;border:1px solid var(--rule);background:rgba(8,12,20,.5);margin-bottom:5px; }
+.p-entry-name { font-family:'Rajdhani',sans-serif;font-size:.76rem;font-weight:700;margin-bottom:2px; }
+.p-entry-desc { font-family:'Share Tech Mono',monospace;font-size:.54rem;line-height:1.72;color:var(--ash-l); }
+.p-entry-tag  { font-family:'Share Tech Mono',monospace;font-size:.46rem;letter-spacing:.14em;color:var(--ash);margin-top:3px; }
+
+/* Card Captor deck grid */
+.cc-grid { display:grid;grid-template-columns:1fr 1fr;gap:7px; }
+.cc-tile { aspect-ratio:3/4;background:var(--bg2);border:1px solid var(--rule-l);position:relative;overflow:hidden;cursor:pointer;transition:all .18s; }
+.cc-tile:hover:not(.locked) { border-color:var(--gold-d);transform:translateY(-2px); }
+.cc-tile.owned  { border-color:var(--gold); }
+.cc-tile.locked { opacity:.32;cursor:not-allowed; }
+.cc-bg    { position:absolute;inset:0;background-size:cover;background-position:center top;opacity:.7;transition:opacity .26s; }
+.cc-tile:hover .cc-bg { opacity:.9; }
+.cc-grad  { position:absolute;inset:0;background:linear-gradient(to bottom,transparent 30%,rgba(4,5,10,.96) 100%); }
+.cc-info  { position:absolute;bottom:0;left:0;right:0;padding:7px 9px; }
+.cc-name  { font-family:'Rajdhani',sans-serif;font-size:.66rem;font-weight:700;color:var(--white);text-transform:uppercase;letter-spacing:.05em; }
+.cc-stat  { font-family:'Share Tech Mono',monospace;font-size:.49rem;color:var(--teal);margin-top:1px; }
+.cc-rarity { position:absolute;top:6px;right:7px;font-family:'Share Tech Mono',monospace;font-size:.44rem;letter-spacing:.1em;padding:2px 5px;border:1px solid; }
+.rarity-common   { border-color:rgba(130,138,154,.4);color:var(--ash-l); }
+.rarity-rare     { border-color:rgba(42,255,238,.35);color:var(--oracle); }
+.rarity-legendary{ border-color:rgba(200,168,74,.5);color:var(--gold-l);text-shadow:0 0 6px rgba(200,168,74,.4); }
+.cc-lock  { position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:1.2rem;opacity:.35; }
+
+/* Roster / roster mini */
+.roster-row { display:flex;align-items:center;gap:8px;padding:6px 8px;border:1px solid var(--rule);background:rgba(8,12,20,.5);margin-bottom:5px; }
+.roster-av  { width:30px;height:30px;border-radius:50%;background-size:cover;background-position:center top;border:1px solid var(--rule-l);flex-shrink:0;display:flex;align-items:center;justify-content:center;background-color:var(--bg2);font-size:.82rem; }
+.roster-inf { flex:1;min-width:0; }
+.roster-nm  { font-family:'Rajdhani',sans-serif;font-size:.74rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.roster-rl  { font-family:'Share Tech Mono',monospace;font-size:.49rem;color:var(--ash); }
+.roster-hp  { font-family:'Share Tech Mono',monospace;font-size:.56rem;flex-shrink:0; }
+
+/* WAMAT order block */
+.wamat-block { padding:9px 11px;background:rgba(255,102,0,.05);border:1px solid rgba(255,102,0,.15);border-left:2px solid var(--wamat-l);margin-bottom:6px; }
+.wamat-title { font-family:'Share Tech Mono',monospace;font-size:.5rem;letter-spacing:.2em;color:var(--wamat-l);margin-bottom:5px; }
+.wamat-row   { display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:1px solid rgba(255,102,0,.06); }
+.wamat-row:last-child { border-bottom:none; }
+.wamat-key   { font-family:'Share Tech Mono',monospace;font-size:.5rem;color:var(--ash); }
+.wamat-val   { font-family:'Rajdhani',sans-serif;font-size:.73rem;font-weight:600;color:var(--ash-l); }
+.wamat-val.hl { color:var(--wamat-l); }
+
+/* Threat intel */
+.threat-entry { padding:8px 10px;border:1px solid var(--rule);background:rgba(8,12,20,.5);border-left:2px solid var(--alert);margin-bottom:5px; }
+.threat-entry.centipede { border-left-color:var(--teal); }
+.threat-entry.invader   { border-left-color:var(--rift-l); }
+.threat-entry.boss      { border-left-color:var(--red); }
+.threat-entry.turret    { border-left-color:var(--turret-l); }
+.threat-name { font-family:'Rajdhani',sans-serif;font-size:.76rem;font-weight:700;margin-bottom:2px; }
+.threat-desc { font-family:'Share Tech Mono',monospace;font-size:.54rem;line-height:1.7;color:var(--ash-l); }
+.threat-stat { font-family:'Share Tech Mono',monospace;font-size:.48rem;letter-spacing:.12em;color:var(--ash);margin-top:3px; }
+
+/* ================================================================
+   ROADMAP STRIP
+================================================================ */
+.rmap-strip { border-top:1px solid var(--rule);padding:8px 20px;display:flex;flex-wrap:wrap;gap:6px;background:rgba(4,5,10,.88);flex-shrink:0; }
+.rmap-chip  { display:flex;align-items:center;gap:5px;padding:4px 8px;border:1px solid var(--rule);background:rgba(8,12,20,.5); }
+.rch-ph { font-family:'Share Tech Mono',monospace;font-size:.52rem;color:var(--gold-d); }
+.rch-nm { font-family:'Rajdhani',sans-serif;font-size:.72rem;font-weight:600;color:var(--ash-l); }
+
+/* ================================================================
+   ENDING
+================================================================ */
+.ending { display:none;position:fixed;inset:0;z-index:900;background:rgba(4,5,10,.97);
+  flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;padding:40px; }
+.ending.on { display:flex;animation:fadeUp .8s ease; }
+.ending-bg { position:absolute;inset:0;background-size:cover;background-position:center;opacity:.05; }
+.ending-title { font-family:'Cinzel Decorative',serif;font-size:clamp(1.1rem,2.8vw,1.9rem);color:var(--gold-l);text-shadow:0 0 26px rgba(200,168,74,.32);position:relative;z-index:1; }
+.ending-desc  { max-width:520px;font-size:.9rem;line-height:1.78;color:var(--ash-l);position:relative;z-index:1; }
+.ending-cards { display:flex;gap:8px;flex-wrap:wrap;justify-content:center;position:relative;z-index:1; }
+.ending-card-tag { padding:4px 10px;border:1px solid var(--gold-d);background:rgba(200,168,74,.08);font-family:'Share Tech Mono',monospace;font-size:.5rem;letter-spacing:.12em;color:var(--gold-l); }
+.restart-btn { padding:9px 32px;background:transparent;border:1px solid var(--gold);color:var(--gold-l);font-family:'Rajdhani',sans-serif;font-size:.9rem;font-weight:700;letter-spacing:.17em;text-transform:uppercase;cursor:pointer;transition:all .19s;position:relative;z-index:1; }
+.restart-btn:hover { background:rgba(200,168,74,.09); }
+
+/* ================================================================
+   ACCENT CLASSES
+================================================================ */
+.acc-rift   { color:var(--rift-l); }
+.acc-flood  { color:var(--flood-l); }
+.acc-teal   { color:var(--teal); }
+.acc-alert  { color:var(--alert-l); }
+.acc-oracle { color:var(--oracle); }
+.acc-gold   { color:var(--gold-l); }
+.acc-swamp  { color:var(--swamp-b); }
+.acc-forge  { color:var(--forge-l); }
+.acc-rail   { color:var(--rail-l); }
+.acc-turret { color:var(--turret-l); }
+.acc-wamat  { color:var(--wamat-l); }
+.acc-red    { color:var(--red); }
+.hidden { display:none; }
+
+/* ================================================================
+   KEYFRAMES
+================================================================ */
+@keyframes introOut  { to{opacity:0;pointer-events:none;} }
+@keyframes fadeUp    { from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;} }
+@keyframes loadBar   { to{width:100%;} }
+@keyframes pulse     { 0%,100%{opacity:1;}50%{opacity:.28;} }
+@keyframes blink     { 0%,100%{opacity:1;}50%{opacity:0;} }
+@keyframes pulseWarn { 0%,100%{opacity:1;}50%{opacity:.35;} }
+@keyframes scanDown  { from{transform:translateY(-100%);}to{transform:translateY(3000%);} }
+@keyframes scenePush { from{opacity:0;transform:translateX(48px);}to{opacity:1;transform:none;} }
+@keyframes tickerScroll { from{transform:translateX(0);}to{transform:translateX(-50%);} }
+
+/* Responsive */
+@media(max-width:820px) {
+  .cstrip { grid-template-columns:1fr; }
+  .narr-col { border-right:none;border-bottom:1px solid var(--rule); }
+  .panel { width:80vw; }
+  .svp { aspect-ratio:16/9; }
+}
+@media(max-width:520px) {
+  .shell { grid-template-columns:40px 1fr 40px; }
+  .panel { width:calc(100vw - 80px); }
+}
+</style>
+</head>
+<body>
+
+<!-- INTRO ═══════════════════════════════════════════════════ -->
+<div class="intro" id="introEl">
+  <div class="i-dept">◈ CST-ERT DEPT — ASTRONOMICAL SOCIETY ◈</div>
+  <div class="i-wamat">WAMAT DIVISION — ALT DC RAIL OPERATIONS — OMEGA CLEARANCE</div>
+  <div class="i-title">Cold Brew<br>Mystics of Mayhem</div>
+  <div class="i-ep">Episode III — Rail Extraction</div>
+  <div class="i-bar-w"><div class="i-bar"></div></div>
+  <div class="i-cmd">Commander Antonio — Train Escort Protocols Active</div>
+</div>
+
+<!-- CARD CAPTOR REWARD MODAL ══════════════════════════════ -->
+<div class="card-reward" id="cardReward">
+  <div class="card-reward-box">
+    <div class="crb-banner">◈ CARD CAPTOR — NEW CARD ACQUIRED</div>
+    <div class="crb-art" id="crbArt">
+      <div class="crb-art-grad"></div>
+      <div class="crb-art-name" id="crbName"></div>
+    </div>
+    <div class="crb-body">
+      <div class="crb-stat" id="crbStat"></div>
+      <div class="crb-desc" id="crbDesc"></div>
+    </div>
+    <div class="crb-actions">
+      <button class="crb-btn" onclick="claimCard()">◈ CLAIM CARD</button>
+      <button class="crb-btn secondary" onclick="closeCardReward()">VIEW LATER</button>
+    </div>
+  </div>
+</div>
+
+<!-- ENDING ══════════════════════════════════════════════════ -->
+<div class="ending" id="endingEl">
+  <div class="ending-bg" id="endingBgEl"></div>
+  <div class="ending-title" id="endingTitleEl"></div>
+  <div class="ending-desc"  id="endingDescEl"></div>
+  <div class="ending-cards" id="endingCardsEl"></div>
+  <button class="restart-btn" onclick="restartGame()">↺  RESTART EPISODE III</button>
+</div>
+
+<!-- SHELL ═══════════════════════════════════════════════════ -->
+<div class="shell">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="tb-left">
+      <div class="tb-dept">CST-ERT ◈ WAMAT DIV.</div>
+      <div class="tb-div"></div>
+      <div class="tb-title">Cold Brew: Mystics of Mayhem — Episode III</div>
+    </div>
+    <div class="tb-right">
+      <div class="wamat-badge">WAMAT ALT DC</div>
+      <div class="live-dot"></div>
+      <div class="live-txt" id="topStatus">RAIL ESCORT LIVE</div>
+    </div>
+  </div>
+
+  <!-- LEFT NAV -->
+  <nav class="nav-l">
+    <div class="nhud">
+      <div class="nh-row"><div class="nh-lbl">TRN</div><div class="nh-track"><div class="nh-fill nf-train" id="nb-train"></div></div></div>
+      <div class="nh-row"><div class="nh-lbl">HUL</div><div class="nh-track"><div class="nh-fill nf-hull"  id="nb-hull"></div></div></div>
+      <div class="nh-row"><div class="nh-lbl">THR</div><div class="nh-track"><div class="nh-fill nf-threat"id="nb-threat"></div></div></div>
+      <div class="nh-row"><div class="nh-lbl">CRD</div><div class="nh-track"><div class="nh-fill nf-cards" id="nb-cards"></div></div></div>
+    </div>
+    <div class="nd"></div>
+    <div class="ni on" data-tip="ORACLE INTEL"   onclick="openP('l','oracle')">⬡</div>
+    <div class="ni"    data-tip="COVEN ROSTER"   onclick="openP('l','coven')">◈</div>
+    <div class="ni"    data-tip="THREAT INTEL"   onclick="openP('l','threats')">⚠</div>
+    <div class="nd"></div>
+    <div class="ni ni-s" data-tip="WAMAT ORDERS"  onclick="openP('l','wamat')">★</div>
+    <div class="ni ni-s" data-tip="MISSION LOG"   onclick="openP('l','log')">▤</div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main" id="mainEl">
+
+    <div class="svp">
+      <div class="sbg" id="sceneBgEl"></div>
+      <div class="sgrad"></div>
+      <div class="sscan"></div>
+      <canvas class="combat-overlay" id="combatCanvas" width="680" height="220"></canvas>
+      <div class="scene-tag"  id="sceneTagEl">RAIL CORRIDOR — SEGMENT 1</div>
+      <div class="scene-seg"  id="sceneSegEl">SEG 1 / 6</div>
+      <div class="scene-wrap">
+        <div class="scene-ep-lbl">◈ EPISODE III — WAMAT DIV. — ALT DC RAIL EXTRACTION</div>
+        <div class="scene-title" id="sceneTitleEl">Boarding the Extraction Train</div>
+      </div>
+    </div>
+
+    <!-- THREAT TICKER -->
+    <div class="threat-ticker">
+      <div class="ticker-label">◈ RAIL THREAT FEED</div>
+      <div class="ticker-scroll">
+        <div class="ticker-inner" id="tickerInner">
+          <span class="ticker-item hot">RIFT RAT HOVER PLATFORMS: 4 DETECTED — SECTOR 7</span>
+          <span class="ticker-item warm">CENTIPEDE FORMATION: SEGMENT 12 — REAR APPROACH</span>
+          <span class="ticker-item">TURRET NODE C-4: OFFLINE — MANUAL ACTIVATION REQUIRED</span>
+          <span class="ticker-item hot">BOSS ENTITY: TAUR-NUPHARI VANGUARD — RAIL BRIDGE</span>
+          <span class="ticker-item">ALCHEMY SKY-DIVER: 2 UNITS — REPEL CABLES DEPLOYED</span>
+          <span class="ticker-item warm">CARD CAPTOR OPPORTUNITY: RAIL WARLOCK — SEGMENT 4</span>
+          <span class="ticker-item">WAMAT DIV. COMMAND: MAINTAIN EXTRACTION SCHEDULE</span>
+          <span class="ticker-item hot">RIFT RAT INVADERS: WEAPONS TURRETS HOT — ROOFTOP</span>
+          <!-- duplicate for seamless scroll -->
+          <span class="ticker-item hot">RIFT RAT HOVER PLATFORMS: 4 DETECTED — SECTOR 7</span>
+          <span class="ticker-item warm">CENTIPEDE FORMATION: SEGMENT 12 — REAR APPROACH</span>
+          <span class="ticker-item">TURRET NODE C-4: OFFLINE — MANUAL ACTIVATION REQUIRED</span>
+          <span class="ticker-item hot">BOSS ENTITY: TAUR-NUPHARI VANGUARD — RAIL BRIDGE</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTENT STRIP -->
+    <div class="cstrip">
+      <div class="narr-col">
+        <div class="narr-text" id="narrativeEl"></div>
+        <div class="oracle-strip" id="oracleEl"><span class="ocursor"></span></div>
+        <div class="enc-badges" id="encBadgesEl"></div>
+      </div>
+      <div class="choice-col">
+        <div class="choice-lbl" id="choiceLblEl">▸ SELECT ACTION</div>
+        <div id="choiceBtnsEl"></div>
+      </div>
+    </div>
+
+    <!-- ROADMAP STRIP -->
+    <div class="rmap-strip" id="rmapEl"></div>
+
+  </main>
+
+  <!-- RIGHT NAV -->
+  <nav class="nav-r">
+    <div class="ni on" data-tip="CARD CAPTOR"     onclick="openP('r','cards')">⬢</div>
+    <div class="ni"    data-tip="RAIL TURRETS"     onclick="openP('r','turrets')">⊛</div>
+    <div class="ni"    data-tip="RIFT RAT INVADERS"onclick="openP('r','invaders')">◉</div>
+    <div class="nd"></div>
+    <div class="ni ni-s" data-tip="BOSS RAID LOG"  onclick="openP('r','boss')">✦</div>
+    <div class="ni ni-s" data-tip="MISSION GALLERY"onclick="openP('r','gallery')">⊞</div>
+  </nav>
+
+</div>
+
+<!-- LEFT PANEL -->
+<div class="panel left" id="panelL">
+  <div class="pbar"><span class="ptitle" id="pLtitle">ORACLE INTEL</span><button class="pclose" onclick="closeP('l')">✕</button></div>
+  <div class="pbody" id="pLbody"></div>
+</div>
+
+<!-- RIGHT PANEL -->
+<div class="panel right" id="panelR">
+  <div class="pbar"><span class="ptitle" id="pRtitle">CARD CAPTOR</span><button class="pclose" onclick="closeP('r')">✕</button></div>
+  <div class="pbody" id="pRbody"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     COLD BREW — EPISODE III ENGINE
+     WAMAT Division — Alt DC Rail Operations
+     Soul Witch Astro Team | Codename: Cold Brew
+     Commander Antonio
+═══════════════════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+const B = '../html_embeds/';
+const img2 = (a,b) => `url('${B}${a}'),url('${B}${b}')`;
+
+/* ── MISSION STATE ────────────────────────────────────────── */
+let MS = {
+  seg:0,             // current segment 0-5
+  trainProgress:0,   // 0-100 extraction progress
+  hullIntegrity:100, // train hull %
+  threatLevel:0,     // 0-100
+  cardsEarned:0,     // cards captured this run
+  ownedCards:new Set(['escort']), // card IDs owned
+  pendingCard:null,  // card awaiting claim
+  turretActive:[false,false,false,false,false,false], // 6 turret nodes
+  centipedeKills:0,
+  invaderKills:0,
+  bossPhase:0,
+  bossDefeated:false,
+  wamatOrders:'MAINTAIN EXTRACTION SCHEDULE — ALL UNITS HOLD RAIL CORRIDOR',
+};
+
+/* ── CARD CAPTOR DECK ─────────────────────────────────────── */
+const CARDS = [
+  {id:'escort',    name:'Rail Escort Witch',   rarity:'rare',     bonus:'+HULL REPAIR',   icon:'🚂', earn:'mission_start',
+   bg:'cb-cst-train-escort.jpg',         fb:'cst-train-escort.jpg',
+   desc:'Frontline protector of the extraction train. Mystic rail wards reduce hull damage by 15% per segment.'},
+  {id:'engineer',  name:'Train Engineer',      rarity:'common',   bonus:'+TURRET SYNC',   icon:'🔧', earn:'seg1_complete',
+   bg:'cb-cst-train-engineer.jpg',       fb:'cst-train-engineer.jpg',
+   desc:'Keeps the forge engines running under fire. Syncs with all turret nodes — activates one offline turret automatically.'},
+  {id:'heavy',     name:'Rail Heavy Armor',    rarity:'rare',     bonus:'+THREAT BLOCK',  icon:'⚙️', earn:'centipede_kill',
+   bg:'cb-cst-train-rail-heavy.jpg',     fb:'cst-train-and-rail-heavy-armor.jpg',
+   desc:'Deployable armor plating for the train exterior. Absorbs Centipede impact damage. Critical for rear-approach segments.'},
+  {id:'swampwitch',name:'Swamp Rail Witch',    rarity:'legendary',bonus:'+RIFT SUPPRESS', icon:'🌿', earn:'rift_rat_kill',
+   bg:'cb-cst-patrol-swamp-rail.jpg',    fb:'cst-patrol-swamp-rail.jpg',
+   desc:'Rift-suppression specialist. Disables Rift Rat hover platform turrets within 40m. Only card effective against sky-diver units.'},
+  {id:'siren',     name:'Counter-Siren',       rarity:'legendary',bonus:'+AWARENESS OFF', icon:'🌊', earn:'boss_phase1',
+   bg:'cb-cst-siren-witch.jpg',          fb:'siren-witch.jpg',
+   desc:'Severs the Taur-Nefarian boss unit\'s tactical awareness. Reduces Boss Raid damage by 50% for one full phase.'},
+  {id:'glitch',    name:'Glitch Witch',        rarity:'rare',     bonus:'+SYSTEM BREACH', icon:'⚡', earn:'turret_chain',
+   bg:'cb-cst-glitch-witch.jpg',         fb:'glitch-witch-orange-ash.jpg',
+   desc:'Remotely hacks Rift Rat weapons turrets and redirects fire back at invader formations. Requires 3 active turret nodes.'},
+  {id:'medic',     name:'CST Medic',           rarity:'common',   bonus:'+HULL RESTORE',  icon:'💊', earn:'seg3_complete',
+   bg:'cb-cst-medic.jpg',               fb:'cst-medic.jpg',
+   desc:'Field restoration specialist. Restores 25% hull integrity between segments. Critical during Boss Raid phases.'},
+  {id:'skydiver',  name:'Alchemy Sky-Diver',   rarity:'legendary',bonus:'+AIR ASSAULT',   icon:'🪂', earn:'invader_sky_kill',
+   bg:'cb-mystic-a1.jpg',               fb:'a1.jpg',
+   desc:'Captured Rift Rat sky-diver unit, repurposed for CST-ERT operations. Alchemy-enhanced base-jump suit. Can intercept incoming repel cables mid-air.'},
+  {id:'commander', name:'Mission Commander',   rarity:'legendary',bonus:'+ALL STATS +10', icon:'⭐', earn:'boss_defeated',
+   bg:'cb-cst-commander.jpg',           fb:'cold-brew-mission-commander.jpg',
+   desc:'Commander Antonio\'s personal command card. Activating this during a Boss Raid phase ends it immediately. Once per run.'},
+  {id:'orbital',   name:'Oracle Override',     rarity:'rare',     bonus:'+INTEL SURGE',   icon:'🔮', earn:'seg5_complete',
+   bg:'cb-prop-alchemy-boards-rare.jpg', fb:'alchemy-rare-boards.jpg',
+   desc:'Grants Oracle AVX full visibility of all remaining rail segments. Reveals enemy formation positions 2 segments ahead.'},
+];
+
+/* ── COVEN ────────────────────────────────────────────────── */
+const COVEN = [
+  {name:'Rail Escort Witch',  role:'Train Protector',   icon:'🚂',hp:100,acc:'acc-rail',   bg:'cb-cst-train-escort.jpg',    fb:'cst-train-escort.jpg'},
+  {name:'Ashari Warlock',     role:'Battle Mystic',     icon:'⚡',hp:100,acc:'acc-rift',   bg:'cb-prop-battle-mystic-blue.jpg',fb:'battle-mystic-blue-line.jpg'},
+  {name:'Siren Witch',        role:'Tide Caller',       icon:'🌊',hp:100,acc:'acc-flood',  bg:'cb-cst-siren-witch.jpg',      fb:'siren-witch.jpg'},
+  {name:'Glitch Witch',       role:'Systems Breacher',  icon:'🔌',hp:90, acc:'acc-teal',   bg:'cb-cst-glitch-witch.jpg',     fb:'glitch-witch-orange-ash.jpg'},
+  {name:'CST Medic',          role:'Field Support',     icon:'💊',hp:100,acc:'acc-oracle', bg:'cb-cst-medic.jpg',            fb:'cst-medic.jpg'},
+  {name:'Rail Heavy Vanguard',role:'Assault/Defense',   icon:'⚙️',hp:85, acc:'acc-alert',  bg:'cb-cst-train-rail-heavy.jpg', fb:'cst-train-and-rail-heavy-armor.jpg'},
+];
+
+/* ── THREATS ──────────────────────────────────────────────── */
+const THREATS = [
+  {id:'centipede',type:'centipede',name:'Centipede Formation',
+   desc:'Segmented bio-mechanical enemy units — 12 to 24 segments per formation. Approach from the rear of the train. Each segment must be destroyed sequentially. Final segment carries an alchemy explosive charge.',
+   stat:'SEGMENTS: 12-24 | APPROACH: REAR | WEAKNESS: TURRET CHAIN FIRE | CARD DROP: Rail Heavy Armor'},
+  {id:'invader_platform',type:'invader',name:'Rift Rat Hover Platform',
+   desc:'High-tech flying rigs deployed by Bipedal Rift Rat units. 4-6 platforms per formation. Each carries weapons turrets and repelling cable systems. Formations attack in synchronized waves — classic flanking pattern.',
+   stat:'UNITS: 4-6 | PATTERN: WAVE SYNC | WEAKNESS: Swamp Rail Witch | CARD DROP: Alchemy Sky-Diver'},
+  {id:'invader_skydiver',type:'invader',name:'Alchemy Sky-Diver Unit',
+   desc:'Elite Rift Rat operatives in alchemy-enhanced base-jumping and sky-diving suits. Deploy from hover platforms via repelling cables. Intercept train roof access. Some carry rift-grenade packs.',
+   stat:'DEPLOY: REPEL CABLES | SUIT: ALCHEMY-ENHANCED | WEAKNESS: Counter-Siren | CARD DROP: Alchemy Sky-Diver'},
+  {id:'boss_vanguard',type:'boss',name:'Taur-Nefarian Rail Vanguard',
+   desc:'Boss-class entity. Three-phase encounter at the Rail Bridge. Phase 1: Void sigil barrier. Phase 2: Rift Rat reinforcement call. Phase 3: Direct assault with full Taur-Nefarian battle rig.',
+   stat:'PHASES: 3 | LOCATION: RAIL BRIDGE | WEAKNESS: Commander Card | CARD DROP: Mission Commander'},
+  {id:'turret_hijack',type:'turret',name:'Turret Node Hijack',
+   desc:'Rift Rat tech operatives attempt to hijack offline rail turret nodes and redirect fire at the extraction train. Six nodes along the rail corridor. Each offline node is a liability.',
+   stat:'NODES: 6 | HIJACK WINDOW: 90s | COUNTER: Glitch Witch | CHAIN BONUS: Glitch Witch Card'},
+];
+
+/* ── RAIL TURRETS ─────────────────────────────────────────── */
+const TURRETS = [
+  {id:0,label:'TUR-A1',loc:'Engine Car',     active:false,desc:'Forward turret. Primary defense against frontal Rift Rat platforms.'},
+  {id:1,label:'TUR-B2',loc:'Passenger Car 1',active:false,desc:'Starboard coverage. Anti-air for sky-diver intercept.'},
+  {id:2,label:'TUR-C3',loc:'Passenger Car 2',active:false,desc:'Port coverage. Secondary anti-air.'},
+  {id:3,label:'TUR-D4',loc:'Cargo Car',      active:false,desc:'C-4 node. OFFLINE. Requires manual activation. Glitch Witch recommended.'},
+  {id:4,label:'TUR-E5',loc:'Fuel Car',       active:false,desc:'Anti-armor turret. Critical for Centipede rear approach defense.'},
+  {id:5,label:'TUR-F6',loc:'Rear Guard',     active:false,desc:'Rear-facing turret. Final defense against Centipede breach.'},
+];
+
+/* ── WAMAT ORDERS ─────────────────────────────────────────── */
+const WAMAT_DATA = {
+  org:       'WAMAT Division — Washington Area Mystic Assault Team',
+  altdesc:   'Alt DC Branch — Swamp Ward Rail Operations',
+  commander: 'Commander Antonio',
+  unit:      'Cold Brew Coven — CST-ERT Dept.',
+  mission:   'Rail Extraction — Priority Asset Transport',
+  extract:   'Destination: Astronomical Society HQ — Sector 9',
+  rules:     'Maintain train integrity above 40%. No civilian encounters. Engage all Rift Rat formations. Boss Raid at Rail Bridge is mandatory intercept.',
+  clearance: 'OMEGA — S.W.A.T. Internal',
+};
+
+/* ── ROADMAP ──────────────────────────────────────────────── */
+const ROADMAP = [
+  {ph:'EP I',nm:'Styx Station',        s:'✅'},
+  {ph:'EP II',nm:'Swamp Ward Station', s:'✅'},
+  {ph:'EP III',nm:'Rail Extraction',   s:'▶ ACTIVE'},
+  {ph:'8.4',nm:'UE5 Parkour Pak',      s:'⏳'},
+  {ph:'8.5',nm:'Theatre E',            s:'⏳'},
+];
+
+/* ── EPISODE III SEGMENTS ─────────────────────────────────── */
+const SEGS = [
+  {
+    num:'SEG 1 / 6', title:'Boarding the Extraction Train',
+    bg:img2('cb-cst-train-escort.jpg','cst-train-escort.jpg'),
+    tag:'PLATFORM ZERO — DEPARTURE', ep:'◈ EPISODE III — RAIL EXTRACTION — WAMAT DIV.',
+    encounters:['badge-wamat'],
+    earn:'engineer',
+    narrative:`<p>Platform Zero. The extraction train idles under the Swamp Ward's phosphorescent fog — a fourteen-car mystic forge locomotive officially registered as a WAMAT Division transport. Unofficially, it carries the most sensitive CST-ERT intelligence asset ever recovered from a Drowned Station.</p>
+<p>The <strong>Rail Escort Witch</strong> has already laid protective sigils on every car. The <strong>Glitch Witch</strong> is online with six turret node access codes. Oracle AVX confirms: <strong>Rift Rat hover platforms are assembling in Sector 7</strong> — they know the train is moving.</p>
+<p><em>WAMAT Command: "Extraction schedule is non-negotiable. You have six rail segments. Whatever hits you out there — you do not stop that train."</em></p>`,
+    oracle:'> EP III: RAIL EXTRACTION ACTIVE\n> TRAIN: PLATFORM ZERO\n> HULL INTEGRITY: 100%\n> RIFT RAT PLATFORMS: SECTOR 7\n> WAMAT ORDER: MAINTAIN SCHEDULE_',
+    lbl:'▸ PRE-DEPARTURE DIRECTIVE',
+    choices:[
+      {key:'A',icon:'🔧',text:'Activate first turret node — TUR-A1 online',     fx:'TURRET +1 / THREAT −10',   fn:'s1Turret', dir:'→'},
+      {key:'B',icon:'⚡',text:'Warlock scouts Rift Rat platform assembly',        fx:'INTEL +15 / THREAT −5',    fn:'s1Scout',  dir:'←'},
+      {key:'C',icon:'🚂',text:'Immediate departure — surprise the formation',     fx:'TRAIN +20 / THREAT +10',   fn:'s1Go',     dir:'→'},
+    ]
+  },
+  {
+    num:'SEG 2 / 6', title:'Centipede Rear Assault',
+    bg:img2('cb-cst-train-rail-heavy.jpg','cst-train-and-rail-heavy-armor.jpg'),
+    tag:'RAIL CORRIDOR — CENTIPEDE ENCOUNTER', ep:'◈ EPISODE III — RAIL EXTRACTION — WAMAT DIV.',
+    encounters:['badge-centipede'],
+    earn:'heavy',
+    narrative:`<p>Segment 2. The train clears the Swamp Ward perimeter and hits open rail. Within thirty seconds, Oracle AVX screams a proximity alert: <strong>Centipede formation inbound — 18 segments — rear approach at speed.</strong></p>
+<p>Bio-mechanical, alchemy-reinforced, each segment independently armored. The <strong>Rail Heavy Vanguard</strong> hits the rear platform. The final segment is carrying a shaped alchemy charge — if it reaches the fuel car, the train ends here.</p>
+<p><em>The Centipede's lead segment bores through the rear guard door. Rear turret TUR-F6 is offline. You have maybe twenty seconds to respond before it's in the cargo hold.</em></p>`,
+    oracle:'> CENTIPEDE: 18 SEGMENTS — REAR BREACH\n> TUR-F6: OFFLINE — CRITICAL\n> RAIL HEAVY: DEPLOYED REAR\n> ALCHEMY CHARGE: SEGMENT 18\n> ENGAGE OR LOSE FUEL CAR_',
+    lbl:'▸ CENTIPEDE RESPONSE',
+    choices:[
+      {key:'A',icon:'💥',text:'Rail Heavy holds rear — coven destroys segment by segment', fx:'HULL −15 / CENTIPEDE +8',  fn:'s2Hold',   dir:'←'},
+      {key:'B',icon:'🔧',text:'Emergency activate TUR-F6 — chain fire on formation',      fx:'TURRET +1 / CENTIPEDE +12',fn:'s2TurretF', dir:'→'},
+      {key:'C',icon:'🌿',text:'Swamp Rail Witch deploys rift-suppression behind train',    fx:'CENTIPEDE +10 / HULL −5',  fn:'s2Suppress',dir:'←'},
+    ]
+  },
+  {
+    num:'SEG 3 / 6', title:'Rift Rat Invader Wave',
+    bg:img2('cb-prop-glitch-goblin.jpg','ash-born-glitch-goblin.jpg'),
+    tag:'OPEN RAIL — RIFT RAT INVADER FORMATION', ep:'◈ EPISODE III — RAIL EXTRACTION — WAMAT DIV.',
+    encounters:['badge-invader'],
+    earn:'swampwitch',
+    narrative:`<p>Segment 3. The Centipede is dealt with — but the train roof is suddenly full of noise. Six <strong>Rift Rat hover platforms</strong> drop into formation above the train, weapons turrets hot. Classic Space Invader pattern — left-to-right sweep, advancing by row.</p>
+<p>From two of the platforms, <strong>alchemy sky-divers</strong> launch on repelling cables — enhanced base-jump suits trailing rift energy, dropping toward the passenger cars. Some carry rift-grenade packs. One carries what looks like a signal jammer.</p>
+<p><em>The Glitch Witch: "Six platforms, twelve turrets, four sky-divers. I can hack the turrets — but only if three of our nodes are active."</em></p>`,
+    oracle:'> RIFT RAT PLATFORMS: 6 — INVADER PATTERN\n> SKY-DIVERS: 4 — REPEL CABLES DEPLOYED\n> GLITCH WITCH: HACK READY (NEED 3 NODES)\n> SIGNAL JAMMER: INCOMING — ORACLE AT RISK\n> CHOOSE YOUR COUNTER NOW_',
+    lbl:'▸ INVADER COUNTER',
+    choices:[
+      {key:'A',icon:'🔌',text:'Glitch Witch hacks turrets — redirects invader fire',      fx:'INVADER +10 / HULL −10',   fn:'s3Glitch',  dir:'→'},
+      {key:'B',icon:'🌊',text:'Siren Witch disrupts sky-diver descent with sonic pulse',   fx:'INVADER +8 / THREAT −15',  fn:'s3Siren',   dir:'←'},
+      {key:'C',icon:'🪂',text:'Deploy captured sky-diver card — intercept cables mid-air', fx:'INVADER +12 / HULL 0',     fn:'s3SkyInt',  dir:'→'},
+    ]
+  },
+  {
+    num:'SEG 4 / 6', title:'Turret Chain Activation',
+    bg:img2('cb-cst-cargo-yards.jpg','cst-cargo-yards.jpg'),
+    tag:'RAIL CORRIDOR — TURRET NETWORK', ep:'◈ EPISODE III — RAIL EXTRACTION — WAMAT DIV.',
+    encounters:['badge-turret'],
+    earn:'glitch',
+    narrative:`<p>Segment 4. The invader wave is broken — but the Glitch Witch is reporting that Rift Rat tech operatives tried to hijack turret node <strong>C-4</strong> during the chaos. It's still offline. Two more nodes are vulnerable.</p>
+<p>Six rail turret nodes protect the train. Right now, only two are active. A full turret chain — all six online — would make the final two segments almost unapproachable. <strong>The Glitch Witch can activate three nodes remotely</strong> — but doing so will alert the Boss entity waiting at the Rail Bridge.</p>
+<p><em>The Oracle: "Commander — the Rail Bridge is two segments out. Whatever you decide about the turret chain, decide it now. Once the Boss unit sees the turrets light up, it will not wait."</em></p>`,
+    oracle:'> TURRET NODES ACTIVE: 2 / 6\n> C-4 NODE: HIJACK ATTEMPT — REPELLED\n> GLITCH WITCH: CAN ACTIVATE 3 REMOTELY\n> BOSS UNIT: RAIL BRIDGE — 2 SEGS OUT\n> CHAIN ACTIVATION WILL ALERT BOSS_',
+    lbl:'▸ TURRET NETWORK DECISION',
+    choices:[
+      {key:'A',icon:'⚡',text:'Full chain — activate all 6 nodes, alert the Boss',          fx:'TURRETS +4 / BOSS ALERT',  fn:'s4Chain',  dir:'→'},
+      {key:'B',icon:'🔧',text:'Selective activation — 3 nodes, stealth maintained',         fx:'TURRETS +3 / THREAT −10',  fn:'s4Select', dir:'←'},
+      {key:'C',icon:'🔌',text:'Glitch Witch loops C-4 — feeds false signal to Boss',        fx:'TURRETS +3 / DECEPTION',   fn:'s4Deceive',dir:'→'},
+    ]
+  },
+  {
+    num:'SEG 5 / 6', title:'Rail Bridge — Boss Raid',
+    bg:img2('cb-prop-alchemy-board-3.jpg','alchemy-board-artefact-3.jpg'),
+    tag:'RAIL BRIDGE — BOSS RAID ACTIVE', ep:'◈ EPISODE III — RAIL EXTRACTION — WAMAT DIV.',
+    encounters:['badge-boss'],
+    earn:'siren',
+    narrative:`<p>Segment 5. <strong>The Rail Bridge.</strong> The train emerges from the tunnel onto the exposed bridge span — and the <strong>Taur-Nefarian Rail Vanguard</strong> is waiting. Three meters of Taur-Nefarian battle rig, rift energy crackling from every joint, standing directly on the tracks.</p>
+<p><strong>Phase 1:</strong> Void sigil barrier across the rails — the train cannot pass. The coven has 90 seconds to break the barrier before the Rift Rat platforms regroup and return for a second wave.</p>
+<p><em>Oracle AVX: "Three-phase encounter. Break the barrier. Survive the reinforcements. Then — we deal with the Vanguard itself. All turrets to bearing zero."</em></p>`,
+    oracle:'> BOSS RAID: RAIL VANGUARD — PHASE 1\n> VOID SIGIL BARRIER: ACTIVE\n> RIFT RAT REINFORCE: 90s WINDOW\n> TURRETS: BEARING ZERO\n> PHASE 1 — BREAK THE BARRIER_',
+    lbl:'▸ BOSS PHASE 1 — VOID BARRIER',
+    choices:[
+      {key:'A',icon:'🔮',text:'Oracle Override — dissolve the barrier remotely',           fx:'ORACLE −20 / BOSS P1',     fn:'s5Oracle', dir:'←'},
+      {key:'B',icon:'⚡',text:'Ashari Warlock + full coven — mystic assault on barrier',   fx:'HULL −10 / BOSS P1',       fn:'s5Assault',dir:'→'},
+      {key:'C',icon:'🌊',text:'Counter-Siren severs Vanguard awareness — barrier collapses',fx:'BOSS P1 / STEALTH',        fn:'s5Counter',dir:'←'},
+    ]
+  },
+  {
+    num:'SEG 6 / 6', title:'Final Push — Extraction Complete',
+    bg:img2('cb-cst-pilot-officer.jpg','cst-pilot-officer.jpg'),
+    tag:'FINAL SEGMENT — EXTRACTION TERMINUS', ep:'◈ EPISODE III — RAIL EXTRACTION — WAMAT DIV.',
+    encounters:[],
+    earn:'commander',
+    narrative:`<p>Segment 6. <strong>Final Push.</strong> The Vanguard is dealt with. The Rail Bridge is behind you. The extraction terminus is two kilometers ahead — Astronomical Society Sector 9, deep in Alt DC.</p>
+<p>The train is battered. The coven is standing. The priority asset is secure in the cargo hold. WAMAT Command is broadcasting all-clear on the primary channel.</p>
+<p>One decision remains — <strong>how you bring this train home</strong> determines the final Card Captor reward and how the Astronomical Society rates this operation for future WAMAT contract clearance.</p>`,
+    oracle:'> FINAL SEGMENT: CLEAR\n> EXTRACTION TERMINUS: 2KM\n> ASSET: SECURED\n> WAMAT: ALL-CLEAR BROADCAST\n> MISSION RATING: CALCULATING_',
+    lbl:'▸ FINAL APPROACH',
+    choices:[
+      {key:'A',icon:'✅',text:'Full speed — standard extraction, book by the WAMAT code',  fx:'MISSION COMPLETE',         fn:'e3EndClean', dir:'←'},
+      {key:'B',icon:'⭐',text:'Heroic entry — turret salute, coven formation on roof',     fx:'LEGENDARY RATING',         fn:'e3EndHeroic',dir:'→'},
+      {key:'C',icon:'📡',text:'Silent approach — covert entry, intel preserved',           fx:'OMEGA CLASSIFICATION',     fn:'e3EndCovert',dir:'←'},
+    ]
+  }
+];
+
+/* ── ENDINGS ──────────────────────────────────────────────── */
+const ENDINGS = {
+  e3EndClean:{ title:'✅ Extraction Complete — WAMAT Approved', hull:true,
+    desc:'The train arrives on schedule. The asset is transferred. WAMAT Command logs the operation as a successful standard extraction. The Astronomical Society upgrades CST-ERT clearance to OMEGA-2.',
+    cards:['engineer','medic'], ratingKey:'WAMAT STANDARD — OMEGA CLEARANCE MAINTAINED'},
+  e3EndHeroic:{ title:'⭐ Legendary Extraction — Coven Formation Entry', hull:true,
+    desc:'The train arrives with all six turrets firing a synchronized salute. The coven stands on the roof in full formation. WAMAT Command calls it the most dramatic extraction in Alt DC history. Card Captor bonus: Commander card unlocked.',
+    cards:['commander','orbital'], ratingKey:'LEGENDARY — OMEGA-2 CLEARANCE GRANTED'},
+  e3EndCovert:{ title:'📡 Silent Approach — Omega Classification', hull:false,
+    desc:'The train enters the terminus under full silence protocol. No lights, no comms, no salute. The asset is transferred in darkness. The Astronomical Society classifies the entire operation at Omega level. The coven disappears back into the Swamp Wards.',
+    cards:['orbital','skydiver'], ratingKey:'OMEGA CLASSIFIED — S.W.A.T. INTERNAL RECORD ONLY'},
+};
+
+/* ── ENGINE STATE ─────────────────────────────────────────── */
+const LOG = [];
+let lMode='oracle', rMode='cards';
+const ROOT=document.documentElement;
+let pendingCardId = null;
+
+/* ── INIT ─────────────────────────────────────────────────── */
+window.addEventListener('load',()=>{
+  buildRmap();
+  setTimeout(()=>{
+    document.getElementById('introEl').classList.add('gone');
+    loadSeg(0);
+    addLog('Episode III: Rail Extraction active. WAMAT Division orders received.',true);
+    addLog('Oracle AVX: Turret nodes offline. Rift Rat platforms assembling.',true);
+    openP('l','oracle');
+    setTimeout(()=>openP('r','cards'),700);
+  },5200);
+});
+
+/* ── LOAD SEGMENT ─────────────────────────────────────────── */
+function loadSeg(idx){
+  const s=SEGS[idx];
+  if(!s) return;
+  MS.seg=idx;
+
+  document.getElementById('sceneSegEl').textContent  = s.num;
+  document.getElementById('sceneTitleEl').textContent = s.title;
+  document.getElementById('sceneTagEl').textContent   = s.tag;
+  document.getElementById('narrativeEl').innerHTML    = s.narrative;
+  document.getElementById('choiceLblEl').textContent  = s.lbl;
+
+  const bg=document.getElementById('sceneBgEl');
+  bg.style.backgroundImage=`url('${B}${s.bg.split("'")[1]?.replace(B,'')||''}')`;
+  bg.classList.remove('push'); void bg.offsetWidth; bg.classList.add('push');
+
+  typeOracle(s.oracle);
+  buildChoices(s.choices);
+
+  // encounter badges
+  const bd=document.getElementById('encBadgesEl');
+  bd.innerHTML=s.encounters.map(c=>`<div class="enc-badge ${c}">${
+    c==='badge-centipede'?'◈ CENTIPEDE ENCOUNTER':
+    c==='badge-invader'  ?'⬢ RIFT RAT INVADERS':
+    c==='badge-boss'     ?'★ BOSS RAID':
+    c==='badge-turret'   ?'⊛ TURRET NETWORK':
+    c==='badge-wamat'    ?'★ WAMAT ORDERS':
+    c==='badge-card'     ?'◈ CARD CAPTOR':'?'
+  }</div>`).join('');
+
+  updateHUD();
+  if(document.getElementById('panelL').classList.contains('open')) renderP('l',lMode);
+  if(document.getElementById('panelR').classList.contains('open')) renderP('r',rMode);
+}
+
+/* ── ORACLE TYPEWRITER ────────────────────────────────────── */
+function typeOracle(txt){
+  const el=document.getElementById('oracleEl');
+  const lines=txt.split('\n'); el.innerHTML=''; let i=0;
+  const t=setInterval(()=>{
+    if(i>=lines.length){el.innerHTML+='<span class="ocursor"></span>';clearInterval(t);return;}
+    el.innerHTML+=(i>0?'<br>':'')+lines[i++];
+  },150);
+}
+
+/* ── CHOICES ──────────────────────────────────────────────── */
+function buildChoices(choices){
+  document.getElementById('choiceBtnsEl').innerHTML=choices.map(c=>
+    `<div class="crow" onclick="${c.fn}()">
+      <div class="ckey">${c.key}</div>
+      <div class="cbody"><div class="cmain">${c.icon} ${c.text}</div><div class="cfx">${c.fx}</div></div>
+      <div class="cdir">${c.dir}</div>
+    </div>`).join('');
+}
+
+/* ── HUD ──────────────────────────────────────────────────── */
+function updateHUD(){
+  ROOT.style.setProperty('--b-train',  Math.min(MS.trainProgress,100)+'%');
+  ROOT.style.setProperty('--b-hull',   Math.min(MS.hullIntegrity,100)+'%');
+  ROOT.style.setProperty('--b-threat', Math.min(MS.threatLevel,100)+'%');
+  ROOT.style.setProperty('--b-cards',  Math.min((MS.cardsEarned/CARDS.length)*100,100)+'%');
+
+  const hEl=document.getElementById('nb-hull');
+  const tEl=document.getElementById('nb-threat');
+  if(hEl) hEl.classList.toggle('nf-crit', MS.hullIntegrity<=30);
+  if(tEl) tEl.classList.toggle('nf-crit', MS.threatLevel>=70);
+
+  const st = MS.hullIntegrity<=20 ? '⚠ HULL CRITICAL'
+           : MS.threatLevel>=80   ? '⚠ THREAT MAX'
+           : MS.bossPhase>0       ? '★ BOSS RAID ACTIVE'
+           : 'RAIL ESCORT LIVE';
+  document.getElementById('topStatus').textContent=st;
+}
+
+/* ── LOG ──────────────────────────────────────────────────── */
+function addLog(msg,fresh){
+  LOG.unshift({msg,fresh});
+  if(document.getElementById('panelL').classList.contains('open')&&lMode==='log') renderP('l','log');
+}
+
+/* ── ADVANCE ──────────────────────────────────────────────── */
+function advance(logMsg, cardEarnId){
+  addLog(logMsg,true);
+  if(cardEarnId) triggerCardReward(cardEarnId);
+  const next=MS.seg+1;
+  if(next<SEGS.length) setTimeout(()=>loadSeg(next),cardEarnId?1800:480);
+}
+
+/* ── CARD REWARD ──────────────────────────────────────────── */
+function triggerCardReward(cardId){
+  const card=CARDS.find(c=>c.id===cardId);
+  if(!card||MS.ownedCards.has(cardId)) return;
+  pendingCardId=cardId;
+  document.getElementById('crbName').textContent=card.name;
+  document.getElementById('crbStat').textContent=card.bonus+' | RARITY: '+card.rarity.toUpperCase();
+  document.getElementById('crbDesc').textContent=card.desc;
+  document.getElementById('crbArt').style.backgroundImage=`url('${B}${card.bg}'),url('${B}${card.fb}')`;
+  document.getElementById('cardReward').classList.add('show');
+  addLog('CARD CAPTOR: New card available — '+card.name,true);
+}
+
+function claimCard(){
+  if(!pendingCardId) return;
+  MS.ownedCards.add(pendingCardId);
+  MS.cardsEarned++;
+  addLog('CARD CLAIMED: '+CARDS.find(c=>c.id===pendingCardId)?.name,true);
+  closeCardReward();
+  updateHUD();
+  if(rMode==='cards') renderP('r','cards');
+}
+
+function closeCardReward(){
+  document.getElementById('cardReward').classList.remove('show');
+  pendingCardId=null;
+}
+
+/* ── SEGMENT 1 ────────────────────────────────────────────── */
+function s1Turret(){
+  MS.turretActive[0]=true; TURRETS[0].active=true;
+  MS.threatLevel=Math.max(MS.threatLevel-10,0);
+  addLog('TUR-A1: ONLINE. Forward defense active.',true);
+  advance('TURRET A1 ACTIVATED: Forward rail corridor covered. Threat −10.','engineer');
+}
+function s1Scout(){
+  MS.threatLevel=Math.max(MS.threatLevel-5,0);
+  MS.trainProgress+=10;
+  advance('WARLOCK RECON: Rift Rat platform positions mapped. Intel advantage gained.','engineer');
+}
+function s1Go(){
+  MS.trainProgress+=20; MS.threatLevel+=10;
+  advance('IMMEDIATE DEPARTURE: Element of surprise — train moving. Threat +10.','engineer');
+}
+
+/* ── SEGMENT 2 ────────────────────────────────────────────── */
+function s2Hold(){
+  MS.hullIntegrity-=15; MS.centipedeKills+=8; MS.trainProgress+=15;
+  advance('REAR HOLD: Rail Heavy absorbs 8 segments. Hull −15. Centipede kills +8.','heavy');
+}
+function s2TurretF(){
+  MS.turretActive[5]=true; TURRETS[5].active=true;
+  MS.centipedeKills+=12; MS.trainProgress+=20;
+  advance('TUR-F6 ONLINE: Chain fire — 12 centipede segments destroyed.','heavy');
+}
+function s2Suppress(){
+  MS.centipedeKills+=10; MS.hullIntegrity-=5; MS.trainProgress+=15;
+  advance('RIFT SUPPRESSION: Centipede formation slowed. 10 kills. Hull −5.','heavy');
+}
+
+/* ── SEGMENT 3 ────────────────────────────────────────────── */
+function s3Glitch(){
+  MS.invaderKills+=10; MS.hullIntegrity-=10; MS.trainProgress+=20;
+  advance('GLITCH WITCH HACK: 10 Rift Rat turrets redirected. Hull −10.','swampwitch');
+}
+function s3Siren(){
+  MS.invaderKills+=8; MS.threatLevel-=15; MS.trainProgress+=20;
+  advance('SIREN SONIC PULSE: 4 sky-divers disrupted. Threat −15.','swampwitch');
+}
+function s3SkyInt(){
+  MS.invaderKills+=12; MS.trainProgress+=20;
+  advance('SKY-DIVER INTERCEPT: Alchemy counter-dive — 4 cables severed. Clean defense.','swampwitch');
+}
+
+/* ── SEGMENT 4 ────────────────────────────────────────────── */
+function s4Chain(){
+  for(let i=0;i<6;i++){MS.turretActive[i]=true;TURRETS[i].active=true;}
+  MS.threatLevel+=20; MS.trainProgress+=20;
+  addLog('TURRET CHAIN: All 6 nodes active. Boss alerted.',true);
+  advance('FULL TURRET CHAIN: Rail corridor locked down. Boss unit now aware.','glitch');
+}
+function s4Select(){
+  MS.turretActive[1]=MS.turretActive[2]=MS.turretActive[3]=true;
+  TURRETS[1].active=TURRETS[2].active=TURRETS[3].active=true;
+  MS.threatLevel-=10; MS.trainProgress+=15;
+  advance('SELECTIVE ACTIVATION: 3 nodes online. Stealth maintained. Threat −10.','glitch');
+}
+function s4Deceive(){
+  MS.turretActive[1]=MS.turretActive[2]=MS.turretActive[3]=true;
+  TURRETS[1].active=TURRETS[2].active=TURRETS[3].active=true;
+  MS.trainProgress+=20;
+  advance('C-4 LOOP: False signal fed to Boss. 3 turrets active — Boss unaware.','glitch');
+}
+
+/* ── SEGMENT 5 ────────────────────────────────────────────── */
+function s5Oracle(){
+  MS.bossPhase=1; MS.trainProgress+=20;
+  advance('ORACLE OVERRIDE: Void sigil barrier dissolved. Phase 1 clear.','siren');
+}
+function s5Assault(){
+  MS.bossPhase=1; MS.hullIntegrity-=10; MS.trainProgress+=20;
+  advance('COVEN ASSAULT: Barrier broken by force. Phase 1 clear. Hull −10.','siren');
+}
+function s5Counter(){
+  MS.bossPhase=1; MS.threatLevel-=20; MS.trainProgress+=20;
+  advance('COUNTER-SIREN: Vanguard awareness severed. Barrier collapsed. Phase 1 clean.','siren');
+}
+
+/* ── ENDINGS ──────────────────────────────────────────────── */
+function triggerEnd(key){
+  const e=ENDINGS[key];
+  MS.trainProgress=100;
+  e.cards.forEach(id=>{if(!MS.ownedCards.has(id)){MS.ownedCards.add(id);MS.cardsEarned++;}});
+  updateHUD();
+  addLog('EPISODE III CONCLUDED — '+e.title,true);
+  closeP('l');closeP('r');
+  document.getElementById('endingTitleEl').textContent=e.title;
+  document.getElementById('endingDescEl').textContent=e.desc;
+  const cardTags=e.cards.map(id=>{const c=CARDS.find(x=>x.id===id);return c?`<div class="ending-card-tag">${c.icon} ${c.name}</div>`:''}).join('');
+  document.getElementById('endingCardsEl').innerHTML=`<div style="font-family:'Share Tech Mono',monospace;font-size:.5rem;letter-spacing:.15em;color:var(--ash);width:100%;margin-bottom:5px;">CARDS EARNED:</div>${cardTags}`;
+  document.getElementById('endingBgEl').style.backgroundImage=`url('${B}cb-cst-train-escort.jpg'),url('${B}cst-train-escort.jpg')`;
+  document.getElementById('endingEl').classList.add('on');
+}
+
+function e3EndClean()  { triggerEnd('e3EndClean');  }
+function e3EndHeroic() { triggerEnd('e3EndHeroic'); }
+function e3EndCovert() { triggerEnd('e3EndCovert'); }
+
+/* ── RESTART ──────────────────────────────────────────────── */
+function restartGame(){
+  MS={seg:0,trainProgress:0,hullIntegrity:100,threatLevel:0,cardsEarned:0,
+      ownedCards:new Set(['escort']),pendingCard:null,
+      turretActive:[false,false,false,false,false,false],
+      centipedeKills:0,invaderKills:0,bossPhase:0,bossDefeated:false,
+      wamatOrders:'MAINTAIN EXTRACTION SCHEDULE'};
+  TURRETS.forEach(t=>t.active=false);
+  LOG.length=0;
+  document.getElementById('endingEl').classList.remove('on');
+  loadSeg(0);
+  addLog('Episode III reset. WAMAT orders refreshed.',true);
+  openP('l','oracle');
+  openP('r','cards');
+}
+
+/* ── PANEL SYSTEM ─────────────────────────────────────────── */
+function openP(side,mode){
+  const el=document.getElementById(side==='l'?'panelL':'panelR');
+  const TITLES={
+    oracle:'ORACLE INTEL',coven:'COVEN ROSTER',threats:'THREAT INTEL',wamat:'WAMAT ORDERS',log:'MISSION LOG',
+    cards:'CARD CAPTOR DECK',turrets:'RAIL TURRETS',invaders:'RIFT RAT INTEL',boss:'BOSS RAID LOG',gallery:'MISSION GALLERY'
+  };
+  document.getElementById(side==='l'?'pLtitle':'pRtitle').textContent=TITLES[mode]||mode.toUpperCase();
+  if(side==='l') lMode=mode; else rMode=mode;
+  renderP(side,mode);
+  el.classList.add('open');
+}
+function closeP(side){ document.getElementById(side==='l'?'panelL':'panelR').classList.remove('open'); }
+
+function renderP(side,mode){
+  const el=document.getElementById(side==='l'?'pLbody':'pRbody');
+  const map={oracle:rOracle,coven:rCoven,threats:rThreats,wamat:rWAMAT,log:rLog,
+             cards:rCards,turrets:rTurrets,invaders:rInvaders,boss:rBoss,gallery:rGallery};
+  if(map[mode]){el.innerHTML='';map[mode](el);}
+  else el.innerHTML=`<div style="font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--ash);padding:10px">◈ ${mode.toUpperCase()} — LOADING</div>`;
+}
+
+/* ── RENDER ORACLE ────────────────────────────────────────── */
+function rOracle(el){
+  el.innerHTML=`
+    <div style="display:flex;align-items:center;gap:9px;padding-bottom:9px;border-bottom:1px solid rgba(42,255,238,.1);margin-bottom:6px">
+      <div style="width:32px;height:32px;border:1px solid var(--oracle);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;color:var(--oracle);text-shadow:0 0 9px var(--oracle);flex-shrink:0">⬡</div>
+      <div><div style="font-family:'Cinzel Decorative',serif;font-size:.76rem;color:var(--oracle)">Oracle AVX Node</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:.48rem;letter-spacing:.14em;color:var(--ash);margin-top:2px">EP III RAIL CORRIDOR — WAMAT DIV.</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+      ${sc('Train Progress', MS.trainProgress+'%', MS.trainProgress, 'var(--rail)')}
+      ${sc('Hull Integrity', MS.hullIntegrity+'%', MS.hullIntegrity, MS.hullIntegrity>50?'var(--teal)':'var(--alert)')}
+      ${sc('Threat Level',   MS.threatLevel+'%',   MS.threatLevel,   'var(--alert)')}
+      ${sc('Cards Earned',   MS.cardsEarned+'/'+CARDS.length, (MS.cardsEarned/CARDS.length)*100, 'var(--gold)')}
+      ${sc('Centipede Kills',MS.centipedeKills, Math.min(MS.centipedeKills*5,100), 'var(--teal)')}
+      ${sc('Invader Kills',  MS.invaderKills,   Math.min(MS.invaderKills*8,100),   'var(--rift-l)')}
+    </div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:.48rem;letter-spacing:.14em;color:var(--ash);margin-top:6px">
+      TURRETS ACTIVE: ${MS.turretActive.filter(Boolean).length}/6 &nbsp;|&nbsp;
+      BOSS PHASE: ${MS.bossPhase>0?MS.bossPhase:'—'} &nbsp;|&nbsp;
+      HULL: ${MS.hullIntegrity<=20?'<span style="color:var(--red)">CRITICAL ⚠</span>':MS.hullIntegrity<=50?'<span style="color:var(--alert)">DAMAGED</span>':'<span style="color:var(--teal)">NOMINAL</span>'}
+    </div>`;
+}
+
+function sc(label,val,pct,color){
+  return `<div style="padding:7px 9px;background:rgba(42,255,238,.03);border:1px solid rgba(42,255,238,.07)">
+    <div style="font-family:'Share Tech Mono',monospace;font-size:.46rem;letter-spacing:.16em;color:var(--ash)">${label}</div>
+    <div style="font-family:'Cinzel Decorative',serif;font-size:1.2rem;margin-top:2px;color:${color}">${val}</div>
+    <div style="height:3px;background:rgba(255,255,255,.04);border-radius:2px;overflow:hidden;margin-top:3px"><div style="height:100%;border-radius:2px;background:${color};width:${Math.min(pct,100)}%"></div></div>
+  </div>`;
+}
+
+/* ── RENDER COVEN ─────────────────────────────────────────── */
+function rCoven(el){
+  el.innerHTML=COVEN.map(m=>`
+    <div class="roster-row">
+      <div class="roster-av" style="background-image:url('${B}${m.bg}'),url('${B}${m.fb}')">${m.icon}</div>
+      <div class="roster-inf">
+        <div class="roster-nm ${m.acc}">${m.name}</div>
+        <div class="roster-rl">${m.role}</div>
+      </div>
+      <div class="roster-hp ${m.acc}">${m.hp}%</div>
+    </div>`).join('');
+}
+
+/* ── RENDER THREATS ───────────────────────────────────────── */
+function rThreats(el){
+  el.innerHTML=THREATS.map(t=>`
+    <div class="threat-entry ${t.type}">
+      <div class="threat-name acc-${t.type==='centipede'?'teal':t.type==='invader'?'rift':t.type==='boss'?'red':'turret'}">${t.name}</div>
+      <div class="threat-desc">${t.desc}</div>
+      <div class="threat-stat">${t.stat}</div>
+    </div>`).join('');
+}
+
+/* ── RENDER WAMAT ─────────────────────────────────────────── */
+function rWAMAT(el){
+  el.innerHTML=`
+    <div class="wamat-block">
+      <div class="wamat-title">◈ WAMAT DIVISION — ALT DC OPERATIONS</div>
+      ${Object.entries({'Organization':WAMAT_DATA.org,'Alt DC Branch':WAMAT_DATA.altdesc,'Commander':WAMAT_DATA.commander,'Unit':WAMAT_DATA.unit,'Mission':WAMAT_DATA.mission,'Extract To':WAMAT_DATA.extract}).map(([k,v])=>
+        `<div class="wamat-row"><span class="wamat-key">${k}</span><span class="wamat-val ${k==='Commander'||k==='Mission'?'hl':''}">${v}</span></div>`
+      ).join('')}
+    </div>
+    <div class="p-entry">
+      <div class="p-entry-name acc-wamat">Standing Orders</div>
+      <div class="p-entry-desc">${WAMAT_DATA.rules}</div>
+    </div>
+    <div class="p-entry">
+      <div class="p-entry-name acc-wamat">Clearance</div>
+      <div class="p-entry-desc">${WAMAT_DATA.clearance}</div>
+    </div>`;
+}
+
+/* ── RENDER LOG ───────────────────────────────────────────── */
+function rLog(el){
+  if(!LOG.length){el.innerHTML=`<div style="font-family:'Share Tech Mono',monospace;font-size:.58rem;color:var(--ash);padding:8px">▸ No entries yet.</div>`;return;}
+  el.innerHTML=LOG.slice(0,14).map(e=>
+    `<div style="font-family:'Share Tech Mono',monospace;font-size:.6rem;line-height:1.82;color:${e.fresh?'var(--ash-l)':'var(--ash)'};border-left:2px solid ${e.fresh?'var(--gold-d)':'var(--rule-l)'};padding-left:9px;margin-bottom:4px">▸ ${e.msg}</div>`
+  ).join('');
+}
+
+/* ── RENDER CARDS ─────────────────────────────────────────── */
+function rCards(el){
+  el.innerHTML=`
+    <div style="font-family:'Cinzel Decorative',serif;font-size:.76rem;color:var(--gold-l);border-bottom:1px solid var(--rule-l);padding-bottom:6px;margin-bottom:4px">Card Captor — Episode III Deck</div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:.48rem;letter-spacing:.15em;color:var(--ash);margin-bottom:8px">OWNED: ${MS.ownedCards.size}/${CARDS.length} &nbsp;|&nbsp; EARN CARDS THROUGH COMBAT AND CHOICES</div>
+    <div class="cc-grid">` +
+    CARDS.map(c=>{ const owned=MS.ownedCards.has(c.id);
+      return `<div class="cc-tile ${owned?'owned':'locked'}">
+        <div class="cc-bg" style="background-image:url('${B}${c.bg}'),url('${B}${c.fb}')"></div>
+        <div class="cc-grad"></div>
+        <div class="cc-rarity rarity-${c.rarity}">${c.rarity.toUpperCase()}</div>
+        ${!owned?'<div class="cc-lock">🔒</div>':''}
+        <div class="cc-info">
+          <div class="cc-name">${c.icon} ${c.name}</div>
+          <div class="cc-stat">${owned?c.bonus:'LOCKED — EARN IN COMBAT'}</div>
+        </div>
+      </div>`;
+    }).join('') + `</div>`;
+}
+
+/* ── RENDER TURRETS ───────────────────────────────────────── */
+function rTurrets(el){
+  const activeCount=TURRETS.filter(t=>t.active).length;
+  el.innerHTML=`
+    <div style="font-family:'Cinzel Decorative',serif;font-size:.76rem;color:var(--turret-l);border-bottom:1px solid var(--rule-l);padding-bottom:6px;margin-bottom:4px">Rail Turret Network — ${activeCount}/6 Active</div>
+    <div style="height:4px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden;margin-bottom:8px">
+      <div style="height:100%;background:var(--turret);width:${(activeCount/6)*100}%;border-radius:2px;transition:width .5s;box-shadow:0 0 6px var(--turret)"></div>
+    </div>` +
+    TURRETS.map(t=>`
+    <div style="padding:8px 10px;border:1px solid ${t.active?'rgba(68,221,255,.3)':'var(--rule)'};background:${t.active?'rgba(68,221,255,.06)':'rgba(8,12,20,.5)'};margin-bottom:5px;border-left:2px solid ${t.active?'var(--turret)':'var(--rule-l)'}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+        <span style="font-family:'Rajdhani',sans-serif;font-size:.76rem;font-weight:700;color:${t.active?'var(--turret-l)':'var(--ash-l)'}">${t.label} — ${t.loc}</span>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:.48rem;letter-spacing:.12em;padding:2px 6px;border:1px solid;color:${t.active?'var(--turret)':'var(--alert)'};border-color:${t.active?'rgba(68,221,255,.3)':'rgba(255,68,34,.3)'}">${t.active?'ONLINE':'OFFLINE'}</span>
+      </div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:.52rem;color:var(--ash-l);line-height:1.65">${t.desc}</div>
+    </div>`).join('');
+}
+
+/* ── RENDER INVADERS ──────────────────────────────────────── */
+function rInvaders(el){
+  el.innerHTML=`
+    <div class="p-section-title">Rift Rat — Invader Units</div>
+    <div class="p-entry" style="border-left-color:var(--rift-l)">
+      <div class="p-entry-name acc-rift">Hover Platform Formation</div>
+      <div class="p-entry-desc">High-tech flying rigs. 4-6 per wave. Weapons turrets — twin-barrel rift cannon. Attack in synchronized Space Invader sweep pattern: left-right advance, descending one row after each full pass. The turrets on the platforms can be hacked by the Glitch Witch if 3 rail nodes are active.</div>
+      <div class="p-entry-tag">WEAKNESS: GLITCH WITCH HACK | PATTERN: WAVE SYNC | CARD: ALCHEMY SKY-DIVER</div>
+    </div>
+    <div class="p-entry" style="border-left-color:var(--rift-l)">
+      <div class="p-entry-name acc-rift">Alchemy Sky-Diver Unit</div>
+      <div class="p-entry-desc">Elite Rift Rat operatives in alchemy-enhanced base-jump suits. Deploy from hover platforms on repelling cables. Some carry rift-grenade packs, others carry signal jamming devices. Can intercept incoming fire mid-descent. Alchemy suits allow hover and partial flight for 30 seconds.</div>
+      <div class="p-entry-tag">WEAKNESS: COUNTER-SIREN | DEPLOY: REPEL CABLES | CARD: ALCHEMY SKY-DIVER</div>
+    </div>
+    <div class="p-entry" style="border-left-color:rgba(42,255,136,.4)">
+      <div class="p-entry-name acc-teal">Centipede Formation</div>
+      <div class="p-entry-desc">Bio-mechanical segmented units — 12 to 24 segments per formation. Approach from the rear of the moving train at matching speed. Each segment independently armored. Must be destroyed sequentially — front to back OR the formation splits into independent units. Segment 18+ carries an alchemy explosive.</div>
+      <div class="p-entry-tag">APPROACH: REAR | SEGMENTS: 12-24 | CARD: RAIL HEAVY ARMOR</div>
+    </div>`;
+}
+
+/* ── RENDER BOSS ──────────────────────────────────────────── */
+function rBoss(el){
+  const phases=[
+    {ph:'Phase 1',name:'Void Sigil Barrier',desc:'A full-span void sigil barrier is projected across the rail tracks. The train cannot pass. The coven has 90 seconds to break it before Rift Rat platforms regroup.',status:MS.bossPhase>=1?'CLEARED':'PENDING'},
+    {ph:'Phase 2',name:'Rift Rat Reinforcements',desc:'Taur-Nefarian Vanguard calls for air support. Rift Rat hover platforms return with doubled turrets. Repel cable teams target the command car.',status:MS.bossPhase>=2?'CLEARED':'PENDING'},
+    {ph:'Phase 3',name:'Direct Vanguard Assault',desc:'Full Taur-Nefarian battle rig — three meters of rift-armored force. Steps off the tracks and boards the train directly. Commander card or full-coven assault required.',status:MS.bossPhase>=3?'CLEARED':'PENDING'},
+  ];
+  el.innerHTML=`
+    <div class="p-section-title">Boss Raid — Rail Vanguard</div>
+    <div class="p-entry" style="border-left-color:var(--red);margin-bottom:8px">
+      <div class="p-entry-name acc-red">Taur-Nefarian Rail Vanguard</div>
+      <div class="p-entry-desc">Three-phase boss entity. Waiting at the Rail Bridge, Segment 5. Direct lineage from the Taur-Nefarian faction encountered at Styx Station — but this is a field-hardened combat unit, not a strategist. It wants to stop the train, not negotiate.</div>
+      <div class="p-entry-tag">LOCATION: RAIL BRIDGE | PHASES: 3 | DEFEAT REWARD: COMMANDER CARD</div>
+    </div>` +
+    phases.map(p=>`
+    <div style="padding:7px 10px;border:1px solid ${p.status==='CLEARED'?'rgba(42,255,136,.25)':'var(--rule)'};background:rgba(8,12,20,.5);margin-bottom:5px;border-left:2px solid ${p.status==='CLEARED'?'var(--teal)':'var(--rule-l)'}">
+      <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+        <span style="font-family:'Rajdhani',sans-serif;font-size:.75rem;font-weight:700;color:var(--ash-l)">${p.ph} — ${p.name}</span>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:.46rem;letter-spacing:.1em;color:${p.status==='CLEARED'?'var(--teal)':'var(--ash)'}">${p.status}</span>
+      </div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:.52rem;line-height:1.65;color:var(--ash-l)">${p.desc}</div>
+    </div>`).join('');
+}
+
+/* ── RENDER GALLERY ───────────────────────────────────────── */
+function rGallery(el){
+  const assets=[
+    {label:'Train Escort',     bg:'cb-cst-train-escort.jpg',      fb:'cst-train-escort.jpg'},
+    {label:'Rail Heavy',       bg:'cb-cst-train-rail-heavy.jpg',  fb:'cst-train-and-rail-heavy-armor.jpg'},
+    {label:'Train Engineer',   bg:'cb-cst-train-engineer.jpg',    fb:'cst-train-engineer.jpg'},
+    {label:'Swamp Rail Witch', bg:'cb-cst-patrol-swamp-rail.jpg', fb:'cst-patrol-swamp-rail.jpg'},
+    {label:'Glitch Witch',     bg:'cb-cst-glitch-witch.jpg',      fb:'glitch-witch-orange-ash.jpg'},
+    {label:'Station Manager',  bg:'cb-cst-station-manager.jpg',   fb:'cst-station-manager.jpg'},
+  ];
+  el.innerHTML=`<div class="cc-grid">` +
+  assets.map(a=>`
+    <div class="cc-tile">
+      <div class="cc-bg" style="background-image:url('${B}${a.bg}'),url('${B}${a.fb}');opacity:.85"></div>
+      <div class="cc-grad"></div>
+      <div class="cc-info"><div class="cc-name">${a.label}</div></div>
+    </div>`).join('') + `</div>`;
+}
+
+/* ── ROADMAP ──────────────────────────────────────────────── */
+function buildRmap(){
+  document.getElementById('rmapEl').innerHTML=ROADMAP.map(r=>
+    `<div class="rmap-chip">
+      <span class="rch-ph">${r.ph}</span>
+      <span class="rch-nm" style="${r.nm==='Rail Extraction'?'color:var(--rail-l)':''}">${r.nm}</span>
+      <span style="font-size:.7rem">${r.s}</span>
+    </div>`).join('');
+}
+</script>
+</body>
+</html>

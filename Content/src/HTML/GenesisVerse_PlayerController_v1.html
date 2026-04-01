@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Genesis Verse — Player Controller v1.1</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0a0f; overflow: hidden; font-family: 'Share Tech Mono', monospace; color: #e0e0e0; }
+
+  #renderCanvas {
+    width: 100vw; height: 100vh;
+    display: block; touch-action: none;
+  }
+
+  /* ── HUD ── */
+  #hud {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 10;
+  }
+
+  /* Telemetry panel — top left */
+  #telemetry {
+    position: absolute; top: 16px; left: 16px;
+    background: rgba(0,0,0,0.7);
+    border: 1px solid #E87B1E44;
+    border-radius: 4px;
+    padding: 10px 14px;
+    font-size: 11px;
+    line-height: 1.8;
+    min-width: 220px;
+  }
+  #telemetry .label { color: #E87B1E; }
+  #telemetry .value { color: #ffffff; margin-left: 6px; }
+
+  /* Stat bars — top right */
+  #stats {
+    position: absolute; top: 16px; right: 16px;
+    background: rgba(0,0,0,0.7);
+    border: 1px solid #1D9E7544;
+    border-radius: 4px;
+    padding: 10px 14px;
+    width: 200px;
+  }
+  .stat-row { margin-bottom: 8px; }
+  .stat-label { font-size: 10px; color: #888; margin-bottom: 3px; }
+  .stat-bar { height: 6px; background: #222; border-radius: 3px; overflow: hidden; }
+  .stat-fill { height: 100%; border-radius: 3px; transition: width 0.2s; }
+  .fill-hp     { background: #E24B4A; width: 100%; }
+  .fill-stamina{ background: #EF9F27; width: 100%; }
+  .fill-signal { background: #1D9E75; width: 75%; }
+
+  /* Action log — bottom left */
+  #action-log {
+    position: absolute; bottom: 16px; left: 16px;
+    background: rgba(0,0,0,0.6);
+    border: 1px solid #ffffff11;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 10px;
+    width: 260px;
+    max-height: 120px;
+    overflow: hidden;
+  }
+  .log-entry { color: #6cffb4; line-height: 1.6; }
+  .log-entry.warn { color: #E87B1E; }
+  .log-entry.error { color: #E24B4A; }
+
+  /* Keybind legend — bottom right */
+  #keybinds {
+    position: absolute; bottom: 16px; right: 16px;
+    background: rgba(0,0,0,0.6);
+    border: 1px solid #ffffff11;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 10px;
+    line-height: 1.8;
+  }
+  #keybinds span.k { color: #E87B1E; }
+
+  /* State flash — center */
+  #state-flash {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 13px; letter-spacing: 0.15em;
+    color: #E87B1E; text-transform: uppercase;
+    opacity: 0; transition: opacity 0.1s;
+    pointer-events: none;
+  }
+
+  /* Loading screen */
+  #loader {
+    position: absolute; inset: 0;
+    background: #0a0a0f;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    z-index: 100;
+    transition: opacity 0.5s;
+  }
+  #loader h1 { font-size: 18px; letter-spacing: 0.2em; color: #E87B1E; margin-bottom: 8px; }
+  #loader p  { font-size: 11px; color: #555; letter-spacing: 0.1em; }
+  #loader-bar { width: 240px; height: 2px; background: #222; margin-top: 20px; border-radius: 1px; }
+  #loader-fill { height: 100%; width: 0%; background: #E87B1E; border-radius: 1px; transition: width 0.3s; }
+</style>
+</head>
+<body>
+
+<canvas id="renderCanvas"></canvas>
+
+<!-- HUD -->
+<div id="hud">
+  <div id="telemetry">
+    <div><span class="label">STATE</span><span class="value" id="t-state">IDLE</span></div>
+    <div><span class="label">PHASE</span><span class="value" id="t-phase">—</span></div>
+    <div><span class="label">INTERRUPT</span><span class="value" id="t-interrupt">FREE</span></div>
+    <div><span class="label">LAST ACTION</span><span class="value" id="t-lastaction">—</span></div>
+    <div><span class="label">OUTCOME</span><span class="value" id="t-outcome">—</span></div>
+    <div><span class="label">FPS</span><span class="value" id="t-fps">0</span></div>
+  </div>
+
+  <div id="stats">
+    <div class="stat-row">
+      <div class="stat-label">HP</div>
+      <div class="stat-bar"><div class="stat-fill fill-hp" id="bar-hp"></div></div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-label">STAMINA</div>
+      <div class="stat-bar"><div class="stat-fill fill-stamina" id="bar-stamina"></div></div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-label">SIGNAL</div>
+      <div class="stat-bar"><div class="stat-fill fill-signal" id="bar-signal"></div></div>
+    </div>
+  </div>
+
+  <div id="action-log"></div>
+
+  <div id="keybinds">
+    <div><span class="k">WASD</span> Move &nbsp; <span class="k">SHIFT</span> Sprint</div>
+    <div><span class="k">SPACE</span> Jump &nbsp; <span class="k">C</span> Roll</div>
+    <div><span class="k">[X]</span> Attack Primary &nbsp; <span class="k">[Z]</span> Secondary</div>
+    <div><span class="k">Q</span> Alchemy &nbsp; <span class="k">E</span> Deploy Golem</div>
+    <div><span class="k">R</span> Toggle Persistence Record</div>
+  </div>
+
+  <div id="state-flash"></div>
+</div>
+
+<!-- Loader -->
+<div id="loader">
+  <h1>GENESIS VERSE</h1>
+  <p>INITIALIZING PLAYER CONTROLLER v1.1</p>
+  <div id="loader-bar"><div id="loader-fill"></div></div>
+</div>
+
+<!-- Babylon.js -->
+<script src="https://cdn.babylonjs.com/babylon.js"></script>
+<script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+
+<script>
+'use strict';
+
+// ═══════════════════════════════════════════════════════════════════
+// ANIMATION TRUTH SCHEMA v1.1
+// Single source of truth for all animation ↔ state mappings.
+// To swap characters: update GLB_BASE_PATH and the names in CLIPS.
+// To add a new state: add one entry to TRANSITION_TABLE + CLIPS.
+// ═══════════════════════════════════════════════════════════════════
+const SCHEMA = {
+  version: '1.1',
+  GLB_BASE_PATH: 'https://media.githubusercontent.com/media/studioprotitan/Forge-Avatars/main/models/',
+
+  CHARACTER_MODEL: 'scene-mint-deploy-idle',
+
+  // Maps state name → GLB filename (without .glb)
+  CLIPS: {
+    idle:             'scene-mint-deploy-idle',
+    walk:             'scene-mint-deploy-walk',
+    run:              'scene-mint-deploy-run',
+    sprint:           'scene-mint-deploy-run',
+    jump_start:       'scene-mint-deploy-walk',
+    jump_loop:        'scene-mint-deploy-walk',
+    jump_land:        'scene-mint-deploy-walk',
+    roll:             'scene-mint-deploy-walk',
+    attack_primary:   'scene-mint-deploy-walk',
+    attack_secondary: 'scene-mint-deploy-walk',
+    ability_alchemy:  'scene-mint-deploy-idle',
+    ability_golem:    'scene-mint-deploy-idle',
+  },
+
+  STAMINA_COSTS: {
+    roll:             20,
+    sprint:            5,
+    attack_primary:   10,
+    attack_secondary: 15,
+    ability_alchemy:  25,
+    ability_golem:    35,
+    jump_start:       10,
+  },
+
+  CLIP_DURATIONS: {
+    jump_start:        0.4,
+    jump_land:         0.35,
+    roll:              0.6,
+    attack_primary:    0.55,
+    attack_secondary:  0.70,
+    ability_alchemy:   1.20,
+    ability_golem:     1.80,
+  },
+
+  NON_INTERRUPTIBLE: new Set([
+    'roll', 'jump_start', 'jump_land',
+    'attack_primary', 'attack_secondary',
+    'ability_alchemy', 'ability_golem',
+  ]),
+
+  PHASE_WINDOWS: {
+    attack_primary:    0.45,
+    attack_secondary:  0.55,
+    ability_alchemy:   0.65,
+    ability_golem:     0.80,
+  },
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// TRANSITION TABLE
+// ═══════════════════════════════════════════════════════════════════
+const TRANSITION_TABLE = {
+  idle:             { move: 'walk',        jump: 'jump_start', roll: 'roll', attack: 'attack_primary', secondary: 'attack_secondary', alchemy: 'ability_alchemy', golem: 'ability_golem' },
+  walk:             { sprint: 'sprint',    stop: 'idle',       jump: 'jump_start', roll: 'roll', attack: 'attack_primary', secondary: 'attack_secondary', alchemy: 'ability_alchemy', golem: 'ability_golem' },
+  run:              { sprint: 'sprint',    stop: 'idle',       jump: 'jump_start', roll: 'roll', attack: 'attack_primary' },
+  sprint:           { sprint_end: 'run',   stop: 'idle',       jump: 'jump_start', roll: 'roll' },
+  jump_start:       { apex: 'jump_loop' },
+  jump_loop:        { land: 'jump_land' },
+  jump_land:        { recover: 'idle' },
+  roll:             { recover: 'idle' },
+  attack_primary:   { recover: 'idle',     attack: 'attack_secondary' },
+  attack_secondary: { recover: 'idle' },
+  ability_alchemy:  { recover: 'idle' },
+  ability_golem:    { recover: 'idle' },
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// SSOT — Single Source of Truth
+// ═══════════════════════════════════════════════════════════════════
+const SSOT = {
+  player: {
+    position:      { x: 0, y: 0, z: 0 },
+    activeState:   'idle',
+    phase:         0,
+    hp:            100,
+    maxHp:         100,
+    stamina:       100,
+    maxStamina:    100,
+    signal:        75,
+    interruptLock: false,
+    lastAction:    null,
+    lastOutcome:   null,
+    isGrounded:    true,
+    isSprinting:   false,
+  },
+  session: {
+    startTime: Date.now(),
+    frameCount: 0,
+    isRecording: false,
+  },
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// TELEMETRY BUS
+// ═══════════════════════════════════════════════════════════════════
+const TELEMETRY = {
+  _listeners: {},
+
+  broadcast(event, payload) {
+    const p = SSOT.player;
+    const fullPayload = {
+      event,
+      ...payload,
+      snapshot: {
+        activeState:   p.activeState,
+        phase:         p.phase,
+        stamina:       p.stamina,
+        hp:            p.hp,
+        signal:        p.signal,
+        lastAction:    p.lastAction,
+        lastOutcome:   p.lastOutcome,
+        interruptLock: p.interruptLock,
+        position:      { ...p.position },
+        ts:            Date.now(),
+      },
+    };
+
+    if (['state_change', 'action_blocked', 'stamina_depleted'].includes(event)) {
+      console.log('[TELEMETRY]', JSON.stringify(fullPayload));
+    }
+
+    (this._listeners[event] || []).forEach(fn => fn(fullPayload));
+    (this._listeners['*']   || []).forEach(fn => fn(fullPayload));
+  },
+
+  on(event, fn) {
+    if (!this._listeners[event]) this._listeners[event] = [];
+    this._listeners[event].push(fn);
+  },
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// MOAI BRIDGE
+// Cross-agent state broadcast. Agents subscribe here to monitor
+// or react to state transitions without coupling to internals.
+// ═══════════════════════════════════════════════════════════════════
+const MOAI = {
+  _channels: {},
+
+  broadcast(channel, payload) {
+    const stamped = { ...payload, _moai: true, ts: Date.now() };
+    console.log(`[MOAI:${channel}]`, JSON.stringify(stamped));
+    (this._channels[channel] || []).forEach(fn => fn(stamped));
+  },
+
+  on(channel, fn) {
+    if (!this._channels[channel]) this._channels[channel] = [];
+    this._channels[channel].push(fn);
+  },
+
+  // Drift sentinel — called after every transition to validate
+  // that animation state matches declared truth state.
+  validateSync(declaredState, playingGroupName) {
+    if (!playingGroupName) return; // nothing playing yet, skip
+    if (declaredState !== playingGroupName &&
+        !(declaredState === 'sprint' && playingGroupName === 'run')) {
+      this.broadcast('DRIFT_DETECTED', {
+        declared: declaredState,
+        playing:  playingGroupName,
+        severity: 'warn',
+      });
+    }
+  },
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// PERSISTENCE SYSTEM
+// Records state, position, and events for gameplay loop validation.
+// ═══════════════════════════════════════════════════════════════════
+const PERSISTENCE = {
+  _buffer: [],
+  _startTime: 0,
+
+  toggle() {
+    const s = SSOT.session;
+    if (!s.isRecording) {
+      this._buffer = [];
+      this._startTime = Date.now();
+      s.isRecording = true;
+      HUD.log("PERSISTENCE RECORDING: START", "warn");
+      MOAI.broadcast('PERSISTENCE_EVENT', { action: 'start' });
+    } else {
+      s.isRecording = false;
+      HUD.log("PERSISTENCE RECORDING: STOP", "warn");
+      MOAI.broadcast('PERSISTENCE_EVENT', { action: 'stop', frames: this._buffer.length });
+      this.export();
+    }
+  },
+
+  record() {
+    if (!SSOT.session.isRecording) return;
+    const p = SSOT.player;
+    this._buffer.push({
+      ts: Date.now() - this._startTime,
+      state: p.activeState,
+      pos: { x: p.position.x.toFixed(3), y: p.position.y.toFixed(3), z: p.position.z.toFixed(3) },
+      rot: capsule ? capsule.rotation.y.toFixed(3) : 0,
+      action: p.lastAction,
+      outcome: p.lastOutcome
+    });
+  },
+
+  export() {
+    const data = JSON.stringify(this._buffer, null, 2);
+    console.log("=== PERSISTENCE CAPTURE DATA ===");
+    console.log(data);
+    
+    // Automated download for investor artifact generation
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `gv_persistence_loop_${Date.now()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// STATE MACHINE
+// ═══════════════════════════════════════════════════════════════════
+const STATE_MACHINE = {
+  _recoveryTimer: null,
+
+  canTransition(input) {
+    const p = SSOT.player;
+    if (p.interruptLock) {
+      TELEMETRY.broadcast('action_blocked', { input, reason: 'interrupt_lock' });
+      return false;
+    }
+    const transitions = TRANSITION_TABLE[p.activeState] || {};
+    return !!transitions[input];
+  },
+
+  transition(input) {
+    if (!this.canTransition(input)) return false;
+
+    const p = SSOT.player;
+    const transitions = TRANSITION_TABLE[p.activeState] || {};
+    const nextState = transitions[input];
+    if (!nextState) return false;
+
+    // Stamina gate
+    const cost = SCHEMA.STAMINA_COSTS[nextState];
+    if (cost && p.stamina < cost) {
+      TELEMETRY.broadcast('stamina_depleted', { input, nextState, stamina: p.stamina });
+      HUD.log(`STAMINA TOO LOW for ${nextState}`, 'warn');
+      return false;
+    }
+    if (cost) p.stamina = Math.max(0, p.stamina - cost);
+
+    const prevState = p.activeState;
+    p.activeState  = nextState;
+    p.phase        = 0;
+    p.lastAction   = input;
+    p.interruptLock = SCHEMA.NON_INTERRUPTIBLE.has(nextState);
+
+    TELEMETRY.broadcast('state_change', { from: prevState, to: nextState, input });
+
+    // MOAI bridge — broadcast confirmed transition
+    MOAI.broadcast('STATE_TRANSITION', {
+      from:    prevState,
+      to:      nextState,
+      input:   input,
+      trigger: 'STATE_MACHINE',
+    });
+
+    // Schedule auto-recovery for timed states
+    const duration = SCHEMA.CLIP_DURATIONS[nextState];
+    if (duration) {
+      clearTimeout(this._recoveryTimer);
+      this._recoveryTimer = setTimeout(() => {
+        p.interruptLock = false;
+        p.lastOutcome   = 'complete';
+
+        if      (nextState === 'jump_start')                                          this.transition('apex');
+        else if (nextState === 'jump_land')                                           this.transition('recover');
+        else if (nextState === 'roll')                                                this.transition('recover');
+        else if (nextState === 'attack_primary' || nextState === 'attack_secondary')  this.transition('recover');
+        else if (nextState === 'ability_alchemy' || nextState === 'ability_golem')    this.transition('recover');
+
+        TELEMETRY.broadcast('state_recovered', { from: nextState });
+      }, duration * 1000);
+    }
+
+    // Phase window tracking
+    const phaseWindow = SCHEMA.PHASE_WINDOWS[nextState];
+    if (phaseWindow && duration) {
+      setTimeout(() => {
+        p.phase = phaseWindow;
+        TELEMETRY.broadcast('phase_window_open', { state: nextState, phase: phaseWindow });
+      }, duration * 1000 * phaseWindow);
+    }
+
+    // ── TRUTH → BINDING → EXPRESSION ──
+    // Animation is a consequence of confirmed state. Not of input.
+    ANIM_CONTROLLER.play(p.activeState);
+
+    // MOAI drift sentinel — verify animation matched declared truth
+    MOAI.validateSync(p.activeState, ANIM_CONTROLLER.getCurrentGroupName());
+
+    return true;
+  },
+
+  tick(dt) {
+    const p = SSOT.player;
+    SSOT.session.frameCount++;
+
+    const duration = SCHEMA.CLIP_DURATIONS[p.activeState];
+    if (duration) {
+      p.phase = Math.min(1, p.phase + dt / duration);
+    }
+
+    const noRegen = ['ability_alchemy', 'ability_golem', 'sprint'].includes(p.activeState);
+    if (!noRegen && p.stamina < p.maxStamina) {
+      p.stamina = Math.min(p.maxStamina, p.stamina + 12 * dt);
+    }
+    if (p.isSprinting && p.activeState === 'sprint') {
+      p.stamina = Math.max(0, p.stamina - SCHEMA.STAMINA_COSTS.sprint * dt);
+      if (p.stamina <= 0) {
+        p.isSprinting = false;
+        this.transition('sprint_end');
+      }
+    }
+  },
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// HUD
+// ═══════════════════════════════════════════════════════════════════
+const HUD = {
+  _logEntries: [],
+  _flashTimer:  null,
+
+  update(engine) {
+    const p = SSOT.player;
+    document.getElementById('t-state').textContent     = p.activeState.toUpperCase().replace(/_/g, ' ');
+    document.getElementById('t-phase').textContent     = p.interruptLock ? (p.phase * 100).toFixed(0) + '%' : '—';
+    document.getElementById('t-interrupt').textContent = p.interruptLock ? 'LOCKED' : 'FREE';
+    document.getElementById('t-lastaction').textContent = p.lastAction || '—';
+    document.getElementById('t-outcome').textContent   = p.lastOutcome || '—';
+    document.getElementById('t-fps').textContent       = engine.getFps().toFixed(0);
+
+    document.getElementById('bar-hp').style.width      = (p.hp / p.maxHp * 100) + '%';
+    document.getElementById('bar-stamina').style.width = (p.stamina / p.maxStamina * 100) + '%';
+    document.getElementById('bar-signal').style.width  = p.signal + '%';
+  },
+
+  flash(text) {
+    const el = document.getElementById('state-flash');
+    el.textContent = text;
+    el.style.opacity = '1';
+    clearTimeout(this._flashTimer);
+    this._flashTimer = setTimeout(() => { el.style.opacity = '0'; }, 600);
+  },
+
+  log(msg, type = 'info') {
+    const log = document.getElementById('action-log');
+    const entry = document.createElement('div');
+    entry.className = `log-entry ${type}`;
+    entry.textContent = `> ${msg}`;
+    log.appendChild(entry);
+    this._logEntries.push(entry);
+    if (this._logEntries.length > 6) {
+      this._logEntries.shift().remove();
+    }
+    log.scrollTop = log.scrollHeight;
+  },
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// ANIMATION CONTROLLER — v1.1 CONSOLIDATED
+//
+// FIX SUMMARY (replaces prior dual-system):
+//
+// ROOT CAUSE 1 FIXED: The old code had module-level idleGroup/walkGroup/
+// runGroup variables that competed with ANIM_CONTROLLER._groups. The
+// ANIM_CONTROLLER.play() priority block routed locomotion states to the
+// module-level refs, which had broken retargeting (targeting Bone objects
+// instead of TransformNodes). Both paths now route through ANIM_CONTROLLER
+// exclusively. Module-level group vars are eliminated.
+//
+// ROOT CAUSE 2 FIXED: loadCharacter() retargeted walk/run animations by
+// looking up bones on idleResult.skeletons[0]. Babylon GLB animations target
+// TransformNodes (scene nodes), not Bone objects. The bone lookup silently
+// failed (returned undefined), fell back to the walk mesh's own nodes
+// (which were hidden/invisible), so walk animation drove a hidden skeleton.
+// Fix: retarget by matching TransformNode names on the idle mesh's node tree.
+//
+// ROOT CAUSE 3 FIXED: playAnim() had an isPlaying guard that silently
+// blocked transitions. Replaced with explicit stop-then-start on every call.
+//
+// ROOT CAUSE 4 FIXED: loadAll() ran after loadCharacter() and loaded the
+// same GLBs a second time, creating duplicate competing AnimationGroup
+// references. loadAll() is now removed. loadCharacter() is the sole loader.
+// ═══════════════════════════════════════════════════════════════════
+const ANIM_CONTROLLER = {
+  // ── State name → AnimationGroup (single authoritative registry) ──
+  _groups:  {},
+  _current: null,
+  _currentName: null,
+  _scene:   null,
+
+  init(scene) {
+    this._scene = scene;
+  },
+
+  // Returns the name key of the currently playing group (for MOAI sync check).
+  getCurrentGroupName() {
+    return this._currentName;
+  },
+
+  // ── Core play() — single authoritative path, no bypass ──────────
+  // Called exclusively by STATE_MACHINE.transition() after truth is declared.
+  // Never called directly from input handlers.
+  play(stateName) {
+    const group = this._groups[stateName];
+
+    if (!group) {
+      const fallbackName = this._getFallback(stateName);
+      if (fallbackName && this._groups[fallbackName]) {
+        this._switchTo(this._groups[fallbackName], fallbackName);
+      } else {
+        console.warn(`[ANIM] No clip registered for state: ${stateName}`);
+      }
+      return;
+    }
+
+    this._switchTo(group, stateName);
+  },
+
+  // ── Stop current, start next — always, no isPlaying guard ───────
+  _switchTo(group, name) {
+    if (this._current && this._current !== group) {
+      this._current.stop();
+    }
+
+    const looping = !SCHEMA.CLIP_DURATIONS[name]; // timed states don't loop
+    group.stop();       // ensure clean start even if same group re-triggered
+    group.start(looping);
+    this._current     = group;
+    this._currentName = name;
+  },
+
+  _getFallback(stateName) {
+    const fallbacks = {
+      sprint:           'run',
+      jump_loop:        'jump_start',
+      jump_land:        'jump_start',
+      attack_secondary: 'attack_primary',
+      ability_golem:    'ability_alchemy',
+    };
+    return fallbacks[stateName] || 'idle';
+  },
+
+  // ── Register a pre-loaded AnimationGroup under a state name ─────
+  register(stateName, group) {
+    if (!group) return;
+    group.stop();
+    this._groups[stateName] = group;
+  },
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// INPUT MAP
+// ═══════════════════════════════════════════════════════════════════
+const INPUT = {
+  keys: {},
+  bindings: {
+    move_forward: ['w', 'arrowup'],
+    move_back:    ['s', 'arrowdown'],
+    move_left:    ['a', 'arrowleft'],
+    move_right:   ['d', 'arrowright'],
+    sprint:       ['shift'],
+    jump:         [' '],
+    roll:         ['c'],
+    attack:       ['x'],
+    secondary:    ['z'],
+    alchemy:      ['q'],
+    golem:        ['e'],
+    record:       ['r'],
+  },
+
+  init() {
+    window.addEventListener('keydown', e => {
+      this.keys[e.key.toLowerCase()] = true;
+      this._handlePress(e.key.toLowerCase());
+    });
+    window.addEventListener('keyup', e => {
+      this.keys[e.key.toLowerCase()] = false;
+      this._handleRelease(e.key.toLowerCase());
+    });
+  },
+
+  _handlePress(key) {
+    if (this.bindings.jump.includes(key))     this._doJump();
+    if (this.bindings.roll.includes(key))     this._doRoll();
+    if (this.bindings.attack.includes(key))   this._doAttack();
+    if (this.bindings.secondary.includes(key))this._doSecondary();
+    if (this.bindings.alchemy.includes(key))  this._doAlchemy();
+    if (this.bindings.golem.includes(key))    this._doGolem();
+    if (this.bindings.record.includes(key))   PERSISTENCE.toggle();
+  },
+
+  _handleRelease(key) {
+    if (this.bindings.sprint.includes(key)) {
+      SSOT.player.isSprinting = false;
+      if (SSOT.player.activeState === 'sprint') {
+        STATE_MACHINE.transition('sprint_end');
+      }
+    }
+  },
+
+  getMoveVector() {
+    const k = this.keys;
+    let x = 0, z = 0;
+    if (k['w'] || k['arrowup'])    z -= 1;
+    if (k['s'] || k['arrowdown'])  z += 1;
+    if (k['a'] || k['arrowleft'])  x -= 1;
+    if (k['d'] || k['arrowright']) x += 1;
+    const len = Math.sqrt(x*x + z*z);
+    return len > 0 ? { x: x/len, z: z/len } : { x: 0, z: 0 };
+  },
+
+  isMoving() {
+    const v = this.getMoveVector();
+    return v.x !== 0 || v.z !== 0;
+  },
+
+  isSprinting() {
+    return this.keys['shift'] && this.isMoving();
+  },
+
+  // ── Action handlers — no ANIM_CONTROLLER.play() calls here ──────
+  // transition() is the only path to animation. Input fires truth;
+  // truth binds animation. Handlers declare intent only.
+
+  _doJump() {
+    const p = SSOT.player;
+    if (!p.isGrounded) return;
+    const ok = STATE_MACHINE.transition('jump');
+    if (!ok) return;
+
+    p.isGrounded = false;
+    HUD.flash('JUMP');
+    HUD.log('Jump initiated');
+
+    // jump_loop: timed phase completion — not an input event.
+    // Timer IS the trigger; state machine has no event for this phase.
+    // ISSUE 2 from prior audit: this play() call is legitimate. Keep.
+    setTimeout(() => {
+      ANIM_CONTROLLER.play('jump_loop');
+
+      setTimeout(() => {
+        p.isGrounded = true;
+        STATE_MACHINE.transition('land');
+        // transition('land') → jump_land → ANIM_CONTROLLER.play() internally
+      }, 600);
+    }, (SCHEMA.CLIP_DURATIONS.jump_start * 1000));
+  },
+
+  _doRoll() {
+    const ok = STATE_MACHINE.transition('roll');
+    if (!ok) return;
+    HUD.flash('ROLL');
+    HUD.log('Roll / dodge');
+  },
+
+  _doAttack() {
+    const ok = STATE_MACHINE.transition('attack');
+    if (!ok) return;
+    const state = SSOT.player.activeState;
+    HUD.flash('ATTACK');
+    HUD.log(`Attack: ${state}`);
+    SSOT.player.lastOutcome = 'hit';
+    TELEMETRY.broadcast('combat_action', { action: state });
+  },
+
+  _doSecondary() {
+    const ok = STATE_MACHINE.transition('secondary');
+    if (!ok) return;
+    HUD.flash('SECONDARY');
+    HUD.log('Attack: secondary');
+    TELEMETRY.broadcast('combat_action', { action: 'attack_secondary' });
+  },
+
+  _doAlchemy() {
+    const ok = STATE_MACHINE.transition('alchemy');
+    if (!ok) return;
+    HUD.flash('ALCHEMY');
+    HUD.log('Ability: Alchemy / Mystic');
+    TELEMETRY.broadcast('ability_activated', { ability: 'alchemy' });
+  },
+
+  _doGolem() {
+    const ok = STATE_MACHINE.transition('golem');
+    if (!ok) return;
+    HUD.flash('DEPLOY GOLEM');
+    HUD.log('Ability: Deploy Golem — summoning...');
+    TELEMETRY.broadcast('ability_activated', { ability: 'golem' });
+  },
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// LOCOMOTION CONTROLLER
+// ISSUE 3 FIX: p.isSprinting only written on confirmed transition.
+// No ANIM_CONTROLLER.play() calls here — transition() handles all.
+// ═══════════════════════════════════════════════════════════════════
+const LOCOMOTION = {
+  _moveSpeed:  4.0,
+  _sprintMult: 1.8,
+
+  tick(dt, capsule) {  // capsule — NOT playerMesh (Document 5 compliance)
+    const p        = SSOT.player;
+    const move     = INPUT.getMoveVector();
+    const isMoving = move.x !== 0 || move.z !== 0;
+    const sprinting = INPUT.isSprinting();
+
+    // ── State transitions — truth first, animation follows ──────
+    const actionStates = new Set([
+      'jump_start', 'jump_loop', 'jump_land',
+      'roll', 'attack_primary', 'attack_secondary',
+      'ability_alchemy', 'ability_golem',
+    ]);
+
+    if (!actionStates.has(p.activeState)) {
+
+      if (sprinting && isMoving && !p.isSprinting) {
+        // ISSUE 3 FIX: flag written AFTER transition confirms, not before.
+        if (STATE_MACHINE.transition('sprint')) {
+          p.isSprinting = true;
+        }
+
+      } else if (isMoving && p.activeState === 'idle') {
+        STATE_MACHINE.transition('move');
+
+      } else if (!isMoving && (
+        p.activeState === 'walk'   ||
+        p.activeState === 'run'    ||
+        p.activeState === 'sprint'
+      )) {
+        p.isSprinting = false;
+        STATE_MACHINE.transition('stop');
+      }
+    }
+
+    // ── Physical movement (capsule is the physics object) ────────
+    if (capsule && isMoving) {
+      const speed = this._moveSpeed * (p.isSprinting ? this._sprintMult : 1.0) * dt;
+      capsule.position.x += move.x * speed;
+      capsule.position.z += move.z * speed;
+      // Mirror capsule position to SSOT
+      p.position.x = capsule.position.x;
+      p.position.y = capsule.position.y;
+      p.position.z = capsule.position.z;
+      // Face direction of travel
+      if (Math.abs(move.x) > 0.01 || Math.abs(move.z) > 0.01) {
+        capsule.rotation.y = Math.atan2(move.x, move.z);
+      }
+    }
+  },
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// LOADER HELPERS
+// ═══════════════════════════════════════════════════════════════════
+function loaderProgress(ratio) {
+  document.getElementById('loader-fill').style.width = (ratio * 100) + '%';
+}
+
+function hideLoader() {
+  const el = document.getElementById('loader');
+  el.style.opacity = '0';
+  setTimeout(() => { el.style.display = 'none'; }, 500);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// TELEMETRY → HUD WIRING
+// ═══════════════════════════════════════════════════════════════════
+TELEMETRY.on('state_change', payload => {
+  HUD.flash(payload.snapshot.activeState.replace(/_/g, ' ').toUpperCase());
+});
+
+TELEMETRY.on('phase_window_open', payload => {
+  HUD.log(`Phase window open: ${payload.state} @ ${(payload.phase*100).toFixed(0)}%`);
+});
+
+TELEMETRY.on('ability_activated', payload => {
+  HUD.log(`Ability fired: ${payload.ability.toUpperCase()}`, 'info');
+});
+
+// MOAI drift monitor — logs any animation/state desync to HUD
+MOAI.on('DRIFT_DETECTED', payload => {
+  HUD.log(`[MOAI] DRIFT: declared=${payload.declared} playing=${payload.playing}`, 'warn');
+  console.warn('[MOAI SENTINEL]', payload);
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// CHARACTER LOADER — SINGLE AUTHORITATIVE LOADER
+//
+// ARCHITECTURAL CHANGE: loadAll() is removed. loadCharacter() is the
+// sole loader. All animation groups are registered into ANIM_CONTROLLER
+// via ANIM_CONTROLLER.register(). No module-level group variables.
+//
+// RETARGETING FIX: Walk/run animations are retargeted to idle mesh
+// TransformNodes (scene nodes), NOT to Bone objects. Babylon GLB
+// animations target nodes. Bone lookup was silently failing and falling
+// back to the walk mesh's hidden nodes, making walk drive an invisible
+// skeleton. Fix: match by node name within the idle mesh's node tree.
+// ═══════════════════════════════════════════════════════════════════
+let capsule;
+let playerMesh;
+let camera;
+
+async function loadCharacter(scene) {
+  // ── 1. Load primary model (idle GLB — has skeleton, mesh, base anim) ──
+  HUD.log('Loading idle model...');
+  const idleResult = await BABYLON.SceneLoader.ImportMeshAsync(
+    '', SCHEMA.GLB_BASE_PATH, 'scene-mint-deploy-idle.glb', scene
+  );
+  loaderProgress(0.25);
+
+  playerMesh = idleResult.meshes[0];
+  playerMesh.parent = capsule;
+  playerMesh.position = new BABYLON.Vector3(0, -0.9, 0);
+  playerMesh.isPickable = false;
+  playerMesh.getChildMeshes().forEach(m => {
+    m.isPickable = false;
+    m.checkCollisions = false;
+  });
+
+  // Stop auto-play and register idle
+  idleResult.animationGroups.forEach(g => g.stop());
+  const idleGroup = idleResult.animationGroups[0] ?? null;
+  ANIM_CONTROLLER.register('idle', idleGroup);
+
+  // Also register alchemy/golem as idle (placeholder until real clips exist)
+  ANIM_CONTROLLER.register('ability_alchemy', idleGroup);
+  ANIM_CONTROLLER.register('ability_golem',   idleGroup);
+
+  console.log('[LOADER] Idle groups:', idleResult.animationGroups.map(g => g.name));
+  HUD.log(`Idle: ${idleGroup ? 'BOUND ✓' : 'MISSING ✗'}`, idleGroup ? 'info' : 'warn');
+
+  // Build a flat map of all TransformNodes on the idle mesh for retargeting.
+  // This is what Babylon actually targets in GLB animations — not Bone objects.
+  const idleNodeMap = {};
+  idleResult.meshes.forEach(m => {
+    idleNodeMap[m.name] = m;
+  });
+  // Also include skeleton bones as TransformNodes (Babylon exposes them both ways)
+  if (idleResult.skeletons[0]) {
+    idleResult.skeletons[0].bones.forEach(b => {
+      if (b._linkedTransformNode) idleNodeMap[b.name] = b._linkedTransformNode;
+    });
+  }
+
+  // ── 2. Load walk animation GLB — retarget to idle mesh nodes ──
+  HUD.log('Loading walk anim...');
+  try {
+    const walkResult = await BABYLON.SceneLoader.ImportMeshAsync(
+      '', SCHEMA.GLB_BASE_PATH, 'scene-mint-deploy-walk.glb', scene
+    );
+    loaderProgress(0.5);
+
+    walkResult.animationGroups.forEach(g => g.stop());
+    const walkGroup = walkResult.animationGroups[0] ?? null;
+
+    // Hide walk mesh — animation only
+    walkResult.meshes.forEach(m => {
+      m.isVisible  = false;
+      m.isPickable = false;
+    });
+
+    // RETARGETING FIX: Target idle mesh TransformNodes, not Bone objects.
+    // Walk anim must drive the idle skeleton's nodes to be visible.
+    if (walkGroup) {
+      walkGroup.targetedAnimations.forEach(ta => {
+        const targetName = ta.target?.name;
+        if (targetName && idleNodeMap[targetName]) {
+          ta.target = idleNodeMap[targetName];
+        }
+        // If no match found, ta.target stays as-is (safe fallback — just won't show)
+      });
+      ANIM_CONTROLLER.register('walk',       walkGroup);
+      ANIM_CONTROLLER.register('run',        walkGroup); // placeholder until run clip exists
+      ANIM_CONTROLLER.register('sprint',     walkGroup);
+      ANIM_CONTROLLER.register('jump_start', walkGroup);
+      ANIM_CONTROLLER.register('jump_loop',  walkGroup);
+      ANIM_CONTROLLER.register('jump_land',  walkGroup);
+      ANIM_CONTROLLER.register('roll',             walkGroup);
+      ANIM_CONTROLLER.register('attack_primary',   walkGroup);
+      ANIM_CONTROLLER.register('attack_secondary', walkGroup);
+    }
+
+    console.log('[LOADER] Walk groups:', walkResult.animationGroups.map(g => g.name));
+    HUD.log(`Walk: ${walkGroup ? 'BOUND ✓' : 'MISSING ✗'}`, walkGroup ? 'info' : 'warn');
+  } catch (e) {
+    HUD.log('Walk GLB missing — sliding expected', 'warn');
+    console.warn('[LOADER] Walk GLB not found:', e.message);
+  }
+
+  // ── 3. Load run animation GLB — retarget same pattern ──
+  HUD.log('Loading run anim...');
+  try {
+    const runResult = await BABYLON.SceneLoader.ImportMeshAsync(
+      '', SCHEMA.GLB_BASE_PATH, 'scene-mint-deploy-run.glb', scene
+    );
+    loaderProgress(0.75);
+
+    runResult.animationGroups.forEach(g => g.stop());
+    const runGroup = runResult.animationGroups[0] ?? null;
+
+    runResult.meshes.forEach(m => {
+      m.isVisible  = false;
+      m.isPickable = false;
+    });
+
+    if (runGroup) {
+      runGroup.targetedAnimations.forEach(ta => {
+        const targetName = ta.target?.name;
+        if (targetName && idleNodeMap[targetName]) {
+          ta.target = idleNodeMap[targetName];
+        }
+      });
+      // Override the walk-group placeholders for run/sprint
+      ANIM_CONTROLLER.register('run',    runGroup);
+      ANIM_CONTROLLER.register('sprint', runGroup);
+    }
+
+    console.log('[LOADER] Run groups:', runResult.animationGroups.map(g => g.name));
+    HUD.log(`Run: ${runGroup ? 'BOUND ✓' : 'MISSING ✗'}`, runGroup ? 'info' : 'warn');
+  } catch (e) {
+    HUD.log('Run GLB missing — walk used as fallback', 'warn');
+    console.warn('[LOADER] Run GLB not found:', e.message);
+  }
+
+  loaderProgress(0.9);
+
+  // ── 4. Start idle as baseline ──
+  ANIM_CONTROLLER.play('idle');
+
+  camera.lockedTarget = capsule;
+
+  const registered = Object.keys(ANIM_CONTROLLER._groups);
+  HUD.log(`${registered.length} states bound: ${registered.join(', ')}`);
+  console.log('[LOADER] ANIM_CONTROLLER registry:', registered);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// BABYLON SCENE BOOTSTRAP
+// ═══════════════════════════════════════════════════════════════════
+(async function main() {
+  const canvas = document.getElementById('renderCanvas');
+  const engine = new BABYLON.Engine(canvas, true, {
+    preserveDrawingBuffer: true,
+    stencil: true,
+  });
+
+  const scene = new BABYLON.Scene(engine);
+  scene.clearColor = new BABYLON.Color4(0.04, 0.04, 0.06, 1);
+  scene.gravity    = new BABYLON.Vector3(0, -18, 0);
+
+  // ── Camera ──
+  camera = new BABYLON.ArcRotateCamera('cam', -Math.PI / 2, Math.PI / 3.5, 10, BABYLON.Vector3.Zero(), scene);
+  camera.lowerRadiusLimit = 4;
+  camera.upperRadiusLimit = 20;
+  camera.upperBetaLimit   = Math.PI / 2.2;
+  camera.attachControl(canvas, true);
+
+  // ── Lighting ──
+  const hemi = new BABYLON.HemisphericLight('hemi', new BABYLON.Vector3(0, 1, 0), scene);
+  hemi.intensity    = 0.4;
+  hemi.groundColor  = new BABYLON.Color3(0.05, 0.05, 0.1);
+
+  const forge = new BABYLON.PointLight('forge', new BABYLON.Vector3(0, 3, 0), scene);
+  forge.diffuse   = new BABYLON.Color3(0.9, 0.48, 0.11);
+  forge.intensity = 60;
+  forge.range     = 20;
+
+  // ── Ground ──
+  const ground   = BABYLON.MeshBuilder.CreateGround('ground', { width: 40, height: 40 }, scene);
+  const groundMat = new BABYLON.StandardMaterial('gMat', scene);
+  groundMat.diffuseColor  = new BABYLON.Color3(0.08, 0.08, 0.12);
+  groundMat.specularColor = new BABYLON.Color3(0.1,  0.1,  0.15);
+  ground.material        = groundMat;
+  ground.checkCollisions = true;
+
+  for (let i = -20; i <= 20; i += 4) {
+    const lh = BABYLON.MeshBuilder.CreateLines('lh'+i, { points: [new BABYLON.Vector3(-20, 0.01, i), new BABYLON.Vector3(20, 0.01, i)] }, scene);
+    lh.color  = new BABYLON.Color3(0.15, 0.15, 0.2);
+    const lv = BABYLON.MeshBuilder.CreateLines('lv'+i, { points: [new BABYLON.Vector3(i, 0.01, -20), new BABYLON.Vector3(i, 0.01, 20)] }, scene);
+    lv.color  = new BABYLON.Color3(0.15, 0.15, 0.2);
+  }
+
+  // ── Player capsule (physics/locomotion root) ──
+  capsule = BABYLON.MeshBuilder.CreateCapsule('playerRoot', { radius: 0.4, height: 1.8 }, scene);
+  capsule.position.y     = 0.9;
+  capsule.isVisible      = false;
+  capsule.checkCollisions = true;
+  capsule.ellipsoid       = new BABYLON.Vector3(0.4, 0.9, 0.4);
+  capsule.ellipsoidOffset = new BABYLON.Vector3(0, 0, 0);
+
+  // ── Systems init ──
+  INPUT.init();
+  ANIM_CONTROLLER.init(scene);
+
+  // ── Load character + animations (single loader, no competing paths) ──
+  HUD.log(`Loading: ${SCHEMA.CHARACTER_MODEL}...`);
+  try {
+    await loadCharacter(scene);
+  } catch (e) {
+    HUD.log('Character load failed', 'error');
+    console.error('[LOADER] loadCharacter error:', e);
+  }
+
+  loaderProgress(1.0);
+  setTimeout(hideLoader, 400);
+
+  // ── Game loop ──
+  let lastTime = performance.now();
+
+  scene.registerBeforeRender(() => {
+    const now = performance.now();
+    const dt  = Math.min((now - lastTime) / 1000, 0.05);
+    lastTime  = now;
+
+    STATE_MACHINE.tick(dt);
+    LOCOMOTION.tick(dt, capsule);
+    PERSISTENCE.record();
+    HUD.update(engine);
+
+    forge.intensity = 55 + Math.sin(now * 0.003) * 8;
+  });
+
+  engine.runRenderLoop(() => scene.render());
+  window.addEventListener('resize', () => engine.resize());
+
+  TELEMETRY.broadcast('session_start', { message: 'Genesis Verse Player Controller v1.1 online' });
+  HUD.log('CONTROLLER ONLINE');
+
+})();
+
+// ═══════════════════════════════════════════════════════════════════
+// STELLAR WOMAN CONFIRMATION TEST
+// Paste in browser console at 127.0.0.1 after mesh loads.
+// All three must return non-null / non-empty / updating.
+// ═══════════════════════════════════════════════════════════════════
+/*
+  // 1. Confirm mesh is present
+  console.log(scene.getMeshByName('__root__') || scene.getMeshByName('player'));
+  // Expected: AbstractMesh — not null
+
+  // 2. Confirm animation groups are registered in ANIM_CONTROLLER
+  console.log(Object.keys(ANIM_CONTROLLER._groups));
+  // Expected: ['idle','walk','run','sprint',...] — not empty
+
+  // 3. Confirm SSOT reads capsule position (updates on WASD)
+  console.log(SSOT.player.position);
+  // Expected: {x: number, y: number, z: number} — updates on movement
+
+  // 4. MOAI bridge integrity check
+  console.log(typeof MOAI.broadcast === 'function' && typeof MOAI.on === 'function');
+  // Expected: true
+
+  // All four confirmed → "Stellar Woman deployed" status: TRUE
+*/
+</script>
+</body>
+</html>

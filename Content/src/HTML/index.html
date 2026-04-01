@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ENIGMATIC UNIVERSES // ABYSSUM: CST OPERATIONS CONSOLE</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Barlow+Condensed:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07070b;--bg2:#0d0d14;--bg3:#13131c;--bg4:#1a1a26;
+  --b:rgba(255,255,255,.05);--b2:rgba(255,255,255,.1);--b3:rgba(255,255,255,.18);
+  --amber:#EF9F27;--ad:rgba(239,159,39,.1);--ab:rgba(239,159,39,.22);
+  --red:#E24B4A;--rd:rgba(226,75,74,.08);--rb:rgba(226,75,74,.22);
+  --teal:#1D9E75;--td:rgba(29,158,117,.08);--tb:rgba(29,158,117,.22);
+  --violet:#7F77DD;--vd:rgba(127,119,221,.1);--vb:rgba(127,119,221,.25);
+  --blue:#378ADD;
+  --text:#e8e6e0;--t2:rgba(232,230,224,.6);--t3:rgba(232,230,224,.3);--t4:rgba(232,230,224,.1);
+  --mono:'JetBrains Mono','Courier New',monospace;
+  --cond:'Barlow Condensed',sans-serif;
+  --sidebar:260px;
+  --topbar:44px;
+  --codex-h:100px;
+}
+
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--mono)}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.018) 2px,rgba(0,0,0,.018) 4px);pointer-events:none;z-index:9990}
+
+/* ── TOP HMI BAR ── */
+#top-bar{position:fixed;top:0;left:0;right:0;height:var(--topbar);background:rgba(7,7,11,.95);border-bottom:1px solid var(--b2);display:flex;align-items:center;justify-content:space-between;padding:0 18px;z-index:200;backdrop-filter:blur(8px)}
+.tb-left{display:flex;align-items:center;gap:14px}
+.tb-logo{font-family:var(--cond);font-size:16px;font-weight:900;letter-spacing:.12em;color:var(--text);text-transform:uppercase;line-height:1}
+.tb-logo span{color:var(--amber)}
+.tb-shard{font-size:8px;letter-spacing:.2em;color:var(--t3);border:1px solid var(--b2);padding:2px 8px;border-radius:2px;text-transform:uppercase}
+.tb-center{font-family:var(--cond);font-size:11px;font-weight:600;letter-spacing:.18em;color:var(--t3);text-transform:uppercase;position:absolute;left:50%;transform:translateX(-50%)}
+.tb-right{display:flex;align-items:center;gap:12px}
+.tb-wallet{background:transparent;border:1px solid var(--ab);color:var(--amber);padding:5px 14px;font-family:var(--mono);font-size:8px;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;border-radius:3px;transition:all .13s}
+.tb-wallet:hover{background:var(--ad)}
+.tb-wallet.connected{border-color:var(--tb);color:var(--teal)}
+.tb-session{font-size:8px;letter-spacing:.1em;color:var(--t3)}
+.tb-status{display:flex;align-items:center;gap:5px}
+.tb-dot{width:5px;height:5px;border-radius:50%;background:var(--teal);box-shadow:0 0 5px var(--teal);animation:dot-pulse 2s infinite}
+@keyframes dot-pulse{0%,100%{box-shadow:0 0 4px var(--teal)}50%{box-shadow:0 0 10px var(--teal)}}
+.tb-dot-label{font-size:8px;letter-spacing:.1em;color:var(--t3)}
+
+/* ── MAIN LAYOUT ── */
+#layout{position:fixed;top:var(--topbar);left:0;right:0;bottom:var(--codex-h);display:flex}
+
+/* ── LEFT SIDEBAR — OPS ── */
+#ops-panel{width:var(--sidebar);flex-shrink:0;background:rgba(7,7,11,.9);border-right:1px solid var(--b);overflow-y:auto;display:flex;flex-direction:column}
+.panel-header{padding:14px 16px 10px;border-bottom:1px solid var(--b);flex-shrink:0}
+.ph-label{font-size:7px;letter-spacing:.24em;color:var(--amber);text-transform:uppercase;margin-bottom:3px}
+.ph-title{font-family:var(--cond);font-size:14px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text)}
+.panel-section{padding:12px 16px;border-bottom:1px solid var(--b)}
+.ps-label{font-size:7px;letter-spacing:.2em;color:var(--t3);text-transform:uppercase;margin-bottom:8px}
+
+/* op mission list */
+.op-item{display:flex;flex-direction:column;gap:3px;padding:8px 10px;border:1px solid var(--b);border-radius:4px;margin-bottom:6px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden}
+.op-item::before{content:'';position:absolute;top:0;left:0;bottom:0;width:2px;background:var(--amber);opacity:0;transition:opacity .15s}
+.op-item:hover{border-color:var(--ab);background:var(--ad)}.op-item:hover::before{opacity:1}
+.op-item.featured{border-color:var(--ab);background:var(--ad)}.op-item.featured::before{opacity:1}
+.oi-tag{font-size:7px;letter-spacing:.2em;color:var(--amber);text-transform:uppercase}
+.oi-title{font-family:var(--cond);font-size:13px;font-weight:700;letter-spacing:.07em;color:var(--text);text-transform:uppercase}
+.oi-sub{font-size:8px;color:var(--t2);letter-spacing:.05em}
+.oi-badge{font-size:7px;letter-spacing:.12em;border:1px solid;padding:1px 5px;border-radius:2px;margin-top:2px;display:inline-block;text-transform:uppercase}
+.badge-active{border-color:var(--tb);color:var(--teal);background:var(--td)}
+.badge-live{border-color:var(--ab);color:var(--amber);background:var(--ad)}
+.badge-ep{border-color:var(--vb);color:var(--violet);background:var(--vd)}
+
+/* pilot status */
+.pilot-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--b)}
+.pilot-row:last-child{border-bottom:none}
+.pr-key{font-size:8px;letter-spacing:.1em;color:var(--t3)}
+.pr-val{font-size:9px;letter-spacing:.07em;color:var(--text)}
+.pr-val.green{color:var(--teal)}.pr-val.amber{color:var(--amber)}.pr-val.violet{color:var(--violet)}
+
+/* ── HERO VIEWPORT ── */
+#hero-wrap{flex:1;position:relative;overflow:hidden}
+#renderCanvas{position:absolute;inset:0;width:100%;height:100%;display:block;outline:none;background:var(--bg)}
+#hero-overlay{position:absolute;inset:0;pointer-events:none;z-index:5}
+.ho-top-left{position:absolute;top:14px;left:14px}
+.ho-session-tag{font-size:8px;letter-spacing:.18em;color:rgba(239,159,39,.55);text-transform:uppercase}
+.ho-char-name{font-family:var(--cond);font-size:22px;font-weight:700;letter-spacing:.1em;color:var(--text);text-transform:uppercase;margin-top:3px;line-height:1}
+.ho-char-sub{font-size:8px;letter-spacing:.14em;color:var(--t3);margin-top:3px}
+.ho-stats{position:absolute;bottom:14px;left:14px;display:flex;flex-direction:column;gap:3px}
+.ho-stat{font-size:8px;letter-spacing:.12em;color:var(--t3)}
+.ho-stat span{color:var(--amber)}
+.ho-load-btn{position:absolute;bottom:14px;right:14px;pointer-events:auto;background:transparent;border:1px solid var(--b2);color:var(--t3);padding:5px 12px;font-family:var(--mono);font-size:8px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;border-radius:3px;transition:all .13s}
+.ho-load-btn:hover{border-color:var(--ab);color:var(--amber)}
+#loading-overlay{position:absolute;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;z-index:10;transition:opacity .5s}
+#loading-overlay.hidden{opacity:0;pointer-events:none}
+.lo-label{font-size:9px;letter-spacing:.22em;color:var(--amber);text-transform:uppercase;animation:lo-blink 1s infinite}
+@keyframes lo-blink{0%,100%{opacity:1}50%{opacity:.35}}
+.lo-bar-wrap{width:180px;height:2px;background:var(--bg3);border-radius:1px;overflow:hidden}
+.lo-bar{height:100%;background:var(--amber);border-radius:1px;animation:lo-fill 2.5s ease forwards}
+@keyframes lo-fill{from{width:0}to{width:100%}}
+
+/* ticker */
+#ticker-wrap{position:absolute;bottom:0;left:0;right:0;height:26px;background:rgba(0,0,0,.65);border-top:1px solid var(--b);overflow:hidden;pointer-events:none;z-index:6}
+#ticker{white-space:nowrap;font-size:8px;letter-spacing:.14em;color:var(--t3);padding:0 30px;line-height:26px;animation:ticker-scroll 40s linear infinite}
+@keyframes ticker-scroll{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
+
+/* ── RIGHT SIDEBAR — DAPP ── */
+#dapp-panel{width:var(--sidebar);flex-shrink:0;background:rgba(7,7,11,.9);border-left:1px solid var(--b);overflow-y:auto;display:flex;flex-direction:column}
+.connect-zone{padding:14px 16px;border-bottom:1px solid var(--b)}
+.cz-title{font-family:var(--cond);font-size:13px;font-weight:700;letter-spacing:.1em;color:var(--text);text-transform:uppercase;margin-bottom:8px}
+.cz-connect-btn{width:100%;background:transparent;border:1px solid var(--ab);color:var(--amber);padding:9px;font-family:var(--mono);font-size:8px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;border-radius:4px;transition:all .14s;margin-bottom:6px}
+.cz-connect-btn:hover{background:var(--ad)}
+.cz-ghost-btn{width:100%;background:transparent;border:1px solid var(--b2);color:var(--t3);padding:7px;font-family:var(--mono);font-size:8px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;border-radius:4px;transition:all .14s}
+.cz-ghost-btn:hover{border-color:var(--b3);color:var(--t2)}
+.cz-address{font-size:9px;letter-spacing:.06em;color:var(--teal);margin-top:6px;display:none}
+
+/* field deck */
+.field-deck{padding:12px 16px;border-bottom:1px solid var(--b)}
+.fd-label{font-size:7px;letter-spacing:.2em;color:var(--t3);text-transform:uppercase;margin-bottom:8px}
+.card-slot{display:flex;align-items:center;gap:8px;padding:6px 8px;background:var(--bg3);border:1px solid var(--b);border-radius:4px;margin-bottom:5px;cursor:pointer;transition:all .14s}
+.card-slot:hover{border-color:var(--ab)}
+.cs-art{width:28px;height:36px;border-radius:3px;background:var(--bg4);border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+.cs-art img{width:100%;height:100%;object-fit:cover;opacity:.8}
+.cs-art-ph{font-size:8px;color:var(--t3);font-family:var(--mono);letter-spacing:.04em}
+.cs-info{flex:1;min-width:0}
+.cs-name{font-family:var(--cond);font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--text);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cs-role{font-size:7px;letter-spacing:.1em;color:var(--amber);text-transform:uppercase}
+.cs-tier{font-size:7px;padding:1px 4px;border-radius:2px;letter-spacing:.1em;text-transform:uppercase;flex-shrink:0}
+.tier-rare{background:var(--ad);border:1px solid var(--ab);color:var(--amber)}
+.tier-epic{background:var(--vd);border:1px solid var(--vb);color:var(--violet)}
+.tier-legend{background:var(--rd);border:1px solid var(--rb);color:var(--red)}
+
+/* clearance */
+.clearance-panel{padding:12px 16px;border-bottom:1px solid var(--b)}
+.clearance-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--b)}
+.clearance-row:last-child{border-bottom:none}
+.cr-key{font-size:8px;letter-spacing:.12em;color:var(--t3)}
+.cr-val{font-size:9px;color:var(--text)}
+.cr-val.amber{color:var(--amber)}.cr-val.green{color:var(--teal)}.cr-val.violet{color:var(--violet)}
+
+/* mint btn */
+.mint-action{padding:12px 16px}
+.mint-btn{width:100%;background:transparent;border:1px solid var(--tb);color:var(--teal);padding:9px;font-family:var(--mono);font-size:8px;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;border-radius:4px;transition:all .14s;margin-bottom:6px}
+.mint-btn:hover{background:var(--td)}
+
+/* ── CODEX RAIL ── */
+#codex-rail{position:fixed;bottom:0;left:0;right:0;height:var(--codex-h);background:rgba(7,7,11,.96);border-top:1px solid var(--b2);overflow-x:auto;overflow-y:hidden;display:flex;align-items:stretch;padding:0 10px;gap:0;z-index:150;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.08) transparent}
+#codex-rail::-webkit-scrollbar{height:2px}
+#codex-rail::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08)}
+.codex-tile{flex-shrink:0;width:160px;border-right:1px solid var(--b);padding:12px 14px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;transition:all .15s;position:relative;overflow:hidden;text-decoration:none}
+.codex-tile::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;opacity:0;transition:opacity .15s}
+.codex-tile:hover{background:rgba(255,255,255,.02)}.codex-tile:hover::before{opacity:1}
+.ct-a::before{background:var(--amber)}.ct-r::before{background:var(--red)}.ct-t::before{background:var(--teal)}.ct-v::before{background:var(--violet)}.ct-b::before{background:var(--blue)}
+.ct-label{font-size:7px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:4px}
+.ct-a .ct-label{color:rgba(239,159,39,.6)}.ct-r .ct-label{color:rgba(226,75,74,.6)}.ct-t .ct-label{color:rgba(29,158,117,.6)}.ct-v .ct-label{color:rgba(127,119,221,.6)}.ct-b .ct-label{color:rgba(55,138,221,.6)}
+.ct-title{font-family:var(--cond);font-size:13px;font-weight:700;letter-spacing:.08em;color:var(--text);text-transform:uppercase;line-height:1.1;margin-bottom:4px}
+.ct-sub{font-size:8px;color:var(--t3);letter-spacing:.05em;line-height:1.4}
+.ct-threat{font-size:7px;padding:1px 5px;border-radius:2px;letter-spacing:.1em;text-transform:uppercase;display:inline-block;margin-top:4px}
+.threat-omega{background:var(--rd);border:1px solid var(--rb);color:var(--red)}
+.threat-high{background:var(--ad);border:1px solid var(--ab);color:var(--amber)}
+.threat-active{background:var(--td);border:1px solid var(--tb);color:var(--teal)}
+.threat-live{background:var(--vd);border:1px solid var(--vb);color:var(--violet)}
+
+/* ── UTILS ── */
+::-webkit-scrollbar{width:2px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.07)}
+</style>
+</head>
+<body>
+
+<!-- TOP HMI BAR -->
+<div id="top-bar">
+  <div class="tb-left">
+    <div class="tb-logo">ENIGMATIC <span>UNIVERSES</span></div>
+    <div class="tb-shard">SHARD: DIESEL CITY</div>
+  </div>
+  <div class="tb-center">ABYSSUM // CST OPERATIONS CONSOLE</div>
+  <div class="tb-right">
+    <div class="tb-status">
+      <div class="tb-dot"></div>
+      <span class="tb-dot-label" id="system-status">SYSTEMS NOMINAL</span>
+    </div>
+    <button class="tb-wallet" id="wallet-btn" onclick="connectWallet()">WALLET: DISCONNECTED</button>
+    <div class="tb-session" id="tb-session">SESSION: —</div>
+  </div>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div id="layout">
+
+  <!-- LEFT: OPS PANEL -->
+  <div id="ops-panel">
+    <div class="panel-header">
+      <div class="ph-label">// CST OPERATIONS</div>
+      <div class="ph-title">Mission Hub</div>
+    </div>
+
+    <div class="panel-section">
+      <div class="ps-label">FEATURED OPERATION</div>
+      <div class="op-item featured" onclick="window.open('CST_MISSION_HUB_v2.html','_self')">
+        <div class="oi-tag">CST // COLD BREW: MYSTICS OF MAYHEM</div>
+        <div class="oi-title">48-Stone Recovery Arc</div>
+        <div class="oi-sub">Corgemont → Stones Throw · Ward 7</div>
+        <div class="oi-badge badge-active">ACTIVE</div>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <div class="ps-label">EPISODE QUEUE</div>
+      <div class="op-item" onclick="window.open('CST_EP01_COLD_BREW.html','_self')">
+        <div class="oi-tag">EP.01</div>
+        <div class="oi-title">Cold Brew</div>
+        <div class="oi-sub">Engine Hall · Taur-Nuphari boss</div>
+        <div class="oi-badge badge-live">DEPLOYED</div>
+      </div>
+      <div class="op-item" onclick="window.open('CST_EP02_DEAD_STONE.html','_self')">
+        <div class="oi-tag">EP.02</div>
+        <div class="oi-title">Dead Stone</div>
+        <div class="oi-sub">Dead Stone Station · Terror King</div>
+        <div class="oi-badge badge-live">DEPLOYED</div>
+      </div>
+      <div class="op-item" onclick="window.open('cold_brew_ep3.html','_self')">
+        <div class="oi-tag">EP.03</div>
+        <div class="oi-title">Styx Station</div>
+        <div class="oi-sub">Boundary Portal 7 · Ossuary Warden</div>
+        <div class="oi-badge badge-live">DEPLOYED</div>
+      </div>
+      <div class="op-item" onclick="window.open('CST_M01_PLAY_LOOP.html','_self')">
+        <div class="oi-tag">M01 // PLAY TEST</div>
+        <div class="oi-title">Broken Rail Entry</div>
+        <div class="oi-sub">Stone Recovery · Babylon.js loop</div>
+        <div class="oi-badge badge-ep">TESTABLE</div>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <div class="ps-label">PILOT STATUS</div>
+      <div class="pilot-row"><span class="pr-key">CLEARANCE</span><span class="pr-val amber">OMEGA</span></div>
+      <div class="pilot-row"><span class="pr-key">WARD</span><span class="pr-val violet">WARD 7 — FORGE</span></div>
+      <div class="pilot-row"><span class="pr-key">STONES</span><span class="pr-val" id="stone-count">0 / 48</span></div>
+      <div class="pilot-row"><span class="pr-key">CARDS</span><span class="pr-val green" id="card-count">12 CAPTURED</span></div>
+      <div class="pilot-row"><span class="pr-key">ERT</span><span class="pr-val" id="ert-status">DORMANT</span></div>
+    </div>
+
+    <div class="panel-section" style="flex:1">
+      <div class="ps-label">FACTION WARDS</div>
+      <div class="op-item" style="cursor:default;opacity:.55">
+        <div class="oi-tag">WARD 1</div>
+        <div class="oi-title" style="font-size:11px">Corporatist — Neon Finance</div>
+      </div>
+      <div class="op-item" style="cursor:default;opacity:.55">
+        <div class="oi-tag">WARD 5</div>
+        <div class="oi-title" style="font-size:11px">Tribal — Ancestral Tech Mystics</div>
+      </div>
+      <div class="op-item" style="cursor:default;opacity:.55">
+        <div class="oi-tag">WARD 8</div>
+        <div class="oi-title" style="font-size:11px">Veil Sector — Abyssum Bleed</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CENTER: BABYLON.JS HERO VIEWPORT -->
+  <div id="hero-wrap">
+    <canvas id="renderCanvas" touch-action="none"></canvas>
+
+    <div id="loading-overlay">
+      <div class="lo-label" id="lo-label">LOADING OPERATIVE...</div>
+      <div class="lo-bar-wrap"><div class="lo-bar" id="lo-bar"></div></div>
+    </div>
+
+    <div id="hero-overlay">
+      <div class="ho-top-left">
+        <div class="ho-session-tag">// GENESIS VERSE — FIELD UNIT</div>
+        <div class="ho-char-name" id="ho-char-name">STELLAR WOMAN</div>
+        <div class="ho-char-sub" id="ho-char-sub">CST TROOPER CLASS — ACTIVE ANIMATION</div>
+      </div>
+      <div class="ho-stats">
+        <div class="ho-stat">FPS <span id="ho-fps">—</span></div>
+        <div class="ho-stat">MESH <span id="ho-mesh">—</span></div>
+        <div class="ho-stat">ANIM <span id="ho-anim">—</span></div>
+      </div>
+      <button class="ho-load-btn" onclick="document.getElementById('file-input').click()">LOAD OPERATIVE GLB</button>
+      <input type="file" id="file-input" accept=".glb,.gltf" style="display:none" onchange="loadFromInput(this)">
+    </div>
+
+    <div id="ticker-wrap">
+      <div id="ticker">
+        M01: BROKEN RAIL ENTRY — CORGEMONT → STONES THROW · WARD 7 — INDUSTRIAL FORGE · CST-ERT CLASSIFIED CHANNEL: DORMANT · BOUNDARY STONE RECOVERY ARC: 0 / 48 · GENESIS VERSE SEASON 1 — SIGNAL AWAKENING · RIFT RATS RECOMPILING · PHASE SPY / GLITCH WITCH / ECHO WITCH: ERT CELL ASSEMBLED · OPERATION SWAT: AWAITING CLEARANCE · WAR WITCH: SIRENS OF ABYSSUM — ACTIVE · JANE DISTRICT: HORROR WITCH REPORTER — DEPLOYING ·
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: DAPP PANEL -->
+  <div id="dapp-panel">
+    <div class="panel-header">
+      <div class="ph-label">// CST WALLET INTERFACE</div>
+      <div class="ph-title">Genesis Verse</div>
+    </div>
+
+    <div class="connect-zone">
+      <div class="cz-title">Forge Network</div>
+      <button class="cz-connect-btn" id="connect-btn" onclick="connectWallet()">CONNECT WALLET ▶</button>
+      <button class="cz-ghost-btn" onclick="viewAsGhost()">VIEW AS GHOST</button>
+      <div class="cz-address" id="cz-address"></div>
+    </div>
+
+    <div class="field-deck">
+      <div class="fd-label">FIELD DECK — CST-ERT</div>
+      <div class="card-slot">
+        <div class="cs-art"><span class="cs-art-ph">PSY</span></div>
+        <div class="cs-info">
+          <div class="cs-name">Phase Spy</div>
+          <div class="cs-role">INFILTRATION · EP.01</div>
+        </div>
+        <span class="cs-tier tier-rare">RARE</span>
+      </div>
+      <div class="card-slot">
+        <div class="cs-art"><span class="cs-art-ph">GW</span></div>
+        <div class="cs-info">
+          <div class="cs-name">Glitch Witch</div>
+          <div class="cs-role">DIGITAL DISRUPTION · EP.02</div>
+        </div>
+        <span class="cs-tier tier-epic">EPIC</span>
+      </div>
+      <div class="card-slot">
+        <div class="cs-art"><span class="cs-art-ph">EW</span></div>
+        <div class="cs-info">
+          <div class="cs-name">Echo Witch</div>
+          <div class="cs-role">RESONANCE · EP.03</div>
+        </div>
+        <span class="cs-tier tier-epic">EPIC</span>
+      </div>
+      <div class="card-slot" onclick="window.open('CST_MISSION_HUB_v2.html','_self')">
+        <div class="cs-art"><span class="cs-art-ph" style="font-size:7px;text-align:center">ALL</span></div>
+        <div class="cs-info">
+          <div class="cs-name">Full Deck</div>
+          <div class="cs-role">12 OPERATIVES</div>
+        </div>
+        <span class="cs-tier tier-legend" style="background:var(--rd);border-color:var(--rb);color:var(--red)">VIEW</span>
+      </div>
+    </div>
+
+    <div class="clearance-panel">
+      <div class="ps-label">CLEARANCE INDEX</div>
+      <div class="clearance-row"><span class="cr-key">PHASE</span><span class="cr-val amber">8.3 — PRODUCTION</span></div>
+      <div class="clearance-row"><span class="cr-key">ON-CHAIN</span><span class="cr-val green">BASE SEPOLIA ✓</span></div>
+      <div class="clearance-row"><span class="cr-key">ERC</span><span class="cr-val">1155 · CST OPERATIVES</span></div>
+      <div class="clearance-row"><span class="cr-key">OPS DONE</span><span class="cr-val green">3 EPISODES</span></div>
+      <div class="clearance-row"><span class="cr-key">ERT LOCKS</span><span class="cr-val violet">0 / 3 CLEARED</span></div>
+    </div>
+
+    <div class="mint-action">
+      <button class="mint-btn" onclick="window.open('CST_MISSION_HUB_v2.html','_self')">MINT TO DEPLOY ▶</button>
+      <button class="cz-ghost-btn" onclick="window.open('CST_CHARACTER_VIEWER_DARK.html','_self')">CHARACTER VIEWER ▶</button>
+    </div>
+  </div>
+</div>
+
+<!-- CODEX RAIL -->
+<div id="codex-rail">
+
+  <a class="codex-tile ct-a" href="CST_MISSION_HUB_v2.html">
+    <div>
+      <div class="ct-label">OPS CONSOLE</div>
+      <div class="ct-title">Mission Hub v2</div>
+      <div class="ct-sub">Card Captor · Mint · Gas</div>
+    </div>
+    <span class="ct-threat threat-active">LIVE</span>
+  </a>
+
+  <a class="codex-tile ct-t" href="CST_M01_PLAY_LOOP.html">
+    <div>
+      <div class="ct-label">PLAY TEST</div>
+      <div class="ct-title">M01 Play Loop</div>
+      <div class="ct-sub">Stone recovery · Smart Watch</div>
+    </div>
+    <span class="ct-threat threat-active">TESTABLE</span>
+  </a>
+
+  <a class="codex-tile ct-r" href="SWAT_Codex.html">
+    <div>
+      <div class="ct-label">SWAT CODEX</div>
+      <div class="ct-title">S.W.A.T.</div>
+      <div class="ct-sub">Encounter taxonomy · Threats</div>
+    </div>
+    <span class="ct-threat threat-omega">CLASSIFIED</span>
+  </a>
+
+  <a class="codex-tile ct-r" href="ABYSSUM_Malvek_Faction_Dossier.html">
+    <div>
+      <div class="ct-label">FACTION</div>
+      <div class="ct-title">Malvek</div>
+      <div class="ct-sub">Overseer · Sigils · Hierarchy</div>
+    </div>
+    <span class="ct-threat threat-omega">OMEGA</span>
+  </a>
+
+  <a class="codex-tile ct-a" href="diesel_city_codex.html">
+    <div>
+      <div class="ct-label">ENVIRONMENT</div>
+      <div class="ct-title">Diesel City</div>
+      <div class="ct-sub">Rail yards · Industrial canon</div>
+    </div>
+    <span class="ct-threat threat-high">SECTOR 3</span>
+  </a>
+
+  <a class="codex-tile ct-v" href="phase7_3_theatre_d.html">
+    <div>
+      <div class="ct-label">THEATRE D</div>
+      <div class="ct-title">Phase 7.3</div>
+      <div class="ct-sub">Campaign framing · Terror King</div>
+    </div>
+    <span class="ct-threat threat-high">P1</span>
+  </a>
+
+  <a class="codex-tile ct-v" href="ABYSSUM_Episodes_I-VII.html">
+    <div>
+      <div class="ct-label">STORY RAIL</div>
+      <div class="ct-title">Episodes I–VII</div>
+      <div class="ct-sub">Corgemont → Styx arc</div>
+    </div>
+    <span class="ct-threat threat-live">CANON</span>
+  </a>
+
+  <a class="codex-tile ct-t" href="ABYSSUM_Visual_Reference_Bible.html">
+    <div>
+      <div class="ct-label">VISUAL LAW</div>
+      <div class="ct-title">Visual Bible</div>
+      <div class="ct-sub">Palette · UI motifs · HUD</div>
+    </div>
+    <span class="ct-threat threat-active">LOCKED</span>
+  </a>
+
+  <a class="codex-tile ct-v" href="swat_witches_teaser.html">
+    <div>
+      <div class="ct-label">TRANSMISSION</div>
+      <div class="ct-title">SWAT Witches</div>
+      <div class="ct-sub">Teaser · Occult urban</div>
+    </div>
+    <span class="ct-threat threat-live">TEASER</span>
+  </a>
+
+  <a class="codex-tile ct-r" href="ABYSSUM_Malvek_Faction_Dossier.html">
+    <div>
+      <div class="ct-label">BESTIARY</div>
+      <div class="ct-title">CST-ERT Registry</div>
+      <div class="ct-sub">Field entity index · NPCs</div>
+    </div>
+    <span class="ct-threat threat-omega">EYES ONLY</span>
+  </a>
+
+  <a class="codex-tile ct-t" href="CST_CHARACTER_VIEWER_DARK.html">
+    <div>
+      <div class="ct-label">3D VIEWER</div>
+      <div class="ct-title">Field Unit</div>
+      <div class="ct-sub">Babylon.js · GLB inspector</div>
+    </div>
+    <span class="ct-threat threat-active">LIVE</span>
+  </a>
+
+  <a class="codex-tile ct-a" href="genesis_veres_lore_cards.html">
+    <div>
+      <div class="ct-label">CARD SYSTEM</div>
+      <div class="ct-title">Card Captor Dev</div>
+      <div class="ct-sub">DAPP · Web3 inventory</div>
+    </div>
+    <span class="ct-threat threat-high">PHASE 8.3</span>
+  </a>
+
+</div>
+
+<script src="https://cdn.babylonjs.com/babylon.js"></script>
+<script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+<script>
+/* ════════════════════════════════════
+   ENIGMATIC UNIVERSES — INDEX.HTML
+   ════════════════════════════════════ */
+
+/* paths relative to HTML/src/HTML/ */
+const WALK_PATH  = '../../../Characters/Players/Animation/StellarWoman/';
+const WALK_FILE  = 'scene-mint-deploy-walk.glb';
+const FALLBACK_PATH = '../../../Characters/Players/Animation/StellarWoman/';
+const FALLBACK_FILE  = 'AS_Idle.gltf';
+
+let engine, scene, camera;
+
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('tb-session').textContent = 'SESSION: EU-'+Date.now().toString(36).toUpperCase().slice(-6);
+  checkSaves();
+  initBabylon();
+  setupDrop();
+});
+
+function initBabylon() {
+  const canvas = document.getElementById('renderCanvas');
+  engine = new BABYLON.Engine(canvas, true, {preserveDrawingBuffer:true, stencil:true});
+  scene = new BABYLON.Scene(engine);
+  scene.clearColor = new BABYLON.Color4(0.027, 0.027, 0.043, 1);
+  scene.ambientColor = new BABYLON.Color3(1,1,1);
+
+  camera = new BABYLON.ArcRotateCamera('cam', BABYLON.Tools.ToRadians(-90), BABYLON.Tools.ToRadians(75), 4.5, new BABYLON.Vector3(0,1,0), scene);
+  camera.lowerRadiusLimit = 0.5; camera.upperRadiusLimit = 20;
+  camera.attachControl(canvas, true); camera.wheelPrecision = 50;
+
+  /* lights */
+  const k = new BABYLON.DirectionalLight('k', new BABYLON.Vector3(1.4,.4,3), scene);
+  k.diffuse = new BABYLON.Color3(1,.9,.8); k.intensity = 1;
+  const f = new BABYLON.DirectionalLight('f', new BABYLON.Vector3(.35,.55,.25), scene);
+  f.diffuse = new BABYLON.Color3(.5,.6,1); f.intensity = .45;
+  const r = new BABYLON.DirectionalLight('r', new BABYLON.Vector3(.8,0,-.6), scene);
+  r.diffuse = new BABYLON.Color3(1,.3,.2); r.intensity = .35;
+
+  /* ground grid */
+  const g = BABYLON.MeshBuilder.CreateGround('grd',{width:16,height:16,subdivisions:24},scene);
+  const gm = new BABYLON.StandardMaterial('gm',scene); gm.wireframe=true; gm.emissiveColor=new BABYLON.Color3(.05,.05,.08); g.material=gm;
+
+  /* atmosphere particles */
+  const ps = new BABYLON.ParticleSystem('atm',60,scene);
+  ps.emitter = new BABYLON.Vector3(0,2,0);
+  ps.minEmitBox = new BABYLON.Vector3(-6,0,-6); ps.maxEmitBox = new BABYLON.Vector3(6,4,6);
+  ps.color1 = new BABYLON.Color4(.94,.62,.15,.1); ps.color2 = new BABYLON.Color4(.5,.46,.87,.07);
+  ps.colorDead = new BABYLON.Color4(0,0,0,0); ps.minSize=.02; ps.maxSize=.05;
+  ps.minLifeTime=5; ps.maxLifeTime=10; ps.emitRate=6;
+  ps.direction1=new BABYLON.Vector3(-.1,.2,-.1); ps.direction2=new BABYLON.Vector3(.1,.4,.1);
+  ps.minEmitPower=.04; ps.maxEmitPower=.08; ps.updateSpeed=0.01; ps.start();
+
+  engine.runRenderLoop(()=>{
+    scene.render();
+    const fps = engine.getFps().toFixed(0);
+    document.getElementById('ho-fps').textContent = fps;
+    document.getElementById('ho-fps').style.color = fps<30?'#E24B4A':'#EF9F27';
+  });
+  window.addEventListener('resize',()=>engine.resize());
+
+  /* auto-load walk animation */
+  autoLoad();
+}
+
+function autoLoad() {
+  document.getElementById('loading-overlay').classList.remove('hidden');
+  document.getElementById('lo-label').textContent = 'LOADING STELLAR WOMAN — WALK FWD...';
+  document.getElementById('lo-bar').style.animation = 'none';
+  setTimeout(()=>{ document.getElementById('lo-bar').style.animation = 'lo-fill 2.5s ease forwards'; },10);
+
+  BABYLON.SceneLoader.ImportMesh('',WALK_PATH,WALK_FILE,scene,(meshes,_p,_s,anims)=>{
+    onLoad(meshes,anims,'Stellar Woman','Walk Fwd');
+  },null,()=>{
+    /* try idle fallback */
+    BABYLON.SceneLoader.ImportMesh('',FALLBACK_PATH,FALLBACK_FILE,scene,(meshes,_p,_s,anims)=>{
+      onLoad(meshes,anims,'Stellar Woman','Idle');
+    },null,()=>{
+      document.getElementById('lo-label').textContent = 'DROP GLB TO LOAD OPERATIVE';
+      document.getElementById('loading-overlay').classList.add('hidden');
+    });
+  });
+}
+
+function onLoad(meshes, anims, name, animName) {
+  if(!meshes.length){document.getElementById('loading-overlay').classList.add('hidden');return;}
+  const root = meshes[0];
+  const bb = root.getHierarchyBoundingVectors(true);
+  const size = bb.max.subtract(bb.min);
+  root.position.y = -bb.min.y;
+  camera.target = new BABYLON.Vector3(0, size.y*.5, 0);
+  camera.radius = Math.max(size.y*2, 2.5);
+
+  let mc=0,pc=0;
+  meshes.forEach(m=>{if(m.getTotalVertices&&m.getTotalVertices()>0){mc++;pc+=m.getTotalIndices?m.getTotalIndices()/3:0;}});
+  document.getElementById('ho-mesh').textContent = mc;
+
+  const ag = scene.animationGroups[0]||anims[0];
+  if(ag){ag.loopAnimation=true;ag.play(true);document.getElementById('ho-anim').textContent=ag.name||animName;}
+
+  document.getElementById('ho-char-name').textContent = name.toUpperCase();
+  document.getElementById('ho-char-sub').textContent = 'CST TROOPER CLASS — '+animName.toUpperCase();
+
+  setTimeout(()=>document.getElementById('loading-overlay').classList.add('hidden'),400);
+}
+
+function loadFromInput(input){const f=input.files[0];if(f)loadFile(f);}
+
+function loadFile(file){
+  if(!file.name.match(/\.(glb|gltf)$/i))return;
+  scene.meshes.slice().forEach(m=>{if(m.name!=='grd')m.dispose();});
+  scene.animationGroups.forEach(a=>a.dispose());
+  document.getElementById('loading-overlay').classList.remove('hidden');
+  document.getElementById('lo-label').textContent='LOADING: '+file.name.toUpperCase();
+  document.getElementById('lo-bar').style.animation='none';
+  setTimeout(()=>{document.getElementById('lo-bar').style.animation='lo-fill 2.5s ease forwards';},10);
+  const url=URL.createObjectURL(file);
+  const ext='.'+file.name.split('.').pop().toLowerCase();
+  BABYLON.SceneLoader.ImportMesh('','',url,scene,(meshes,_p,_s,anims)=>{
+    URL.revokeObjectURL(url);
+    const name=file.name.replace(/\.(glb|gltf)$/i,'').replace(/[-_]/g,' ').toUpperCase();
+    onLoad(meshes,anims,name,'LOADED');
+    /* rebuild grid */
+    const g=BABYLON.MeshBuilder.CreateGround('grd',{width:16,height:16,subdivisions:24},scene);
+    const gm=new BABYLON.StandardMaterial('gm',scene);gm.wireframe=true;gm.emissiveColor=new BABYLON.Color3(.05,.05,.08);g.material=gm;
+  },null,null,ext);
+}
+
+function setupDrop(){
+  const hw=document.getElementById('hero-wrap');
+  hw.addEventListener('dragover',e=>e.preventDefault());
+  hw.addEventListener('drop',e=>{e.preventDefault();const f=e.dataTransfer.files[0];if(f)loadFile(f);});
+}
+
+/* ── WALLET ── */
+function connectWallet(){
+  const btn=document.getElementById('wallet-btn');
+  const cbtn=document.getElementById('connect-btn');
+  btn.textContent='SYNCING...';cbtn.textContent='SYNCING...';
+  setTimeout(()=>{
+    btn.textContent='WALLET: 0x7F...3A // BASE'; btn.className='tb-wallet connected';
+    cbtn.textContent='CONNECTED ✓'; cbtn.style.borderColor='var(--tb)'; cbtn.style.color='var(--teal)';
+    document.getElementById('cz-address').style.display='block';
+    document.getElementById('cz-address').textContent='0x7F3A...9E2D · BASE MAINNET';
+  },1200);
+}
+function viewAsGhost(){
+  document.getElementById('connect-btn').textContent='GHOST MODE — READ ONLY';
+  document.getElementById('connect-btn').style.opacity='.6';
+}
+
+/* ── READ SAVES ── */
+function checkSaves(){
+  let stones=0;
+  ['ep01','ep02','ep03'].forEach(ep=>{
+    const raw=localStorage.getItem(`cst_${ep}_save`);
+    if(raw)try{const d=JSON.parse(raw);if(d.complete)stones++;}catch(e){}
+  });
+  if(stones>0){
+    document.getElementById('stone-count').textContent=stones+' / 48';
+    document.getElementById('stone-count').style.color='var(--amber)';
+  }
+  const minted=JSON.parse(localStorage.getItem('cst_minted')||'[]');
+  if(minted.length) document.getElementById('card-count').textContent=minted.length+' / 12 MINTED';
+  if(localStorage.getItem('cst_ert_unlocked')==='true'){
+    document.getElementById('ert-status').textContent='SIGNAL ACQUIRED';
+    document.getElementById('ert-status').style.color='var(--red)';
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>VLAAD COCKPIT — SESSION HANDOFF // UPGRADE TRIAD BRIEF</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #020309;
+    --panel: #050814;
+    --amber: #d4820a;
+    --signal: #00f0ff;
+    --orange: #e84e12;
+    --gold: #c8a84a;
+    --teal: #1a8a88;
+    --blue: #3a7adf;
+    --success: #7dffb3;
+    --danger: #ff3b3b;
+    --mid: #1a2240;
+    --soft: #9aa7c0;
+    --strong: #e8f0ff;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--strong);
+    font-family: 'Crimson Pro', Georgia, serif;
+    padding: 40px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,240,255,.02) 3px, rgba(0,240,255,.02) 4px);
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* HEADER */
+  .cover-stamp {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px; letter-spacing: .4em; color: var(--teal);
+    text-transform: uppercase; margin-bottom: 8px;
+  }
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px; letter-spacing: .1em; color: var(--signal);
+    line-height: .9;
+  }
+  h1 span { color: var(--amber); }
+  .sub {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px; letter-spacing: .2em; color: var(--soft);
+    margin-top: 8px;
+  }
+  .rule {
+    height: 2px;
+    background: linear-gradient(90deg, var(--signal), var(--amber), transparent);
+    margin: 20px 0 28px;
+  }
+
+  /* SECTION */
+  .section { margin-bottom: 32px; }
+  .section-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px; letter-spacing: .4em; color: var(--amber);
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px; letter-spacing: .1em; color: var(--strong);
+    margin-bottom: 12px;
+  }
+  p { font-size: 15px; line-height: 1.7; color: var(--soft); font-weight: 300; }
+  p + p { margin-top: 8px; }
+  strong { color: var(--strong); font-weight: 600; }
+  em { color: var(--signal); font-style: italic; }
+
+  /* GRID */
+  .triad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .triad-card {
+    border: 1px solid var(--mid);
+    background: rgba(5,8,20,.8);
+    padding: 18px;
+  }
+  .triad-card-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 8px; letter-spacing: .35em; text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .triad-card-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px; letter-spacing: .08em;
+    margin-bottom: 8px;
+  }
+  .triad-card-body { font-size: 13px; line-height: 1.6; color: var(--soft); font-weight: 300; }
+
+  .card-a .triad-card-label { color: var(--signal); }
+  .card-a .triad-card-title { color: var(--signal); }
+  .card-b .triad-card-label { color: var(--amber); }
+  .card-b .triad-card-title { color: var(--amber); }
+  .card-c .triad-card-label { color: var(--orange); }
+  .card-c .triad-card-title { color: var(--orange); }
+
+  /* ORDER FLOW */
+  .flow {
+    display: flex; gap: 0; align-items: stretch; margin-top: 16px; flex-wrap: wrap;
+  }
+  .flow-step {
+    flex: 1; min-width: 160px;
+    border: 1px solid var(--mid);
+    background: rgba(5,8,20,.8);
+    padding: 14px 16px;
+    position: relative;
+  }
+  .flow-step + .flow-step { border-left: none; }
+  .flow-num {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 8px; letter-spacing: .3em; color: var(--amber-dim);
+    margin-bottom: 4px;
+  }
+  .flow-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px; letter-spacing: .1em;
+  }
+  .flow-sub { font-size: 12px; color: var(--soft); margin-top: 4px; line-height: 1.5; }
+  .flow-step:nth-child(1) .flow-title { color: var(--signal); }
+  .flow-step:nth-child(2) .flow-title { color: var(--amber); }
+  .flow-step:nth-child(3) .flow-title { color: var(--orange); }
+
+  /* STATUS TABLE */
+  .status-table {
+    width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 12px;
+  }
+  .status-table th {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 8px; letter-spacing: .3em; text-transform: uppercase;
+    color: var(--amber); text-align: left; padding: 8px 12px;
+    border-bottom: 1px solid var(--mid);
+  }
+  .status-table td {
+    padding: 8px 12px; border-bottom: 1px solid rgba(26,34,64,.5); color: var(--soft);
+    vertical-align: top;
+  }
+  .status-table td:first-child {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px; color: var(--strong);
+  }
+  .badge {
+    display: inline-block;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 8px; letter-spacing: .2em; text-transform: uppercase;
+    padding: 3px 8px; border: 1px solid;
+  }
+  .badge.ready  { color: var(--success); border-color: var(--success); background: rgba(125,255,179,.08); }
+  .badge.pending { color: var(--amber);  border-color: var(--amber);   background: rgba(212,130,10,.08); }
+  .badge.locked  { color: var(--soft);   border-color: var(--mid);     background: transparent; }
+
+  /* ARCH DIAGRAM */
+  .arch {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px; line-height: 2.2; color: var(--soft);
+    border-left: 2px solid var(--mid);
+    padding-left: 20px; margin-top: 12px;
+  }
+  .arch span { color: var(--signal); }
+  .arch em { color: var(--amber); font-style: normal; }
+
+  /* NOTE BOX */
+  .note {
+    border-left: 3px solid var(--amber);
+    padding: 12px 18px;
+    background: rgba(5,8,20,.5);
+    font-size: 14px; font-style: italic;
+    line-height: 1.6; color: var(--soft);
+    margin-top: 16px;
+  }
+
+  /* FOOTER */
+  .footer {
+    border-top: 1px solid var(--mid);
+    margin-top: 40px; padding-top: 20px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px; letter-spacing: .2em; color: var(--mid);
+    text-transform: uppercase;
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  }
+
+  @media (max-width: 640px) {
+    body { padding: 20px; }
+    .triad { grid-template-columns: 1fr; }
+    .flow { flex-direction: column; }
+    .flow-step + .flow-step { border-left: 1px solid var(--mid); border-top: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cover-stamp">CST-ERT // VLAAD COMMAND — SESSION HANDOFF DOCUMENT</div>
+<h1>VLAAD Cockpit <span>Upgrade</span><br>Triad Brief</h1>
+<div class="sub">Phase 3C — Implementation Backlog · Awaiting Build Order</div>
+<div class="rule"></div>
+
+<!-- WHERE WE ARE -->
+<div class="section">
+  <div class="section-tag">Current State</div>
+  <h2>What the Cockpit Has Now</h2>
+  <p>The <strong>VLAAD Cockpit v2</strong> (VLAAD_Cockpit_v2 in HTML) is a fully working single-file command interface implementing the State → View → Consequence engine. Core loop is live: <em>Contract → Deploy → Mission choices → Outcome overlay → Reset to Freight Car</em>.</p>
+  <p>The image reference (screenshot from session) confirms the cockpit renders correctly with <strong>Mission Channel viewport</strong>, <strong>Subsystems column</strong> (Repair Bay, Salvage Bay, Contract Terminal), <strong>Telemetry Panel</strong> (HP / Signal / Threat stats), and <strong>Mission Success / Failure overlays</strong>.</p>
+
+  <table class="status-table" style="margin-top:16px;">
+    <tr>
+      <th>System</th><th>Status</th><th>Notes</th>
+    </tr>
+    <tr>
+      <td>State Engine (SSoT)</td>
+      <td><span class="badge ready">Live</span></td>
+      <td>gameState object, eventBus, phase indicator — all functional</td>
+    </tr>
+    <tr>
+      <td>View Engine</td>
+      <td><span class="badge ready">Live</span></td>
+      <td>renderView() swap — IDLE / MISSION / SALVAGE</td>
+    </tr>
+    <tr>
+      <td>Mission Choices</td>
+      <td><span class="badge ready">Live</span></td>
+      <td>Silent Entry / Forced Breach / Pilot Eject — all wired</td>
+    </tr>
+    <tr>
+      <td>Outcome Overlays</td>
+      <td><span class="badge ready">Live</span></td>
+      <td>Success (green) / Failure (red) — 2s auto-dismiss → reset</td>
+    </tr>
+    <tr>
+      <td>Telemetry Unit Cards</td>
+      <td><span class="badge pending">Upgrade A</span></td>
+      <td>Currently basic stat chips — needs full unit card slots</td>
+    </tr>
+    <tr>
+      <td>Mission Spine</td>
+      <td><span class="badge pending">Upgrade B</span></td>
+      <td>Currently static text stack — needs live clickable stages</td>
+    </tr>
+    <tr>
+      <td>Contract Generator</td>
+      <td><span class="badge locked">Upgrade C</span></td>
+      <td>Hardcoded STYX contract — needs dynamic generator</td>
+    </tr>
+  </table>
+</div>
+
+<!-- THE THREE UPGRADES -->
+<div class="section">
+  <div class="section-tag">Upgrade Triad — Build Backlog</div>
+  <h2>Three Upgrades, Locked and Ready</h2>
+
+  <div class="triad">
+    <div class="triad-card card-a">
+      <div class="triad-card-label">Upgrade A · Immediate</div>
+      <div class="triad-card-title">Telemetry Unit Cards</div>
+      <div class="triad-card-body">Replace the 3-chip stat row with a living roster strip. Each card: clickable, shows HP bar / signal drain / condition tags / faction glow. Emits state from SSoT. This is where NFT captors, mechs, pilots, and summoned entities live.</div>
+    </div>
+    <div class="triad-card card-b">
+      <div class="triad-card-label">Upgrade B · Structure</div>
+      <div class="triad-card-title">Clickable Mission Spine</div>
+      <div class="triad-card-body">Turn the static deployment loop text into a live stage spine. Active stage glows, completed stages get emissive mark, locked stages dim. Clicking shows stage logs / outcomes / sub-actions. Becomes a diegetic timeline of the run.</div>
+    </div>
+    <div class="triad-card card-c">
+      <div class="triad-card-label">Upgrade C · Engine Core</div>
+      <div class="triad-card-title">Contract Generator</div>
+      <div class="triad-card-body">Dynamic contract objects: title, faction, risk tier, threat modifiers, rewards, conditions, special rules, environmental effects, narrative hook, optional objectives. Injects into mission viewport. This is where worldbuilding meets mechanics.</div>
+    </div>
+  </div>
+</div>
+
+<!-- BUILD ORDER -->
+<div class="section">
+  <div class="section-tag">Implementation Order</div>
+  <h2>Correct Build Sequence</h2>
+  <p>The three upgrades are <strong>dependent in sequence</strong> — the Contract defines the Mission, the Mission defines the Stages, the Stages update the Units. Build in this order to avoid rework:</p>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-num">Step 01</div>
+      <div class="flow-title">Unit Cards</div>
+      <div class="flow-sub">Immediate visual payoff. Ties directly into SSoT. Sets up the entity model for everything downstream.</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">Step 02</div>
+      <div class="flow-title">Mission Spine</div>
+      <div class="flow-sub">Adds structure and loop clarity. Spine reads from state — so Unit Card state already exists when wired.</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">Step 03</div>
+      <div class="flow-title">Contract Gen</div>
+      <div class="flow-sub">Final injection: makes the cockpit alive. Contracts write to both Spine and Unit Cards via event bus.</div>
+    </div>
+  </div>
+
+  <div class="arch">
+    <span>Contract Generator</span> → injects mission profile<br>
+    &nbsp;&nbsp;&nbsp;↓<br>
+    <em>Mission Spine</em> → displays structure, tracks progress<br>
+    &nbsp;&nbsp;&nbsp;↓<br>
+    <span>Telemetry Unit Cards</span> → reflect unit consequence state<br>
+    &nbsp;&nbsp;&nbsp;↓<br>
+    <em>eventBus</em> → wires all three to SSoT<br>
+    &nbsp;&nbsp;&nbsp;↓<br>
+    <span>WORLD STATE UPDATES</span> → instability / threat / market
+  </div>
+</div>
+
+<!-- DOCTRINE LOCK -->
+<div class="section">
+  <div class="section-tag">Doctrine — Locked</div>
+  <h2>Core Principles (Non-Negotiable)</h2>
+
+  <p><strong>No page loads. No UI transitions.</strong> Only: <em>State Mutation → View Reactivity → World Consequences</em>.</p>
+  <p>The <strong>Freight Car is the root view</strong> — immutable shell. Everything routes through it. The active viewport inside is the only thing that mutates.</p>
+  <p><strong>Failure does not stop the system</strong> — it reshapes the world. Instability increments. Threat rises. The loop continues, just harder. This is the persistence-without-failure philosophy.</p>
+  <p><strong>Drowning = true loss.</strong> Submerged + non-ejected = drowned flag = no recovery. No UI save-scumming.</p>
+
+  <div class="note">
+    "The View is constant. The State mutates. The World persists consequences." — Phase 3C Doctrine, locked.
+  </div>
+</div>
+
+<!-- KEY FILES -->
+<div class="section">
+  <div class="section-tag">Reference Material — This Session</div>
+  <h2>What Was Produced</h2>
+  <table class="status-table">
+    <tr><th>Deliverable</th><th>Status</th><th>Location / Notes</th></tr>
+    <tr>
+      <td>volume_iv_bible.html</td>
+      <td><span class="badge ready">Complete</span></td>
+      <td>Full 4-section Field Codex: Glitch Witches, Freight Car Interface, CST Battle Witch Trooper, Echelon Class Siren. Image slots labelled with source filenames.</td>
+    </tr>
+    <tr>
+      <td>VLAAD Cockpit v2 (code)</td>
+      <td><span class="badge ready">Received</span></td>
+      <td>Full working HTML in Document 2. State engine, event bus, view swap, mission loop — all live. Screenshot confirms render.</td>
+    </tr>
+    <tr>
+      <td>Phase 3C Architecture doc</td>
+      <td><span class="badge ready">Received</span></td>
+      <td>Document 1 — full system topology, code snippets for eject / loss / market / contract / faction-chain mapping.</td>
+    </tr>
+    <tr>
+      <td>VLAAD Upgrade Triad Brief</td>
+      <td><span class="badge ready">This File</span></td>
+      <td>Current document — session handoff for token refresh.</td>
+    </tr>
+  </table>
+</div>
+
+<div class="footer">
+  <span>CST-ERT // VLAAD Command Spine — Session Handoff</span>
+  <span>Awaiting Build Order: A · B · or · C</span>
+  <span>Signal Confirmed. Doctrine Aligned.</span>
+</div>
+
+</body>
+</html>
