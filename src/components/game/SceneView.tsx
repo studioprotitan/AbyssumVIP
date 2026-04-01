@@ -4,19 +4,22 @@
 import React, { useEffect, useRef } from 'react';
 import * as BABYLON from 'babylonjs';
 import 'babylonjs-loaders';
-import { PhaseState } from '@/lib/game/types';
+import { PhaseState, OperatorStats, SurvivalDirective } from '@/lib/game/types';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 interface SceneViewProps {
   phase: PhaseState;
+  stats?: OperatorStats;
 }
 
-export const SceneView: React.FC<SceneViewProps> = ({ phase }) => {
+export const SceneView: React.FC<SceneViewProps> = ({ phase, stats }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<BABYLON.Engine | null>(null);
   const sceneRef = useRef<BABYLON.Scene | null>(null);
   const particleSystemRef = useRef<BABYLON.ParticleSystem | null>(null);
   const cameraRef = useRef<BABYLON.ArcRotateCamera | null>(null);
+  const characterRef = useRef<BABYLON.Mesh | null>(null);
+  const characterMatRef = useRef<BABYLON.StandardMaterial | null>(null);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -77,10 +80,15 @@ export const SceneView: React.FC<SceneViewProps> = ({ phase }) => {
     const charMat = new BABYLON.StandardMaterial("charMat", scene);
     charMat.emissiveColor = new BABYLON.Color3(1, 0.5, 0.2);
     character.material = charMat;
+    characterRef.current = character;
+    characterMatRef.current = charMat;
 
     engine.runRenderLoop(() => {
       scene.render();
       character.rotation.y += 0.01;
+      
+      // Simulated floating/bobbing
+      character.position.y = 1 + Math.sin(Date.now() * 0.002) * 0.1;
     });
 
     const handleResize = () => engine.resize();
@@ -97,8 +105,9 @@ export const SceneView: React.FC<SceneViewProps> = ({ phase }) => {
     };
   }, []);
 
+  // Sync visuals with phase and survival directives
   useEffect(() => {
-    if (!particleSystemRef.current || !cameraRef.current) return;
+    if (!particleSystemRef.current || !cameraRef.current || !characterMatRef.current) return;
 
     switch (phase) {
       case PhaseState.LOADING:
@@ -114,7 +123,18 @@ export const SceneView: React.FC<SceneViewProps> = ({ phase }) => {
         cameraRef.current.radius = 10;
         break;
     }
-  }, [phase]);
+
+    if (stats?.activeDirective === SurvivalDirective.EMERGENCY) {
+      characterMatRef.current.emissiveColor = new BABYLON.Color3(1, 0, 0); // Red for emergency
+      particleSystemRef.current.color1 = new BABYLON.Color4(1, 0, 0, 1);
+    } else if (stats?.activeDirective === SurvivalDirective.FIGHT) {
+      characterMatRef.current.emissiveColor = new BABYLON.Color3(1, 0.5, 0); // Orange for fight
+      particleSystemRef.current.color1 = new BABYLON.Color4(1, 0.5, 0, 1);
+    } else {
+      characterMatRef.current.emissiveColor = new BABYLON.Color3(1, 0.5, 0.2); // Normal ember
+      particleSystemRef.current.color1 = new BABYLON.Color4(1, 0.5, 0.2, 1);
+    }
+  }, [phase, stats?.activeDirective]);
 
   return (
     <div className="relative w-full h-full overflow-hidden bg-void-dark">

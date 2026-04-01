@@ -12,7 +12,8 @@ export enum Locomotion {
   vault = 'vault',
   brace = 'brace',
   climb = 'climb',
-  swim = 'swim'
+  swim = 'swim',
+  falling = 'falling'
 }
 
 export enum Environment {
@@ -96,4 +97,7 @@ export interface OperatorStats {
   mountingStatus: 'unmounted' | 'mounting' | 'mounted';
   activeDirective: SurvivalDirective;
   threatLevel: ThreatLevel;
+  entropyScore: number;
+  driftScore: number;
+  hazardDetected?: string;
 }

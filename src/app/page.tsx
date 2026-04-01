@@ -9,7 +9,7 @@ import { QTEOverlay } from '@/components/ui/QTEOverlay';
 import { useGameEngine } from '@/hooks/use-game-engine';
 import { PhaseState } from '@/lib/game/types';
 import { Toaster } from '@/components/ui/toaster';
-import { Loader2, BrainCircuit } from 'lucide-react';
+import { Loader2, BrainCircuit, AlertTriangle } from 'lucide-react';
 
 export default function Home() {
   const {
@@ -19,13 +19,14 @@ export default function Home() {
     behaviors,
     oracleIntel,
     startLaunch,
-    handleQTEResult
+    handleQTEResult,
+    injectSkill
   } = useGameEngine();
 
   return (
     <main className="relative w-screen h-screen bg-void-dark">
       {/* 3D Core */}
-      <SceneView phase={phase} />
+      <SceneView phase={phase} stats={stats} />
 
       {/* Loading Screen Overlay */}
       {phase === PhaseState.LOADING && (
@@ -52,17 +53,20 @@ export default function Home() {
       <QTEOverlay active={qteActive} onResult={handleQTEResult} />
 
       {/* Persistent HUD */}
-      <HUD phase={phase} stats={stats} />
+      <HUD phase={phase} stats={stats} onInjectSkill={injectSkill} />
 
       {/* Oracle Guidance & AI Behaviors Overlay */}
       {phase === PhaseState.STREAMING && (
         <>
           {/* Top Left Oracle Assessment */}
           {oracleIntel && (
-            <div className="absolute top-32 left-8 z-30 max-w-sm p-4 bg-void/60 border-l-2 border-primary backdrop-blur-md animate-in slide-in-from-left-4 duration-500">
-              <div className="flex items-center gap-2 mb-2">
-                <BrainCircuit className="size-4 text-primary animate-pulse" />
-                <span className="font-code text-[10px] text-primary uppercase">Oracle Strategic Analysis</span>
+            <div className="absolute top-32 left-8 z-30 max-w-sm p-4 bg-void/80 border-l-2 border-primary backdrop-blur-md animate-in slide-in-from-left-4 duration-500">
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <div className="flex items-center gap-2">
+                  <BrainCircuit className="size-4 text-primary animate-pulse" />
+                  <span className="font-code text-[10px] text-primary uppercase">Oracle Strategic Analysis</span>
+                </div>
+                {stats.hazardDetected && <AlertTriangle className="size-3 text-destructive animate-bounce" />}
               </div>
               <p className="font-body text-xs text-ember/80 italic leading-relaxed">
                 "{oracleIntel.riskAssessment}"
@@ -78,9 +82,12 @@ export default function Home() {
                 <p className="font-headline text-sm text-ember uppercase">
                   Action: {behaviors[0].name}
                 </p>
-                <p className="font-body text-[10px] text-ember/60 mt-1">
-                  Weight: {behaviors[0].signalPulseWeight.toFixed(2)} | Directive: {stats.activeDirective}
-                </p>
+                <div className="flex justify-between items-center mt-1">
+                  <p className="font-body text-[10px] text-ember/60">
+                    Weight: {behaviors[0].signalPulseWeight.toFixed(2)} | Directive: {stats.activeDirective}
+                  </p>
+                  <div className="size-1.5 rounded-full bg-primary animate-pulse" />
+                </div>
               </div>
             </div>
           )}
