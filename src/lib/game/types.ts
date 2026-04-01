@@ -101,3 +101,13 @@ export interface OperatorStats {
   driftScore: number;
   hazardDetected?: string;
 }
+
+export interface ArtifactSnapshot {
+  timestamp: number;
+  directive: SurvivalDirective;
+  threat: ThreatLevel;
+  entropy: number;
+  drift: number;
+  action: string;
+  riskAssessment: string;
+}

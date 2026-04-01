@@ -2,7 +2,15 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { PhaseState, OperatorStats, SurvivalDirective, ThreatLevel, Locomotion, Environment } from '@/lib/game/types';
+import { 
+  PhaseState, 
+  OperatorStats, 
+  SurvivalDirective, 
+  ThreatLevel, 
+  Locomotion, 
+  Environment,
+  ArtifactSnapshot
+} from '@/lib/game/types';
 import { globalPhaseEngine } from '@/lib/game/PhaseEngine';
 import { globalStateMachine } from '@/lib/game/StateMachine';
 import { companionMemory } from '@/lib/game/PseudoMemory';
@@ -23,6 +31,8 @@ export const useGameEngine = () => {
   const [qteActive, setQteActive] = useState(false);
   const [behaviors, setBehaviors] = useState<AdaptiveAICompanionBehaviorOutput>([]);
   const [oracleIntel, setOracleIntel] = useState<OracleIntelOutput | null>(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const [artifactLog, setArtifactLog] = useState<ArtifactSnapshot[]>([]);
   
   const tickCount = useRef(0);
 
@@ -47,11 +57,11 @@ export const useGameEngine = () => {
       tickCount.current++;
       const snapshot = companionMemory.getSnapshot();
       
-      // Simulate emergent environmental hazards
       let currentHazard: string | undefined = undefined;
       let forceDirective: SurvivalDirective | null = null;
       let forceLocomotion: Locomotion | null = null;
 
+      // Simulate emergent hazards for stress testing
       if (tickCount.current % 7 === 0) {
         currentHazard = "IMMINENT DROWNING";
         forceDirective = SurvivalDirective.EMERGENCY;
@@ -66,12 +76,10 @@ export const useGameEngine = () => {
         companionMemory.update({ environment: Environment.exterior });
       }
 
-      // Simulate Entropy and Drift changes
       const newEntropy = Math.min(1, Math.max(0, stats.entropyScore + (Math.random() * 0.2 - 0.1)));
       const newDrift = Math.min(1, Math.max(0, stats.driftScore + (Math.random() * 0.1 - 0.05)));
 
       try {
-        // 1. Oracle AI analyzes world
         const intel = await getOracleIntel({
           environment: snapshot.environment,
           threatLevel: snapshot.threatLevel,
@@ -80,7 +88,6 @@ export const useGameEngine = () => {
         });
         setOracleIntel(intel);
 
-        // 2. GOAP Planner ranks actions
         const nextBehaviors = await adaptiveAICompanionBehavior({
           memory: {
             locomotion: snapshot.locomotion,
@@ -94,26 +101,47 @@ export const useGameEngine = () => {
         });
         setBehaviors(nextBehaviors);
 
-        // 3. State Machine commits first ranked action or Emergency override
+        let activeAction = "idle";
         if (forceLocomotion) {
           globalStateMachine.transition(forceLocomotion);
           companionMemory.update({ locomotion: forceLocomotion });
+          activeAction = forceLocomotion;
         } else if (nextBehaviors.length > 0) {
           const topAction = nextBehaviors[0];
+          activeAction = topAction.name;
           const locomotionType = Locomotion[topAction.name as keyof typeof Locomotion] || Locomotion.idle;
           if (globalStateMachine.transition(locomotionType)) {
             companionMemory.update({ locomotion: locomotionType });
           }
         }
 
+        const finalDirective = forceDirective || intel.suggestedDirective;
+        const finalThreat = currentHazard ? ThreatLevel.CRITICAL : ThreatLevel.LOW;
+
         setStats(prev => ({ 
           ...prev, 
-          activeDirective: forceDirective || intel.suggestedDirective,
-          threatLevel: currentHazard ? ThreatLevel.CRITICAL : ThreatLevel.LOW,
+          activeDirective: finalDirective,
+          threatLevel: finalThreat,
           entropyScore: newEntropy,
           driftScore: newDrift,
           hazardDetected: currentHazard
         }));
+
+        // Artifact Logging
+        if (isRecording) {
+          setArtifactLog(prev => [
+            {
+              timestamp: Date.now(),
+              directive: finalDirective,
+              threat: finalThreat,
+              entropy: newEntropy,
+              drift: newDrift,
+              action: activeAction,
+              riskAssessment: intel.riskAssessment
+            },
+            ...prev
+          ].slice(0, 50));
+        }
 
         if (currentHazard) {
           toast({
@@ -131,7 +159,7 @@ export const useGameEngine = () => {
     const interval = setInterval(agentTick, 5000);
     agentTick();
     return () => clearInterval(interval);
-  }, [phase, stats.entropyScore, stats.driftScore]);
+  }, [phase, stats.entropyScore, stats.driftScore, isRecording]);
 
   const startLaunch = useCallback(() => {
     setQteActive(true);
@@ -169,8 +197,24 @@ export const useGameEngine = () => {
       title: "Mint-to-Deploy",
       description: "Injecting Dash Strike into Memory Slot Combat...",
     });
-    setStats(prev => ({ ...prev, driftScore: 0.01 })); // Reset drift on sync
+    setStats(prev => ({ ...prev, driftScore: 0.01 }));
   }, []);
+
+  const toggleRecording = useCallback(() => {
+    setIsRecording(!isRecording);
+    if (!isRecording) {
+      setArtifactLog([]);
+      toast({
+        title: "Recording Started",
+        description: "Capturing investor artifact loop...",
+      });
+    } else {
+      toast({
+        title: "Recording Stopped",
+        description: "Artifact loop finalized.",
+      });
+    }
+  }, [isRecording]);
 
   return {
     phase,
@@ -178,8 +222,11 @@ export const useGameEngine = () => {
     qteActive,
     behaviors,
     oracleIntel,
+    isRecording,
+    artifactLog,
     startLaunch,
     handleQTEResult,
-    injectSkill
+    injectSkill,
+    toggleRecording
   };
 };

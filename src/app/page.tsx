@@ -6,6 +6,7 @@ import { SceneView } from '@/components/game/SceneView';
 import { HUD } from '@/components/ui/HUD';
 import { LandingScreen } from '@/components/ui/LandingScreen';
 import { QTEOverlay } from '@/components/ui/QTEOverlay';
+import { SimulationLog } from '@/components/ui/SimulationLog';
 import { useGameEngine } from '@/hooks/use-game-engine';
 import { PhaseState } from '@/lib/game/types';
 import { Toaster } from '@/components/ui/toaster';
@@ -18,9 +19,12 @@ export default function Home() {
     qteActive,
     behaviors,
     oracleIntel,
+    isRecording,
+    artifactLog,
     startLaunch,
     handleQTEResult,
-    injectSkill
+    injectSkill,
+    toggleRecording
   } = useGameEngine();
 
   return (
@@ -53,13 +57,22 @@ export default function Home() {
       <QTEOverlay active={qteActive} onResult={handleQTEResult} />
 
       {/* Persistent HUD */}
-      <HUD phase={phase} stats={stats} onInjectSkill={injectSkill} />
+      <HUD 
+        phase={phase} 
+        stats={stats} 
+        onInjectSkill={injectSkill} 
+        isRecording={isRecording}
+        onToggleRecording={toggleRecording}
+      />
+
+      {/* Artifact Log Sidebar */}
+      <SimulationLog logs={artifactLog} active={isRecording && phase === PhaseState.STREAMING} />
 
       {/* Oracle Guidance & AI Behaviors Overlay */}
       {phase === PhaseState.STREAMING && (
         <>
           {/* Top Left Oracle Assessment */}
-          {oracleIntel && (
+          {oracleIntel && !isRecording && (
             <div className="absolute top-32 left-8 z-30 max-w-sm p-4 bg-void/80 border-l-2 border-primary backdrop-blur-md animate-in slide-in-from-left-4 duration-500">
               <div className="flex items-center justify-between gap-2 mb-2">
                 <div className="flex items-center gap-2">

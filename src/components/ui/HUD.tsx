@@ -5,15 +5,24 @@ import React from 'react';
 import { PhaseState, OperatorStats } from '@/lib/game/types';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Activity, Zap, Shield, Target, AlertTriangle, Cpu, BrainCircuit, Waves } from 'lucide-react';
+import { Activity, Zap, Shield, Target, AlertTriangle, Cpu, BrainCircuit, Waves, Radio } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface HUDProps {
   phase: PhaseState;
   stats: OperatorStats;
   onInjectSkill?: () => void;
+  isRecording?: boolean;
+  onToggleRecording?: () => void;
 }
 
-export const HUD: React.FC<HUDProps> = ({ phase, stats, onInjectSkill }) => {
+export const HUD: React.FC<HUDProps> = ({ 
+  phase, 
+  stats, 
+  onInjectSkill, 
+  isRecording, 
+  onToggleRecording 
+}) => {
   if (phase === PhaseState.LOADING) return null;
 
   return (
@@ -74,14 +83,28 @@ export const HUD: React.FC<HUDProps> = ({ phase, stats, onInjectSkill }) => {
           </div>
 
           {phase === PhaseState.STREAMING && (
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={onInjectSkill}
-              className="border-ember/30 text-ember hover:bg-ember/20 bg-void/40 font-code text-[10px] tracking-widest h-8"
-            >
-              MINT-TO-DEPLOY SKILL
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={onToggleRecording}
+                className={cn(
+                  "border-ember/30 font-code text-[10px] tracking-widest h-8 px-4",
+                  isRecording ? "bg-destructive/20 text-destructive animate-pulse" : "bg-void/40 text-ember hover:bg-ember/20"
+                )}
+              >
+                <Radio className={cn("size-3 mr-2", isRecording && "animate-spin")} />
+                {isRecording ? "STOP ARTIFACT" : "RECORD ARTIFACT"}
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={onInjectSkill}
+                className="border-ember/30 text-ember hover:bg-ember/20 bg-void/40 font-code text-[10px] tracking-widest h-8"
+              >
+                MINT-TO-DEPLOY SKILL
+              </Button>
+            </div>
           )}
         </div>
       </div>
@@ -94,7 +117,6 @@ export const HUD: React.FC<HUDProps> = ({ phase, stats, onInjectSkill }) => {
             <div className="absolute inset-4 border border-ember/20 rounded-full animate-pulse" />
             <Target className="size-6 text-ember/30" />
             
-            {/* Loot-At Target Info */}
             <div className="absolute top-full mt-4 flex flex-col items-center gap-1 opacity-40">
               <div className="h-10 w-px bg-ember/20" />
               <div className="bg-void/60 px-2 py-1 border border-ember/20">
