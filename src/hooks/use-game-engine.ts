@@ -9,7 +9,8 @@ import {
   ThreatLevel, 
   Locomotion, 
   Environment,
-  ArtifactSnapshot
+  ArtifactSnapshot,
+  MissionContext
 } from '@/lib/game/types';
 import { globalPhaseEngine } from '@/lib/game/PhaseEngine';
 import { globalStateMachine } from '@/lib/game/StateMachine';
@@ -33,6 +34,7 @@ export const useGameEngine = () => {
   const [oracleIntel, setOracleIntel] = useState<OracleIntelOutput | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [artifactLog, setArtifactLog] = useState<ArtifactSnapshot[]>([]);
+  const [currentWave, setCurrentWave] = useState(1);
   
   const tickCount = useRef(0);
 
@@ -49,35 +51,50 @@ export const useGameEngine = () => {
     });
   }, []);
 
-  // Agentic Advanced Simulation Tick
+  // Agentic Advanced Simulation Tick — Wave Stress Test Logic
   useEffect(() => {
     if (phase !== PhaseState.STREAMING) return;
 
     const agentTick = async () => {
       tickCount.current++;
+      
+      // Wave Logic
+      let wave = 1;
+      if (tickCount.current > 12) wave = 3;
+      else if (tickCount.current > 6) wave = 2;
+      setCurrentWave(wave);
+
       const snapshot = companionMemory.getSnapshot();
       
       let currentHazard: string | undefined = undefined;
       let forceDirective: SurvivalDirective | null = null;
       let forceLocomotion: Locomotion | null = null;
 
-      // Simulate emergent hazards for stress testing
-      if (tickCount.current % 7 === 0) {
-        currentHazard = "IMMINENT DROWNING";
-        forceDirective = SurvivalDirective.EMERGENCY;
-        forceLocomotion = Locomotion.swim;
-        companionMemory.update({ environment: Environment.water });
-      } else if (tickCount.current % 11 === 0) {
-        currentHazard = "CRITICAL FALL DETECTED";
-        forceDirective = SurvivalDirective.EMERGENCY;
-        forceLocomotion = Locomotion.falling;
-        companionMemory.update({ environment: Environment.rooftop });
-      } else {
-        companionMemory.update({ environment: Environment.exterior });
+      // Phase-Specific Emergent Hazards
+      if (wave === 1) {
+        // Light exploration / Combat
+        companionMemory.update({ threatLevel: ThreatLevel.LOW, missionContext: MissionContext.launchPrep });
+      } else if (wave === 2) {
+        // Mixed Combat + Terrain
+        if (tickCount.current % 3 === 0) {
+          forceLocomotion = Locomotion.vault;
+          companionMemory.update({ environment: Environment.railcar });
+        }
+      } else if (wave === 3) {
+        // Heavy Stress + Hazards
+        if (tickCount.current % 2 === 0) {
+          currentHazard = tickCount.current % 4 === 0 ? "CRITICAL FALL DETECTED" : "IMMINENT DROWNING";
+          forceDirective = SurvivalDirective.EMERGENCY;
+          forceLocomotion = tickCount.current % 4 === 0 ? Locomotion.falling : Locomotion.swim;
+          companionMemory.update({ 
+            environment: tickCount.current % 4 === 0 ? Environment.rooftop : Environment.water,
+            threatLevel: ThreatLevel.CRITICAL 
+          });
+        }
       }
 
-      const newEntropy = Math.min(1, Math.max(0, stats.entropyScore + (Math.random() * 0.2 - 0.1)));
-      const newDrift = Math.min(1, Math.max(0, stats.driftScore + (Math.random() * 0.1 - 0.05)));
+      const newEntropy = Math.min(1, Math.max(0, stats.entropyScore + (Math.random() * 0.15 - 0.05)));
+      const newDrift = Math.min(1, Math.max(0, stats.driftScore + (Math.random() * 0.08 - 0.03)));
 
       try {
         const intel = await getOracleIntel({
@@ -116,7 +133,7 @@ export const useGameEngine = () => {
         }
 
         const finalDirective = forceDirective || intel.suggestedDirective;
-        const finalThreat = currentHazard ? ThreatLevel.CRITICAL : ThreatLevel.LOW;
+        const finalThreat = currentHazard ? ThreatLevel.CRITICAL : (wave === 3 ? ThreatLevel.HIGH : (wave === 2 ? ThreatLevel.MODERATE : ThreatLevel.LOW));
 
         setStats(prev => ({ 
           ...prev, 
@@ -127,7 +144,7 @@ export const useGameEngine = () => {
           hazardDetected: currentHazard
         }));
 
-        // Artifact Logging
+        // Artifact Logging — Capture rich state data
         if (isRecording) {
           setArtifactLog(prev => [
             {
@@ -152,11 +169,11 @@ export const useGameEngine = () => {
         }
 
       } catch (e) {
-        console.error("Brain tick failure", e);
+        // Central error handling through provider/listener
       }
     };
 
-    const interval = setInterval(agentTick, 5000);
+    const interval = setInterval(agentTick, 4000); // Faster tick for stress testing
     agentTick();
     return () => clearInterval(interval);
   }, [phase, stats.entropyScore, stats.driftScore, isRecording]);
@@ -194,11 +211,26 @@ export const useGameEngine = () => {
 
   const injectSkill = useCallback(() => {
     toast({
-      title: "Mint-to-Deploy",
-      description: "Injecting Dash Strike into Memory Slot Combat...",
+      title: "Mint-to-Deploy Skill",
+      description: "Injecting Tactical Shield into Combat Memory...",
     });
-    setStats(prev => ({ ...prev, driftScore: 0.01 }));
-  }, []);
+    setStats(prev => ({ ...prev, driftScore: 0.01, activeDirective: SurvivalDirective.FIGHT }));
+    // Simulate immediate skill effect in log
+    if (isRecording) {
+      setArtifactLog(prev => [
+        {
+          timestamp: Date.now(),
+          directive: SurvivalDirective.FIGHT,
+          threat: stats.threatLevel,
+          entropy: stats.entropyScore,
+          drift: 0.01,
+          action: "Skill: Tactical Shield Deploy",
+          riskAssessment: "Defensive perimeter established via Mint-to-Deploy."
+        },
+        ...prev
+      ].slice(0, 50));
+    }
+  }, [isRecording, stats.threatLevel, stats.entropyScore]);
 
   const toggleRecording = useCallback(() => {
     setIsRecording(!isRecording);
@@ -211,10 +243,10 @@ export const useGameEngine = () => {
     } else {
       toast({
         title: "Recording Stopped",
-        description: "Artifact loop finalized.",
+        description: `Artifact finalized with ${artifactLog.length} snapshots.`,
       });
     }
-  }, [isRecording]);
+  }, [isRecording, artifactLog.length]);
 
   return {
     phase,
@@ -224,6 +256,7 @@ export const useGameEngine = () => {
     oracleIntel,
     isRecording,
     artifactLog,
+    currentWave,
     startLaunch,
     handleQTEResult,
     injectSkill,

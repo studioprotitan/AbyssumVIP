@@ -5,7 +5,7 @@ import React from 'react';
 import { PhaseState, OperatorStats } from '@/lib/game/types';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Activity, Zap, Shield, Target, AlertTriangle, Cpu, BrainCircuit, Waves, Radio } from 'lucide-react';
+import { Activity, Zap, Shield, Target, AlertTriangle, Cpu, BrainCircuit, Waves, Radio, Crosshair } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface HUDProps {
@@ -48,7 +48,7 @@ export const HUD: React.FC<HUDProps> = ({
           </div>
 
           {stats.hazardDetected && (
-            <div className="p-2 bg-destructive/20 border-l-4 border-destructive animate-pulse">
+            <div className="p-2 bg-destructive/20 border-l-4 border-destructive animate-pulse shadow-[0_0_15px_rgba(204,23,30,0.3)]">
               <div className="flex items-center gap-2">
                 <AlertTriangle className="size-4 text-destructive" />
                 <span className="font-code text-xs text-destructive font-bold uppercase">{stats.hazardDetected}</span>
@@ -77,7 +77,7 @@ export const HUD: React.FC<HUDProps> = ({
               <span className="font-code text-[10px] opacity-40 uppercase">Tactical AI Array</span>
               <div className="flex items-center gap-2 text-primary">
                 <Cpu className="size-3" />
-                <span className="font-code text-xs">ACTIVE / ANALYZING TERRAIN</span>
+                <span className="font-code text-xs">ANALYZING WAVE DYNAMICS</span>
               </div>
             </div>
           </div>
@@ -90,17 +90,17 @@ export const HUD: React.FC<HUDProps> = ({
                 onClick={onToggleRecording}
                 className={cn(
                   "border-ember/30 font-code text-[10px] tracking-widest h-8 px-4",
-                  isRecording ? "bg-destructive/20 text-destructive animate-pulse" : "bg-void/40 text-ember hover:bg-ember/20"
+                  isRecording ? "bg-destructive/20 text-destructive border-destructive/50 animate-pulse" : "bg-void/40 text-ember hover:bg-ember/20"
                 )}
               >
                 <Radio className={cn("size-3 mr-2", isRecording && "animate-spin")} />
-                {isRecording ? "STOP ARTIFACT" : "RECORD ARTIFACT"}
+                {isRecording ? "FINALIZE ARTIFACT" : "RECORD ARTIFACT"}
               </Button>
               <Button 
                 variant="outline" 
                 size="sm" 
                 onClick={onInjectSkill}
-                className="border-ember/30 text-ember hover:bg-ember/20 bg-void/40 font-code text-[10px] tracking-widest h-8"
+                className="border-primary/30 text-primary hover:bg-primary/20 bg-void/40 font-code text-[10px] tracking-widest h-8"
               >
                 MINT-TO-DEPLOY SKILL
               </Button>
@@ -109,18 +109,23 @@ export const HUD: React.FC<HUDProps> = ({
         </div>
       </div>
 
-      {/* Center Reticle */}
+      {/* Center Reticle - Dynamic Loot-At Targeting */}
       {phase === PhaseState.STREAMING && (
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-20">
           <div className="relative size-24 flex items-center justify-center">
             <div className="absolute inset-0 border border-ember/10 rounded-full animate-ping" />
             <div className="absolute inset-4 border border-ember/20 rounded-full animate-pulse" />
-            <Target className="size-6 text-ember/30" />
+            <div className="absolute inset-0 flex items-center justify-center">
+               <Crosshair className="size-8 text-ember/20" />
+            </div>
+            <Target className="size-6 text-ember/50" />
             
-            <div className="absolute top-full mt-4 flex flex-col items-center gap-1 opacity-40">
-              <div className="h-10 w-px bg-ember/20" />
-              <div className="bg-void/60 px-2 py-1 border border-ember/20">
-                <span className="font-code text-[8px] whitespace-nowrap uppercase">Line Trace: Terrain Point [42.1, -12.4]</span>
+            <div className="absolute top-full mt-4 flex flex-col items-center gap-1">
+              <div className="h-10 w-px bg-ember/20 animate-pulse" />
+              <div className="bg-void/80 px-2 py-1 border border-ember/20 backdrop-blur-md">
+                <span className="font-code text-[8px] whitespace-nowrap uppercase text-ember/60">
+                  Target Lock: [{ (Math.random()*100).toFixed(1) }, { (Math.random()*100).toFixed(1) }] :: SSOT Validated
+                </span>
               </div>
             </div>
           </div>
@@ -129,7 +134,7 @@ export const HUD: React.FC<HUDProps> = ({
 
       {/* Bottom Bar - Bond & Status */}
       <div className="flex justify-between items-end gap-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
-        <div className="flex-1 max-w-sm space-y-3">
+        <div className="flex-1 max-w-sm space-y-3 pointer-events-auto">
           <div className="flex justify-between items-end">
             <div className="flex flex-col">
               <span className="font-code text-[10px] text-ember/40 uppercase">Cognitive Coherence</span>
@@ -142,21 +147,26 @@ export const HUD: React.FC<HUDProps> = ({
               className="h-full bg-ember shadow-[0_0_12px_#FF8C33] transition-all duration-500 ease-out"
               style={{ width: `${stats.bondLevel}%` }}
             />
+            {/* Drift overlay */}
+            <div 
+              className="absolute top-0 right-0 h-full bg-destructive/40 transition-all duration-1000"
+              style={{ width: `${stats.driftScore * 50}%` }}
+            />
           </div>
         </div>
 
         <div className="flex gap-12 pb-1">
           <div className="flex flex-col items-center gap-1 opacity-60">
             <Shield className="size-5 text-ember" />
-            <span className="font-code text-[8px] uppercase">SSOT Auth</span>
+            <span className="font-code text-[8px] uppercase tracking-tighter text-center">Persistence<br/>Oversight</span>
           </div>
           <div className="flex flex-col items-center gap-1 opacity-60">
              <Waves className="size-5 text-primary" />
-             <span className="font-code text-[8px] uppercase">Terrain AI</span>
+             <span className="font-code text-[8px] uppercase tracking-tighter text-center">Negotiate<br/>Terrain</span>
           </div>
           <div className="flex flex-col items-center gap-1 opacity-60">
              <Activity className="size-5 text-secondary" />
-             <span className="font-code text-[8px] uppercase">MOAI Live</span>
+             <span className="font-code text-[8px] uppercase tracking-tighter text-center">Tactical AI<br/>Array</span>
           </div>
         </div>
       </div>
