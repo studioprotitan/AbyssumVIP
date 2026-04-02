@@ -42,7 +42,7 @@ export const SystemsReport: React.FC<SystemsReportProps> = ({ active, stats, onC
               </h1>
             </div>
             <p className="font-code text-xs text-ember/40 uppercase">
-              Phase 8.4 Integration // Omega Physics Stable // SSOT-LOCKED
+              Phase 8.4 Integration // Omega Physics Stable // STATE_CORE-LOCKED
             </p>
           </div>
           <button 
@@ -74,14 +74,14 @@ export const SystemsReport: React.FC<SystemsReportProps> = ({ active, stats, onC
                 </div>
                 <div className="space-y-2">
                   <div className="flex justify-between font-code text-[10px] text-ember/40">
-                    <span>GOAP_PLANNER_ARRAY</span>
+                    <span>PLANNER_ARRAY</span>
                     <span className="text-primary">DETERMINISTIC</span>
                   </div>
                   <Progress value={88} className="h-1 bg-void" />
                 </div>
                 <div className="space-y-2">
                   <div className="flex justify-between font-code text-[10px] text-ember/40">
-                    <span>SENTINEL_DRIFT_REASONING</span>
+                    <span>STABILITY_REASONING</span>
                     <span className="text-ember">MONITORING</span>
                   </div>
                   <Progress value={stats.driftScore * 100} className="h-1 bg-void" />
@@ -162,7 +162,7 @@ export const SystemsReport: React.FC<SystemsReportProps> = ({ active, stats, onC
               </div>
               <div className="space-y-4 pt-2 border-t border-ember/5">
                  <div className="flex justify-between items-center">
-                   <span className="font-code text-[8px] text-ember/40 uppercase">Drift Reasoning</span>
+                   <span className="font-code text-[8px] text-ember/40 uppercase">Stability Reasoning</span>
                    <span className="font-code text-xs text-ember">{(stats.driftScore * 100).toFixed(1)}%</span>
                  </div>
                  <div className="flex justify-between items-center">
@@ -181,11 +181,11 @@ export const SystemsReport: React.FC<SystemsReportProps> = ({ active, stats, onC
             <span className="uppercase tracking-widest opacity-40">System Log Feed</span>
           </div>
           <div className="flex-1 space-y-1">
-            <p className="text-primary">[OK] SSOT Initialization Complete — Build v1.5.2 Stable</p>
-            <p>[INFO] NexusVerse Bridge: Active connection via MOAI events</p>
-            <p>[INFO] GOAP recalculation triggered by Directive: {stats.activeDirective}</p>
+            <p className="text-primary">[OK] STATE_CORE Initialization Complete — Build v1.5.2 Stable</p>
+            <p>[INFO] NexusVerse Bridge: Active connection via SYNC_BRIDGE events</p>
+            <p>[INFO] OPERATIVE_DIRECTIVE recalculation triggered by Directive: {stats.activeDirective}</p>
             <p className={cn(stats.driftScore > 0.5 ? "text-destructive animate-pulse" : "")}>
-              [WARN] Sentinel Drift detected at {(stats.driftScore * 100).toFixed(1)}% threshold
+              [WARN] STABILITY_CHECK threshold reached at {(stats.driftScore * 100).toFixed(1)}%
             </p>
             <p>[INFO] Tactical AI Array analyzing threat wave: {stats.threatLevel}</p>
             <p className="text-primary/60">[OK] Negotiate Terrain protocols synchronized with Babylon Engine</p>

@@ -21,10 +21,6 @@ import { toast } from '@/hooks/use-toast';
 
 const FLASH_COOLDOWN_MS = 800;
 
-/**
- * Fuzzy Membership Utility
- * Calculates the membership degree of a value within a specified range.
- */
 const fuzzyMembership = (value: number, low: number, high: number) => 
   Math.max(0, Math.min(1, (value - low) / (high - low)));
 
@@ -50,7 +46,6 @@ export const useGameEngine = () => {
   const isProcessing = useRef(false);
   const lastFlashTime = useRef(0);
 
-  // Initialize and Hydrate
   useEffect(() => {
     const init = async () => {
       await companionMemory.hydrate('default-avatar');
@@ -67,12 +62,10 @@ export const useGameEngine = () => {
     });
   }, []);
 
-  // Agentic Advanced Simulation Tick (Fuzzy Math Integrated)
   useEffect(() => {
     if (phase !== PhaseState.STREAMING) return;
 
     const agentTick = async () => {
-      // Priority 3: isProcessing guard
       if (isProcessing.current) return;
       isProcessing.current = true;
 
@@ -91,16 +84,13 @@ export const useGameEngine = () => {
         let forceLocomotion: Locomotion | null = null;
         let auditLog: string | undefined = undefined;
 
-        // Fuzzy Math: Calculate Entropy Delta and New State
         const entropyDelta = (Math.random() * 0.1 - 0.04) * (1 + tickCount.current * 0.02);
         const newEntropy = Math.min(1, Math.max(0, stats.entropyScore + entropyDelta));
         const newDrift = Math.min(1, Math.max(0, stats.driftScore + (Math.random() * 0.08 - 0.03)));
 
-        // Fuzzy Threat Assessment
         const criticalMembership = fuzzyMembership(newEntropy, 0.6, 1.0);
         const shouldTriggerHazard = wave === 3 && Math.random() < criticalMembership;
 
-        // Hazard Simulation
         if (wave === 1) {
           companionMemory.update({ 
             threatLevel: ThreatLevel.LOW, 
@@ -128,6 +118,21 @@ export const useGameEngine = () => {
             entropyScore: newEntropy
           });
         } else {
+          // Sprint Test P3: if threat is high but no hazard, allow sprint
+          if (wave === 2 && Math.random() > 0.7) {
+             forceLocomotion = Locomotion.sprint;
+          }
+          // Jump Loop Test P3: handle jump cycle
+          if (tickCount.current % 5 === 0) {
+             forceLocomotion = Locomotion.jump_start;
+             setTimeout(() => {
+                forceLocomotion = Locomotion.jump_loop;
+                setTimeout(() => {
+                   forceLocomotion = Locomotion.jump_land;
+                }, 1000);
+             }, 400);
+          }
+
           companionMemory.update({ entropyScore: newEntropy });
         }
 
@@ -169,7 +174,7 @@ export const useGameEngine = () => {
           if (globalStateMachine.transition(locomotionType)) {
             companionMemory.update({ locomotion: locomotionType });
           } else {
-            auditLog = `GOAP DRIFT: ${globalStateMachine.getCurrentState()} -> ${locomotionType} REJECTED`;
+            auditLog = `OPERATIVE DRIFT: ${globalStateMachine.getCurrentState()} -> ${locomotionType} REJECTED`;
           }
         }
 
@@ -214,7 +219,7 @@ export const useGameEngine = () => {
         }
 
       } catch (e) {
-        console.error('[MOAI:ERROR] Oracle Sync Failure', e);
+        console.error('[STATE_CORE:ERROR] Oracle Sync Failure', e);
       } finally {
         isProcessing.current = false;
       }
@@ -282,7 +287,6 @@ export const useGameEngine = () => {
     const nextRecordingState = !isRecording;
     setIsRecording(nextRecordingState);
     if (!nextRecordingState) {
-      // Finalize and Save
       await companionMemory.save('default-avatar');
       toast({
         title: "Recording Stopped",

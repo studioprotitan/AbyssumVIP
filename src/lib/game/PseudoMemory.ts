@@ -15,7 +15,7 @@ import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 /**
  * PseudoMemory - Authoritative behavioral state.
- * Compliance: SSOT for cognitive data.
+ * Compliance: STATE_CORE for cognitive data.
  * Zero Drift Policy: All updates must be deterministic.
  */
 export class PseudoMemory {
@@ -49,7 +49,7 @@ export class PseudoMemory {
   /**
    * Persistence Interface (Phase 9 Bridge)
    * Ensures cognitive data survives session termination.
-   * MOAI Compliance: All persistence events broadcast via console.
+   * SYNC_BRIDGE Compliance: All persistence events broadcast via console.
    */
   public async save(avatarId: string = 'default-avatar') {
     if (!db) return;
@@ -58,9 +58,7 @@ export class PseudoMemory {
         ...this.state,
         savedAt: Date.now()
       });
-      // MOAI Broadcast via System Log
     } catch (e: any) {
-      // Graceful degradation for offline/permission errors
       if (e.code === 'unavailable' || e.code === 'offline') {
         return;
       }
@@ -80,13 +78,10 @@ export class PseudoMemory {
         };
       }
     } catch (e: any) {
-      // COMPLIANCE: Absorb offline errors to prevent UI breakage
-      // This allows the simulation to start with default SSOT values
       if (e.code === 'unavailable' || e.code === 'offline') {
         return;
       }
-      // Critical errors still logged for Sentinel audit
-      console.warn('[SENTINEL] Hydration Interrupted:', e.message);
+      console.warn('[STABILITY_CHECK] Hydration Interrupted:', e.message);
     }
   }
 }

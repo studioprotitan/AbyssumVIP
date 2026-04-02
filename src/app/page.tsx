@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState } from 'react';
@@ -47,7 +48,7 @@ export default function Home() {
             <h2 className="font-headline text-3xl text-ember uppercase tracking-[0.3em] animate-pulse">
               Calibrating Brain
             </h2>
-            <p className="font-code text-xs text-ember/40">ORACLE NODE CONNECTING... [GOAP ACTIVE]</p>
+            <p className="font-code text-xs text-ember/40">ORACLE NODE CONNECTING... [NODE ACTIVE]</p>
           </div>
         </div>
       )}
@@ -100,7 +101,7 @@ export default function Home() {
             </div>
           )}
 
-          {/* Bottom Left GOAP Action Intent */}
+          {/* Bottom Left Intent Proposed */}
           {behaviors.length > 0 && !showReport && (
             <div className="absolute bottom-32 left-8 z-30 max-w-xs space-y-1 animate-in slide-in-from-left-4 fade-in duration-500">
               <span className="font-code text-[10px] text-ember/40 uppercase">Avatar Intent Proposed</span>

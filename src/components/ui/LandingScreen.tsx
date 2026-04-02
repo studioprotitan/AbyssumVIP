@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -28,7 +29,6 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onLaunch, onWarmUp
       log('ABYSSUM GATEWAY FORGE CONFIRM — BOOT INITIATED', 'info');
       setBootLabel('INITIALIZING BABYLON ENGINE');
 
-      // Telemetry reveal sequence (slower)
       const telemReveal = setInterval(() => {
         setVisibleTelem(prev => {
           if (prev >= 6) {
@@ -39,7 +39,6 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onLaunch, onWarmUp
         });
       }, 800);
 
-      // System Checks — Sequenced slow
       setTimeout(() => {
         log('Babylon.js engine initialized', 'ok');
         setConfirmedChecks(prev => [...prev, 'chk-babylon']);
@@ -58,21 +57,20 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onLaunch, onWarmUp
       }, 3000);
 
       setTimeout(() => {
-        log('SSOT authority locked', 'ok');
+        log('STATE_CORE authority locked', 'ok');
         setConfirmedChecks(prev => [...prev, 'chk-ssot']);
       }, 4200);
 
       setTimeout(() => {
-        log('MOAI bridge broadcasting', 'ok');
+        log('SYNC_BRIDGE broadcasting', 'ok');
         setConfirmedChecks(prev => [...prev, 'chk-moai']);
       }, 5400);
 
       setTimeout(() => {
-        log('Sentinel drift check passed', 'ok');
+        log('STABILITY_CHECK passed', 'ok');
         setConfirmedChecks(prev => [...prev, 'chk-sentinel']);
       }, 6600);
 
-      // Slow progress fill
       const progressInterval = setInterval(() => {
         setBootProgress(prev => {
           if (prev >= 100) {
@@ -92,7 +90,6 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onLaunch, onWarmUp
     sequence();
   }, [onWarmUp]);
 
-  // Handle all systems green
   useEffect(() => {
     if (confirmedChecks.length === totalSystems) {
       setTimeout(() => {
@@ -107,9 +104,9 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onLaunch, onWarmUp
     { id: 'chk-babylon', name: 'BABYLON_ENGINE', icon: Cpu },
     { id: 'chk-webgl', name: 'WEBGL2_CONTEXT', icon: Terminal },
     { id: 'chk-mesh', name: 'FORGE_MESH', icon: Database },
-    { id: 'chk-ssot', name: 'SSOT_AUTHORITY', icon: ShieldCheck },
-    { id: 'chk-moai', name: 'MOAI_BRIDGE', icon: Radio },
-    { id: 'chk-sentinel', name: 'SENTINEL_DRIFT', icon: BrainCircuit },
+    { id: 'chk-ssot', name: 'STATE_CORE', icon: ShieldCheck },
+    { id: 'chk-moai', name: 'SYNC_BRIDGE', icon: Radio },
+    { id: 'chk-sentinel', name: 'STABILITY_CHECK', icon: BrainCircuit },
   ];
 
   const totalSystems = systems.length;
@@ -208,7 +205,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onLaunch, onWarmUp
         {/* Right Panel */}
         <div className="border-l border-white/5 p-8 flex flex-col gap-8 bg-black/20">
           <div className="space-y-4">
-            <span className="text-[8px] tracking-[0.4em] text-white/20 uppercase block border-b border-white/5 pb-2">GOAP Directive</span>
+            <span className="text-[8px] tracking-[0.4em] text-white/20 uppercase block border-b border-white/5 pb-2">OPERATIVE DIRECTIVE</span>
             <div className="space-y-1">
               <div className="text-[8px] text-white/60 tracking-wider">DIRECTIVE: FORGE_CONFIRM</div>
               <div className="text-[8px] text-white/40 tracking-wider">ACTIVE_GOAL: MESH_VERIFICATION</div>

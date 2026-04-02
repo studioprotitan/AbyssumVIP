@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useMemo } from 'react';
@@ -18,11 +19,14 @@ interface HUDProps {
 }
 
 const actionHeartbeatMap: Record<string, number> = {
-  'IDLE': 2.0,       // seconds per beat
+  'IDLE': 2.0,
   'WALK': 1.2,
   'RUN': 0.7,
   'SPRINT': 0.45,
-  'JUMP': 0.55,
+  'JUMP_START': 0.4,
+  'JUMP_LOOP': 0.8,
+  'JUMP_LAND': 0.5,
+  'VAULT': 0.55,
   'ROLL': 0.6,
   'ATTACK': 0.4,
   'BRACE': 0.8,
@@ -90,7 +94,7 @@ export const HUD: React.FC<HUDProps> = ({
               </div>
             </div>
             <div className="flex flex-col items-end">
-              <span className="font-code text-[10px] opacity-40 uppercase">Sentinel Drift</span>
+              <span className="font-code text-[10px] opacity-40 uppercase">Stability Check</span>
               <div className="flex items-center gap-2">
                 <BrainCircuit className="size-3" />
                 <span className="font-code text-xs animate-telemetry-pulse">{(stats.driftScore * 100).toFixed(1)}%</span>
@@ -167,7 +171,7 @@ export const HUD: React.FC<HUDProps> = ({
               <div className="h-10 w-px bg-ember/20 animate-pulse" />
               <div className="bg-void/80 px-2 py-1 border border-ember/20 backdrop-blur-md">
                 <span className="font-code text-[8px] whitespace-nowrap uppercase text-ember/60">
-                  Target Lock :: SSOT Validated :: {activeAction || 'CALIBRATING'}
+                  Target Lock :: STATE_CORE Validated :: {activeAction || 'CALIBRATING'}
                 </span>
               </div>
             </div>

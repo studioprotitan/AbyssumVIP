@@ -13,7 +13,10 @@ export enum Locomotion {
   brace = 'brace',
   climb = 'climb',
   swim = 'swim',
-  falling = 'falling'
+  falling = 'falling',
+  jump_start = 'jump_start',
+  jump_loop = 'jump_loop',
+  jump_land = 'jump_land'
 }
 
 export enum Environment {
@@ -110,5 +113,5 @@ export interface ArtifactSnapshot {
   drift: number;
   action: string;
   riskAssessment: string;
-  audit?: string; // New: Sentinel Audit tracking
+  audit?: string;
 }
