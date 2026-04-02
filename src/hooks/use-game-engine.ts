@@ -72,6 +72,7 @@ export const useGameEngine = () => {
     if (phase !== PhaseState.STREAMING) return;
 
     const agentTick = async () => {
+      // Priority 3: isProcessing guard
       if (isProcessing.current) return;
       isProcessing.current = true;
 
@@ -95,7 +96,7 @@ export const useGameEngine = () => {
         const newEntropy = Math.min(1, Math.max(0, stats.entropyScore + entropyDelta));
         const newDrift = Math.min(1, Math.max(0, stats.driftScore + (Math.random() * 0.08 - 0.03)));
 
-        // Fuzzy Threat Assessment: Hazards fire based on cognitive state, not just a clock
+        // Fuzzy Threat Assessment
         const criticalMembership = fuzzyMembership(newEntropy, 0.6, 1.0);
         const shouldTriggerHazard = wave === 3 && Math.random() < criticalMembership;
 
