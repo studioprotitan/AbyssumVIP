@@ -1,11 +1,10 @@
-
 'use client';
 
 import React, { useMemo } from 'react';
 import { PhaseState, OperatorStats } from '@/lib/game/types';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Activity, Zap, Shield, Target, AlertTriangle, Cpu, BrainCircuit, Waves, Radio, Crosshair, ClipboardList } from 'lucide-react';
+import { Activity, Zap, BrainCircuit, Waves, Radio, Crosshair, ClipboardList, Target, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface HUDProps {
@@ -19,20 +18,12 @@ interface HUDProps {
 }
 
 const actionHeartbeatMap: Record<string, number> = {
-  'IDLE': 2.0,
-  'WALK': 1.2,
-  'RUN': 0.7,
-  'SPRINT': 0.45,
-  'JUMP_START': 0.4,
-  'JUMP_LOOP': 0.8,
-  'JUMP_LAND': 0.5,
-  'VAULT': 0.55,
-  'ROLL': 0.6,
-  'ATTACK': 0.4,
-  'BRACE': 0.8,
-  'CLIMB': 0.9,
-  'SWIM': 1.1,
-  'FALLING': 0.3,
+  'idle': 2.0,
+  'walk': 1.2,
+  'sprint': 0.45,
+  'jump_start': 0.4,
+  'jump_loop': 0.8,
+  'jump_land': 0.5,
   'DEFAULT': 1.0
 };
 
@@ -46,7 +37,7 @@ export const HUD: React.FC<HUDProps> = ({
   onToggleReport
 }) => {
   const heartbeatSpeed = useMemo(() => {
-    const action = activeAction?.toUpperCase() || 'DEFAULT';
+    const action = activeAction || 'DEFAULT';
     return actionHeartbeatMap[action] || actionHeartbeatMap['DEFAULT'];
   }, [activeAction]);
 
@@ -54,14 +45,14 @@ export const HUD: React.FC<HUDProps> = ({
 
   return (
     <div className="absolute inset-0 pointer-events-none flex flex-col justify-between p-8 font-body">
-      {/* Top Bar - Oracle & Tactical Array */}
+      {/* Top Bar — Sync Node & Tactical State */}
       <div className="flex justify-between items-start animate-in fade-in slide-in-from-top-4 duration-500">
         <div className="space-y-4">
           <div className="space-y-1">
             <div className="flex items-center gap-3">
               <div className="w-3 h-3 rounded-full bg-ember animate-pulse shadow-[0_0_8px_#FF8C33]" />
               <h2 className="font-headline text-xl tracking-widest text-ember uppercase glitch-text">
-                Avatar Brain Core
+                SYNC_NODE ACTIVE
               </h2>
             </div>
             <div className="flex gap-4">
@@ -75,7 +66,7 @@ export const HUD: React.FC<HUDProps> = ({
           </div>
 
           {stats.hazardDetected && (
-            <div className="p-2 bg-destructive/20 border-l-4 border-destructive animate-pulse shadow-[0_0_15px_rgba(204,23,30,0.3)]">
+            <div className="p-2 bg-destructive/20 border-l-4 border-destructive animate-pulse">
               <div className="flex items-center gap-2">
                 <AlertTriangle className="size-4 text-destructive" />
                 <span className="font-code text-xs text-destructive font-bold uppercase">{stats.hazardDetected}</span>
@@ -88,24 +79,11 @@ export const HUD: React.FC<HUDProps> = ({
           <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-ember/70">
             <div className="flex flex-col items-end">
               <span className="font-code text-[10px] opacity-40 uppercase">Entropy</span>
-              <div className="flex items-center gap-2">
-                <Zap className="size-3" />
-                <span className="font-code text-xs animate-telemetry-pulse">{(stats.entropyScore * 100).toFixed(1)}%</span>
-              </div>
+              <span className="font-code text-xs animate-telemetry-pulse">{(stats.entropyScore * 100).toFixed(1)}%</span>
             </div>
             <div className="flex flex-col items-end">
-              <span className="font-code text-[10px] opacity-40 uppercase">Stability Check</span>
-              <div className="flex items-center gap-2">
-                <BrainCircuit className="size-3" />
-                <span className="font-code text-xs animate-telemetry-pulse">{(stats.driftScore * 100).toFixed(1)}%</span>
-              </div>
-            </div>
-            <div className="flex flex-col items-end col-span-2 mt-2">
-              <span className="font-code text-[10px] opacity-40 uppercase">Tactical AI Array</span>
-              <div className="flex items-center gap-2 text-primary">
-                <Cpu className="size-3" />
-                <span className="font-code text-xs animate-telemetry-pulse">ANALYZING WAVE DYNAMICS</span>
-              </div>
+              <span className="font-code text-[10px] opacity-40 uppercase">Stability</span>
+              <span className="font-code text-xs animate-telemetry-pulse">{(100 - stats.driftScore * 100).toFixed(1)}%</span>
             </div>
           </div>
 
@@ -118,7 +96,7 @@ export const HUD: React.FC<HUDProps> = ({
                 className="border-ember/30 text-ember hover:bg-ember/20 bg-void/40 font-code text-[10px] tracking-widest h-8"
               >
                 <ClipboardList className="size-3 mr-2" />
-                SYSTEMS_REPORT
+                DIAGNOSTICS
               </Button>
               <Button 
                 variant="outline" 
@@ -130,25 +108,16 @@ export const HUD: React.FC<HUDProps> = ({
                 )}
               >
                 <Radio className={cn("size-3 mr-2", isRecording && "animate-spin")} />
-                {isRecording ? "FINALIZE ARTIFACT" : "RECORD ARTIFACT"}
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={onInjectSkill}
-                className="border-primary/30 text-primary hover:bg-primary/20 bg-void/40 font-code text-[10px] tracking-widest h-8"
-              >
-                MINT-TO-DEPLOY SKILL
+                {isRecording ? "FINALIZE_LOG" : "RECORD_LOG"}
               </Button>
             </div>
           )}
         </div>
       </div>
 
-      {/* Center Reticle & State Flash Heartbeat */}
+      {/* Center Reticle */}
       {phase === PhaseState.STREAMING && (
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center">
-          {/* State Flash Heartbeat Text */}
           {activeAction && (
             <div 
               key={activeAction}
@@ -158,62 +127,37 @@ export const HUD: React.FC<HUDProps> = ({
               {activeAction}
             </div>
           )}
-
           <div className="relative size-24 flex items-center justify-center">
             <div className="absolute inset-0 border border-ember/10 rounded-full animate-ping" />
             <div className="absolute inset-4 border border-ember/20 rounded-full animate-pulse" />
-            <div className="absolute inset-0 flex items-center justify-center">
-               <Crosshair className="size-8 text-ember/20" />
-            </div>
-            <Target className="size-6 text-ember/50" />
-            
-            <div className="absolute top-full mt-4 flex flex-col items-center gap-1">
-              <div className="h-10 w-px bg-ember/20 animate-pulse" />
-              <div className="bg-void/80 px-2 py-1 border border-ember/20 backdrop-blur-md">
-                <span className="font-code text-[8px] whitespace-nowrap uppercase text-ember/60">
-                  Target Lock :: STATE_CORE Validated :: {activeAction || 'CALIBRATING'}
-                </span>
-              </div>
-            </div>
+            <Crosshair className="size-8 text-ember/20" />
+            <Target className="size-6 text-ember/50 absolute" />
           </div>
         </div>
       )}
 
-      {/* Bottom Bar - Bond & Status */}
+      {/* Bottom Bar — Grid Resonance */}
       <div className="flex justify-between items-end gap-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <div className="flex-1 max-w-sm space-y-3 pointer-events-auto">
           <div className="flex justify-between items-end">
             <div className="flex flex-col">
-              <span className="font-code text-[10px] text-ember/40 uppercase">Cognitive Coherence</span>
-              <span className="font-headline text-sm tracking-tighter text-ember uppercase">Bond Resonance</span>
+              <span className="font-code text-[10px] text-ember/40 uppercase">Grid Resonance</span>
+              <span className="font-headline text-sm tracking-tighter text-ember uppercase">Signal Integrity</span>
             </div>
             <span className="font-code text-lg font-bold text-ember animate-telemetry-pulse">{stats.bondLevel}%</span>
           </div>
-          <div className="relative h-2 bg-void/60 border border-ember/20 rounded-none overflow-hidden">
+          <div className="relative h-2 bg-void/60 border border-ember/20 overflow-hidden">
             <div 
-              className="h-full bg-ember shadow-[0_0_12px_#FF8C33] transition-all duration-500 ease-out"
+              className="h-full bg-ember shadow-[0_0_12px_#FF8C33] transition-all duration-500"
               style={{ width: `${stats.bondLevel}%` }}
-            />
-            <div 
-              className="absolute top-0 right-0 h-full bg-destructive/40 transition-all duration-1000"
-              style={{ width: `${stats.driftScore * 50}%` }}
             />
           </div>
         </div>
 
-        <div className="flex gap-12 pb-1">
-          <div className="flex flex-col items-center gap-1 opacity-60">
-            <Shield className="size-5 text-ember" />
-            <span className="font-code text-[8px] uppercase tracking-tighter text-center animate-telemetry-pulse">Persistence<br/>Oversight</span>
-          </div>
-          <div className="flex flex-col items-center gap-1 opacity-60">
-             <Waves className="size-5 text-primary" />
-             <span className="font-code text-[8px] uppercase tracking-tighter text-center animate-telemetry-pulse">Negotiate<br/>Terrain</span>
-          </div>
-          <div className="flex flex-col items-center gap-1 opacity-60">
-             <Activity className="size-5 text-secondary" />
-             <span className="font-code text-[8px] uppercase tracking-tighter text-center animate-telemetry-pulse">Tactical AI<br/>Array</span>
-          </div>
+        <div className="flex gap-12 pb-1 opacity-40">
+           <Waves className="size-5 text-primary animate-pulse" />
+           <Activity className="size-5 text-secondary animate-pulse" />
+           <Zap className="size-5 text-ember animate-pulse" />
         </div>
       </div>
     </div>

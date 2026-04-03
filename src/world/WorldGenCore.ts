@@ -2,7 +2,8 @@
 
 /**
  * WorldGenCore.ts
- * Authoritative World Generation Core
+ * Authoritative World Generation Core — Phase 8.5
+ * Implements SSOT validation for grid stability.
  */
 
 export class WorldGenCore {
@@ -16,13 +17,23 @@ export class WorldGenCore {
     return WorldGenCore.instance;
   }
 
-  // STABILITY_CHECK patch applied line 259
+  /**
+   * STABILITY_CHECK validation logic (formerly SENTINEL_DRIFT)
+   * Ensures world state aligns with SSOT before rendering.
+   */
   public validateWorldState(state: any) {
     if (!state) {
-      console.warn('[STABILITY_CHECK] WORLD_STATE null. Initializing default.');
-      return { status: 'LIVE' };
+      console.warn('[STABILITY_CHECK] WORLD_STATE null. Booting default substrate.');
+      return { status: 'LIVE', origin: 'DRIVE_CORE' };
     }
-    return state;
+    
+    // Check for drift in coordinates or mesh data
+    if (state.drift > 0.8) {
+      console.error('[STABILITY_CHECK] CRITICAL DRIFT. Triggering Relay Reset.');
+      return { ...state, status: 'FAULT' };
+    }
+
+    return { ...state, status: 'LIVE' };
   }
 }
 

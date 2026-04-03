@@ -1,17 +1,33 @@
 {
+  "$schema": "https://simpro-titans.studio/schemas/mi-manifest-v1.json",
+  "_doc": "MI = Material Instance Library. One manifest per kit. Source of truth for all GLB assets in the CDN pipeline.",
   "manifest_version": "1.0.0",
   "kit": {
     "id": "dpk",
     "name": "Diesel Punk",
-    "version": "6.0.1"
+    "version": "6.0.1",
+    "source": "KitBash3D",
+    "export_path": "/models/"
   },
   "assets": [
     {
       "id": "dpk-prop-clock-a",
       "filename": "scene-mint-deploy-dpk-prop-clock-a.glb",
       "type": "prop",
-      "status": "LIVE",
-      "tags": ["clock", "street", "dieselpunk"]
+      "status": "CONFIRMED",
+      "babylon_path": "/models/scene-mint-deploy-dpk-prop-clock-a.glb",
+      "tags": ["clock", "street", "prop", "dieselpunk"],
+      "notes": "Proof-of-concept asset. Validated 04/03/26."
+    }
+  ],
+  "standing_flags": [
+    {
+      "flag": "SCHEMA_SUFFIX",
+      "assets": [
+        "scene-mint-deploy-braced-drop-a.glb",
+        "scene-mint-deploy-jump-start-a.glb"
+      ],
+      "note": "Collision variants require -a suffix in schema binding."
     }
   ]
 }
