@@ -1,0 +1,17 @@
+{
+  "manifest_version": "1.0.0",
+  "kit": {
+    "id": "dpk",
+    "name": "Diesel Punk",
+    "version": "6.0.1"
+  },
+  "assets": [
+    {
+      "id": "dpk-prop-clock-a",
+      "filename": "scene-mint-deploy-dpk-prop-clock-a.glb",
+      "type": "prop",
+      "status": "LIVE",
+      "tags": ["clock", "street", "dieselpunk"]
+    }
+  ]
+}
