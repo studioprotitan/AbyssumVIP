@@ -12,6 +12,12 @@
       "description": "Dark metallic arena floor",
       "imageUrl": "https://picsum.photos/seed/arena/1024/1024",
       "imageHint": "dark metal"
+    },
+    {
+      "id": "dpk-prop-clock-a",
+      "description": "Diesel Punk prop: Street clock",
+      "imageUrl": "https://picsum.photos/seed/clock/600/600",
+      "imageHint": "dieselpunk clock"
     }
   ]
 }

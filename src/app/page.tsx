@@ -19,7 +19,7 @@ export default function Home() {
     stats,
     qteActive,
     behaviors,
-    oracleIntel,
+    syncIntel,
     isRecording,
     showReport,
     artifactLog,
@@ -34,10 +34,8 @@ export default function Home() {
 
   return (
     <main className="relative w-screen h-screen bg-void-dark">
-      {/* 3D Core */}
       <SceneView phase={phase} stats={stats} isWarmed={isWarmed} />
 
-      {/* Loading Screen Overlay */}
       {phase === PhaseState.LOADING && (
         <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-void-dark gap-8">
           <div className="relative">
@@ -46,22 +44,19 @@ export default function Home() {
           </div>
           <div className="text-center space-y-2">
             <h2 className="font-headline text-3xl text-ember uppercase tracking-[0.3em] animate-pulse">
-              Calibrating Brain
+              SYSTEM CALIBRATING
             </h2>
-            <p className="font-code text-xs text-ember/40">ORACLE NODE CONNECTING... [NODE ACTIVE]</p>
+            <p className="font-code text-xs text-ember/40">CORE SYNC CONNECTING... [NODE ACTIVE]</p>
           </div>
         </div>
       )}
 
-      {/* Landing Phase UI (Forge Confirm) */}
       {phase === PhaseState.LANDING && !qteActive && (
         <LandingScreen onLaunch={startLaunch} onWarmUp={setIsWarmed} />
       )}
 
-      {/* QTE Layer */}
       <QTEOverlay active={qteActive} onResult={handleQTEResult} />
 
-      {/* Persistent HUD */}
       <HUD 
         phase={phase} 
         stats={stats} 
@@ -72,36 +67,31 @@ export default function Home() {
         onToggleReport={toggleReport}
       />
 
-      {/* Artifact Log Sidebar */}
       <SimulationLog logs={artifactLog} active={isRecording && phase === PhaseState.STREAMING} />
 
-      {/* Systems Diagnostics Overlay */}
       <SystemsReport 
         active={showReport} 
         stats={stats} 
         onClose={toggleReport} 
       />
 
-      {/* Oracle Guidance & AI Behaviors Overlay */}
       {phase === PhaseState.STREAMING && (
         <>
-          {/* Top Left Oracle Assessment */}
-          {oracleIntel && !isRecording && !showReport && (
+          {syncIntel && !isRecording && !showReport && (
             <div className="absolute top-32 left-8 z-30 max-w-sm p-4 bg-void/80 border-l-2 border-primary backdrop-blur-md animate-in slide-in-from-left-4 duration-500">
               <div className="flex items-center justify-between gap-2 mb-2">
                 <div className="flex items-center gap-2">
                   <BrainCircuit className="size-4 text-primary animate-pulse" />
-                  <span className="font-code text-[10px] text-primary uppercase">Oracle Strategic Analysis</span>
+                  <span className="font-code text-[10px] text-primary uppercase">Sync Node Strategic Analysis</span>
                 </div>
                 {stats.hazardDetected && <AlertTriangle className="size-3 text-destructive animate-bounce" />}
               </div>
               <p className="font-body text-xs text-ember/80 italic leading-relaxed">
-                "{oracleIntel.riskAssessment}"
+                "{syncIntel.riskAssessment}"
               </p>
             </div>
           )}
 
-          {/* Bottom Left Intent Proposed */}
           {behaviors.length > 0 && !showReport && (
             <div className="absolute bottom-32 left-8 z-30 max-w-xs space-y-1 animate-in slide-in-from-left-4 fade-in duration-500">
               <span className="font-code text-[10px] text-ember/40 uppercase">Avatar Intent Proposed</span>
@@ -121,7 +111,6 @@ export default function Home() {
         </>
       )}
 
-      {/* Post-Process Film Grain / Glitch Overlay */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[url('https://picsum.photos/seed/noise/1024/1024')] bg-repeat mix-blend-overlay" />
       
       <Toaster />

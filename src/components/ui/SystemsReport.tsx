@@ -32,17 +32,16 @@ export const SystemsReport: React.FC<SystemsReportProps> = ({ active, stats, onC
   return (
     <div className="absolute inset-0 z-[60] bg-void-dark/95 backdrop-blur-xl flex items-center justify-center p-8 animate-in fade-in zoom-in-95 duration-300">
       <div className="max-w-6xl w-full h-full flex flex-col gap-6">
-        {/* Header */}
         <div className="flex justify-between items-end border-b border-ember/20 pb-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <Terminal className="size-5 text-ember" />
               <h1 className="font-headline text-3xl text-ember uppercase tracking-tighter glitch-text">
-                Systems Diagnostic Report — v1.5.2
+                Systems Diagnostic Report — v1.6.0
               </h1>
             </div>
             <p className="font-code text-xs text-ember/40 uppercase">
-              Phase 8.4 Integration // Omega Physics Stable // STATE_CORE-LOCKED
+              Phase 8.5 Integration // Omega Physics Stable // STATE_CORE-LOCKED
             </p>
           </div>
           <button 
@@ -53,10 +52,7 @@ export const SystemsReport: React.FC<SystemsReportProps> = ({ active, stats, onC
           </button>
         </div>
 
-        {/* Diagnostic Grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 flex-1 overflow-y-auto pr-2 custom-scrollbar">
-          
-          {/* Core Processing Node Status */}
           <Card className="bg-void/40 border-ember/10 rounded-none md:col-span-2">
             <CardHeader className="pb-2 border-b border-ember/5">
               <CardTitle className="font-code text-xs text-ember/60 uppercase flex items-center gap-2">
@@ -67,14 +63,14 @@ export const SystemsReport: React.FC<SystemsReportProps> = ({ active, stats, onC
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <div className="flex justify-between font-code text-[10px] text-ember/40">
-                    <span>ORACLE_INTEL_NODE</span>
+                    <span>SYNC_INTEL_NODE</span>
                     <span className="text-primary">SYNC_OK</span>
                   </div>
                   <Progress value={92} className="h-1 bg-void" />
                 </div>
                 <div className="space-y-2">
                   <div className="flex justify-between font-code text-[10px] text-ember/40">
-                    <span>PLANNER_ARRAY</span>
+                    <span>DIRECTIVE_ARRAY</span>
                     <span className="text-primary">DETERMINISTIC</span>
                   </div>
                   <Progress value={88} className="h-1 bg-void" />
@@ -113,7 +109,6 @@ export const SystemsReport: React.FC<SystemsReportProps> = ({ active, stats, onC
             </CardContent>
           </Card>
 
-          {/* Memory Slot Integrity */}
           <Card className="bg-void/40 border-ember/10 rounded-none">
             <CardHeader className="pb-2 border-b border-ember/5">
               <CardTitle className="font-code text-xs text-ember/60 uppercase flex items-center gap-2">
@@ -144,7 +139,6 @@ export const SystemsReport: React.FC<SystemsReportProps> = ({ active, stats, onC
             </CardContent>
           </Card>
 
-          {/* Tactical Telemetry */}
           <Card className="bg-void/40 border-ember/10 rounded-none">
             <CardHeader className="pb-2 border-b border-ember/5">
               <CardTitle className="font-code text-xs text-ember/60 uppercase flex items-center gap-2">
@@ -174,21 +168,20 @@ export const SystemsReport: React.FC<SystemsReportProps> = ({ active, stats, onC
           </Card>
         </div>
 
-        {/* Footer Technical Logs */}
         <div className="h-40 bg-void/60 border border-ember/10 p-4 font-code text-[9px] text-ember/50 overflow-hidden flex flex-col">
           <div className="flex items-center gap-2 mb-2 border-b border-ember/5 pb-1">
             <FileCode className="size-3" />
             <span className="uppercase tracking-widest opacity-40">System Log Feed</span>
           </div>
           <div className="flex-1 space-y-1">
-            <p className="text-primary">[OK] STATE_CORE Initialization Complete — Build v1.5.2 Stable</p>
+            <p className="text-primary">[OK] STATE_CORE Initialization Complete — Build v1.6.0 Stable</p>
             <p>[INFO] NexusVerse Bridge: Active connection via SYNC_BRIDGE events</p>
             <p>[INFO] OPERATIVE_DIRECTIVE recalculation triggered by Directive: {stats.activeDirective}</p>
             <p className={cn(stats.driftScore > 0.5 ? "text-destructive animate-pulse" : "")}>
               [WARN] STABILITY_CHECK threshold reached at {(stats.driftScore * 100).toFixed(1)}%
             </p>
             <p>[INFO] Tactical AI Array analyzing threat wave: {stats.threatLevel}</p>
-            <p className="text-primary/60">[OK] Negotiate Terrain protocols synchronized with Babylon Engine</p>
+            <p className="text-primary/60">[OK] Negotiate Terrain protocols synchronized with Forge Engine</p>
             <p className="animate-pulse opacity-30">_ Awaiting signal pulse from Pilot Interface...</p>
           </div>
         </div>

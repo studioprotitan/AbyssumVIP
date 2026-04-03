@@ -16,7 +16,7 @@ import { globalPhaseEngine } from '@/lib/game/PhaseEngine';
 import { globalStateMachine } from '@/lib/game/StateMachine';
 import { companionMemory } from '@/lib/game/PseudoMemory';
 import { adaptiveAICompanionBehavior, AdaptiveAICompanionBehaviorOutput } from '@/ai/flows/adaptive-ai-companion-behavior';
-import { getOracleIntel, OracleIntelOutput } from '@/ai/flows/oracle-intel-node';
+import { getSyncIntel, SyncIntelOutput } from '@/ai/flows/sync-intel-node';
 import { toast } from '@/hooks/use-toast';
 
 const FLASH_COOLDOWN_MS = 800;
@@ -36,7 +36,7 @@ export const useGameEngine = () => {
   });
   const [qteActive, setQteActive] = useState(false);
   const [behaviors, setBehaviors] = useState<AdaptiveAICompanionBehaviorOutput>([]);
-  const [oracleIntel, setOracleIntel] = useState<OracleIntelOutput | null>(null);
+  const [syncIntel, setSyncIntel] = useState<SyncIntelOutput | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [showReport, setShowReport] = useState(false);
   const [artifactLog, setArtifactLog] = useState<ArtifactSnapshot[]>([]);
@@ -118,11 +118,9 @@ export const useGameEngine = () => {
             entropyScore: newEntropy
           });
         } else {
-          // Sprint Test P3: if threat is high but no hazard, allow sprint
           if (wave === 2 && Math.random() > 0.7) {
              forceLocomotion = Locomotion.sprint;
           }
-          // Jump Loop Test P3: handle jump cycle
           if (tickCount.current % 5 === 0) {
              forceLocomotion = Locomotion.jump_start;
              setTimeout(() => {
@@ -136,13 +134,13 @@ export const useGameEngine = () => {
           companionMemory.update({ entropyScore: newEntropy });
         }
 
-        const intel = await getOracleIntel({
+        const intel = await getSyncIntel({
           environment: snapshot.environment,
           threatLevel: snapshot.threatLevel,
           entropyScore: newEntropy,
           pilotIntent: snapshot.pilotIntent
         });
-        setOracleIntel(intel);
+        setSyncIntel(intel);
 
         const nextBehaviors = await adaptiveAICompanionBehavior({
           memory: {
@@ -165,7 +163,7 @@ export const useGameEngine = () => {
             companionMemory.update({ locomotion: forceLocomotion });
             activeAction = forceLocomotion;
           } else {
-            auditLog = `ILLEGAL TRANSITION BLOCKED: ${globalStateMachine.getCurrentState()} -> ${forceLocomotion}`;
+            auditLog = `OPERATIVE DRIFT DETECTED: ${globalStateMachine.getCurrentState()} -> ${forceLocomotion}`;
           }
         } else if (nextBehaviors.length > 0) {
           const topAction = nextBehaviors[0];
@@ -174,7 +172,7 @@ export const useGameEngine = () => {
           if (globalStateMachine.transition(locomotionType)) {
             companionMemory.update({ locomotion: locomotionType });
           } else {
-            auditLog = `OPERATIVE DRIFT: ${globalStateMachine.getCurrentState()} -> ${locomotionType} REJECTED`;
+            auditLog = `STABILITY DRIFT: ${globalStateMachine.getCurrentState()} -> ${locomotionType} REJECTED`;
           }
         }
 
@@ -219,7 +217,7 @@ export const useGameEngine = () => {
         }
 
       } catch (e) {
-        console.error('[STATE_CORE:ERROR] Oracle Sync Failure', e);
+        console.error('[STATE_CORE:ERROR] SYNC_BRIDGE Failure', e);
       } finally {
         isProcessing.current = false;
       }
@@ -244,7 +242,7 @@ export const useGameEngine = () => {
       }));
       toast({
         title: "Bond Resonated",
-        description: "Oracle Node syncing...",
+        description: "SYNC_NODE online...",
       });
       
       setTimeout(() => {
@@ -255,7 +253,7 @@ export const useGameEngine = () => {
       setStats(prev => ({ ...prev, bondLevel: Math.max(0, prev.bondLevel - 5) }));
       toast({
         title: "Feedback Detected",
-        description: "Oracle sync rejected.",
+        description: "SYNC_NODE rejected.",
         variant: "destructive"
       });
     }
@@ -310,7 +308,7 @@ export const useGameEngine = () => {
     stats,
     qteActive,
     behaviors,
-    oracleIntel,
+    syncIntel,
     isRecording,
     showReport,
     artifactLog,

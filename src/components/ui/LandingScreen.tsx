@@ -4,11 +4,19 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { Terminal, Cpu, Database, BrainCircuit, Radio, ShieldCheck } from 'lucide-react';
+import { Terminal, Cpu, Database, BrainCircuit, Radio, ShieldCheck, ChevronDown } from 'lucide-react';
 
 interface LandingScreenProps {
   onLaunch: () => void;
   onWarmUp?: (isWarmed: boolean) => void;
+}
+
+type SystemTier = 'RENDER' | 'MESH' | 'STATE' | 'WATCH';
+
+interface SystemNode {
+  id: string;
+  name: string;
+  tier: SystemTier;
 }
 
 export const LandingScreen: React.FC<LandingScreenProps> = ({ onLaunch, onWarmUp }) => {
@@ -24,10 +32,19 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onLaunch, onWarmUp
     setLogs(prev => [...prev, { msg, type }].slice(-6));
   };
 
+  const systems: SystemNode[] = [
+    { id: 'chk-engine', name: 'FORGE_ENGINE', tier: 'RENDER' },
+    { id: 'chk-visual', name: 'VISUAL_CORE', tier: 'RENDER' },
+    { id: 'chk-mesh', name: 'AVATAR_MESH', tier: 'MESH' },
+    { id: 'chk-ssot', name: 'STATE_CORE', tier: 'STATE' },
+    { id: 'chk-moai', name: 'SYNC_BRIDGE', tier: 'STATE' },
+    { id: 'chk-sentinel', name: 'STABILITY_CHECK', tier: 'WATCH' },
+  ];
+
   useEffect(() => {
     const sequence = async () => {
       log('ABYSSUM GATEWAY FORGE CONFIRM — BOOT INITIATED', 'info');
-      setBootLabel('INITIALIZING BABYLON ENGINE');
+      setBootLabel('INITIALIZING FORGE ENGINE');
 
       const telemReveal = setInterval(() => {
         setVisibleTelem(prev => {
@@ -40,17 +57,17 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onLaunch, onWarmUp
       }, 800);
 
       setTimeout(() => {
-        log('Babylon.js engine initialized', 'ok');
-        setConfirmedChecks(prev => [...prev, 'chk-babylon']);
+        log('Forge engine substrate initialized', 'ok');
+        setConfirmedChecks(prev => [...prev, 'chk-engine']);
       }, 1000);
 
       setTimeout(() => {
-        log('WebGL2 context verified', 'ok');
-        setConfirmedChecks(prev => [...prev, 'chk-webgl']);
+        log('Visual core context verified', 'ok');
+        setConfirmedChecks(prev => [...prev, 'chk-visual']);
       }, 2000);
 
       setTimeout(() => {
-        log('Forge mesh loaded', 'ok');
+        log('Avatar mesh verified', 'ok');
         setConfirmedChecks(prev => [...prev, 'chk-mesh']);
         setIsWarmed(true);
         onWarmUp?.(true);
@@ -91,78 +108,84 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onLaunch, onWarmUp
   }, [onWarmUp]);
 
   useEffect(() => {
-    if (confirmedChecks.length === totalSystems) {
+    if (confirmedChecks.length === systems.length) {
       setTimeout(() => {
         setBootLabel('ALL SYSTEMS GREEN — OPERATIVE READY');
         log('ALL SYSTEMS WARM — FORGE ATOM ACTIVE', 'ok');
         setShowDeploy(true);
       }, 800);
     }
-  }, [confirmedChecks]);
-
-  const systems = [
-    { id: 'chk-babylon', name: 'BABYLON_ENGINE', icon: Cpu },
-    { id: 'chk-webgl', name: 'WEBGL2_CONTEXT', icon: Terminal },
-    { id: 'chk-mesh', name: 'FORGE_MESH', icon: Database },
-    { id: 'chk-ssot', name: 'STATE_CORE', icon: ShieldCheck },
-    { id: 'chk-moai', name: 'SYNC_BRIDGE', icon: Radio },
-    { id: 'chk-sentinel', name: 'STABILITY_CHECK', icon: BrainCircuit },
-  ];
-
-  const totalSystems = systems.length;
+  }, [confirmedChecks, systems.length]);
 
   const telemLines = [
-    'ENGINE: Babylon.js v7.54.3',
-    'RENDERER: WebGL2',
+    'CORE: Forge Engine v7.54.3',
+    'RENDERER: Visual Core Substrate',
     'SHADER: PARALLEL',
     'ENTROPY_FLUX: 0.37',
-    'DRIFT_SCORE: 2.41%',
+    'STABILITY_SCORE: 2.41%',
     'BOND_LEVEL: 78%'
   ];
 
   return (
     <div className="absolute inset-0 z-40 bg-void-dark font-code flex flex-col overflow-hidden">
-      {/* Overlays */}
       <div className="absolute inset-0 pointer-events-none scanline opacity-30 z-50 animate-pulse-ember" />
       <div className="absolute inset-0 pointer-events-none noise-grain z-40" />
 
-      {/* Header */}
       <div className={cn(
         "h-14 border-b border-white/5 flex items-center justify-between px-8 bg-black/80 backdrop-blur-sm z-30 transition-colors duration-1000",
         isWarmed && "border-ember/20"
       )}>
         <div className="font-headline text-[10px] tracking-[0.4em] text-white/40 uppercase">Abyssum Gateway</div>
-        <div className="text-[10px] tracking-[0.3em] text-white/20 uppercase">Forge Confirm // Phase 8.4 // Build v1.5.2</div>
+        <div className="text-[10px] tracking-[0.3em] text-white/20 uppercase">Forge Confirm // Phase 8.5 // Build v1.6.0</div>
         <div className="text-[10px] tracking-[0.2em] text-white/40">{new Date().toLocaleTimeString()}</div>
       </div>
 
-      {/* Main Grid */}
-      <div className="flex-1 grid grid-cols-[280px_1fr_280px] z-20">
-        {/* Left Panel */}
-        <div className="border-r border-white/5 p-8 flex flex-col gap-8 bg-black/20">
+      <div className="flex-1 grid grid-cols-[320px_1fr_280px] z-20">
+        <div className="border-r border-white/5 p-8 flex flex-col gap-8 bg-black/20 overflow-y-auto">
           <div className="space-y-4">
-            <span className="text-[8px] tracking-[0.4em] text-white/20 uppercase block border-b border-white/5 pb-2">System Integrity</span>
-            <div className="space-y-2">
-              {systems.map(sys => (
-                <div 
-                  key={sys.id}
-                  className={cn(
-                    "flex items-center justify-between p-2 border transition-all duration-500",
-                    confirmedChecks.includes(sys.id) ? "border-ember/40 bg-ember/5" : "border-white/5 bg-white/5"
+            <span className="text-[8px] tracking-[0.4em] text-white/20 uppercase block border-b border-white/5 pb-2">System Integrity Chain</span>
+            <div className="flex flex-col">
+              {systems.map((sys, idx) => (
+                <div key={sys.id}>
+                  <div 
+                    className={cn(
+                      "flex items-center justify-between p-3 border-l-2 transition-all duration-500 bg-void/40",
+                      confirmedChecks.includes(sys.id) 
+                        ? sys.tier === 'RENDER' ? "border-l-ember bg-ember/5" : 
+                          sys.tier === 'MESH' ? "border-l-primary/60 bg-primary/5" :
+                          sys.tier === 'STATE' ? "border-l-secondary bg-secondary/5" : "border-l-green-500 bg-green-500/5"
+                        : "border-l-white/10 bg-white/5"
+                    )}
+                  >
+                    <div className="flex flex-col">
+                      <span className={cn(
+                        "text-[7px] tracking-widest uppercase opacity-40",
+                        confirmedChecks.includes(sys.id) && "opacity-100"
+                      )}>
+                        {sys.tier}
+                      </span>
+                      <span className={cn(
+                        "text-[10px] tracking-widest uppercase",
+                        confirmedChecks.includes(sys.id) ? "text-white" : "text-white/20"
+                      )}>
+                        {sys.name}
+                      </span>
+                    </div>
+                    <span className={cn("text-[8px] tracking-widest font-bold", confirmedChecks.includes(sys.id) ? "text-green-500" : "text-white/10")}>
+                      {confirmedChecks.includes(sys.id) ? "CONFIRMED" : "SCANNING"}
+                    </span>
+                  </div>
+                  {idx < systems.length - 1 && (
+                    <div className="flex justify-start pl-4 py-1">
+                      <div className="w-px h-3 bg-white/5" />
+                    </div>
                   )}
-                >
-                  <span className={cn("text-[8px] tracking-widest uppercase", confirmedChecks.includes(sys.id) ? "text-ember" : "text-white/20")}>
-                    {sys.name}
-                  </span>
-                  <span className={cn("text-[8px] tracking-widest", confirmedChecks.includes(sys.id) ? "text-green-500" : "text-white/20")}>
-                    {confirmedChecks.includes(sys.id) ? "CONFIRMED" : "SCANNING"}
-                  </span>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-4 pt-4 border-t border-white/5">
             <span className="text-[8px] tracking-[0.4em] text-white/20 uppercase block border-b border-white/5 pb-2">Telemetry</span>
             <div className="space-y-1">
               {telemLines.map((t, i) => (
@@ -182,11 +205,8 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onLaunch, onWarmUp
           </div>
         </div>
 
-        {/* Center Area */}
         <div className="relative">
           <div className={cn("absolute inset-0 border border-white/5 transition-colors duration-1000 m-4", isWarmed && "border-ember/20")} />
-          
-          {/* Orbital Pulsing Elements */}
           <div className={cn(
             "absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity duration-1000",
             isWarmed ? "opacity-20" : "opacity-5"
@@ -202,7 +222,6 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onLaunch, onWarmUp
           <div className={cn("absolute bottom-8 right-8 size-8 border-b border-r transition-colors", isWarmed ? "border-ember" : "border-white/10")} />
         </div>
 
-        {/* Right Panel */}
         <div className="border-l border-white/5 p-8 flex flex-col gap-8 bg-black/20">
           <div className="space-y-4">
             <span className="text-[8px] tracking-[0.4em] text-white/20 uppercase block border-b border-white/5 pb-2">OPERATIVE DIRECTIVE</span>
@@ -210,7 +229,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onLaunch, onWarmUp
               <div className="text-[8px] text-white/60 tracking-wider">DIRECTIVE: FORGE_CONFIRM</div>
               <div className="text-[8px] text-white/40 tracking-wider">ACTIVE_GOAL: MESH_VERIFICATION</div>
               <div className={cn("text-[8px] tracking-wider", isWarmed ? "text-green-500" : "text-white/20")}>
-                ORACLE_NODE: {isWarmed ? 'ACTIVE' : 'QUERYING'}
+                SYNC_NODE: {isWarmed ? 'ACTIVE' : 'QUERYING'}
               </div>
             </div>
           </div>
@@ -231,7 +250,6 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onLaunch, onWarmUp
         </div>
       </div>
 
-      {/* Footer */}
       <div className="h-32 border-t border-white/5 grid grid-cols-[1fr_2fr_1fr] items-center px-8 bg-black/80 backdrop-blur-md z-30">
         <div className="status-block">
           <div className="progress-label mb-2 text-[8px] tracking-[0.3em] text-white/40 uppercase">{bootLabel}</div>
