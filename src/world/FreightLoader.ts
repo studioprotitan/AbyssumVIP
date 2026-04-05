@@ -9,8 +9,8 @@ import 'babylonjs-loaders';
  */
 
 interface ManifestAsset {
-  assetId: string;
-  babylonPath: string;
+  id: string;
+  babylon_path: string;
   status: string;
 }
 
@@ -48,23 +48,43 @@ export class FreightLoader {
       return;
     }
 
+    if (!manifest || !manifest.assets) {
+      console.warn('[FREIGHT] Manifest invalid or empty.');
+      return;
+    }
+
     // Load confirmed assets
     const confirmed = manifest.assets.filter(a => a.status === 'CONFIRMED');
     for (const asset of confirmed) {
+      if (!asset.babylon_path) {
+        console.warn(`[FREIGHT] Asset ${asset.id} missing babylon_path.`);
+        continue;
+      }
+
       try {
-        console.log(`[FREIGHT] Loading asset: ${asset.assetId}`);
+        console.log(`[FREIGHT] Loading asset: ${asset.id}`);
+        
+        // Split path to directory and filename to satisfy Babylon's SceneLoader parsing logic
+        const path = asset.babylon_path;
+        const lastSlash = path.lastIndexOf('/');
+        const rootUrl = lastSlash !== -1 ? path.substring(0, lastSlash + 1) : '';
+        const filename = lastSlash !== -1 ? path.substring(lastSlash + 1) : path;
+
         const result = await BABYLON.SceneLoader.ImportMeshAsync(
           '',
-          asset.babylonPath,
-          '',
+          rootUrl,
+          filename,
           scene
         );
-        result.meshes.forEach(mesh => {
-          mesh.metadata = { assetId: asset.assetId, state: 'ACTIVE' };
-        });
-        console.log(`[FREIGHT] ✅ Asset spawned: ${asset.assetId}`);
+        
+        if (result && result.meshes) {
+          result.meshes.forEach(mesh => {
+            mesh.metadata = { assetId: asset.id, state: 'ACTIVE' };
+          });
+          console.log(`[FREIGHT] ✅ Asset spawned: ${asset.id}`);
+        }
       } catch (err) {
-        console.error(`[FREIGHT] ❌ Failed to load ${asset.assetId}:`, err);
+        console.error(`[FREIGHT] ❌ Failed to load ${asset.id}:`, err);
       }
     }
   }

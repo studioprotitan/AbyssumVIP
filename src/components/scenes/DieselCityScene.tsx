@@ -46,16 +46,25 @@ export default function DieselCityScene() {
         // Load authoritative clock GLB
         const clockAsset = manifest.assets.find((a: any) => a.id === 'dpk-prop-clock-a');
         if (clockAsset) {
-          BABYLON.SceneLoader.ImportMeshAsync(
-            "",
-            "/models/",
-            clockAsset.filename,
-            scene
-          ).then((result) => {
+          try {
+            // Split path for the clock asset as well
+            const clockPath = "/models/" + clockAsset.filename;
+            const lastSlash = clockPath.lastIndexOf('/');
+            const rootUrl = clockPath.substring(0, lastSlash + 1);
+            const sceneFilename = clockPath.substring(lastSlash + 1);
+
+            const result = await BABYLON.SceneLoader.ImportMeshAsync(
+              "",
+              rootUrl,
+              sceneFilename,
+              scene
+            );
             const clock = result.meshes[0];
             clock.position = new BABYLON.Vector3(2, 0, 0);
             console.log('[MOAI:LOAD] Asset Spawned:', clockAsset.id);
-          }).catch(e => console.warn('[MOAI:GLB] Clock load failed:', e));
+          } catch (e) {
+            console.warn('[MOAI:GLB] Clock load failed:', e);
+          }
         }
 
         // Initialize FreightLoader
