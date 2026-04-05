@@ -48,7 +48,7 @@ export default function DieselCityScene() {
         if (clockAsset) {
           BABYLON.SceneLoader.ImportMeshAsync(
             "",
-            "https://media.githubusercontent.com/media/studioprotitan/Forge-Avatars/main/models/",
+            "/models/",
             clockAsset.filename,
             scene
           ).then((result) => {
@@ -59,7 +59,7 @@ export default function DieselCityScene() {
         }
 
         // Initialize FreightLoader
-        FreightLoader.loadChunk(scene);
+        await FreightLoader.loadChunk(scene);
       } catch (e) {
         console.error('[MOAI:ERROR] Loop A Failure:', e);
       }
