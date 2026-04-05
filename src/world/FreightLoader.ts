@@ -1,11 +1,13 @@
+
 'use client';
 import * as BABYLON from 'babylonjs';
 import 'babylonjs-loaders';
 
 /**
- * FreightLoader.ts
+ * @fileOverview FreightLoader.ts
  * Handles modular chunk loading for Forge City.
- * Phase 8.5 — manifest-driven GLB delivery via GitHub Releases CDN
+ * Phase 8.5 — manifest-driven GLB delivery via GitHub Releases CDN.
+ * Compliance: SSOT Field Parity (id / babylon_path).
  */
 
 interface ManifestAsset {
@@ -23,33 +25,34 @@ export class FreightLoader {
   private static MANIFEST_URL = '/models/mi_manifest_dpk.json';
 
   public static async loadChunk(scene: BABYLON.Scene): Promise<void> {
-    console.log('[FREIGHT] Loading City Chunk...');
+    console.log('[MOAI:FREIGHT] Loading City Chunk...');
 
-    // Ground
+    // Ground setup
     const ground = BABYLON.MeshBuilder.CreateGround(
       'city_ground',
       { width: 50, height: 50 },
       scene
     );
     const groundMaterial = new BABYLON.StandardMaterial('ground_mat', scene);
-    groundMaterial.diffuseColor = new BABYLON.Color3(0.05, 0.05, 0.05);
+    groundMaterial.diffuseColor = new BABYLON.Color3(0.02, 0.02, 0.02);
+    groundMaterial.specularColor = new BABYLON.Color3(0.1, 0.1, 0.1);
     ground.material = groundMaterial;
 
     // Manifest fetch
     let manifest: Manifest;
     try {
-      console.log('[FREIGHT] Fetching manifest...');
+      console.log('[MOAI:FREIGHT] Fetching manifest...');
       const res = await fetch(FreightLoader.MANIFEST_URL);
       if (!res.ok) throw new Error(`Manifest fetch failed: ${res.status}`);
       manifest = await res.json();
-      console.log(`[FREIGHT] Manifest loaded — kit: ${manifest.kit.id}`);
+      console.log(`[MOAI:MANIFEST] Loaded kit: ${manifest.kit.id}`);
     } catch (err) {
-      console.error('[FREIGHT] Manifest error:', err);
+      console.error('[MOAI:ERROR] Manifest sync failed:', err);
       return;
     }
 
     if (!manifest || !manifest.assets) {
-      console.warn('[FREIGHT] Manifest invalid or empty.');
+      console.warn('[MOAI:FREIGHT] Manifest invalid or empty.');
       return;
     }
 
@@ -57,14 +60,14 @@ export class FreightLoader {
     const confirmed = manifest.assets.filter(a => a.status === 'CONFIRMED');
     for (const asset of confirmed) {
       if (!asset.babylon_path) {
-        console.warn(`[FREIGHT] Asset ${asset.id} missing babylon_path.`);
+        console.warn(`[MOAI:FREIGHT] Asset ${asset.id} missing babylon_path.`);
         continue;
       }
 
       try {
-        console.log(`[FREIGHT] Loading asset: ${asset.id}`);
+        console.log(`[MOAI:LOAD] Spawning asset: ${asset.id}`);
         
-        // Split path to directory and filename to satisfy Babylon's SceneLoader parsing logic
+        // Path splitting for Babylon SceneLoader compliance
         const path = asset.babylon_path;
         const lastSlash = path.lastIndexOf('/');
         const rootUrl = lastSlash !== -1 ? path.substring(0, lastSlash + 1) : '';
@@ -81,10 +84,10 @@ export class FreightLoader {
           result.meshes.forEach(mesh => {
             mesh.metadata = { assetId: asset.id, state: 'ACTIVE' };
           });
-          console.log(`[FREIGHT] ✅ Asset spawned: ${asset.id}`);
+          console.log(`[MOAI:SUCCESS] Asset active: ${asset.id}`);
         }
       } catch (err) {
-        console.error(`[FREIGHT] ❌ Failed to load ${asset.id}:`, err);
+        console.error(`[MOAI:ERROR] Failed to spawn ${asset.id}:`, err);
       }
     }
   }

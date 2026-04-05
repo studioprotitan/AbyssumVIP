@@ -1,26 +1,31 @@
 
 {
-  "build": "v1.5.2",
-  "phase": "8.4 — Integration",
-  "status": "OMEGA Physics Stable",
-  "summary": "Phase 8.4 marks the critical transition from standalone narrative modules to a fully integrated NexusVerse Bridge. We have successfully established the STATE_CORE/SYNC_BRIDGE/STABILITY_CHECK framework across React and Babylon.js.",
+  "build": "v1.6.0",
+  "phase": "8.5 — Opening Operations",
+  "status": "Loop A Integration Active",
+  "summary": "Phase 8.5 marks the transition to Pilot-ready UX and manifest-driven asset deployment. We have established the DRIVE CORE (Forge Engine) and VISOR (Visual Core) hierarchy, stripping all technical exposure from the public interface.",
   "milestones": [
-    "Stabilization of OMEGA Character Controller v2",
-    "Integration of Oracle AI Intel Node predictive guidance",
-    "Implementation of OPERATIVE_DIRECTIVE Planner (GOAP)",
-    "Deployment of Forge Confirm v1.0 Dieselpunk Boot Sequence",
-    "Standardization of Investor-Grade Artifact Recording",
-    "STABILITY_CHECK reasoning audit integration"
+    "Pilot Language Remapping (Neutralization Phase 2) complete",
+    "Dependency Chain Hierarchy (RENDER -> MESH -> STATE -> WATCH) implemented",
+    "DieselCityScene orchestrator deployed with async manifest support",
+    "FreightLoader synchronized with mi_manifest_dpk.json schema",
+    "Operator Panel shell established for internal 2FA-gated diagnostics",
+    "Fuzzy math entropy assessment integrated into STATE_CORE"
   ],
   "activeThreads": [
-    "Phase 8.5: Station City Expansion",
-    "Draco Export Pipeline Compliance Fix",
-    "Adaptive Memory Persistence (Supabase Bridge)"
+    "Loop A Closure: Confirming GLB spawn in Diesel City",
+    "Asset Normalization: Iron Forge kit induction",
+    "Persistence Bridge: Supabase / Firebase session handoff"
   ],
   "compliance": {
     "state_core": "AUTHORITATIVE",
-    "state_machine": "ABSOLUTE",
     "sync_bridge": "ACTIVE",
-    "persistence": "PARTIAL (RUNTIME ONLY)"
+    "pilot_language": "ENFORCED",
+    "moai_ssot_checklist": {
+      "naming_convention": "scene-mint-deploy-kebab-case",
+      "manifest_parity": "babylon_path / id keys synchronized",
+      "deterministic_guards": "isProcessing ref-loop protection active",
+      "binary_resolution": "media.githubusercontent.com LFS mapping confirmed"
+    }
   }
 }

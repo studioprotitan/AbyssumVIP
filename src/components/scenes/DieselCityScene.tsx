@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useEffect, useRef } from 'react';
@@ -47,8 +48,7 @@ export default function DieselCityScene() {
         const clockAsset = manifest.assets.find((a: any) => a.id === 'dpk-prop-clock-a');
         if (clockAsset) {
           try {
-            // Split path for the clock asset as well
-            const clockPath = "/models/" + clockAsset.filename;
+            const clockPath = clockAsset.babylon_path;
             const lastSlash = clockPath.lastIndexOf('/');
             const rootUrl = clockPath.substring(0, lastSlash + 1);
             const sceneFilename = clockPath.substring(lastSlash + 1);
@@ -67,7 +67,7 @@ export default function DieselCityScene() {
           }
         }
 
-        // Initialize FreightLoader
+        // Initialize FreightLoader chunk build
         await FreightLoader.loadChunk(scene);
       } catch (e) {
         console.error('[MOAI:ERROR] Loop A Failure:', e);
