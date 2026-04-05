@@ -1,4 +1,3 @@
-
 {
   "build": "v1.6.0",
   "phase": "8.5 — Opening Operations",
@@ -8,7 +7,7 @@
     "Pilot Language Remapping (Neutralization Phase 2) complete",
     "Dependency Chain Hierarchy (RENDER -> MESH -> STATE -> WATCH) implemented",
     "DieselCityScene orchestrator deployed with async manifest support",
-    "FreightLoader synchronized with mi_manifest_dpk.json schema",
+    "FreightLoader synchronized with mi_manifest_dpk.json schema (Field Parity Fix 001)",
     "Operator Panel shell established for internal 2FA-gated diagnostics",
     "Fuzzy math entropy assessment integrated into STATE_CORE"
   ],
@@ -23,7 +22,7 @@
     "pilot_language": "ENFORCED",
     "moai_ssot_checklist": {
       "naming_convention": "scene-mint-deploy-kebab-case",
-      "manifest_parity": "babylon_path / id keys synchronized",
+      "manifest_parity": "babylonPath / assetId keys synchronized",
       "deterministic_guards": "isProcessing ref-loop protection active",
       "binary_resolution": "media.githubusercontent.com LFS mapping confirmed"
     }

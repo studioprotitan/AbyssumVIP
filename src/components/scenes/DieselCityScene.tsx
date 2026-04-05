@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useEffect, useRef } from 'react';
@@ -44,11 +43,14 @@ export default function DieselCityScene() {
         const manifest = await response.json();
         console.log('[MOAI:MANIFEST] Validated Kit:', manifest.kit.id);
 
-        // Load authoritative clock GLB
-        const clockAsset = manifest.assets.find((a: any) => a.id === 'dpk-prop-clock-a');
+        // Load authoritative clock GLB using assetId
+        const clockAsset = manifest.assets.find(
+          (a: any) => a.assetId === 'scene-mint-deploy-dpk-prop-clock-a'
+        );
+
         if (clockAsset) {
           try {
-            const clockPath = clockAsset.babylon_path;
+            const clockPath = clockAsset.babylonPath;
             const lastSlash = clockPath.lastIndexOf('/');
             const rootUrl = clockPath.substring(0, lastSlash + 1);
             const sceneFilename = clockPath.substring(lastSlash + 1);
@@ -61,7 +63,7 @@ export default function DieselCityScene() {
             );
             const clock = result.meshes[0];
             clock.position = new BABYLON.Vector3(2, 0, 0);
-            console.log('[MOAI:LOAD] Asset Spawned:', clockAsset.id);
+            console.log('[MOAI:LOAD] Asset Spawned:', clockAsset.assetId);
           } catch (e) {
             console.warn('[MOAI:GLB] Clock load failed:', e);
           }
