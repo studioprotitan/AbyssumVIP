@@ -3,7 +3,12 @@
   "assets": [
     {
       "assetId": "scene-mint-deploy-dpk-prop-clock-a",
-      "babylonPath": "https://github.com/studioprotitan/Forge-Avatars/releases/download/v1.0/scene-mint-deploy-dpk-prop-clock-a.glb",
+      "babylonPath": "/api/asset/scene-mint-deploy-dpk-prop-clock-a.glb",
+      "status": "CONFIRMED"
+    },
+    {
+      "assetId": "scene-mint-deploy-dpk-prop-banner-b",
+      "babylonPath": "/api/asset/scene-mint-deploy-dpk-prop-banner-b.glb",
       "status": "CONFIRMED"
     }
   ]
