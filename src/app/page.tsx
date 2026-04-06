@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DieselCityScene from '@/components/scenes/DieselCityScene';
 import { SystemIntegrityPanel } from '@/components/ui/SystemIntegrityPanel';
 import { HUD } from '@/components/ui/HUD';
@@ -12,15 +12,19 @@ import { OperatorPanel } from '@/components/ui/OperatorPanel';
 import { useGameEngine } from '@/hooks/use-game-engine';
 import { PhaseState } from '@/lib/game/types';
 import { Toaster } from '@/components/ui/toaster';
-import { Loader2, BrainCircuit, AlertTriangle, Settings } from 'lucide-react';
+import { Loader2, Settings } from 'lucide-react';
 
+/**
+ * Arenas of Echelon - Main Entry
+ * Compliance: Phase 8.5 Pilot UX
+ * Fix: Suppress global extension/MetaMask errors to prevent overlay noise.
+ */
 export default function Home() {
   const {
     phase,
     stats,
     qteActive,
     behaviors,
-    syncIntel,
     isRecording,
     showReport,
     artifactLog,
@@ -33,6 +37,22 @@ export default function Home() {
 
   const [isWarmed, setIsWarmed] = useState(false);
   const [operatorUnlocked, setOperatorUnlocked] = useState(false);
+
+  useEffect(() => {
+    // Suppress noisy browser extension errors (MetaMask, etc.) in the development overlay
+    const handleExtensionErrors = (event: ErrorEvent) => {
+      if (
+        event.message?.includes('MetaMask') || 
+        event.filename?.includes('chrome-extension') ||
+        event.message?.includes('inpage.js')
+      ) {
+        event.stopImmediatePropagation();
+      }
+    };
+
+    window.addEventListener('error', handleExtensionErrors);
+    return () => window.removeEventListener('error', handleExtensionErrors);
+  }, []);
 
   return (
     <main className="relative w-screen h-screen bg-void-dark">

@@ -9,6 +9,7 @@ import { FreightLoader } from '@/world/FreightLoader';
  * DieselCityScene.tsx
  * Orchestrates the Phase 8.5 Pilot World layer.
  * Implements Test Loop A with manifest synchronization.
+ * Fix: Await asynchronous FreightLoader chunk build.
  */
 export default function DieselCityScene() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -69,7 +70,7 @@ export default function DieselCityScene() {
           }
         }
 
-        // Initialize FreightLoader chunk build
+        // Initialize FreightLoader chunk build - MUST BE AWAITED
         await FreightLoader.loadChunk(scene);
       } catch (e) {
         console.error('[MOAI:ERROR] Loop A Failure:', e);
