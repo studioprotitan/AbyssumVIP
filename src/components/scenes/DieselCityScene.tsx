@@ -9,7 +9,7 @@ import { FreightLoader } from '@/world/FreightLoader';
  * DieselCityScene.tsx
  * Orchestrates the Phase 8.5 Pilot World layer.
  * Implements Test Loop A with manifest synchronization.
- * Fix: Await asynchronous FreightLoader chunk build.
+ * Fix: Deduped asset loading, using FreightLoader as single authority.
  */
 export default function DieselCityScene() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -38,40 +38,10 @@ export default function DieselCityScene() {
       try {
         console.log('[MOAI:BOOT] Loop A Initiated');
         
-        // Fetch Manifest from public models
-        const response = await fetch('/models/mi_manifest_dpk.json');
-        if (!response.ok) throw new Error('Manifest 404');
-        const manifest = await response.json();
-        console.log('[MOAI:MANIFEST] Validated Kit:', manifest.kit.id);
-
-        // Load authoritative clock GLB using assetId
-        const clockAsset = manifest.assets.find(
-          (a: any) => a.assetId === 'scene-mint-deploy-dpk-prop-clock-a'
-        );
-
-        if (clockAsset) {
-          try {
-            const clockPath = clockAsset.babylonPath;
-            const lastSlash = clockPath.lastIndexOf('/');
-            const rootUrl = clockPath.substring(0, lastSlash + 1);
-            const sceneFilename = clockPath.substring(lastSlash + 1);
-
-            const result = await BABYLON.SceneLoader.ImportMeshAsync(
-              "",
-              rootUrl,
-              sceneFilename,
-              scene
-            );
-            const clock = result.meshes[0];
-            clock.position = new BABYLON.Vector3(2, 0, 0);
-            console.log('[MOAI:LOAD] Asset Spawned:', clockAsset.assetId);
-          } catch (e) {
-            console.warn('[MOAI:GLB] Clock load failed:', e);
-          }
-        }
-
-        // Initialize FreightLoader chunk build - MUST BE AWAITED
+        // Initialize FreightLoader chunk build - Single Authority for Spawning
         await FreightLoader.loadChunk(scene);
+        
+        console.log('[MOAI:BOOT] Loop A Build Complete');
       } catch (e) {
         console.error('[MOAI:ERROR] Loop A Failure:', e);
       }
