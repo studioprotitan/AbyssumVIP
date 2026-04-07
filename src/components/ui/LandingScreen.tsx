@@ -72,36 +72,41 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onLaunch, onWarmUp
 
       {/* Top Header */}
       <div className={cn(
-        "h-14 border-b border-white/5 flex items-center justify-between px-8 bg-black/80 backdrop-blur-sm z-30 transition-colors duration-1000",
+        "h-14 border-b border-white/5 flex items-center justify-between px-4 md:px-8 bg-black/80 backdrop-blur-sm z-30 transition-colors duration-1000",
         isWarmed && "border-ember/20"
       )}>
-        <div className="font-headline text-[10px] tracking-[0.4em] text-white/40 uppercase">Abyssum Gateway</div>
-        <div className="text-[10px] tracking-[0.3em] text-white/20 uppercase">Forge Confirm // Phase 8.5 // Build v1.6.0</div>
-        <div className="text-[10px] tracking-[0.2em] text-white/40">{new Date().toLocaleTimeString()}</div>
+        <div className="font-headline text-[8px] md:text-[10px] tracking-[0.2em] md:tracking-[0.4em] text-white/40 uppercase">Abyssum Gateway</div>
+        <div className="hidden sm:block text-[8px] md:text-[10px] tracking-[0.3em] text-white/20 uppercase">Forge Confirm // Phase 8.5</div>
+        <div className="text-[8px] md:text-[10px] tracking-[0.2em] text-white/40">{new Date().toLocaleTimeString()}</div>
       </div>
 
-      <div className="flex-1 grid grid-cols-[320px_1fr_280px] z-20">
-        {/* Left Panel: Integrity Hierarchy */}
-        <div className="border-r border-white/5 p-6 bg-black/20 overflow-y-auto">
+      <div className="flex-1 grid grid-cols-1 md:grid-cols-[320px_1fr_280px] z-20 overflow-hidden">
+        {/* Left Panel: Integrity Hierarchy - Hidden on mobile */}
+        <div className="hidden md:block border-r border-white/5 p-6 bg-black/20 overflow-y-auto">
           <SystemIntegrityPanel />
         </div>
 
         {/* Center: Targeting/Visuals */}
-        <div className="relative flex items-center justify-center">
+        <div className="relative flex items-center justify-center p-4">
           <div className={cn(
-            "size-[300px] border border-dashed border-white/20 rounded-full animate-spin duration-[20s]",
+            "size-[260px] md:size-[300px] border border-dashed border-white/20 rounded-full animate-spin duration-[20s]",
             isWarmed && "animate-console-breathe opacity-40"
           )} />
           <div className={cn(
-            "absolute size-[140px] border border-ember/20 rounded-full animate-pulse flex items-center justify-center",
+            "absolute size-[100px] md:size-[140px] border border-ember/20 rounded-full animate-pulse flex items-center justify-center",
             isWarmed ? "opacity-100" : "opacity-20"
           )}>
             <div className="size-2 bg-ember rounded-full animate-ping" />
           </div>
+          
+          {/* Mobile-only Integrity Info */}
+          <div className="absolute top-4 left-4 md:hidden opacity-40 scale-75 origin-top-left">
+             <div className="text-[8px] text-ember uppercase font-bold tracking-widest">Grid Status: {isWarmed ? 'ACTIVE' : 'QUERYING'}</div>
+          </div>
         </div>
 
-        {/* Right Panel: Operative Status */}
-        <div className="border-l border-white/5 p-6 bg-black/20 space-y-8">
+        {/* Right Panel: Operative Status - Hidden on mobile */}
+        <div className="hidden md:block border-l border-white/5 p-6 bg-black/20 space-y-8">
           <div className="space-y-4">
             <span className="text-[8px] tracking-[0.4em] text-white/20 uppercase block border-b border-white/5 pb-2">Directive</span>
             <div className="space-y-2">
@@ -113,19 +118,21 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onLaunch, onWarmUp
       </div>
 
       {/* Footer Boot Progress */}
-      <div className="h-32 border-t border-white/5 grid grid-cols-[1fr_2fr_1fr] items-center px-8 bg-black/80 backdrop-blur-md z-30">
-        <div className="flex flex-col gap-2">
-          <div className="text-[8px] tracking-[0.3em] text-white/40 uppercase">{bootLabel}</div>
+      <div className="min-h-32 border-t border-white/5 flex flex-col md:grid md:grid-cols-[1fr_2fr_1fr] items-center px-4 md:px-8 py-4 bg-black/80 backdrop-blur-md z-30 gap-4">
+        {/* Progress Bar (Visible on all) */}
+        <div className="w-full max-w-sm md:max-w-none flex flex-col gap-2">
+          <div className="text-[8px] tracking-[0.3em] text-white/40 uppercase text-center md:text-left">{bootLabel}</div>
           <div className="h-1 w-full bg-white/5 relative overflow-hidden">
             <div className="h-full bg-ember shadow-[0_0_8px_#c8570a] transition-all duration-300" style={{ width: `${bootProgress}%` }} />
           </div>
         </div>
 
-        <div className="flex flex-col items-center gap-4">
+        {/* Action Button (Centered) */}
+        <div className="flex flex-col items-center justify-center gap-4 w-full">
           <Button 
             onClick={onLaunch}
             className={cn(
-              "h-10 px-8 rounded-none border border-ember bg-void text-ember hover:bg-ember hover:text-void transition-all duration-500 font-headline text-[10px] tracking-[0.4em] uppercase",
+              "h-12 md:h-10 px-8 rounded-none border border-ember bg-void text-ember hover:bg-ember hover:text-void transition-all duration-500 font-headline text-[10px] tracking-[0.4em] uppercase w-full max-w-[280px] md:w-auto",
               showDeploy ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
             )}
           >
@@ -133,7 +140,8 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onLaunch, onWarmUp
           </Button>
         </div>
 
-        <div className="flex flex-col justify-end gap-1 text-[8px] text-white/20">
+        {/* System Logs (Hidden on very small mobile) */}
+        <div className="hidden sm:flex flex-col justify-end gap-1 text-[8px] text-white/20 w-full text-right overflow-hidden h-12">
           {logs.map((l, i) => (
             <div key={i} className={cn("animate-in slide-in-from-bottom-1", l.type === 'ok' && "text-green-500/60")}>
               [{new Date().toLocaleTimeString([], { hour12: false })}] {l.msg}
