@@ -72,12 +72,16 @@ export interface AdaptiveAICompanionBehaviorInput {
   threatLevel: ThreatLevel;
   entropyScore: number;
   timestamp: number;
+  signalIntegrity?: number;
+  riftDetectionRisk?: number;
+  distanceFromPulse?: number;
 }
 
 export interface OracleIntelOutput {
   suggestedDirective: SurvivalDirective;
   tacticalWeights: Record<string, number>;
   riskAssessment: string;
+  turretComm?: string;
 }
 
 export interface BehaviorAction {
@@ -102,6 +106,7 @@ export interface OperatorStats {
   threatLevel: ThreatLevel;
   entropyScore: number;
   driftScore: number;
+  signalIntegrity: number;
   hazardDetected?: string;
 }
 
@@ -113,5 +118,6 @@ export interface ArtifactSnapshot {
   drift: number;
   action: string;
   riskAssessment: string;
+  signalIntegrity: number;
   audit?: string;
 }

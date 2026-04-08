@@ -17,6 +17,7 @@ import { globalStateMachine } from '@/lib/game/StateMachine';
 import { companionMemory } from '@/lib/game/PseudoMemory';
 import { adaptiveAICompanionBehavior, AdaptiveAICompanionBehaviorOutput } from '@/ai/flows/adaptive-ai-companion-behavior';
 import { getSyncIntel, SyncIntelOutput } from '@/ai/flows/sync-intel-node';
+import { globalOracleAI } from '@/lib/game/OracleAI';
 import { toast } from '@/hooks/use-toast';
 
 const FLASH_COOLDOWN_MS = 800;
@@ -32,7 +33,8 @@ export const useGameEngine = () => {
     activeDirective: SurvivalDirective.SURVIVAL,
     threatLevel: ThreatLevel.LOW,
     entropyScore: 0.1,
-    driftScore: 0.05
+    driftScore: 0.05,
+    signalIntegrity: 1.0
   });
   const [qteActive, setQteActive] = useState(false);
   const [behaviors, setBehaviors] = useState<AdaptiveAICompanionBehaviorOutput>([]);
@@ -41,6 +43,7 @@ export const useGameEngine = () => {
   const [showReport, setShowReport] = useState(false);
   const [artifactLog, setArtifactLog] = useState<ArtifactSnapshot[]>([]);
   const [currentWave, setCurrentWave] = useState(1);
+  const [distance, setDistance] = useState(0);
   
   const tickCount = useRef(0);
   const isProcessing = useRef(false);
@@ -72,6 +75,13 @@ export const useGameEngine = () => {
       try {
         tickCount.current++;
         
+        // Narrative Distance Increase
+        const newDistance = distance + (Math.random() * 50 + 20);
+        setDistance(newDistance);
+
+        // Oracle Signal Analysis
+        const signalData = globalOracleAI.evaluateSignalProximity(newDistance);
+        
         let wave = 1;
         if (tickCount.current > 12) wave = 3;
         else if (tickCount.current > 6) wave = 2;
@@ -89,54 +99,22 @@ export const useGameEngine = () => {
         const newDrift = Math.min(1, Math.max(0, stats.driftScore + (Math.random() * 0.08 - 0.03)));
 
         const criticalMembership = fuzzyMembership(newEntropy, 0.6, 1.0);
-        const shouldTriggerHazard = wave === 3 && Math.random() < criticalMembership;
+        const shouldTriggerHazard = (wave === 3 || signalData.risk > 0.7) && Math.random() < criticalMembership;
 
-        if (wave === 1) {
-          companionMemory.update({ 
-            threatLevel: ThreatLevel.LOW, 
-            missionContext: MissionContext.launchPrep,
-            entropyScore: newEntropy
-          });
-        } else if (wave === 2) {
-          if (tickCount.current % 3 === 0) {
-            forceLocomotion = Locomotion.vault;
-            companionMemory.update({ 
-              environment: Environment.railcar,
-              entropyScore: newEntropy 
-            });
-          }
+        if (signalData.risk > 0.9) {
+          currentHazard = "SIGNAL LOST. RIFT RATS OVERRUNNING.";
+          forceDirective = SurvivalDirective.EMERGENCY;
         } else if (wave === 3 && shouldTriggerHazard) {
           currentHazard = newEntropy > 0.8 
             ? "CRITICAL FALL DETECTED" 
             : "IMMINENT DROWNING";
           forceDirective = SurvivalDirective.EMERGENCY;
           forceLocomotion = newEntropy > 0.8 ? Locomotion.falling : Locomotion.swim;
-          
-          companionMemory.update({ 
-            environment: newEntropy > 0.8 ? Environment.rooftop : Environment.water,
-            threatLevel: ThreatLevel.CRITICAL,
-            entropyScore: newEntropy
-          });
-        } else {
-          if (wave === 2 && Math.random() > 0.7) {
-             forceLocomotion = Locomotion.sprint;
-          }
-          if (tickCount.current % 5 === 0) {
-             forceLocomotion = Locomotion.jump_start;
-             setTimeout(() => {
-                forceLocomotion = Locomotion.jump_loop;
-                setTimeout(() => {
-                   forceLocomotion = Locomotion.jump_land;
-                }, 1000);
-             }, 400);
-          }
-
-          companionMemory.update({ entropyScore: newEntropy });
         }
 
         const intel = await getSyncIntel({
           environment: snapshot.environment,
-          threatLevel: snapshot.threatLevel,
+          threatLevel: signalData.threat,
           entropyScore: newEntropy,
           pilotIntent: snapshot.pilotIntent
         });
@@ -158,12 +136,9 @@ export const useGameEngine = () => {
         let activeAction = "idle";
         
         if (forceLocomotion) {
-          const success = globalStateMachine.transition(forceLocomotion);
-          if (success) {
+          if (globalStateMachine.transition(forceLocomotion)) {
             companionMemory.update({ locomotion: forceLocomotion });
             activeAction = forceLocomotion;
-          } else {
-            auditLog = `OPERATIVE DRIFT DETECTED: ${globalStateMachine.getCurrentState()} -> ${forceLocomotion}`;
           }
         } else if (nextBehaviors.length > 0) {
           const topAction = nextBehaviors[0];
@@ -171,20 +146,18 @@ export const useGameEngine = () => {
           const locomotionType = Locomotion[topAction.name as keyof typeof Locomotion] || Locomotion.idle;
           if (globalStateMachine.transition(locomotionType)) {
             companionMemory.update({ locomotion: locomotionType });
-          } else {
-            auditLog = `STABILITY DRIFT: ${globalStateMachine.getCurrentState()} -> ${locomotionType} REJECTED`;
           }
         }
 
         const finalDirective = forceDirective || intel.suggestedDirective;
-        const finalThreat = currentHazard ? ThreatLevel.CRITICAL : (wave === 3 ? ThreatLevel.HIGH : (wave === 2 ? ThreatLevel.MODERATE : ThreatLevel.LOW));
 
         setStats(prev => ({ 
           ...prev, 
           activeDirective: finalDirective,
-          threatLevel: finalThreat,
+          threatLevel: signalData.threat,
           entropyScore: newEntropy,
           driftScore: newDrift,
+          signalIntegrity: signalData.integrity * 100,
           hazardDetected: currentHazard
         }));
 
@@ -193,24 +166,25 @@ export const useGameEngine = () => {
             {
               timestamp: Date.now(),
               directive: finalDirective,
-              threat: finalThreat,
+              threat: signalData.threat,
               entropy: newEntropy,
               drift: newDrift,
               action: activeAction,
               riskAssessment: intel.riskAssessment,
+              signalIntegrity: signalData.integrity * 100,
               audit: auditLog
             },
             ...prev
           ].slice(0, 50));
         }
 
-        if (currentHazard) {
+        if (currentHazard || signalData.risk > 0.5) {
           const now = Date.now();
           if (now - lastFlashTime.current > FLASH_COOLDOWN_MS) {
             lastFlashTime.current = now;
             toast({
-              title: "SURVIVAL PRIME ACTIVE",
-              description: currentHazard,
+              title: signalData.risk > 0.8 ? "RIFT DETECTION ALERT" : "SIGNAL WARNING",
+              description: currentHazard || globalOracleAI.getTurretComm(signalData.risk),
               variant: "destructive"
             });
           }
@@ -226,7 +200,7 @@ export const useGameEngine = () => {
     const interval = setInterval(agentTick, 4000);
     agentTick();
     return () => clearInterval(interval);
-  }, [phase, stats.entropyScore, stats.driftScore, isRecording]);
+  }, [phase, stats.entropyScore, stats.driftScore, isRecording, distance]);
 
   const startLaunch = useCallback(() => {
     setQteActive(true);
@@ -274,12 +248,13 @@ export const useGameEngine = () => {
           entropy: stats.entropyScore,
           drift: 0.01,
           action: "Skill: Tactical Shield Deploy",
-          riskAssessment: "Defensive perimeter established via Mint-to-Deploy."
+          riskAssessment: "Defensive perimeter established via Mint-to-Deploy.",
+          signalIntegrity: stats.signalIntegrity
         },
         ...prev
       ].slice(0, 50));
     }
-  }, [isRecording, stats.threatLevel, stats.entropyScore]);
+  }, [isRecording, stats.threatLevel, stats.entropyScore, stats.signalIntegrity]);
 
   const toggleRecording = useCallback(async () => {
     const nextRecordingState = !isRecording;
