@@ -9,8 +9,7 @@ import {
   ThreatLevel, 
   Locomotion, 
   Environment,
-  ArtifactSnapshot,
-  MissionContext
+  ArtifactSnapshot
 } from '@/lib/game/types';
 import { globalPhaseEngine } from '@/lib/game/PhaseEngine';
 import { globalStateMachine } from '@/lib/game/StateMachine';
@@ -19,11 +18,6 @@ import { adaptiveAICompanionBehavior, AdaptiveAICompanionBehaviorOutput } from '
 import { getSyncIntel, SyncIntelOutput } from '@/ai/flows/sync-intel-node';
 import { globalOracleAI } from '@/lib/game/OracleAI';
 import { toast } from '@/hooks/use-toast';
-
-const FLASH_COOLDOWN_MS = 800;
-
-const fuzzyMembership = (value: number, low: number, high: number) => 
-  Math.max(0, Math.min(1, (value - low) / (high - low)));
 
 export const useGameEngine = () => {
   const [phase, setPhase] = useState<PhaseState>(PhaseState.LOADING);
@@ -34,7 +28,9 @@ export const useGameEngine = () => {
     threatLevel: ThreatLevel.LOW,
     entropyScore: 0.1,
     driftScore: 0.05,
-    signalIntegrity: 1.0
+    signalIntegrity: 100,
+    distanceFromPulse: 0,
+    riftDetectionRisk: 0
   });
   const [qteActive, setQteActive] = useState(false);
   const [behaviors, setBehaviors] = useState<AdaptiveAICompanionBehaviorOutput>([]);
@@ -42,12 +38,9 @@ export const useGameEngine = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [showReport, setShowReport] = useState(false);
   const [artifactLog, setArtifactLog] = useState<ArtifactSnapshot[]>([]);
-  const [currentWave, setCurrentWave] = useState(1);
-  const [distance, setDistance] = useState(0);
   
   const tickCount = useRef(0);
   const isProcessing = useRef(false);
-  const lastFlashTime = useRef(0);
 
   useEffect(() => {
     const init = async () => {
@@ -76,46 +69,17 @@ export const useGameEngine = () => {
         tickCount.current++;
         
         // Narrative Distance Increase
-        const newDistance = distance + (Math.random() * 50 + 20);
-        setDistance(newDistance);
+        const distanceDelta = Math.random() * 40 + 10;
+        const newDistance = stats.distanceFromPulse! + distanceDelta;
 
         // Oracle Signal Analysis
         const signalData = globalOracleAI.evaluateSignalProximity(newDistance);
         
-        let wave = 1;
-        if (tickCount.current > 12) wave = 3;
-        else if (tickCount.current > 6) wave = 2;
-        setCurrentWave(wave);
-
         const snapshot = companionMemory.getSnapshot();
-        
-        let currentHazard: string | undefined = undefined;
-        let forceDirective: SurvivalDirective | null = null;
-        let forceLocomotion: Locomotion | null = null;
-        let auditLog: string | undefined = undefined;
-
-        const entropyDelta = (Math.random() * 0.1 - 0.04) * (1 + tickCount.current * 0.02);
-        const newEntropy = Math.min(1, Math.max(0, stats.entropyScore + entropyDelta));
-        const newDrift = Math.min(1, Math.max(0, stats.driftScore + (Math.random() * 0.08 - 0.03)));
-
-        const criticalMembership = fuzzyMembership(newEntropy, 0.6, 1.0);
-        const shouldTriggerHazard = (wave === 3 || signalData.risk > 0.7) && Math.random() < criticalMembership;
-
-        if (signalData.risk > 0.9) {
-          currentHazard = "SIGNAL LOST. RIFT RATS OVERRUNNING.";
-          forceDirective = SurvivalDirective.EMERGENCY;
-        } else if (wave === 3 && shouldTriggerHazard) {
-          currentHazard = newEntropy > 0.8 
-            ? "CRITICAL FALL DETECTED" 
-            : "IMMINENT DROWNING";
-          forceDirective = SurvivalDirective.EMERGENCY;
-          forceLocomotion = newEntropy > 0.8 ? Locomotion.falling : Locomotion.swim;
-        }
-
         const intel = await getSyncIntel({
           environment: snapshot.environment,
           threatLevel: signalData.threat,
-          entropyScore: newEntropy,
+          entropyScore: stats.entropyScore,
           pilotIntent: snapshot.pilotIntent
         });
         setSyncIntel(intel);
@@ -129,69 +93,56 @@ export const useGameEngine = () => {
             personality: snapshot.personality
           },
           oracleIntel: intel,
-          entropyScore: newEntropy
+          entropyScore: stats.entropyScore
         });
         setBehaviors(nextBehaviors);
 
-        let activeAction = "idle";
-        
-        if (forceLocomotion) {
-          if (globalStateMachine.transition(forceLocomotion)) {
-            companionMemory.update({ locomotion: forceLocomotion });
-            activeAction = forceLocomotion;
-          }
-        } else if (nextBehaviors.length > 0) {
+        if (nextBehaviors.length > 0) {
           const topAction = nextBehaviors[0];
-          activeAction = topAction.name;
           const locomotionType = Locomotion[topAction.name as keyof typeof Locomotion] || Locomotion.idle;
           if (globalStateMachine.transition(locomotionType)) {
             companionMemory.update({ locomotion: locomotionType });
           }
         }
 
-        const finalDirective = forceDirective || intel.suggestedDirective;
-
         setStats(prev => ({ 
           ...prev, 
-          activeDirective: finalDirective,
+          activeDirective: intel.suggestedDirective,
           threatLevel: signalData.threat,
-          entropyScore: newEntropy,
-          driftScore: newDrift,
           signalIntegrity: signalData.integrity * 100,
-          hazardDetected: currentHazard
+          distanceFromPulse: newDistance,
+          riftDetectionRisk: signalData.risk,
+          entropyScore: Math.min(1, prev.entropyScore + 0.01),
+          driftScore: Math.min(1, prev.driftScore + 0.005)
         }));
 
         if (isRecording) {
           setArtifactLog(prev => [
             {
               timestamp: Date.now(),
-              directive: finalDirective,
+              directive: intel.suggestedDirective,
               threat: signalData.threat,
-              entropy: newEntropy,
-              drift: newDrift,
-              action: activeAction,
+              entropy: stats.entropyScore,
+              drift: stats.driftScore,
+              action: nextBehaviors[0]?.name || 'idle',
               riskAssessment: intel.riskAssessment,
               signalIntegrity: signalData.integrity * 100,
-              audit: auditLog
+              distance: newDistance
             },
             ...prev
           ].slice(0, 50));
         }
 
-        if (currentHazard || signalData.risk > 0.5) {
-          const now = Date.now();
-          if (now - lastFlashTime.current > FLASH_COOLDOWN_MS) {
-            lastFlashTime.current = now;
-            toast({
-              title: signalData.risk > 0.8 ? "RIFT DETECTION ALERT" : "SIGNAL WARNING",
-              description: currentHazard || globalOracleAI.getTurretComm(signalData.risk),
-              variant: "destructive"
-            });
-          }
+        if (signalData.risk > 0.5) {
+          toast({
+            title: "SIGNAL WARNING",
+            description: globalOracleAI.getTurretComm(signalData.risk),
+            variant: "destructive"
+          });
         }
 
       } catch (e) {
-        console.error('[STATE_CORE:ERROR] SYNC_BRIDGE Failure', e);
+        console.error('[NERVE_LINE:ERROR] SYNC_BRIDGE Failure', e);
       } finally {
         isProcessing.current = false;
       }
@@ -200,7 +151,7 @@ export const useGameEngine = () => {
     const interval = setInterval(agentTick, 4000);
     agentTick();
     return () => clearInterval(interval);
-  }, [phase, stats.entropyScore, stats.driftScore, isRecording, distance]);
+  }, [phase, stats.distanceFromPulse, stats.entropyScore, stats.driftScore, isRecording]);
 
   const startLaunch = useCallback(() => {
     setQteActive(true);
@@ -235,26 +186,11 @@ export const useGameEngine = () => {
 
   const injectSkill = useCallback(() => {
     toast({
-      title: "Mint-to-Deploy Skill",
-      description: "Injecting Tactical Shield into Combat Memory...",
+      title: "Tactical Injection",
+      description: "Optimizing Nerve Line response...",
     });
-    setStats(prev => ({ ...prev, driftScore: 0.01, activeDirective: SurvivalDirective.FIGHT }));
-    if (isRecording) {
-      setArtifactLog(prev => [
-        {
-          timestamp: Date.now(),
-          directive: SurvivalDirective.FIGHT,
-          threat: stats.threatLevel,
-          entropy: stats.entropyScore,
-          drift: 0.01,
-          action: "Skill: Tactical Shield Deploy",
-          riskAssessment: "Defensive perimeter established via Mint-to-Deploy.",
-          signalIntegrity: stats.signalIntegrity
-        },
-        ...prev
-      ].slice(0, 50));
-    }
-  }, [isRecording, stats.threatLevel, stats.entropyScore, stats.signalIntegrity]);
+    setStats(prev => ({ ...prev, driftScore: Math.max(0, prev.driftScore - 0.2) }));
+  }, []);
 
   const toggleRecording = useCallback(async () => {
     const nextRecordingState = !isRecording;
@@ -262,14 +198,14 @@ export const useGameEngine = () => {
     if (!nextRecordingState) {
       await companionMemory.save('default-avatar');
       toast({
-        title: "Recording Stopped",
-        description: `Artifact finalized with ${artifactLog.length} snapshots. Cognitive memory persisted.`,
+        title: "Artifact Finalized",
+        description: `Logged ${artifactLog.length} snapshots to Cognitive Core.`,
       });
     } else {
       setArtifactLog([]);
       toast({
-        title: "Recording Started",
-        description: "Capturing investor artifact loop...",
+        title: "Log Active",
+        description: "Monitoring Rail Pulse flow...",
       });
     }
   }, [isRecording, artifactLog.length]);
@@ -287,7 +223,6 @@ export const useGameEngine = () => {
     isRecording,
     showReport,
     artifactLog,
-    currentWave,
     startLaunch,
     handleQTEResult,
     injectSkill,

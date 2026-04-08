@@ -1,17 +1,41 @@
+
 {
-  "kit": { "id": "dpk" },
+  "kit": {
+    "id": "dpk",
+    "name": "Diesel Punk",
+    "version": "6.0.1",
+    "source": "KitBash3D"
+  },
   "assets": [
-    { "assetId": "scene-mint-deploy-dpk-prop-clock-a", "babylonPath": "/api/asset/scene-mint-deploy-dpk-prop-clock-a.glb", "status": "CONFIRMED" },
-    { "assetId": "scene-mint-deploy-dpk-prop-banner-b", "babylonPath": "/api/asset/scene-mint-deploy-dpk-prop-banner-b.glb", "status": "CONFIRMED" },
-    { "assetId": "scene-mint-deploy-dpk-prop-blade-sign-d", "babylonPath": "/api/asset/scene-mint-deploy-dpk-prop-blade-sign-d.glb", "status": "CONFIRMED" },
-    { "assetId": "scene-mint-deploy-dpk-drinking-fountain-a", "babylonPath": "/api/asset/scene-mint-deploy-dpk-drinking-fountain-a.glb", "status": "CONFIRMED" },
-    { "assetId": "scene-mint-deploy-dpk-prop-bus-stop-a", "babylonPath": "/api/asset/scene-mint-deploy-dpk-prop-bus-stop-a.glb", "status": "CONFIRMED" },
-    { "assetId": "scene-mint-deploy-dpk-prop-postal-box-a", "babylonPath": "/api/asset/scene-mint-deploy-dpk-prop-postal-box-a.glb", "status": "CONFIRMED" },
-    { "assetId": "scene-mint-deploy-dpk-prop-trash-can-b", "babylonPath": "/api/asset/scene-mint-deploy-dpk-prop-trash-can-b.glb", "status": "CONFIRMED" },
-    { "assetId": "scene-mint-deploy-dpk-prop-tower-i", "babylonPath": "/api/asset/scene-mint-deploy-dpk-prop-tower-i.glb", "status": "CONFIRMED" },
-    { "assetId": "scene-mint-deploy-dpk-bldg-lg-astronomy-institute-a", "babylonPath": "/api/asset/scene-mint-deploy-dpk-bldg-lg-astronomy-institute-a.glb", "status": "CONFIRMED" },
-    { "assetId": "scene-mint-deploy-dpk-bldg-xl-astronomical-admin-a", "babylonPath": "/api/asset/scene-mint-deploy-dpk-bldg-xl-astronomical-admin-a.glb", "status": "CONFIRMED" },
-    { "assetId": "scene-mint-deploy-dpk-bldg-xl-train-station-a", "babylonPath": "/api/asset/scene-mint-deploy-dpk-bldg-xl-train-station-a.glb", "status": "CONFIRMED" },
-    { "assetId": "scene-hype-stage-idle-pre-mint", "babylonPath": "/api/asset/scene-hype-stage-idle-pre-mint.glb", "status": "CONFIRMED" }
+    {
+      "assetId": "scene-mint-deploy-dpk-prop-clock-a",
+      "babylonPath": "/api/asset/scene-mint-deploy-dpk-prop-clock-a.glb",
+      "status": "CONFIRMED",
+      "tags": ["clock", "street", "prop", "dieselpunk"],
+      "notes": "Proof-of-concept asset. Validated in Babylon.js 04/03/26."
+    },
+    {
+      "assetId": "scene-mint-deploy-dpk-prop-banner-b",
+      "babylonPath": "/api/asset/scene-mint-deploy-dpk-prop-banner-b.glb",
+      "status": "CONFIRMED",
+      "tags": ["banner", "street", "prop", "dieselpunk"]
+    },
+    {
+      "assetId": "scene-mint-deploy-dpk-struct-hype-tunnel-a",
+      "babylonPath": "/api/asset/scene-mint-deploy-dpk-struct-hype-tunnel-a.glb",
+      "status": "PENDING_EXPORT",
+      "tags": ["tunnel", "structure", "dieselpunk"],
+      "notes": "Hype Stage Tunnel pre-deployment zone. FLAG: Material check required."
+    }
+  ],
+  "standing_flags": [
+    {
+      "flag": "SIGNAL_MECHANIC",
+      "note": "Signal degrades with distance > 850m. Avoid Rift Rat detection."
+    },
+    {
+      "flag": "LORE_LOCK",
+      "note": "Transmission script: 'you'd rather be dead than reforged as a Scout for the Sovereign Hordes' is confirmed canon."
+    }
   ]
 }

@@ -108,6 +108,8 @@ export interface OperatorStats {
   driftScore: number;
   signalIntegrity: number;
   hazardDetected?: string;
+  distanceFromPulse?: number;
+  riftDetectionRisk?: number;
 }
 
 export interface ArtifactSnapshot {
@@ -120,4 +122,5 @@ export interface ArtifactSnapshot {
   riskAssessment: string;
   signalIntegrity: number;
   audit?: string;
+  distance?: number;
 }

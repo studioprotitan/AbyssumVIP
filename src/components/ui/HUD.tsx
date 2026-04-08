@@ -1,10 +1,11 @@
+
 'use client';
 
 import React, { useMemo } from 'react';
 import { PhaseState, OperatorStats } from '@/lib/game/types';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Activity, Zap, BrainCircuit, Waves, Radio, Crosshair, ClipboardList, Target, AlertTriangle } from 'lucide-react';
+import { Activity, Zap, Waves, Radio, Crosshair, ClipboardList, Target, AlertTriangle, ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface HUDProps {
@@ -43,15 +44,23 @@ export const HUD: React.FC<HUDProps> = ({
 
   if (phase === PhaseState.LOADING) return null;
 
+  const isCriticalRisk = (stats.riftDetectionRisk || 0) > 0.7;
+
   return (
     <div className="absolute inset-0 pointer-events-none flex flex-col justify-between p-8 font-body">
-      {/* Top Bar — Sync Node & Tactical State */}
+      {/* Top Bar — Nerve Line & Tactical State */}
       <div className="flex justify-between items-start animate-in fade-in slide-in-from-top-4 duration-500">
         <div className="space-y-4">
           <div className="space-y-1">
             <div className="flex items-center gap-3">
-              <div className="w-3 h-3 rounded-full bg-ember animate-pulse shadow-[0_0_8px_#FF8C33]" />
-              <h2 className="font-headline text-xl tracking-widest text-ember uppercase glitch-text">
+              <div className={cn(
+                "w-3 h-3 rounded-full animate-pulse shadow-[0_0_8px_currentColor]",
+                isCriticalRisk ? "bg-destructive text-destructive" : "bg-ember text-ember"
+              )} />
+              <h2 className={cn(
+                "font-headline text-xl tracking-widest uppercase glitch-text",
+                isCriticalRisk ? "text-destructive" : "text-ember"
+              )}>
                 SYNC_NODE ACTIVE
               </h2>
             </div>
@@ -78,11 +87,11 @@ export const HUD: React.FC<HUDProps> = ({
         <div className="flex flex-col items-end gap-6 pointer-events-auto">
           <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-ember/70">
             <div className="flex flex-col items-end">
-              <span className="font-code text-[10px] opacity-40 uppercase">Entropy</span>
-              <span className="font-code text-xs animate-telemetry-pulse">{(stats.entropyScore * 100).toFixed(1)}%</span>
+              <span className="font-code text-[10px] opacity-40 uppercase tracking-widest text-ember">Signal Integrity</span>
+              <span className="font-code text-xs animate-telemetry-pulse">{(stats.signalIntegrity || 0).toFixed(1)}%</span>
             </div>
             <div className="flex flex-col items-end">
-              <span className="font-code text-[10px] opacity-40 uppercase">Stability</span>
+              <span className="font-code text-[10px] opacity-40 uppercase tracking-widest text-ember">Nerve Stability</span>
               <span className="font-code text-xs animate-telemetry-pulse">{(100 - stats.driftScore * 100).toFixed(1)}%</span>
             </div>
           </div>
@@ -128,10 +137,21 @@ export const HUD: React.FC<HUDProps> = ({
             </div>
           )}
           <div className="relative size-24 flex items-center justify-center">
-            <div className="absolute inset-0 border border-ember/10 rounded-full animate-ping" />
-            <div className="absolute inset-4 border border-ember/20 rounded-full animate-pulse" />
-            <Crosshair className="size-8 text-ember/20" />
-            <Target className="size-6 text-ember/50 absolute" />
+            <div className={cn(
+              "absolute inset-0 border rounded-full animate-ping",
+              isCriticalRisk ? "border-destructive/20" : "border-ember/10"
+            )} />
+            <div className={cn(
+              "absolute inset-4 border rounded-full animate-pulse",
+              isCriticalRisk ? "border-destructive/40" : "border-ember/20"
+            )} />
+            <Crosshair className={cn("size-8", isCriticalRisk ? "text-destructive/40" : "text-ember/20")} />
+            <Target className={cn("size-6 absolute", isCriticalRisk ? "text-destructive" : "text-ember/50")} />
+          </div>
+          
+          <div className="absolute -bottom-12 flex flex-col items-center">
+             <span className="font-code text-[9px] text-ember/30 uppercase tracking-[0.3em]">Pulse Distance</span>
+             <span className="font-code text-xs text-ember/80">{(stats.distanceFromPulse || 0).toFixed(1)}m</span>
           </div>
         </div>
       )}
@@ -156,7 +176,7 @@ export const HUD: React.FC<HUDProps> = ({
 
         <div className="flex gap-12 pb-1 opacity-40">
            <Waves className="size-5 text-primary animate-pulse" />
-           <Activity className="size-5 text-secondary animate-pulse" />
+           <ShieldCheck className="size-5 text-secondary animate-pulse" />
            <Zap className="size-5 text-ember animate-pulse" />
         </div>
       </div>
