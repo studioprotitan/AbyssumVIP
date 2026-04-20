@@ -1,0 +1,82 @@
+{
+  "kit": { "id": "dpk" },
+  "assets": [
+    {
+      "assetId": "scene-hype-stage-idle-pre-mint",
+      "babylonPath": "/api/asset/scene-hype-stage-idle-pre-mint.glb",
+      "status": "CONFIRMED"
+    },
+    {
+      "assetId": "scene-mint-deploy-hype-stage-tunnel",
+      "babylonPath": "/api/asset/scene-mint-deploy-hype-stage-tunnel.glb",
+      "status": "PENDING_EXPORT"
+    },
+    {
+      "assetId": "scene-mint-deploy-dpk-prop-clock-a",
+      "babylonPath": "/api/asset/scene-mint-deploy-dpk-prop-clock-a.glb",
+      "status": "CONFIRMED"
+    },
+    {
+      "assetId": "scene-mint-deploy-dpk-prop-banner-b",
+      "babylonPath": "/api/asset/scene-mint-deploy-dpk-prop-banner-b.glb",
+      "status": "CONFIRMED"
+    },
+    {
+      "assetId": "scene-mint-deploy-dpk-prop-billboard-a",
+      "babylonPath": "/api/asset/scene-mint-deploy-dpk-prop-billboard-a.glb",
+      "status": "PENDING_EXPORT"
+    },
+    {
+      "assetId": "scene-mint-deploy-dpk-prop-bus-stop-a",
+      "babylonPath": "/api/asset/scene-mint-deploy-dpk-prop-bus-stop-a.glb",
+      "status": "PENDING_EXPORT"
+    },
+    {
+      "assetId": "scene-mint-deploy-dpk-prop-postal-box-a",
+      "babylonPath": "/api/asset/scene-mint-deploy-dpk-prop-postal-box-a.glb",
+      "status": "PENDING_EXPORT"
+    },
+    {
+      "assetId": "scene-mint-deploy-dpk-prop-trash-can-b",
+      "babylonPath": "/api/asset/scene-mint-deploy-dpk-prop-trash-can-b.glb",
+      "status": "PENDING_EXPORT"
+    },
+    {
+      "assetId": "scene-mint-deploy-dpk-prop-drinking-fountain-a",
+      "babylonPath": "/api/asset/scene-mint-deploy-dpk-prop-drinking-fountain-a.glb",
+      "status": "PENDING_EXPORT"
+    },
+    {
+      "assetId": "scene-mint-deploy-dpk-prop-blade-sign-d",
+      "babylonPath": "/api/asset/scene-mint-deploy-dpk-prop-blade-sign-d.glb",
+      "status": "PENDING_EXPORT"
+    },
+    {
+      "assetId": "scene-mint-deploy-dpk-prop-tower-i",
+      "babylonPath": "/api/asset/scene-mint-deploy-dpk-prop-tower-i.glb",
+      "status": "PENDING_EXPORT"
+    },
+    {
+      "assetId": "scene-mint-deploy-dpk-bldg-lg-astronomy-institute-a",
+      "babylonPath": "/api/asset/scene-mint-deploy-dpk-bldg-lg-astronomy-institute-a.glb",
+      "status": "PENDING_EXPORT"
+    },
+    {
+      "assetId": "scene-mint-deploy-dpk-bldg-xl-astronomical-admin-a",
+      "babylonPath": "/api/asset/scene-mint-deploy-dpk-bldg-xl-astronomical-admin-a.glb",
+      "status": "PENDING_EXPORT"
+    },
+    {
+      "assetId": "scene-mint-deploy-dpk-bldg-xl-train-station-a",
+      "babylonPath": "/api/asset/scene-mint-deploy-dpk-bldg-xl-train-station-a.glb",
+      "status": "CONFIRMED"
+    },
+    {
+      "assetId": "cst-mint-deploy-mvp-animation-group-01",
+      "babylonPath": "/api/asset/cst-mint-deploy-mvp-animation-group-01.glb",
+      "status": "CONFIRMED",
+      "type": "character",
+      "default_animation": "cst-ert-idle-b"
+    }
+  ]
+}
