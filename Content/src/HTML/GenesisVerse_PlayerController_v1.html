@@ -140,6 +140,7 @@
     <div><span class="k">SPACE</span> Jump &nbsp; <span class="k">C</span> Roll</div>
     <div><span class="k">[X]</span> Attack Primary &nbsp; <span class="k">[Z]</span> Secondary</div>
     <div><span class="k">Q</span> Alchemy &nbsp; <span class="k">E</span> Deploy Golem</div>
+    <div><span class="k">B</span> Equip Bazooka &nbsp; <span class="k">R</span> Toggle Persistence</div>
     <div><span class="k">R</span> Toggle Persistence Record</div>
   </div>
 
@@ -186,6 +187,7 @@ const SCHEMA = {
     attack_secondary: 'scene-mint-deploy-walk',
     ability_alchemy:  'scene-mint-deploy-idle',
     ability_golem:    'scene-mint-deploy-idle',
+    ability_bazooka:  'scene-mint-deploy-equip-ability-bazooka-equip', 
   },
 
   STAMINA_COSTS: {
@@ -196,6 +198,7 @@ const SCHEMA = {
     ability_alchemy:  25,
     ability_golem:    35,
     jump_start:       10,
+    ability_bazooka:  15,
   },
 
   CLIP_DURATIONS: {
@@ -206,12 +209,14 @@ const SCHEMA = {
     attack_secondary:  0.70,
     ability_alchemy:   1.20,
     ability_golem:     1.80,
+    ability_bazooka:   0.85,
   },
 
   NON_INTERRUPTIBLE: new Set([
     'roll', 'jump_start', 'jump_land',
     'attack_primary', 'attack_secondary',
     'ability_alchemy', 'ability_golem',
+    'ability_bazooka',
   ]),
 
   PHASE_WINDOWS: {
@@ -219,6 +224,7 @@ const SCHEMA = {
     attack_secondary:  0.55,
     ability_alchemy:   0.65,
     ability_golem:     0.80,
+    ability_bazooka:   0.50,
   },
 };
 
@@ -227,8 +233,8 @@ const SCHEMA = {
 // ═══════════════════════════════════════════════════════════════════
 const TRANSITION_TABLE = {
   idle:             { move: 'walk',        jump: 'jump_start', roll: 'roll', attack: 'attack_primary', secondary: 'attack_secondary', alchemy: 'ability_alchemy', golem: 'ability_golem' },
-  walk:             { sprint: 'sprint',    stop: 'idle',       jump: 'jump_start', roll: 'roll', attack: 'attack_primary', secondary: 'attack_secondary', alchemy: 'ability_alchemy', golem: 'ability_golem' },
-  run:              { sprint: 'sprint',    stop: 'idle',       jump: 'jump_start', roll: 'roll', attack: 'attack_primary' },
+  walk:             { sprint: 'sprint',    stop: 'idle',       jump: 'jump_start', roll: 'roll', attack: 'attack_primary', secondary: 'attack_secondary', alchemy: 'ability_alchemy', golem: 'ability_golem', bazooka: 'ability_bazooka' },
+  run:              { sprint: 'sprint',    stop: 'idle',       jump: 'jump_start', roll: 'roll', attack: 'attack_primary', bazooka: 'ability_bazooka' },
   sprint:           { sprint_end: 'run',   stop: 'idle',       jump: 'jump_start', roll: 'roll' },
   jump_start:       { apex: 'jump_loop' },
   jump_loop:        { land: 'jump_land' },
@@ -238,6 +244,7 @@ const TRANSITION_TABLE = {
   attack_secondary: { recover: 'idle' },
   ability_alchemy:  { recover: 'idle' },
   ability_golem:    { recover: 'idle' },
+  ability_bazooka:  { recover: 'idle' },
 };
 
 // ═══════════════════════════════════════════════════════════════════
@@ -655,6 +662,7 @@ const INPUT = {
     secondary:    ['z'],
     alchemy:      ['q'],
     golem:        ['e'],
+    bazooka:      ['b'],
     record:       ['r'],
   },
 
@@ -676,6 +684,7 @@ const INPUT = {
     if (this.bindings.secondary.includes(key))this._doSecondary();
     if (this.bindings.alchemy.includes(key))  this._doAlchemy();
     if (this.bindings.golem.includes(key))    this._doGolem();
+    if (this.bindings.bazooka.includes(key))  this._doBazooka();
     if (this.bindings.record.includes(key))   PERSISTENCE.toggle();
   },
 
@@ -775,6 +784,13 @@ const INPUT = {
     HUD.flash('DEPLOY GOLEM');
     HUD.log('Ability: Deploy Golem — summoning...');
     TELEMETRY.broadcast('ability_activated', { ability: 'golem' });
+  },
+
+  _doBazooka() {
+    const ok = STATE_MACHINE.transition('bazooka');
+    if (!ok) return;
+    HUD.flash('BAZOOKA EQUIP');
+    HUD.log('Ability: Bazooka Equip');
   },
 };
 

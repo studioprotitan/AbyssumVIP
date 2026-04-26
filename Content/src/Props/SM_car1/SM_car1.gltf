@@ -1,0 +1,326 @@
+{
+	"asset":
+	{
+		"version": "2.0",
+		"generator": "Unreal Engine 5.4.4"
+	},
+	"scene": 0,
+	"accessors": [
+		{
+			"bufferView": 0,
+			"count": 4536,
+			"type": "SCALAR",
+			"componentType": 5123
+		},
+		{
+			"bufferView": 1,
+			"count": 2231,
+			"type": "VEC3",
+			"componentType": 5126,
+			"min": [ -1.70929956, 0.817374408, -8.26935577 ],
+			"max": [ 1.70929956, 4.6265583, 8.26936245 ]
+		},
+		{
+			"bufferView": 2,
+			"count": 2231,
+			"type": "VEC3",
+			"componentType": 5126
+		},
+		{
+			"bufferView": 3,
+			"count": 2231,
+			"type": "VEC4",
+			"componentType": 5126
+		},
+		{
+			"bufferView": 4,
+			"count": 2231,
+			"type": "VEC2",
+			"componentType": 5126
+		},
+		{
+			"bufferView": 5,
+			"count": 2231,
+			"type": "VEC2",
+			"componentType": 5126
+		},
+		{
+			"bufferView": 6,
+			"count": 53448,
+			"type": "SCALAR",
+			"componentType": 5123
+		},
+		{
+			"bufferView": 7,
+			"count": 21100,
+			"type": "VEC3",
+			"componentType": 5126,
+			"min": [ -1.71097863, 0.0149593158, -9.07285976 ],
+			"max": [ 1.71097863, 4.01650333, 9.07285881 ]
+		},
+		{
+			"bufferView": 8,
+			"count": 21100,
+			"type": "VEC3",
+			"componentType": 5126
+		},
+		{
+			"bufferView": 9,
+			"count": 21100,
+			"type": "VEC4",
+			"componentType": 5126
+		},
+		{
+			"bufferView": 10,
+			"count": 21100,
+			"type": "VEC2",
+			"componentType": 5126
+		},
+		{
+			"bufferView": 11,
+			"count": 21100,
+			"type": "VEC2",
+			"componentType": 5126
+		}
+	],
+	"buffers": [
+		{
+			"uri": "SM_car1.bin",
+			"byteLength": 1422504
+		}
+	],
+	"bufferViews": [
+		{
+			"buffer": 0,
+			"byteLength": 9072,
+			"target": 34963
+		},
+		{
+			"buffer": 0,
+			"byteLength": 26772,
+			"byteOffset": 9072,
+			"target": 34962
+		},
+		{
+			"buffer": 0,
+			"byteLength": 26772,
+			"byteOffset": 35844,
+			"target": 34962
+		},
+		{
+			"buffer": 0,
+			"byteLength": 35696,
+			"byteOffset": 62616,
+			"target": 34962
+		},
+		{
+			"buffer": 0,
+			"byteLength": 17848,
+			"byteOffset": 98312,
+			"target": 34962
+		},
+		{
+			"buffer": 0,
+			"byteLength": 17848,
+			"byteOffset": 116160,
+			"target": 34962
+		},
+		{
+			"buffer": 0,
+			"byteLength": 106896,
+			"byteOffset": 134008,
+			"target": 34963
+		},
+		{
+			"buffer": 0,
+			"byteLength": 253200,
+			"byteOffset": 240904,
+			"target": 34962
+		},
+		{
+			"buffer": 0,
+			"byteLength": 253200,
+			"byteOffset": 494104,
+			"target": 34962
+		},
+		{
+			"buffer": 0,
+			"byteLength": 337600,
+			"byteOffset": 747304,
+			"target": 34962
+		},
+		{
+			"buffer": 0,
+			"byteLength": 168800,
+			"byteOffset": 1084904,
+			"target": 34962
+		},
+		{
+			"buffer": 0,
+			"byteLength": 168800,
+			"byteOffset": 1253704,
+			"target": 34962
+		}
+	],
+	"images": [
+		{
+			"uri": "MI_car1_MetallicRoughness.png"
+		},
+		{
+			"uri": "MI_car1_Occlusion.png"
+		},
+		{
+			"uri": "MI_wheels_MetallicRoughness.png"
+		},
+		{
+			"uri": "MI_wheels_Occlusion.png"
+		},
+		{
+			"uri": "T_car1_D.png"
+		},
+		{
+			"uri": "T_car1_N.png"
+		},
+		{
+			"uri": "T_wheel_D.png"
+		},
+		{
+			"uri": "T_wheel_N.png"
+		}
+	],
+	"materials": [
+		{
+			"name": "MI_car1",
+			"pbrMetallicRoughness":
+			{
+				"baseColorTexture":
+				{
+					"index": 0
+				},
+				"metallicRoughnessTexture":
+				{
+					"index": 1
+				}
+			},
+			"normalTexture":
+			{
+				"index": 2
+			},
+			"occlusionTexture":
+			{
+				"index": 3
+			}
+		},
+		{
+			"name": "MI_wheels",
+			"pbrMetallicRoughness":
+			{
+				"baseColorTexture":
+				{
+					"index": 4
+				},
+				"metallicRoughnessTexture":
+				{
+					"index": 5
+				}
+			},
+			"normalTexture":
+			{
+				"index": 6
+			},
+			"occlusionTexture":
+			{
+				"index": 7
+			}
+		}
+	],
+	"meshes": [
+		{
+			"name": "SM_car1",
+			"primitives": [
+				{
+					"attributes":
+					{
+						"POSITION": 1,
+						"NORMAL": 2,
+						"TANGENT": 3,
+						"TEXCOORD_0": 4,
+						"TEXCOORD_1": 5
+					},
+					"indices": 0,
+					"material": 0
+				},
+				{
+					"attributes":
+					{
+						"POSITION": 7,
+						"NORMAL": 8,
+						"TANGENT": 9,
+						"TEXCOORD_0": 10,
+						"TEXCOORD_1": 11
+					},
+					"indices": 6,
+					"material": 1
+				}
+			]
+		}
+	],
+	"nodes": [
+		{
+			"mesh": 0
+		}
+	],
+	"samplers": [
+		{
+			"minFilter": 9987,
+			"magFilter": 9729
+		}
+	],
+	"scenes": [
+		{
+			"nodes": [ 0 ]
+		}
+	],
+	"textures": [
+		{
+			"name": "T_car1_D",
+			"sampler": 0,
+			"source": 4
+		},
+		{
+			"name": "MI_car1_MetallicRoughness",
+			"sampler": 0,
+			"source": 0
+		},
+		{
+			"name": "T_car1_N",
+			"sampler": 0,
+			"source": 5
+		},
+		{
+			"name": "MI_car1_Occlusion",
+			"sampler": 0,
+			"source": 1
+		},
+		{
+			"name": "T_wheel_D",
+			"sampler": 0,
+			"source": 6
+		},
+		{
+			"name": "MI_wheels_MetallicRoughness",
+			"sampler": 0,
+			"source": 2
+		},
+		{
+			"name": "T_wheel_N",
+			"sampler": 0,
+			"source": 7
+		},
+		{
+			"name": "MI_wheels_Occlusion",
+			"sampler": 0,
+			"source": 3
+		}
+	]
+}

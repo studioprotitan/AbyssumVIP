@@ -1,0 +1,79 @@
+﻿COLD BREW -- MASTER RENAME LOG -- 2026-03-16 18:35:08
+================================================
+
+>> CST OPERATIVE CHARACTERS
+[SKIP]    1.jpg  (not found)
+[SKIP]    2.jpg  (not found)
+[RENAMED] 3.jpg  -->  cb-cst-pilot-03.jpg
+[RENAMED] 4.jpg  -->  cb-cst-pilot-04.jpg
+[RENAMED] 5.jpg  -->  cb-cst-pilot-05.jpg
+[RENAMED] 6.jpg  -->  cb-cst-pilot-06.jpg
+[RENAMED] 7.jpg  -->  cb-cst-pilot-07.jpg
+[RENAMED] 8.jpg  -->  cb-cst-pilot-08.jpg
+[RENAMED] cold-brew-mission-commander.jpg  -->  cb-cst-commander.jpg
+[SKIP]    cst-medic.jpg  (not found)
+[RENAMED] cst-sniper.jpg  -->  cb-cst-sniper.jpg
+[RENAMED] cst-witch.jpg  -->  cb-cst-witch.jpg
+[RENAMED] cst-undercity.jpg  -->  cb-cst-undercity.jpg
+[RENAMED] cst-pilot-officer.jpg  -->  cb-cst-pilot-officer.jpg
+[RENAMED] cst-patrol-officer.jpg  -->  cb-cst-patrol-officer.jpg
+[SKIP]    cst-patrol-officer-male.jpg  (not found)
+[RENAMED] cst-patrol-mpc.jpg  -->  cb-cst-patrol-mpc.jpg
+[RENAMED] cst-patrol-mpc-station-commander.jpg  -->  cb-cst-patrol-station-cmdr.jpg
+[RENAMED] cst-patrol-glitch-squad.jpg  -->  cb-cst-patrol-glitch-squad.jpg
+[RENAMED] cst-patrol-swamp-rail.jpg  -->  cb-cst-patrol-swamp-rail.jpg
+[RENAMED] cst-cargo-yards.jpg  -->  cb-cst-cargo-yards.jpg
+[RENAMED] cst-sewer-city-patrol-witch.jpg  -->  cb-cst-sewer-patrol-witch.jpg
+[RENAMED] cst-station-manager.jpg  -->  cb-cst-station-manager.jpg
+[RENAMED] cst-train-and-rail-heavy-armor.jpg  -->  cb-cst-train-rail-heavy.jpg
+[RENAMED] cst-train-engineer.jpg  -->  cb-cst-train-engineer.jpg
+[RENAMED] cst-train-escort.jpg  -->  cb-cst-train-escort.jpg
+[RENAMED] cst-portal-aparatus.jpg  -->  cb-cst-portal-apparatus.jpg
+[SKIP]    cst-ranking-officer-commander-S-hae.jpg  (not found)
+[RENAMED] a-swat.jpg  -->  cb-cst-assault-01.jpg
+[RENAMED] a-swat-blade-.jpg  -->  cb-cst-assault-blade.jpg
+[RENAMED] a-swat-blade-blue.jpg  -->  cb-cst-assault-blade-blue.jpg
+[RENAMED] glitch-witch-orange-ash.jpg  -->  cb-cst-glitch-witch.jpg
+[RENAMED] siren-witch.jpg  -->  cb-cst-siren-witch.jpg
+[RENAMED] siren-witch-rail-mystic.jpg  -->  cb-cst-siren-rail-mystic.jpg
+[SKIP]    1-medic.webp  (not found)
+[SKIP]    2-sniper.png  (not found)
+
+>> ABYSSUM MYSTIC CHARACTERS
+[RENAMED] a1.jpg  -->  cb-mystic-a1.jpg
+[RENAMED] a2.jpg  -->  cb-mystic-a2.jpg
+[RENAMED] a3.jpg  -->  cb-mystic-a3.jpg
+[RENAMED] a4.jpg  -->  cb-mystic-a4.jpg
+[RENAMED] a5.jpg  -->  cb-mystic-a5.jpg
+[RENAMED] a6.jpg  -->  cb-mystic-a6.jpg
+[RENAMED] a7.jpg  -->  cb-mystic-a7.jpg
+[RENAMED] a8.jpg  -->  cb-mystic-a8.jpg
+[SKIP]    a9.jpg  (not found)
+[RENAMED] a1-mystic.jpg  -->  cb-mystic-a1-variant.jpg
+[RENAMED] a2-mystic.jpg  -->  cb-mystic-a2-variant.jpg
+[RENAMED] a3-mystic.jpg  -->  cb-mystic-a3-variant.jpg
+[RENAMED] a4-mystic.jpg  -->  cb-mystic-a4-variant.jpg
+[RENAMED] a5-mystic.jpg  -->  cb-mystic-a5-variant.jpg
+[SKIP]    a6-mystic.jpg  (not found)
+[RENAMED] a6-mysstic.jpg  -->  cb-mystic-a6-alt.jpg
+[RENAMED] a7-mystic.jpg  -->  cb-mystic-a7-variant.jpg
+
+>> ENVIRONMENT / SCENE BACKGROUNDS
+[SKIP]    ancinet-engine-hall.jpg  (not found)
+
+>> PROPS / ALCHEMY / ARTEFACTS
+[SKIP]    alchemy-board-artefact-3.jpg  (not found)
+[SKIP]    alchemy-rare-boards.jpg  (not found)
+[SKIP]    ash-born-glitch-goblin.jpg  (not found)
+[SKIP]    ash-forged-kraken-ship.jpg  (not found)
+[SKIP]    battle-mystic-blue-line.jpg  (not found)
+
+>> LONG-NAME AI PROMPT FILES
+[SKIP]    a50222ec-c4ad-4dd0-957b-3f175f78da66.jpg  (not found)
+[SKIP]    alchem-board-artefact-2.jpg  (not found)
+[SKIP]    alchem-board-rar-artefact.jpg  (not found)
+[SKIP]    alchemist-x.jpg  (not found)
+[SKIP]    A Widescreen Cinematic Artwork Depicting The Eerie.jpg  (not found)
+[SKIP]    An Artist's Rendering Of A Man And A Woman Dressed.jpg  (not found)
+
+RENAMED: 44 | SKIPPED: 21

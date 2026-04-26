@@ -1,0 +1,1 @@
+const RELEASE_BASE = "https://github.com/studioprotitan/Forge-Avatars/releases/download/v1.0/";

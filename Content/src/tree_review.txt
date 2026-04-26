@@ -1,0 +1,1490 @@
+Folder PATH listing for volume Crucial X6
+Volume serial number is 0C1A-81D4
+E:.
+¦   dvv_log.txt
+¦   append_dvv_log.py
+¦   tree_review.txt
+¦   
++---Characters
+¦   +---Players
+¦   ¦   +---Avatar
+¦   ¦   ¦       steamfitter-cst-glitch-corps.fbx
+¦   ¦   ¦       cst-meta-torso.glb
+¦   ¦   ¦       cst-ritualistic-helmet-base.glb
+¦   ¦   ¦       
+¦   ¦   +---Animation
+¦   ¦   ¦   ¦   cst-headset.glb
+¦   ¦   ¦   ¦   
+¦   ¦   ¦   +---StellarWoman
+¦   ¦   ¦   ¦       AS_Idle.bin
+¦   ¦   ¦   ¦       M_TEETH_Occlusion.png
+¦   ¦   ¦   ¦       MI_HEAD_F_09_BaseColor.png
+¦   ¦   ¦   ¦       MI_HEAD_F_09_MetallicRoughness.png
+¦   ¦   ¦   ¦       MI_HEAD_F_09_Normal.png
+¦   ¦   ¦   ¦       MI_HEAD_F_09_Specular.png
+¦   ¦   ¦   ¦       MI_EYES_16_SK_TROOPER_F_03_BaseColor.png
+¦   ¦   ¦   ¦       MI_EYES_16_SK_TROOPER_F_03_Emissive.png
+¦   ¦   ¦   ¦       MI_EYES_16_SK_TROOPER_F_03_Normal.png
+¦   ¦   ¦   ¦       MI_EYES_16_SK_TROOPER_F_03_Specular.png
+¦   ¦   ¦   ¦       MI_EYES_16_SK_TROOPER_F_03_BaseColor_1.png
+¦   ¦   ¦   ¦       MI_EYES_16_SK_TROOPER_F_03_Emissive_1.png
+¦   ¦   ¦   ¦       MI_EYES_16_SK_TROOPER_F_03_Normal_1.png
+¦   ¦   ¦   ¦       MI_EYES_16_SK_TROOPER_F_03_Specular_1.png
+¦   ¦   ¦   ¦       MI_TROOPER_SUIT_01_BaseColor.png
+¦   ¦   ¦   ¦       MI_TROOPER_SUIT_01_MetallicRoughness.png
+¦   ¦   ¦   ¦       MI_TROOPER_SUIT_01_Normal.png
+¦   ¦   ¦   ¦       MI_HAIR_Wavy_05_SK_TROOPER_F_03_BaseColor.png
+¦   ¦   ¦   ¦       MI_HAIR_Wavy_05_SK_TROOPER_F_03_Normal.png
+¦   ¦   ¦   ¦       T_LASHES_F_BaseColor.png
+¦   ¦   ¦   ¦       T_TEETH_BaseColor.png
+¦   ¦   ¦   ¦       T_TEETH_Normal.png
+¦   ¦   ¦   ¦       T_TROOPER_SUIT_OcclusionRoughnessMetallic.png
+¦   ¦   ¦   ¦       AS_Idle.gltf
+¦   ¦   ¦   ¦       AS_UE5_MF_Idle.bin
+¦   ¦   ¦   ¦       AS_UE5_MF_Idle.gltf
+¦   ¦   ¦   ¦       AS_UE5_MF_Run_Fwd.bin
+¦   ¦   ¦   ¦       AS_UE5_MF_Run_Fwd.gltf
+¦   ¦   ¦   ¦       AS_UE5_MF_Walk_Fwd.bin
+¦   ¦   ¦   ¦       AS_UE5_MF_Walk_Fwd.gltf
+¦   ¦   ¦   ¦       AS_UE5_MM_T_Pose.FBX
+¦   ¦   ¦   ¦       
+¦   ¦   ¦   +---StellarMan
+¦   ¦   ¦           MI_Manny_02_SKM_Manny_Simple_Specular.png
+¦   ¦   ¦           MI_TROOPER_SUIT_01_BaseColor.png
+¦   ¦   ¦           MI_TROOPER_SUIT_01_MetallicRoughness.png
+¦   ¦   ¦           MI_TROOPER_SUIT_01_Normal.png
+¦   ¦   ¦           T_Manny_01_N.png
+¦   ¦   ¦           T_Manny_02_N.png
+¦   ¦   ¦           T_TROOPER_SUIT_OcclusionRoughnessMetallic.png
+¦   ¦   ¦           AS_UE5_MF_Run_Fwd.bin
+¦   ¦   ¦           AS_UE5_MF_Run_Fwd.gltf
+¦   ¦   ¦           AS_Idle.glb
+¦   ¦   ¦           AS_UE5_MF_Idle.bin
+¦   ¦   ¦           AS_UE5_MF_Idle.gltf
+¦   ¦   ¦           M_UE4Man_Body_BaseColor.png
+¦   ¦   ¦           M_UE4Man_Body_MetallicRoughness.png
+¦   ¦   ¦           M_UE4Man_Body_Normal.png
+¦   ¦   ¦           M_UE4Man_ChestLogo_BaseColor.png
+¦   ¦   ¦           M_UE4Man_ChestLogo_Normal.png
+¦   ¦   ¦           MI_Manny_01_SKM_Manny_Simple_BaseColor.png
+¦   ¦   ¦           MI_Manny_01_SKM_Manny_Simple_ClearCoatRoughness.png
+¦   ¦   ¦           MI_Manny_01_SKM_Manny_Simple_Emissive.png
+¦   ¦   ¦           MI_Manny_01_SKM_Manny_Simple_MetallicRoughness.png
+¦   ¦   ¦           MI_Manny_01_SKM_Manny_Simple_Occlusion.png
+¦   ¦   ¦           MI_Manny_01_SKM_Manny_Simple_Specular.png
+¦   ¦   ¦           MI_Manny_02_SKM_Manny_Simple_BaseColor.png
+¦   ¦   ¦           MI_Manny_02_SKM_Manny_Simple_ClearCoatRoughness.png
+¦   ¦   ¦           MI_Manny_02_SKM_Manny_Simple_Emissive.png
+¦   ¦   ¦           MI_Manny_02_SKM_Manny_Simple_MetallicRoughness.png
+¦   ¦   ¦           MI_Manny_02_SKM_Manny_Simple_Occlusion.png
+¦   ¦   ¦           
+¦   ¦   +---Skeleton
+¦   ¦   +---Player_HeadMorphs
+¦   +---NPC
+¦   ¦   +---RiftRats
+¦   ¦   +---GlitchGoblin
+¦   ¦   ¦       glitch-goblin-corgemont.glb
+¦   ¦   ¦       Meshy_AI_Cybernetic_Guardian_0315142226_texture_fbx.zip
+¦   ¦   ¦       
+¦   ¦   +---GlitchWitch
+¦   ¦   +---Salvagers
+¦   ¦   +---CrocMen
+¦   ¦   +---Golems
+¦   ¦   +---DrownedOnes
+¦   +---NPC_HeadMorphs
+¦   +---ABEXBankers
+¦   ¦   +---the_oracle
+¦   ¦   ¦       the-oracle.jpeg
+¦   ¦   ¦       
+¦   ¦   +---goliath
+¦   ¦   ¦       goliath.jpeg
+¦   ¦   ¦       
+¦   ¦   +---zara_ace_ryder
+¦   ¦   ¦       zara-ace-ryder.jpeg
+¦   ¦   ¦       
+¦   ¦   +---jax_riley
+¦   ¦   ¦       jax-cog-riley.jpeg
+¦   ¦   ¦       
+¦   ¦   +---cypher
+¦   ¦   ¦       cypher.jpeg
+¦   ¦   ¦       
+¦   ¦   +---dr_aris_thorne
+¦   ¦   ¦       dr-aris-thorne.jpeg
+¦   ¦   ¦       
+¦   ¦   +---dr_evelyn_reed
+¦   ¦   ¦       dr-evelyn-reed.jpeg
+¦   ¦   ¦       
+¦   ¦   +---elara_the_forger_vance
+¦   ¦   ¦       elara-the-forger-vance.jpeg
+¦   ¦   ¦       
+¦   ¦   +---elena_prism_vasquez
+¦   ¦   ¦       elena-prism-vasquez.jpeg
+¦   ¦   ¦       
+¦   ¦   +---kira_shadow_vex_smuggler
+¦   ¦   ¦       kira-shadow-vex-smuggler.jpeg
+¦   ¦   ¦       
+¦   ¦   +---marcus_void_caldwell
+¦   ¦   ¦       marcus-void-caldwell.jpeg
+¦   ¦   ¦       
+¦   ¦   +---silas_the_ledger_croft
+¦   ¦   ¦       silas-the-ledger-croft.jpeg
+¦   ¦   ¦       
+¦   ¦   +---NFT_Gallery_Concept
+¦   ¦           antonio-scott-f2dff396-d50b-4d12-ac31-a122018b0ac1.jpg
+¦   ¦           _420b26af-4a42-41da-9b94-baa819e03ae8.jpg
+¦   ¦           _7608565f-44af-4019-877c-bdf739cc3b2c.jpg
+¦   ¦           _a8633aa8-2731-416c-9e18-b6346081305a.jpg
+¦   ¦           _ad560c06-95ee-4d22-b4f0-f886a25e51f3.jpg
+¦   ¦           _c7b4a1a1-d24f-436d-85d4-0b1776d2c2b5.jpg
+¦   ¦           antonio-scott-6ae30efd-59ce-413d-bf92-3b13c7fc9703.jpg
+¦   ¦           antonio-scott-35f07d98-a3fd-406b-884a-9aeae19c942e.jpg
+¦   ¦           antonio-scott-13599b75-8f86-4d39-acc7-0fe00cd2cd84.jpg
+¦   ¦           antonio-scott-a9f6823a-8d76-43bc-ba9d-8ae4614d4ddd.jpg
+¦   ¦           antonio-scott-dabdbb12-3037-4ae8-9352-3c59c4e44601.jpg
+¦   ¦           ChatGPT Image Jan 17, 2026, 03_41_29 PM.png
+¦   ¦           ChatGPT Image Jan 17, 2026, 03_42_54 PM.png
+¦   ¦           ChatGPT Image Jan 17, 2026, 03_50_33 PM.png
+¦   ¦           ChatGPT Image Jan 17, 2026, 03_56_33 PM.png
+¦   ¦           ChatGPT Image Jan 17, 2026, 05_58_12 PM.png
+¦   ¦           _5756b16b-5840-497b-a850-67c34781edc1.jpg
+¦   ¦           ChatGPT Image Jan 17, 2026, 03_48_51 PM.png
+¦   ¦           _a1a4eb6a-8ff8-4873-ac24-33ae246c011f.jpg
+¦   ¦           _3660f4b7-f5b7-4fce-a491-9210e9147789.jpg
+¦   ¦           _1a32e7bf-04e1-43f8-8ff7-13e1f935f88e.jpg
+¦   ¦           ChatGPT Image Jan 17, 2026, 03_46_32 PM.png
+¦   ¦           _bd7d7056-9272-4bc9-8304-f50d8452ea07.jpg
+¦   ¦           _bb301e03-f1eb-4b5d-8fc7-406749f6058b.jpg
+¦   ¦           _8c7cb47c-cb52-4cbe-bfb1-12f53b190b8a.jpg
+¦   ¦           _8b356b44-3428-4d72-8c40-476c7213d4cf.jpg
+¦   ¦           _394342b2-7aee-4130-88bd-ef2f39518b59.jpg
+¦   ¦           _35d11850-a3c7-47e4-8ed2-fd846958e259.jpg
+¦   ¦           _9362fb81-024b-4da7-b588-96c7b4b2b2c1.jpg
+¦   ¦           _8a001ac6-acda-457d-952c-1fca816bcd9a.jpg
+¦   ¦           _ec1c4dcb-8384-4136-9cb8-d22999bdf9e5.jpg
+¦   ¦           _f092f7b6-d53b-4a5d-a43e-387dd287fdfc.jpg
+¦   ¦           _069d8bee-c19d-426f-bfad-95302985f4c9.jpg
+¦   ¦           _0f23ee01-6695-4c62-87aa-d6494c668881.jpg
+¦   ¦           _acef81cb-d070-4dca-9634-caafd84ee170.jpg
+¦   ¦           jax.png
+¦   ¦           
+¦   +---avatars
+¦   ¦       towers.glb
+¦   ¦       wristwatch.glb
+¦   ¦       giant-golem-titan.glb
+¦   ¦       cst-forge-mystic-corgemont.glb
+¦   ¦       cst-mint-to-deploy-base-1.glb
+¦   ¦       battle-mystic-pilot.glb
+¦   ¦       cst-mint-to-deploy-base-2.glb
+¦   ¦       drone-ship.glb
+¦   ¦       cst-rail-trooper.glb
+¦   ¦       cst-escort-rail-raider.glb
+¦   ¦       arcane-enforcer.glb
+¦   ¦       abyssal-guardian.glb
+¦   ¦       dark-forest.glb
+¦   ¦       dar-forest-a.glb
+¦   ¦       genesis-verse-explorer-bot-blue.glb
+¦   ¦       guardian-stone-yellow.glb
+¦   ¦       cst-scout-automadroid.glb
+¦   ¦       airship.glb
+¦   ¦       locomotive-flatbed.glb
+¦   ¦       cst-mint-to-deploy-rare-base.glb
+¦   ¦       malveks-golem-menace.glb
+¦   ¦       astronimical-scout.glb
+¦   ¦       helmet-a2.glb
+¦   ¦       engimatic-baise-portal.glb
+¦   ¦       tanuki.glb
+¦   ¦       cst-reair-bay-freight-hutch.glb
+¦   ¦       thane-wraith-mystic.glb
+¦   ¦       cst-station-architect-scott.glb
+¦   ¦       armored hyena 3d model.glb
+¦   ¦       automoton-torso.glb
+¦   ¦       automoton-torso-01.glb
+¦   ¦       rat-pack-racer-miglia.glb
+¦   ¦       rift-rat-abomination-01.glb
+¦   ¦       rift-rat-abomination.glb
+¦   ¦       salvager-mechanist-rail-boss.glb
+¦   ¦       spherical-drone.glb
+¦   ¦       back-pack-freight-gear.glb
+¦   ¦       steamfitter-armored-warrior.glb
+¦   ¦       cst-mint-to-deploy-forge.glb
+¦   ¦       steamfitter-exosuit.glb
+¦   ¦       back-pack-freight-gear-scout.glb
+¦   ¦       bitcoin-behemoth.glb
+¦   ¦       bitcoin-behemoth-idle.glb
+¦   ¦       chrono-revolver.glb
+¦   ¦       armored+warrior+3d+model.glb
+¦   ¦       cst-steamfitter-fighter.glb
+¦   ¦       cst-steamfitter-fighter-purple.glb
+¦   ¦       cst-tactical-exosuit-cuirass.glb
+¦   ¦       steamfitter-chamber-lock.glb
+¦   ¦       M_EMISION.usd
+¦   ¦       biomass-ash-born.glb
+¦   ¦       cst-tactical-exosuit-full.glb
+¦   ¦       military-vehicle.glb
+¦   ¦       cst-tactical-exosuit-rare.glb
+¦   ¦       cursed-automaton.glb
+¦   ¦       cursed-colossus.glb
+¦   ¦       tanuki-meet-cute.glb
+¦   ¦       fantasy-helmet.glb
+¦   ¦       dcst-titan-golem.glb
+¦   ¦       ash-born-war-relic-epic-type.glb
+¦   ¦       weapon-crono.glb
+¦   ¦       cst-mint-deploy-terminal.glb
+¦   ¦       armored-werewolf.glb
+¦   ¦       echelonian-exorcist-forward-roll.glb
+¦   ¦       echo-scribe.glb
+¦   ¦       explorer-bot.glb
+¦   ¦       explorer-pilot-exo-armor.glb
+¦   ¦       explorer-pilot-exo-armor-drone.glb
+¦   ¦       explorer-pilot-exo-armor-engineer.glb
+¦   ¦       formula-fighter-green.glb
+¦   ¦       cst-crono-revolver.glb
+¦   ¦       cst-heavy-bamma-armor-rare-type.glb
+¦   ¦       void-alchemist.glb
+¦   ¦       warloc-01-idle-.glb
+¦   ¦       siren-war-witch.glb
+¦   ¦       cst-glitch-helm.glb
+¦   ¦       hex-engineer.glb
+¦   ¦       tidal-titan-komainu.glb
+¦   ¦       fanatasy-creature.glb
+¦   ¦       armored-titan-green0.glb
+¦   ¦       ash-born-automaton-yellow-ley.glb
+¦   ¦       iron-giant-express.glb
+¦   ¦       iron-sentinel.glb
+¦   ¦       mechanist.glb
+¦   ¦       mystic-pilot-chair.glb
+¦   ¦       mystic-pilot-chair-a.glb
+¦   ¦       cst-station-commander.glb
+¦   ¦       racer.glb
+¦   ¦       rat-pack-racer.glb
+¦   ¦       rift-rat-monster.glb
+¦   ¦       rift-rat-wendigo.glb
+¦   ¦       shadow-hunter-cyborg.glb
+¦   ¦       marrow-vex-heavy-salager.glb
+¦   ¦       cst-cenote-armor.glb
+¦   ¦       cst-rail-knight.glb
+¦   ¦       station-city-logo-a.glb
+¦   ¦       station-city-logo-freight-car.glb
+¦   ¦       steam locomotive 3d model.glb
+¦   ¦       steam locomotive engine.glb
+¦   ¦       rift-rat-abomination (2).glb
+¦   ¦       glitch-witch.glb
+¦   ¦       mechanist-salvager.glb
+¦   ¦       glitch-goblin-metro-punk.glb
+¦   ¦       siren-tidal-armor.glb
+¦   ¦       giant-golem-a.glb
+¦   ¦       ash-born-helmet.glb
+¦   ¦       armored-knight.glb
+¦   ¦       mech.glb
+¦   ¦       helmet.glb
+¦   ¦       helmet-a.glb
+¦   ¦       knight-a.glb
+¦   ¦       mecha.glb
+¦   ¦       orb.glb
+¦   ¦       pistol.glb
+¦   ¦       robot-head.glb
+¦   ¦       robot-helmet.glb
+¦   ¦       
+¦   +---CST_SWAT
+¦   ¦   ¦   cst-train-and-rail-heavy-armor.jpg
+¦   ¦   ¦   cst-station-manager.jpg
+¦   ¦   ¦   cst-train-engineer.jpg
+¦   ¦   ¦   cold-brew-mission-commander.jpg
+¦   ¦   ¦   5.jpg
+¦   ¦   ¦   6.jpg
+¦   ¦   ¦   7.jpg
+¦   ¦   ¦   8.jpg
+¦   ¦   ¦   1.webp
+¦   ¦   ¦   2.png
+¦   ¦   ¦   3.jpg
+¦   ¦   ¦   4.jpg
+¦   ¦   ¦   ash-born-glitch-goblin.jpg
+¦   ¦   ¦   ash-forged-kraken-ship.jpg
+¦   ¦   ¦   cst-medic.webp
+¦   ¦   ¦   ChatGPT Image Mar 20, 2026, 03_53_30 PM.png
+¦   ¦   ¦   Copilot_20260320_155010.png
+¦   ¦   ¦   Copilot_20260320_155250.png
+¦   ¦   ¦   ChatGPT Image Mar 20, 2026, 03_55_58 PM.png
+¦   ¦   ¦   a-swat-blade-.jpg
+¦   ¦   ¦   a-swat-blade-blue.jpg
+¦   ¦   ¦   a1.jpg
+¦   ¦   ¦   a2.jpg
+¦   ¦   ¦   a3.jpg
+¦   ¦   ¦   a4.jpg
+¦   ¦   ¦   a5.jpg
+¦   ¦   ¦   a6.jpg
+¦   ¦   ¦   a7.jpg
+¦   ¦   ¦   a8.jpg
+¦   ¦   ¦   a9.png
+¦   ¦   ¦   a-swat.jpg
+¦   ¦   ¦   cst-sewer-city-patrol-witch.jpg
+¦   ¦   ¦   cst-portal-aparatus.jpg
+¦   ¦   ¦   siren-witch.jpg
+¦   ¦   ¦   siren-witch-rail-mystic.jpg
+¦   ¦   ¦   cst-patrol-swamp-rail.jpg
+¦   ¦   ¦   cst-witch.jpg
+¦   ¦   ¦   cst-patrol-officer.jpg
+¦   ¦   ¦   cst-patrol-officer-male.png
+¦   ¦   ¦   cst-patrol-glitch-squad.jpg
+¦   ¦   ¦   cst-patrol-mpc.jpg
+¦   ¦   ¦   cst-patrol-mpc-station-commander.jpg
+¦   ¦   ¦   cst-train-escort.jpg
+¦   ¦   ¦   cst-cargo-yards.jpg
+¦   ¦   ¦   cst-undercity.jpg
+¦   ¦   ¦   cst-sniper.jpg
+¦   ¦   ¦   cst-pilot-officer.jpg
+¦   ¦   ¦   glitch-witch-orange-ash.jpg
+¦   ¦   ¦   cst-ranking-officer-commander-Shae.jpg
+¦   ¦   ¦   
+¦   ¦   +---html_embeds
+¦   ¦           5.jpg
+¦   ¦           6.jpg
+¦   ¦           7.jpg
+¦   ¦           8.jpg
+¦   ¦           1.webp
+¦   ¦           2.png
+¦   ¦           3.jpg
+¦   ¦           4.jpg
+¦   ¦           a1.jpg
+¦   ¦           a2.jpg
+¦   ¦           a3.jpg
+¦   ¦           a4.jpg
+¦   ¦           a5.jpg
+¦   ¦           a6.jpg
+¦   ¦           a7.jpg
+¦   ¦           a8.jpg
+¦   ¦           a9.png
+¦   ¦           a-swat.jpg
+¦   ¦           a-swat-blade-.jpg
+¦   ¦           a-swat-blade-blue.jpg
+¦   ¦           cold-brew-mission-commander.jpg
+¦   ¦           cst-cargo-yards.jpg
+¦   ¦           cst-medic.webp
+¦   ¦           cst-patrol-glitch-squad.jpg
+¦   ¦           cst-patrol-mpc.jpg
+¦   ¦           cst-patrol-mpc-station-commander.jpg
+¦   ¦           cst-patrol-officer.jpg
+¦   ¦           cst-patrol-officer-male.png
+¦   ¦           cst-patrol-swamp-rail.jpg
+¦   ¦           cst-pilot-officer.jpg
+¦   ¦           cst-portal-aparatus.jpg
+¦   ¦           cst-ranking-officer-commander-Shae.jpg
+¦   ¦           cst-sewer-city-patrol-witch.jpg
+¦   ¦           cst-sniper.jpg
+¦   ¦           cst-station-manager.jpg
+¦   ¦           cst-train-and-rail-heavy-armor.jpg
+¦   ¦           cst-train-engineer.jpg
+¦   ¦           cst-train-escort.jpg
+¦   ¦           cst-undercity.jpg
+¦   ¦           cst-witch.jpg
+¦   ¦           glitch-witch-orange-ash.jpg
+¦   ¦           siren-witch.jpg
+¦   ¦           siren-witch-rail-mystic.jpg
+¦   ¦           a1-mystic.jpg
+¦   ¦           a2-mystic.jpg
+¦   ¦           a3-mystic.jpg
+¦   ¦           a4-mystic.jpg
+¦   ¦           a5-mystic.jpg
+¦   ¦           a6-mysstic.jpg
+¦   ¦           a7-mystic.jpg
+¦   ¦           
+¦   +---Test_Manny
+¦           MI_Manny_01_SKM_Manny_Simple_Emissive.png
+¦           MI_Manny_01_SKM_Manny_Simple_MetallicRoughness.png
+¦           MI_Manny_01_SKM_Manny_Simple_Occlusion.png
+¦           MI_Manny_01_SKM_Manny_Simple_Specular.png
+¦           MI_Manny_02_SKM_Manny_Simple_BaseColor.png
+¦           MI_Manny_02_SKM_Manny_Simple_ClearCoatRoughness.png
+¦           MI_Manny_02_SKM_Manny_Simple_Emissive.png
+¦           MI_Manny_02_SKM_Manny_Simple_MetallicRoughness.png
+¦           MI_Manny_02_SKM_Manny_Simple_Occlusion.png
+¦           MI_Manny_02_SKM_Manny_Simple_Specular.png
+¦           T_Manny_01_N.png
+¦           T_Manny_02_N.png
+¦           anim_Idle.bin
+¦           anim_Idle.gltf
+¦           MI_Manny_01_SKM_Manny_Simple_BaseColor.png
+¦           MI_Manny_01_SKM_Manny_Simple_ClearCoatRoughness.png
+¦           
++---Weapons
+¦   +---Steampunk_Arsenal
+¦       +---AssaultRifle
+¦       +---Pistol
+¦       +---Shotgun
+¦       +---SniperRifle
+¦       +---Grenades
+¦       +---WaveGun
+¦       +---FlameThrower
++---Levels
+¦   +---HypeChamber
+¦   +---SkullChamber
+¦   +---EngineHall
+¦   +---EndlessRunner_Template
++---Props
+¦   ¦   mysterious+hooded+bust+3d+model.glb
+¦   ¦   steampunk+doorway+3d+model.glb
+¦   ¦   steampunk+sarcophagus+3d+model.glb
+¦   ¦   stone+bust+3d+model.glb
+¦   ¦   dark+necromancer+statue+3d+model.fbx
+¦   ¦   skull-helmet-armor.glb
+¦   ¦   spiked-boots.glb
+¦   ¦   sprint.fbx
+¦   ¦   sprint-forward-roll-me.fbx
+¦   ¦   sprint-me.fbx
+¦   ¦   standard-run.fbx
+¦   ¦   steamfitter-deepsea-explorer-ship.glb
+¦   ¦   steampunk mech 3d model.glb
+¦   ¦   steampunk-airship.glb
+¦   ¦   steampunk-doorwary.glb
+¦   ¦   steampunk-flying0ship.glb
+¦   ¦   steampunk-machine.glb
+¦   ¦   steampunk-monster.glb
+¦   ¦   steampunk-robot-01.glb
+¦   ¦   submersible-hunter-drone.glb
+¦   ¦   technocrat-titan.glb
+¦   ¦   tony-da-vinci.glb
+¦   ¦   two-cycle-sprint-me.fbx
+¦   ¦   type-to-sit.fbx
+¦   ¦   typing-me.fbx
+¦   ¦   vehicle.glb
+¦   ¦   void-alchemist.glb
+¦   ¦   void-archivist.glb
+¦   ¦   walking.fbx
+¦   ¦   walking-me.fbx
+¦   ¦   warloc-01-idle-.glb
+¦   ¦   warrior-01.glb
+¦   ¦   armor-01.glb
+¦   ¦   armor-02.glb
+¦   ¦   armored hyena 3d model.glb
+¦   ¦   armored suit 3d model.glb
+¦   ¦   bitcoin-behemoth.glb
+¦   ¦   bitcoin-behemoth-idle.glb
+¦   ¦   mecha 3d model.glb
+¦   ¦   arcane-fuel-tanker-car-01.glb
+¦   ¦   button-pushing-me.fbx
+¦   ¦   giant mech 3d model.glb
+¦   ¦   jack-giant mech 3d model.glb
+¦   ¦   colossus.glb
+¦   ¦   cursed-automaton.glb
+¦   ¦   cursed-camera.glb
+¦   ¦   cursed-colossus.glb
+¦   ¦   cyber-enforcer.glb
+¦   ¦   cyber-enforcer-free.glb
+¦   ¦   cybernetic-enforcer-epic.glb
+¦   ¦   cybernetic-monk.glb
+¦   ¦   cyberpunk+armor+3d+model.fbx
+¦   ¦   cyberpunk-armor.glb
+¦   ¦   cyberpunk-armored-fighter model.glb
+¦   ¦   cyberpunk-cat.glb
+¦   ¦   diesel-pilot (2).glb
+¦   ¦   diesel-pilot.glb
+¦   ¦   dragon-statute (2).glb
+¦   ¦   dragon-statute.glb
+¦   ¦   drone-pilot.glb
+¦   ¦   echelonian-exorcist.glb
+¦   ¦   echelonian-exorcist-legend.babylon
+¦   ¦   echelonian-exorcist-legend.glb
+¦   ¦   echelonian-exorcist-rifle-idle.glb
+¦   ¦   echo-scribe.glb
+¦   ¦   enter-code.fbx
+¦   ¦   enter-code-right-me.fbx
+¦   ¦   exosuit.glb
+¦   ¦   Leonardo_Lightning_XL_Arcanepowered_dieselpunk_flatbed_railca_0 (5).jpg
+¦   ¦   fantasy armor 3d model.glb
+¦   ¦   fast-run-me.fbx
+¦   ¦   Female Locomotion Pose.fbx
+¦   ¦   female-armor.glb
+¦   ¦   fighter.glb
+¦   ¦   forge-ogre.glb
+¦   ¦   formula-fighter-green (2).glb
+¦   ¦   formula-fighter-green.glb
+¦   ¦   formula-fighter-orange.glb
+¦   ¦   futruristic-character.glb
+¦   ¦   futuristic+creature+3d+model.fbx
+¦   ¦   futuristic-armor .glb
+¦   ¦   futuristic-armored-figure.glb
+¦   ¦   futuristic-battle-mech.glb
+¦   ¦   futuristic-combat-meta.glb
+¦   ¦   futuristic-creature.glb
+¦   ¦   giant-battle-mech.glb
+¦   ¦   glitch-goblin.glb
+¦   ¦   golem-statute.glb
+¦   ¦   grave-digger-glove.glb
+¦   ¦   hex-engineer.glb
+¦   ¦   hunter-drone.glb
+¦   ¦   idle-01.fbx
+¦   ¦   Idle-me.fbx
+¦   ¦   idle-sprint-me.fbx
+¦   ¦   idle-to-sprint-me.fbx
+¦   ¦   iron-sentinel.glb
+¦   ¦   jacket.glb
+¦   ¦   jane-district-yellow.fbx
+¦   ¦   jane-district-yellow.glb
+¦   ¦   mech.glb
+¦   ¦   mecha-armor.glb
+¦   ¦   mechanist.glb
+¦   ¦   mechanist-salvager.glb
+¦   ¦   mossy-stature.glb
+¦   ¦   nosferatu-eldritch-.glb
+¦   ¦   oranate-armor-01.glb
+¦   ¦   ornate-armor.glb
+¦   ¦   ornate-high-heels-boots.glb
+¦   ¦   ornnate-boots.glb
+¦   ¦   pilot-flip-switch-me.fbx
+¦   ¦   pilot-switch-flip-me.fbx
+¦   ¦   pose.fbx
+¦   ¦   robot-01.glb
+¦   ¦   robot-02.glb
+¦   ¦   robot-03.glb
+¦   ¦   robot-04.glb
+¦   ¦   robotic-demon.glb
+¦   ¦   ruined-mansion.glb
+¦   ¦   shadow-hunter-cyborg.glb
+¦   ¦   sit-to-type-me.fbx
+¦   ¦   armored train car 3d model.glb
+¦   ¦   tank railcar 3d model.glb
+¦   ¦   arcane-fuel-tanker-car.glb
+¦   ¦   large ancient portal 3d model.glb
+¦   ¦   rusty tanker wagon 3d model.glb
+¦   ¦   advanced-smart-watch-oracle-ai.glb
+¦   ¦   boundary-stone-01.glb
+¦   ¦   boundary-stone.glb
+¦   ¦   
+¦   +---AlchemyTables
+¦   +---AlchemyPotions
+¦   +---Boundary_Stones
+¦   ¦       boundary-stone-1-portal-boss-raid.jpg
+¦   ¦       boundary-stone-2-portal-cold-stone-station.jpg
+¦   ¦       boundary-stone-3-portal-dead-stone-station.jpg
+¦   ¦       boundary-stone-4-portal-noskog.jpg
+¦   ¦       boundary-stone-5-portal-one.jpg
+¦   ¦       boundary-stone-6-portal-stones-throw-station.jpg
+¦   ¦       boundary-stone-7-portal-styx-station.jpg
+¦   ¦       boundary-stone-8-portal-terror-king.jpg
+¦   ¦       boundary-stone-seal.jpg
+¦   ¦       boundary-stone.jpg
+¦   ¦       Copilot_20260124_120211.png
+¦   ¦       Designer (3).png
+¦   ¦       core-stone-yellow-glitch-witch.jpg
+¦   ¦       core-stone-blue-glitch.jpg
+¦   ¦       corgemont-rare-core-stone.jpg
+¦   ¦       rare-raijin-green-colossus.jpg
+¦   ¦       rare-core-stone-yellow.jpg
+¦   ¦       ash-core-stone-blue-line.jpg
+¦   ¦       ash-core-stone-orange-line.jpg
+¦   ¦       core-stone-bust-ossuary.jpg
+¦   ¦       core-stone-negu.jpg
+¦   ¦       core-stone-rare-yellow.jpg
+¦   ¦       ash-stone-orange-line.jpg
+¦   ¦       ash-core-stone-red.jpg
+¦   ¦       sun-temple-core-stone.jpg
+¦   ¦       core-stone-orange-line-negu.jpg
+¦   ¦       core-stone-rare-bust-oni.jpg
+¦   ¦       corrupt-ash-stone-mushrooms.jpg
+¦   ¦       core-stone-rare-tanuki.jpg
+¦   ¦       core-stone-purple-renji.jpg
+¦   ¦       core-stone-legendary.jpg
+¦   ¦       core-stone-rare-komainu.jpg
+¦   ¦       core-stone-yello-glitch.jpg
+¦   ¦       core-stone-rare-komainu-temple.jpg
+¦   ¦       core-stone-rare-renji-purple.jpg
+¦   ¦       ash-core-stone-tanuki-furnace.jpg
+¦   ¦       core-stone-stones-throw-furnace.jpg
+¦   ¦       core-stone-ultra-rare-wild-card.jpg
+¦   ¦       corgemont-ultra-rare-core-stone.jpg
+¦   ¦       core-stone-bust-stones-throw.jpg
+¦   ¦       ash-core-stone-rare-purple-line.jpg
+¦   ¦       core-stone-rare-bust-raijin.jpg
+¦   ¦       core-stone-coregemont-furnaces.jpg
+¦   ¦       ash-core-stone-rare-bust-oni.jpg
+¦   ¦       steam-fitters-armory-key-stone.jpg
+¦   ¦       corrupt-ash-stone.jpg
+¦   ¦       ash-born-core-stone-rare.jpg
+¦   ¦       yellow-ley-core-stone.jpg
+¦   ¦       core-stone-bust-yellow-ley.jpg
+¦   ¦       
+¦   +---Biomes
+¦   ¦       rift-raft-soverign-scout.glb
+¦   ¦       
+¦   +---Automatons
+¦   ¦       Ginoid_Helper_Static.bin
+¦   ¦       BodyMetal_MAT_Occlusion.png
+¦   ¦       Face_MetallicRoughness.png
+¦   ¦       Face_Emissive.png
+¦   ¦       Face_Occlusion.png
+¦   ¦       Face_diffuse.png
+¦   ¦       Face_normal.png
+¦   ¦       Ginoid_Helper_Static.gltf
+¦   ¦       glitch-goblin-yellow.glb
+¦   ¦       
+¦   +---Corgemont_Engine_Room_Colosus_Class
+¦   ¦       corgemont-engines-colossus-relics.bin
+¦   ¦       futuristicmachine3dmodel_normal.jpg
+¦   ¦       futuristicmachine3dmodel_basecolor.jpg
+¦   ¦       futuristicmachine3dmodel_rm.jpg
+¦   ¦       corgemont-engines-colossus-relics.gltf
+¦   ¦       corgemont-engines-colossus-relics.glb
+¦   ¦       corgemont-glitch-goblin-relics.glb
+¦   ¦       formula-helmet.glb
+¦   ¦       cst-silver-line-trooper.glb
+¦   ¦       siren-ash-born-tidal-armor.glb
+¦   ¦       
+¦   +---Level
+¦   ¦       wall_01.bin
+¦   ¦       M_FFA_Wall_04_Brighter_02_BaseColor.png
+¦   ¦       M_FFA_Wall_04_Brighter_02_MetallicRoughness.png
+¦   ¦       M_FFA_Wall_04_Brighter_02_Normal.png
+¦   ¦       M_FFA_Wall_04_Brighter_02_Specular.png
+¦   ¦       wall_01.gltf
+¦   ¦       
+¦   +---Ritual_Helmet_CST_Yellow
+¦           cst-ritual-helmet-yellow.glb
+¦           A Ritual-mechanical HMI Headset Designed As A Crow (17).png
+¦           cst-armor-torso.png
+¦           
++---UI
+¦   ¦   A Highly Detailed  Dieselpunk Artwork Depicts A Yo (2).jpg
+¦   ¦   A Highly Detailed  Dieselpunk Artwork Depicts A Yo (3).jpg
+¦   ¦   A Highly Detailed  Dieselpunk Artwork Depicts A Yo (4).jpg
+¦   ¦   A Highly Detailed  Dieselpunk Artwork Depicts A Yo (5).jpg
+¦   ¦   A Highly Detailed  Dieselpunk Artwork Depicts A Yo (6).jpg
+¦   ¦   A Mysterious Afrodieselpunk Shogun Alchemist Stand.png
+¦   ¦   A Ritual-mechanical HMI Headset Designed As A Crow (1).png
+¦   ¦   A Ritual-mechanical HMI Headset Designed As A Crow (2).png
+¦   ¦   A Ritual-mechanical HMI Headset Designed As A Crow (3).png
+¦   ¦   A Ritual-mechanical HMI Headset Designed As A Crow (4).png
+¦   ¦   A Ritual-mechanical HMI Headset Designed As A Crow (5).png
+¦   ¦   A Ritual-mechanical HMI Headset Designed As A Crow (6).png
+¦   ¦   A Ritual-mechanical HMI Headset Designed As A Crow (7).png
+¦   ¦   A Ritual-mechanical HMI Headset Designed As A Crow (8).png
+¦   ¦   A Ritual-mechanical HMI Headset Designed As A Crow (9).png
+¦   ¦   A Ritual-mechanical HMI Headset Designed As A Crow (10).png
+¦   ¦   A Ritual-mechanical HMI Headset Designed As A Crow (11).png
+¦   ¦   A Ritual-mechanical HMI Headset Designed As A Crow (12).png
+¦   ¦   A Ritual-mechanical HMI Headset Designed As A Crow (13).png
+¦   ¦   A Ritual-mechanical HMI Headset Designed As A Crow (14).png
+¦   ¦   A Ritual-mechanical HMI Headset Designed As A Crow (15).png
+¦   ¦   A Ritual-mechanical HMI Headset Designed As A Crow (16).png
+¦   ¦   A Ritual-mechanical HMI Headset Designed As A Crow (17).png
+¦   ¦   A Ritual-mechanical HMI Headset Designed As A Crow (18).png
+¦   ¦   A Ritual-mechanical HMI Headset Designed As A Crow (19).png
+¦   ¦   A Ritual-mechanical HMI Headset Designed As A Crow (20).png
+¦   ¦   A Ritual-mechanical HMI Headset Designed As A Crow (21).png
+¦   ¦   A Ritual-mechanical HMI Headset Designed As A Crow (22).png
+¦   ¦   A Ritual-mechanical HMI Headset Designed As A Crow (23).png
+¦   ¦   A Ritual-mechanical HMI Headset Designed As A Crow (24).png
+¦   ¦   A Ritual-mechanical HMI Headset Designed As A Crow (25).png
+¦   ¦   A Ritual-mechanical HMI Headset Designed As A Crow (26).png
+¦   ¦   A Ritual-mechanical HMI Headset Designed As A Crow (27).png
+¦   ¦   A Ritual-mechanical HMI Headset Designed As A Crow (28).png
+¦   ¦   A Ritual-mechanical HMI Headset Designed As A Crow.png
+¦   ¦   A Ritualmechanical Hmi Headset Designed As A Crown (1).png
+¦   ¦   A Ritualmechanical Hmi Headset Designed As A Crown.png
+¦   ¦   alchemy-board.jpg
+¦   ¦   Copilot_20260308_110913.png
+¦   ¦   D40.jpg
+¦   ¦   Default_Imagine_Dieselpunk_Tengu_Golem_standing_on_a_dieselpun_0 (4).jpg
+¦   ¦   Default_Imagine_Ghostface_Assassin_Golem_standing_on_a_dieselp_0 (4).jpg
+¦   ¦   Design 39.jpg
+¦   ¦   Designer_SlimeHouse.jpg
+¦   ¦   Fantasy Character Solo Focus Realistic Absurdres I.jpg
+¦   ¦   Leonardo_Lightning_XL_Image_is_a_digital_artwork_depicting_a_f_0.jpg
+¦   ¦   marrow-vex.jpg
+¦   ¦   overseers-warmachine.jpg
+¦   ¦   Picture A Afro Dieselpunk Hero Comic Character Tha.png
+¦   ¦   Picture A Dieselpunk Horror Comics Character That  (22).jpg
+¦   ¦   PixVerse_V5.5_Extend_540P_the_colossal_geardri (3).mp4
+¦   ¦   styx-station-portal.jpg
+¦   ¦   
+¦   +---AsyncLoadScreen
+¦   +---CustomWidgets
++---cst-swat-anim
++---Images
+¦   ¦   cold_brew_interactive.html
+¦   ¦   ChatGPT Image Mar 14, 2026, 09_57_04 AM.png
+¦   ¦   ChatGPT Image Mar 15, 2026, 03_35_57 PM.png
+¦   ¦   Leonardo_Lightning_XL_A_colossal_templeengine_forged_from_mono_0 (2).jpg
+¦   ¦   Leonardo_Lightning_XL_A_colossal_templeengine_forged_from_mono_0 (3).jpg
+¦   ¦   Leonardo_Lightning_XL_A_colossal_templeengine_forged_from_mono_0.jpg
+¦   ¦   Leonardo_Lightning_XL_A_highly_detailed_afro_dieselpunk_artwor_0 (3).jpg
+¦   ¦   Pirate_SalvagerShipPilot.PNG
+¦   ¦   Pirate_YellowSalvageShip.PNG
+¦   ¦   
+¦   +---public
+¦       +---images
+¦           ¦   A Highly Detailed Afro Dieselpunk Artwork Depicts  (1).png
+¦           ¦   A Highly Detailed Afro Dieselpunk Artwork Depicts  (2).jpg
+¦           ¦   A Highly Detailed Afro Dieselpunk Artwork Depicts  (2).png
+¦           ¦   A Highly Detailed Afro Dieselpunk Artwork Depicts  (3).png
+¦           ¦   A Highly Detailed Afro Dieselpunk Artwork Depicts  (4).png
+¦           ¦   A Highly Detailed Afro Dieselpunk Artwork Depicts  (5).png
+¦           ¦   A Highly Detailed Afro Dieselpunk Artwork Depicts  (6).png
+¦           ¦   A Highly Detailed Afro Dieselpunk Artwork Depicts  (13).png
+¦           ¦   A Highly Detailed Afro Dieselpunk Artwork Depicts  (14).png
+¦           ¦   A Highly Detailed Afro Dieselpunk Artwork Depicts  (15).png
+¦           ¦   A Highly Detailed Afro Dieselpunk Artwork Depicts  (16).png
+¦           ¦   A Highly Detailed Afro Dieselpunk Artwork Depicts  (18).png
+¦           ¦   A Highly Detailed Afro Dieselpunk Artwork Depicts  (21).png
+¦           ¦   A Highly Detailed Afro Dieselpunk Artwork Depicts  (22).png
+¦           ¦   A Mysterious Afro-dieselpunk Shogun Alchemist Stan (1).jpg
+¦           ¦   A Mysterious Afro-dieselpunk Shogun Alchemist Stan (2).jpg
+¦           ¦   A Mysterious Afro-dieselpunk Shogun Alchemist Stan.png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (1).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (2).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (3).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (4).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (5).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (7).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (8).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (9).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (10).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (11).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (12).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (13).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (14).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (15).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (16).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (17).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (18).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (19).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (20).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (21).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (22).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (23).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (24).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (25).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (26).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (27).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (28).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (29).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (30).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (31).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (32).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (33).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (34).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (35).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (36).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (37).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (38).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (39).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (40).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (41).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (42).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (43).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (44).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (45).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (46).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (47).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow (48).png
+¦           ¦   A Ritual-mechanical HMI Headset Designed As A Crow.png
+¦           ¦   A Ritualmechanical Hmi Headset Designed As A Crown (1).png
+¦           ¦   A Ritualmechanical Hmi Headset Designed As A Crown (2).png
+¦           ¦   A Ritualmechanical Hmi Headset Designed As A Crown (3).png
+¦           ¦   A Ritualmechanical Hmi Headset Designed As A Crown (4).png
+¦           ¦   A Ritualmechanical Hmi Headset Designed As A Crown.png
+¦           ¦   A Towering, Densely Packed Futuristic City With Da.jpg
+¦           ¦   A Widescreen Cinematic Artwork Depicting The Eerie.jpg
+¦           ¦   a1-mystic.jpg
+¦           ¦   a2-mystic.jpg
+¦           ¦   a3-mystic.jpg
+¦           ¦   a4-mystic.jpg
+¦           ¦   a5-mystic.jpg
+¦           ¦   a6-mysstic.jpg
+¦           ¦   a7-mystic.jpg
+¦           ¦   a50222ec-c4ad-4dd0-957b-3f175f78da66.jpg
+¦           ¦   alchem-board-artefact-2.jpg
+¦           ¦   alchem-board-rar-artefact.jpg
+¦           ¦   alchemist-x.jpg
+¦           ¦   alchemy-board-artefact-3.jpg
+¦           ¦   alchemy-rare-boards.jpg
+¦           ¦   An Artist's Rendering Of A Man And A Woman Dressed.png
+¦           ¦   ash-born-glitch-goblin.jpg
+¦           ¦   ash-forged-kraken-ship.jpg
+¦           ¦   Bipedal Rift Rat Generation Promptpromptbipedal Ri (1).png
+¦           ¦   Bipedal Rift Rat Generation Promptpromptbipedal Ri (2).png
+¦           ¦   Bipedal Rift Rat Generation Promptpromptbipedal Ri (3).png
+¦           ¦   Bipedal Rift Rat Generation Promptpromptbipedal Ri (4).png
+¦           ¦   Bipedal Rift Rat Generation Promptpromptbipedal Ri (5).png
+¦           ¦   Bipedal Rift Rat Generation Promptpromptbipedal Ri (6).png
+¦           ¦   Bipedal Rift Rat Generation Promptpromptbipedal Ri (7).png
+¦           ¦   Bipedal Rift Rat Generation Promptpromptbipedal Ri (8).png
+¦           ¦   BIPEDAL RIFT RAT GENERATION PROMPTPromptBipedal Ri (9).png
+¦           ¦   BIPEDAL RIFT RAT GENERATION PROMPTPromptBipedal Ri (10).png
+¦           ¦   BIPEDAL RIFT RAT GENERATION PROMPTPromptBipedal Ri (11).png
+¦           ¦   BIPEDAL RIFT RAT GENERATION PROMPTPromptBipedal Ri (12).png
+¦           ¦   BIPEDAL RIFT RAT GENERATION PROMPTPromptBipedal Ri (13).png
+¦           ¦   BIPEDAL RIFT RAT GENERATION PROMPTPromptBipedal Ri (14).png
+¦           ¦   Bipedal Rift Rat Generation Promptpromptbipedal Ri (15).png
+¦           ¦   Bipedal Rift Rat Generation Promptpromptbipedal Ri (16).png
+¦           ¦   Bipedal Rift Rat Generation Promptpromptbipedal Ri (17).png
+¦           ¦   Bipedal Rift Rat Generation Promptpromptbipedal Ri (18).png
+¦           ¦   Bipedal Rift Rat Generation Promptpromptbipedal Ri (19).png
+¦           ¦   BIPEDAL RIFT RAT GENERATION PROMPTPromptBipedal Ri (20).png
+¦           ¦   Bipedal Rift Rat Generation Promptpromptbipedal Ri (21).png
+¦           ¦   BIPEDAL RIFT RAT GENERATION PROMPTPromptBipedal Ri (22).png
+¦           ¦   Bipedal Rift Rat Generation Promptpromptbipedal Ri (23).png
+¦           ¦   Bipedal Rift Rat Generation Promptpromptbipedal Ri (24).png
+¦           ¦   BIPEDAL RIFT RAT GENERATION PROMPTPromptBipedal Ri (25).png
+¦           ¦   BIPEDAL RIFT RAT GENERATION PROMPTPromptBipedal Ri (26).png
+¦           ¦   Bipedal Rift Rat Generation Promptpromptbipedal Ri (28).png
+¦           ¦   Bipedal Rift Rat Generation Promptpromptbipedal Ri (29).png
+¦           ¦   Bipedal Rift Rat Generation Promptpromptbipedal Ri (30).png
+¦           ¦   Bipedal Rift Rat Generation Promptpromptbipedal Ri (31).png
+¦           ¦   Bipedal Rift Rat Generation Promptpromptbipedal Ri (32).png
+¦           ¦   Bipedal Rift Rat Generation Promptpromptbipedal Ri (33).png
+¦           ¦   Bipedal Rift Rat Generation Promptpromptbipedal Ri (34).png
+¦           ¦   Bipedal Rift Rat Generation Promptpromptbipedal Ri (35).png
+¦           ¦   Bipedal Rift Rat Generation Promptpromptbipedal Ri (36).png
+¦           ¦   Bipedal Rift Rat Generation Promptpromptbipedal Ri.png
+¦           ¦   ChatGPT Image Mar 5, 2026, 04_41_40 PM.jpg
+¦           ¦   ChatGPT Image Mar 14, 2026, 08_33_45 PM.png
+¦           ¦   ChatGPT Image Mar 15, 2026, 03_35_41 PM.png
+¦           ¦   Copilot_20260314_095955.png
+¦           ¦   Copilot_20260314_100206.png
+¦           ¦   cst-simple-city-stadium-mystic.png
+¦           ¦   cst-simple-city-transit-officer.png
+¦           ¦   cst-simple-city-ward-3.png
+¦           ¦   cst-simple-city-ward-5.png
+¦           ¦   D40.jpg
+¦           ¦   DarkThrone_Adjusted.jpg
+¦           ¦   DarkThrone_ForgeMystic.jpg
+¦           ¦   DarkThrone_ForgeMystic2.jpg
+¦           ¦   dc15e9b1-60f5-45e3-a5d5-815a3cc65133.jpg
+¦           ¦   Default_Afro_Dieselpunk_Imagine_Dieselpunk_Ghost_Hunter_stand_0 (6).jpg
+¦           ¦   Default_Afro_Dieselpunk_Imagine_Dieselpunk_Ghost_Hunter_stand_0 (11).jpg
+¦           ¦   Default_Afro_dieselpunk_street_fighter_stands_ready_for_battle_0 (2).jpg
+¦           ¦   Default_Create_a_visually_striking_3D_model_inspired_by_HR_Gi_0 (2).jpg
+¦           ¦   Default_Create_a_visually_striking_3D_model_inspired_by_HR_Gi_0.jpg
+¦           ¦   Default_Create_a_visually_striking_3D_model_inspired_by_HR_Gig_0 (4).jpg
+¦           ¦   Default_Design_Prompt_Create_a_dynamic_and_visually_striking_a_0 (1).jpg
+¦           ¦   Default_Imagine_Dieselpunk_Tengu_Golem_standing_on_a_dieselpun_0 (1).jpg
+¦           ¦   Default_Imagine_Dieselpunk_Tengu_Golem_standing_on_a_dieselpun_0 (2).jpg
+¦           ¦   Default_Imagine_Dieselpunk_Tengu_Golem_standing_on_a_dieselpun_0 (3).jpg
+¦           ¦   Default_Imagine_Dieselpunk_Tengu_Golem_standing_on_a_dieselpun_0 (4).jpg
+¦           ¦   Default_Imagine_Dieselpunk_Tengu_Golem_standing_on_a_dieselpun_0.jpg
+¦           ¦   Default_Imagine_Ghostface_Assassin_Golem_standing_on_a_dieselp_0 (1).jpg
+¦           ¦   Default_Imagine_Ghostface_Assassin_Golem_standing_on_a_dieselp_0 (2).jpg
+¦           ¦   Default_Imagine_Ghostface_Assassin_Golem_standing_on_a_dieselp_0 (3).jpg
+¦           ¦   Default_Imagine_Ghostface_Assassin_Golem_standing_on_a_dieselp_0 (4).jpg
+¦           ¦   Default_Imagine_Ghostface_Assassin_Golem_standing_on_a_dieselp_0.jpg
+¦           ¦   Default_Transport_your_audience_to_a_world_of_magic_and_myster_0 (1).jpg
+¦           ¦   Default_Transport_your_audience_to_a_world_of_magic_and_myster_0 (2).jpg
+¦           ¦   Default_Transport_your_audience_to_a_world_of_magic_and_myster_0 (3).jpg
+¦           ¦   Default_Transport_your_audience_to_a_world_of_magic_and_myster_0 (4).jpg
+¦           ¦   Default_Transport_your_audience_to_a_world_of_magic_and_myster_0 (6).jpg
+¦           ¦   Default_Transport_your_audience_to_a_world_of_magic_and_myster_0 (7).jpg
+¦           ¦   Default_Transport_your_audience_to_a_world_of_magic_and_myster_0 (8).jpg
+¦           ¦   Default_Transport_your_audience_to_a_world_of_magic_and_myster_0 (9).jpg
+¦           ¦   Default_Transport_your_audience_to_a_world_of_magic_and_myster_0 (36).jpg
+¦           ¦   Default_Transport_your_audience_to_a_world_of_magic_and_myster_0 (39).jpg
+¦           ¦   Default_Transport_your_audience_to_a_world_of_magic_and_myster_0 (40).jpg
+¦           ¦   Default_Transport_your_audience_to_a_world_of_magic_and_myster_0 (41).jpg
+¦           ¦   Default_Transport_your_audience_to_a_world_of_magic_and_myster_0 (45).jpg
+¦           ¦   Default_With_the_remains_of_a_Nian_Kaiju_as_their_source_of_po_0 (1).jpg
+¦           ¦   Design 39.jpg
+¦           ¦   Design 97.jpg
+¦           ¦   Design 98.jpg
+¦           ¦   Design 98a_Horizontal_Z.jpg
+¦           ¦   Design 98e.jpg
+¦           ¦   Design 98i.jpg
+¦           ¦   Design 98o.jpg
+¦           ¦   Design 98p.jpg
+¦           ¦   Design 98t.jpg
+¦           ¦   Design 98u.jpg
+¦           ¦   Design 100.jpg
+¦           ¦   Designer (8).jpg
+¦           ¦   Designer_SlimeHouse.jpg
+¦           ¦   Designer26.jpg
+¦           ¦   document (4).jpg
+¦           ¦   document (7).jpg
+¦           ¦   document (8).jpg
+¦           ¦   document (9).jpg
+¦           ¦   document (10).jpg
+¦           ¦   document (11).jpg
+¦           ¦   document (17).jpg
+¦           ¦   document (18).jpg
+¦           ¦   document (19).jpg
+¦           ¦   document (20).jpg
+¦           ¦   document (21).jpg
+¦           ¦   document (22).jpg
+¦           ¦   document (23).jpg
+¦           ¦   document (24).jpg
+¦           ¦   document (25).jpg
+¦           ¦   document (26).jpg
+¦           ¦   document (27).jpg
+¦           ¦   document (28).jpg
+¦           ¦   document (29).jpg
+¦           ¦   document (30).jpg
+¦           ¦   document (31).jpg
+¦           ¦   DreamShaper_v7_Design_a_Dieselpunk_Hypechamber_corridor_inspi_0 (2).jpg
+¦           ¦   DreamShaper_v7_Design_a_Dieselpunk_Hypechamber_corridor_inspi_0 (5).jpg
+¦           ¦   DreamShaper_v7_Design_a_Dieselpunk_Hypechamber_corridor_inspi_0 (6).jpg
+¦           ¦   DreamShaper_v7_Design_a_Dieselpunk_Hypechamber_corridor_inspi_0 (7).jpg
+¦           ¦   DreamShaper_v7_Design_a_Dieselpunk_Hypechamber_corridor_inspi_0 (8).jpg
+¦           ¦   DreamShaper_v7_Design_a_Dieselpunk_Hypechamber_corridor_inspi_0 (9).jpg
+¦           ¦   DreamShaper_v7_Design_a_Dieselpunk_Hypechamber_corridor_inspi_0 (10).jpg
+¦           ¦   DreamShaper_v7_Design_the_ingame_UI_for_Diesel_City_Golem_Clas_0.jpg
+¦           ¦   DreamShaper_v7_Design_the_ingame_UI_MetaAlchemist_Diesel_City_Golem_Clas_0 (5).jpg
+¦           ¦   DreamShaper_v7_Exterior_midday_firstperson_POV_Eye_level_from_0 (1).jpg
+¦           ¦   DreamShaper_v7_Exterior_midday_firstperson_POV_Eye_level_from_0 (2).jpg
+¦           ¦   DreamShaper_v7_Exterior_midday_firstperson_POV_Eye_level_from_0.jpg
+¦           ¦   DreamShaper_v7_Imagine_Dieselpunk_Tengu_Golem_standing_on_a_di_0.jpg
+¦           ¦   DreamShaper_v7_Imagine_Ghostface_Assassin_Golem_standing_on_a_0.jpg
+¦           ¦   DreamShaper_v7_The_object_features_a_handsome_African_man_dres_0.jpg
+¦           ¦   DreamShaper_v7_The_object_features_an_intricate_humanoid_figur_0.jpg
+¦           ¦   e3e168c3-dacc-4485-bc6f-757648ec81dd.jpg
+¦           ¦   ec33c84c-01d6-4280-9b51-b98e9a50e886.jpg
+¦           ¦   fc703717-5cb1-4680-a11b-a0d8c4c3f735_0.webp
+¦           ¦   freight_car_hmi_hud.jpg
+¦           ¦   glitch-witch-ash-dead.jpg
+¦           ¦   glitch-witch-blu-line.png
+¦           ¦   Imagine Woman African American Full Body Dieselpun (1).png
+¦           ¦   Imagine Woman African American Full Body Dieselpun (2).png
+¦           ¦   Imagine Woman African American Full Body Dieselpun (3).png
+¦           ¦   Imagine Woman African American Full Body Dieselpun (4).png
+¦           ¦   Imagine Woman African American Full Body Dieselpun (5).png
+¦           ¦   Imagine Woman African American Full Body Dieselpun (6).png
+¦           ¦   Imagine Woman African American Full Body Dieselpun (7).png
+¦           ¦   Imagine Woman African American Full Body Dieselpun (8).png
+¦           ¦   Imagine Woman African American Full Body Dieselpun (9).png
+¦           ¦   Imagine Woman African American Full Body Dieselpun.png
+¦           ¦   Imagine, Woman African American, Full Body, Diesel (1).png
+¦           ¦   Imagine, Woman African American, Full Body, Diesel (2).png
+¦           ¦   Imagine, Woman African American, Full Body, Diesel (3).png
+¦           ¦   Imagine, Woman African American, Full Body, Diesel (4).png
+¦           ¦   Imagine, Woman African American, Full Body, Diesel (5).png
+¦           ¦   Imagine, Woman African American, Full Body, Diesel (6).png
+¦           ¦   Imagine, Woman African American, Full Body, Diesel (7).png
+¦           ¦   Imagine, Woman African American, Full Body, Diesel (8).png
+¦           ¦   Imagine, Woman African American, Full Body, Diesel (9).png
+¦           ¦   Imagine, Woman African American, Full Body, Diesel (10).png
+¦           ¦   Imagine, Woman African American, Full Body, Diesel (11).png
+¦           ¦   Imagine, Woman African American, Full Body, Diesel (12).png
+¦           ¦   Imagine, Woman African American, Full Body, Diesel (13).png
+¦           ¦   Imagine, Woman African American, Full Body, Diesel (14).png
+¦           ¦   Imagine, Woman African American, Full Body, Diesel (15).png
+¦           ¦   Imagine, Woman African American, Full Body, Diesel.png
+¦           ¦   Leonardo_Lightning_XL_A_colossal_templeengine_forged_from_mono_0 (2).jpg
+¦           ¦   Leonardo_Lightning_XL_A_colossal_templeengine_forged_from_mono_0 (3).jpg
+¦           ¦   Leonardo_Lightning_XL_A_colossal_templeengine_forged_from_mono_0.jpg
+¦           ¦   Leonardo_Lightning_XL_A_highly_detailed_afro_dieselpunk_artwor_0 (3).jpg
+¦           ¦   mystic-fighter-orange-line.jpg
+¦           ¦   mystics-totem.jpg
+¦           ¦   Picture A Dieselpunk Horror Comics Character That  (3).jpg
+¦           ¦   Picture A Dieselpunk Horror Comics Character That  (22).jpg
+¦           ¦   Pirate_SalvagerShipPilot.PNG
+¦           ¦   Pirate_YellowSalvageShip.PNG
+¦           ¦   rift-rat.jpg
+¦           ¦   rift-rat-1.jpg
+¦           ¦   rift-rat-2.jpg
+¦           ¦   rift--rat-3.jpg
+¦           ¦   rift-rat-4.jpg
+¦           ¦   rift-rat-5.jpg
+¦           ¦   rift-rat-6.jpg
+¦           ¦   rift-rat-hord-leader.jpg
+¦           ¦   rift-rat-upper-rank.jpg
+¦           ¦   station-city-a.jpg
+¦           ¦   station-city-a1.jpg
+¦           ¦   The Dark Imagery Unfolds With A Majestic Dragonoid.jpg
+¦           ¦   The Dark Imagery Unfolds With A Majestic Dragonoid1.jpg
+¦           ¦   The Dark Imagery Unfolds With A Majestic Dragonoid2.jpg
+¦           ¦   The Dark Imagery Unfolds With A Majestic Dragonoid3.jpg
+¦           ¦   The Dark Imagery Unfolds With A Majestic Dragonoid4.jpg
+¦           ¦   The Dark Imagery Unfolds With A Majestic Dragonoid5.jpg
+¦           ¦   The Dark Imagery Unfolds With A Majestic Dragonoid6.jpg
+¦           ¦   The Dark Imagery Unfolds With A Majestic Dragonoidd.jpg
+¦           ¦   The Dark Imagery Unfolds With A Majestic Dragonoidg.jpg
+¦           ¦   
+¦           +---html_embeds
+¦                   cb-mystic-a6.jpg
+¦                   cb-mystic-a7.jpg
+¦                   cb-mystic-a8.jpg
+¦                   1.webp
+¦                   2.png
+¦                   cb-mystic-a1-variant.jpg
+¦                   cb-mystic-a2-variant.jpg
+¦                   cb-mystic-a3-variant.jpg
+¦                   cb-mystic-a4-variant.jpg
+¦                   cb-mystic-a5-variant.jpg
+¦                   cb-mystic-a6-alt.jpg
+¦                   cb-mystic-a7-variant.jpg
+¦                   a9.png
+¦                   cb-cst-assault-blade.jpg
+¦                   cb-cst-assault-blade-blue.jpg
+¦                   cb-cst-cargo-yards.jpg
+¦                   cst-medic.webp
+¦                   cb-cst-patrol-glitch-squad.jpg
+¦                   cb-cst-patrol-mpc.jpg
+¦                   cb-cst-patrol-officer.jpg
+¦                   cst-patrol-officer-male.png
+¦                   cb-cst-patrol-swamp-rail.jpg
+¦                   cb-cst-pilot-officer.jpg
+¦                   cb-cst-portal-apparatus.jpg
+¦                   cst-ranking-officer-commander-Shae.jpg
+¦                   cb-cst-station-manager.jpg
+¦                   cb-cst-train-engineer.jpg
+¦                   cb-cst-train-escort.jpg
+¦                   cb-cst-undercity.jpg
+¦                   cb-cst-glitch-witch.jpg
+¦                   cb-cst-siren-rail-mystic.jpg
+¦                   cb_rename_log.txt
+¦                   cb-cst-pilot-03.jpg
+¦                   cb-cst-pilot-04.jpg
+¦                   cb-cst-pilot-05.jpg
+¦                   cb-cst-pilot-06.jpg
+¦                   cb-cst-pilot-07.jpg
+¦                   cb-cst-pilot-08.jpg
+¦                   cb-cst-commander.jpg
+¦                   cb-cst-sniper.jpg
+¦                   cb-cst-witch.jpg
+¦                   cb-cst-patrol-station-cmdr.jpg
+¦                   cb-cst-sewer-patrol-witch.jpg
+¦                   cb-cst-train-rail-heavy.jpg
+¦                   cb-cst-assault-01.jpg
+¦                   cb-cst-siren-witch.jpg
+¦                   cb-mystic-a1.jpg
+¦                   cb-mystic-a2.jpg
+¦                   cb-mystic-a3.jpg
+¦                   cb-mystic-a4.jpg
+¦                   cb-mystic-a5.jpg
+¦                   
++---HTML
+¦   ¦   cold_brew_interactive.html
+¦   ¦   diesel_city_codex.html
+¦   ¦   
+¦   +---src
+¦       ¦   CST_NAV_PATCH.js
+¦       ¦   CST_NPC_SORT.sh
+¦       ¦   cold_brew_interactive.css
+¦       ¦   PilotDeployLobby.tsx
+¦       ¦   VideoTransmissionWindow.tsx
+¦       ¦   VideoTransmissionWindow.css
+¦       ¦   cb_rename_master.sh
+¦       ¦   bmcbarron.babylonjs-viewer-0.9.4.vsix
+¦       ¦   
+¦       +---HTML
+¦       ¦   ¦   ABYSSUM_Archive_Volume_III.html
+¦       ¦   ¦   ABYSSUM_Codex_Update_II.html
+¦       ¦   ¦   abyssum_command_interface_v2.html
+¦       ¦   ¦   ABYSSUM_CrossChat_Summary.html
+¦       ¦   ¦   ABYSSUM_Episodes_I-VII.html
+¦       ¦   ¦   ABYSSUM_Malvek_Faction_Dossier.html
+¦       ¦   ¦   ABYSSUM_Narrative_Design_Document.html
+¦       ¦   ¦   abyssum_pipeline.html
+¦       ¦   ¦   ABYSSUM_Visual_Reference_Bible.html
+¦       ¦   ¦   CST_EP02_DEAD_STONE.html
+¦       ¦   ¦   genesis_veres_lore_cards.html
+¦       ¦   ¦   genesis-verse-world-rules.html
+¦       ¦   ¦   phase7_3_theatre_d.html
+¦       ¦   ¦   index.html
+¦       ¦   ¦   swat_witches_teaser.html
+¦       ¦   ¦   diesel_city_codex.html
+¦       ¦   ¦   ABYSSUM_INDEX_a1
+¦       ¦   ¦   CST_MISSION_HUB.html
+¦       ¦   ¦   CST_MISSION_HUB_v2.html
+¦       ¦   ¦   CST_CHARACTER_VIEWER_DARK.html
+¦       ¦   ¦   CST_M01_PLAY_LOOP_v2.html
+¦       ¦   ¦   SWAT_Codex.html
+¦       ¦   ¦   cold_brew_v2.html
+¦       ¦   ¦   cold_brew_ep3.html
+¦       ¦   ¦   CST_EP01_COLD_BREW.html
+¦       ¦   ¦   
+¦       ¦   +---public
+¦       ¦       +---images
+¦       +---cinematic
+¦       ¦       ash-born-relic-kaiju.mp4
+¦       ¦       PixVerse_V5.5_Extend_540P_the_colossal_geardri.mp4
+¦       ¦       cst-stationn-patrol-car.mp4
+¦       ¦       station-city.mp4
+¦       ¦       cst-astro-verse-rocket.mp4
+¦       ¦       formula-mystic.mp4
+¦       ¦       power-core.mp4
+¦       ¦       station-swam-wards.mp4
+¦       ¦       glitch-witch-portal.mp4
+¦       ¦       cst-portal.mp4
+¦       ¦       ancient-siren-witch.mp4
+¦       ¦       cst-officer-haunted-station.mp4
+¦       ¦       negu-child.mp4
+¦       ¦       formula-fuel.mp4
+¦       ¦       miglia-marauder-affiliate-boss-car.mp4
+¦       ¦       
+¦       +---html_embeds
+¦               cb-cst-pilot-07.jpg
+¦               cb-cst-pilot-08.jpg
+¦               cb-mystic-a1-variant.jpg
+¦               cb-prop-alchemy-board-1.jpg
+¦               cb-cst-pilot-05.jpg
+¦               30.png
+¦               31.png
+¦               32.png
+¦               33.png
+¦               34.png
+¦               35.png
+¦               36.png
+¦               37.png
+¦               38.png
+¦               39.png
+¦               40.png
+¦               41.png
+¦               42.png
+¦               43.png
+¦               44.png
+¦               45.png
+¦               46.png
+¦               47.png
+¦               48.png
+¦               49.png
+¦               50.png
+¦               51.png
+¦               52.png
+¦               53.png
+¦               54.png
+¦               55.png
+¦               56.png
+¦               57.png
+¦               58.png
+¦               59.png
+¦               60.png
+¦               61.png
+¦               62.png
+¦               63.png
+¦               64.png
+¦               65.png
+¦               66.png
+¦               67.png
+¦               68.png
+¦               69.png
+¦               70.png
+¦               71.png
+¦               72.png
+¦               73.png
+¦               74.png
+¦               75.png
+¦               76.png
+¦               77.png
+¦               78.png
+¦               79.png
+¦               80.jpg
+¦               forge.jpg
+¦               glitch-goblin-yellow-line.jpg
+¦               cb-env-engine-hall.jpg
+¦               engine-hall2.jpg
+¦               engine-hall3.jpg
+¦               engine-hall4.jpg
+¦               engine-hall5.jpg
+¦               engine-hall6.jpg
+¦               engine-hall-7.jpg
+¦               broadcast-deploy-tunnel.jpg
+¦               station-city.jpg
+¦               station-city-1.jpg
+¦               corgemont-east-station.jpg
+¦               steamfitter-tengu.jpg
+¦               glitch-hunter.jpg
+¦               cb-prop-battle-mystic-blue.jpg
+¦               taur-nuphar-gltich-witch.jpg
+¦               alchemist.jpg
+¦               alchemist-a.jpg
+¦               glitch-witch-a.webp
+¦               3-battalion-commander.jpg
+¦               cb_rename_master.sh
+¦               cb_rename_log.txt
+¦               cb-cst-pilot-04.jpg
+¦               cb-cst-pilot-06.jpg
+¦               cb-mystic-a2-variant.jpg
+¦               cb-mystic-a3-variant.jpg
+¦               cb-mystic-a4-variant.jpg
+¦               cb-mystic-a5-variant.jpg
+¦               cb-mystic-a6-alt.jpg
+¦               cb-mystic-a7-variant.jpg
+¦               cb-prop-alchemy-boards-rare.jpg
+¦               cb-cst-medic.webp
+¦               cb-cst-sniper.png
+¦               cb-prop-alchemist-x.jpg
+¦               cb-prop-alchemy-board-2.jpg
+¦               cb-prop-alchemy-board-rare.jpg
+¦               cb-prop-alchemy-board-3.jpg
+¦               An Artist's Rendering Of A Man And A Woman Dressed.png
+¦               cb-prop-glitch-goblin.jpg
+¦               cb-prop-kraken-ship.jpg
+¦               Bipedal Rift Rat Generation Promptpromptbipedal Ri (1).png
+¦               Bipedal Rift Rat Generation Promptpromptbipedal Ri (2).png
+¦               Bipedal Rift Rat Generation Promptpromptbipedal Ri (3).png
+¦               Bipedal Rift Rat Generation Promptpromptbipedal Ri (4).png
+¦               Bipedal Rift Rat Generation Promptpromptbipedal Ri (5).png
+¦               Bipedal Rift Rat Generation Promptpromptbipedal Ri (6).png
+¦               Bipedal Rift Rat Generation Promptpromptbipedal Ri (7).png
+¦               Bipedal Rift Rat Generation Promptpromptbipedal Ri (8).png
+¦               BIPEDAL RIFT RAT GENERATION PROMPTPromptBipedal Ri (9).png
+¦               BIPEDAL RIFT RAT GENERATION PROMPTPromptBipedal Ri (10).png
+¦               BIPEDAL RIFT RAT GENERATION PROMPTPromptBipedal Ri (11).png
+¦               BIPEDAL RIFT RAT GENERATION PROMPTPromptBipedal Ri (12).png
+¦               BIPEDAL RIFT RAT GENERATION PROMPTPromptBipedal Ri (13).png
+¦               BIPEDAL RIFT RAT GENERATION PROMPTPromptBipedal Ri (14).png
+¦               Bipedal Rift Rat Generation Promptpromptbipedal Ri (15).png
+¦               Bipedal Rift Rat Generation Promptpromptbipedal Ri (16).png
+¦               Bipedal Rift Rat Generation Promptpromptbipedal Ri (17).png
+¦               Bipedal Rift Rat Generation Promptpromptbipedal Ri (18).png
+¦               Bipedal Rift Rat Generation Promptpromptbipedal Ri (19).png
+¦               BIPEDAL RIFT RAT GENERATION PROMPTPromptBipedal Ri (20).png
+¦               Bipedal Rift Rat Generation Promptpromptbipedal Ri (21).png
+¦               BIPEDAL RIFT RAT GENERATION PROMPTPromptBipedal Ri (22).png
+¦               Bipedal Rift Rat Generation Promptpromptbipedal Ri (23).png
+¦               Bipedal Rift Rat Generation Promptpromptbipedal Ri (24).png
+¦               BIPEDAL RIFT RAT GENERATION PROMPTPromptBipedal Ri (25).png
+¦               BIPEDAL RIFT RAT GENERATION PROMPTPromptBipedal Ri (26).png
+¦               Bipedal Rift Rat Generation Promptpromptbipedal Ri (28).png
+¦               Bipedal Rift Rat Generation Promptpromptbipedal Ri (29).png
+¦               Bipedal Rift Rat Generation Promptpromptbipedal Ri (30).png
+¦               Bipedal Rift Rat Generation Promptpromptbipedal Ri (31).png
+¦               Bipedal Rift Rat Generation Promptpromptbipedal Ri (32).png
+¦               Bipedal Rift Rat Generation Promptpromptbipedal Ri (33).png
+¦               Bipedal Rift Rat Generation Promptpromptbipedal Ri (34).png
+¦               Bipedal Rift Rat Generation Promptpromptbipedal Ri (35).png
+¦               Bipedal Rift Rat Generation Promptpromptbipedal Ri (36).png
+¦               Bipedal Rift Rat Generation Promptpromptbipedal Ri.png
+¦               ChatGPT Image Mar 5, 2026, 04_41_40 PM.jpg
+¦               ChatGPT Image Mar 14, 2026, 08_33_45 PM.png
+¦               ChatGPT Image Mar 15, 2026, 03_35_41 PM.png
+¦               Copilot_20260314_095955.png
+¦               Copilot_20260314_100206.png
+¦               cst-headquarters-main-entrance.jpg
+¦               cst-rail-cargo-escort-trooper.jpg
+¦               cst-simple-city-stadium-mystic.png
+¦               cst-simple-city-transit-officer.png
+¦               cst-simple-city-ward-3.png
+¦               cst-simple-city-ward-5.png
+¦               D40.jpg
+¦               DarkThrone_Adjusted.jpg
+¦               DarkThrone_ForgeMystic.jpg
+¦               DarkThrone_ForgeMystic2.jpg
+¦               dc15e9b1-60f5-45e3-a5d5-815a3cc65133.jpg
+¦               Default_Afro_Dieselpunk_Imagine_Dieselpunk_Ghost_Hunter_stand_0 (6).jpg
+¦               Default_Afro_Dieselpunk_Imagine_Dieselpunk_Ghost_Hunter_stand_0 (11).jpg
+¦               Default_Afro_dieselpunk_street_fighter_stands_ready_for_battle_0 (2).jpg
+¦               Default_Create_a_visually_striking_3D_model_inspired_by_HR_Gi_0 (2).jpg
+¦               Default_Create_a_visually_striking_3D_model_inspired_by_HR_Gi_0.jpg
+¦               Default_Create_a_visually_striking_3D_model_inspired_by_HR_Gig_0 (4).jpg
+¦               Default_Design_Prompt_Create_a_dynamic_and_visually_striking_a_0 (1).jpg
+¦               Default_Imagine_Dieselpunk_Tengu_Golem_standing_on_a_dieselpun_0 (1).jpg
+¦               Default_Imagine_Dieselpunk_Tengu_Golem_standing_on_a_dieselpun_0 (2).jpg
+¦               Default_Imagine_Dieselpunk_Tengu_Golem_standing_on_a_dieselpun_0 (3).jpg
+¦               Default_Imagine_Dieselpunk_Tengu_Golem_standing_on_a_dieselpun_0 (4).jpg
+¦               Default_Imagine_Dieselpunk_Tengu_Golem_standing_on_a_dieselpun_0.jpg
+¦               Default_Imagine_Ghostface_Assassin_Golem_standing_on_a_dieselp_0 (1).jpg
+¦               Default_Imagine_Ghostface_Assassin_Golem_standing_on_a_dieselp_0 (2).jpg
+¦               Default_Imagine_Ghostface_Assassin_Golem_standing_on_a_dieselp_0 (3).jpg
+¦               Default_Imagine_Ghostface_Assassin_Golem_standing_on_a_dieselp_0 (4).jpg
+¦               Default_Imagine_Ghostface_Assassin_Golem_standing_on_a_dieselp_0.jpg
+¦               Default_Transport_your_audience_to_a_world_of_magic_and_myster_0 (1).jpg
+¦               Default_Transport_your_audience_to_a_world_of_magic_and_myster_0 (2).jpg
+¦               Default_Transport_your_audience_to_a_world_of_magic_and_myster_0 (3).jpg
+¦               Default_Transport_your_audience_to_a_world_of_magic_and_myster_0 (4).jpg
+¦               Default_Transport_your_audience_to_a_world_of_magic_and_myster_0 (6).jpg
+¦               Default_Transport_your_audience_to_a_world_of_magic_and_myster_0 (7).jpg
+¦               Default_Transport_your_audience_to_a_world_of_magic_and_myster_0 (8).jpg
+¦               Default_Transport_your_audience_to_a_world_of_magic_and_myster_0 (9).jpg
+¦               Default_Transport_your_audience_to_a_world_of_magic_and_myster_0 (36).jpg
+¦               Default_Transport_your_audience_to_a_world_of_magic_and_myster_0 (39).jpg
+¦               Default_Transport_your_audience_to_a_world_of_magic_and_myster_0 (40).jpg
+¦               Default_Transport_your_audience_to_a_world_of_magic_and_myster_0 (41).jpg
+¦               Default_Transport_your_audience_to_a_world_of_magic_and_myster_0 (45).jpg
+¦               Default_With_the_remains_of_a_Nian_Kaiju_as_their_source_of_po_0 (1).jpg
+¦               Design 39.jpg
+¦               Design 97.jpg
+¦               Design 98.jpg
+¦               Design 98a_Horizontal_Z.jpg
+¦               Design 98e.jpg
+¦               Design 98i.jpg
+¦               Design 98o.jpg
+¦               Design 98p.jpg
+¦               Design 98t.jpg
+¦               Design 98u.jpg
+¦               Design 100.jpg
+¦               Designer (8).jpg
+¦               Designer_SlimeHouse.jpg
+¦               Designer26.jpg
+¦               document (4).jpg
+¦               document (7).jpg
+¦               document (8).jpg
+¦               document (9).jpg
+¦               document (10).jpg
+¦               document (11).jpg
+¦               document (17).jpg
+¦               document (18).jpg
+¦               document (19).jpg
+¦               document (20).jpg
+¦               document (21).jpg
+¦               document (22).jpg
+¦               document (23).jpg
+¦               document (24).jpg
+¦               document (25).jpg
+¦               document (26).jpg
+¦               document (27).jpg
+¦               document (28).jpg
+¦               document (29).jpg
+¦               document (30).jpg
+¦               document (31).jpg
+¦               engine-hall.jpg
+¦               furnace-control-panel.jpg
+¦               glitch-witch-ash-dead.jpg
+¦               glitch-witch-blu-line.png
+¦               rift-rat.jpg
+¦               rift-rat-1.jpg
+¦               rift-rat-2.jpg
+¦               rift--rat-3.jpg
+¦               rift-rat-4.jpg
+¦               rift-rat-5.jpg
+¦               rift-rat-6.jpg
+¦               rift-rat-hord-leader.jpg
+¦               rift-rat-upper-rank.jpg
+¦               station-city-a.jpg
+¦               station-city-a1.jpg
+¦               The Dark Imagery Unfolds With A Majestic Dragonoid.jpg
+¦               9.png
+¦               10.jpg
+¦               11.png
+¦               12.png
+¦               13.png
+¦               14.png
+¦               15.png
+¦               16.png
+¦               17.png
+¦               18.png
+¦               19.png
+¦               20.png
+¦               21.png
+¦               22.png
+¦               23.jpg
+¦               24.jpg
+¦               25.png
+¦               26.png
+¦               27.png
+¦               28.png
+¦               29.png
+¦               
++---Endless_Runner
+        “A Widescreen Cinematic Artwork Depicting The Eeri (14).png
+        A Widescreen Cinematic Artwork Depicting The Eerie (2).png
+        A Widescreen Cinematic Artwork Depicting The Eerie (6).png
+        A Widescreen Cinematic Artwork Depicting The Eerie (7).png
+        A Widescreen Cinematic Artwork Depicting The Eerie (8).png
+        “A Widescreen Cinematic Artwork Depicting The Eeri.png
+        61ebdd84-df14-4b39-984a-3f3c2c1db92d_0.webp
+        Default_Generative_PromptDescribe_Stones_Throw_Outpost_A_Diese_0 (4).jpg
+        Default_Imagine_a_world_where_Da_Vincis_architectural_brillian_0.jpg
+        Default_The_Stones_Throw_Outpost_a_Dieselpunk_haven_stands_tal_0.jpg
+        Default_The_Stones_Throw_Outpost_is_a_visual_feast_with_its_Di_0.jpg
+        DreamShaper_v7_best_quality_masterpiece_realisticdigital_art_h_0 (2).jpg
+        DreamShaper_v7_best_quality_masterpiece_realisticdigital_art_h_0 (3).jpg
+        DreamShaper_v7_Dieselpunk_train_Golem_transport_Shogun_escort_0 (1).jpg
+        DreamShaper_v7_Exterior_middaythirdperson_POV_Eye_level_from_p_0 (11).jpg
+        DreamShaper_v7_Exterior_middaythirdperson_POV_Eye_level_from_p_0 (43).jpg
+        DreamShaper_v7_Firstperson_POV_Eye_level_from_pier_35mm_camera_0.jpg
+        Full-body 3D Model Of An African American Male Wit (1).png
+        Full-body 3D Model Of An African American Male Wit (2).png
+        Full-body 3D Model Of An African American Male Wit (3).png
+        Full-body 3D Model Of An African American Male Wit.png
+        Game_Modular_Scifi_Mechanic_Base_Material_MM_M_EMISION_Roughness.png
+        A Statue Of A Woman In A Metallic Outfit Stands On.png
+        _081aa307-YukiOni.jpg
+        _b227c9c8-449a-4d04-ac29-e4d694126680.jpg
+        _cf3193d2-c5e3-49dd-9c79-6d2681779740.jpg
+        _d4c5acc0-Tengu.jpg
+        “A Widescreen Cinematic Artwork Depicting The Eeri (1).png
+        “A Widescreen Cinematic Artwork Depicting The Eeri (2).png
+        “A Widescreen Cinematic Artwork Depicting The Eeri (3).png
+        “A Widescreen Cinematic Artwork Depicting The Eeri (4).png
+        “A Widescreen Cinematic Artwork Depicting The Eeri (5).png
+        “A Widescreen Cinematic Artwork Depicting The Eeri (6).png
+        “A Widescreen Cinematic Artwork Depicting The Eeri (7).png
+        “A Widescreen Cinematic Artwork Depicting The Eeri (8).png
+        “A Widescreen Cinematic Artwork Depicting The Eeri (9).png
+        “A Widescreen Cinematic Artwork Depicting The Eeri (10).png
+        “A Widescreen Cinematic Artwork Depicting The Eeri (11).png
+        “A Widescreen Cinematic Artwork Depicting The Eeri (12).png
+        “A Widescreen Cinematic Artwork Depicting The Eeri (13).png
+        85c8541b-55f4-49d1-bfde-51f804f43a40.jpg
+        A Widescreen Cinematic Artwork Depicting The Eerie.png
+        Absolute_Reality_v16_Imagine_Dieselpunk_Tengu_Golem_standing_o_0 (1).jpg
+        Absolute_Reality_v16_Imagine_Dieselpunk_Tengu_Golem_standing_o_0.jpg
+        blue-ley-siren.png
+        blue-ley-siren--01.png
+        A Close-up Of A Female Character In A Green And Go.png
+        A Ritual-mechanical HMI Headset Designed As A Crow (1).png
+        A Ritualmechanical Hmi Headset Designed As A Crown (2).png
+        A Ritualmechanical Hmi Headset Designed As A Crown.png
+        A Widescreen Cinematic Artwork Depicting The Eerie (1).png
+        A Widescreen Cinematic Artwork Depicting The Eerie (3).png
+        A Widescreen Cinematic Artwork Depicting The Eerie (4).png
+        A Widescreen Cinematic Artwork Depicting The Eerie (5).png
+        Design 98.jpg
+        image (31).jpg
+        Imagine Woman, African American, Full Body, Diesel.png
+        Imagine, Woman African American, Full Body, Diesel.png
+        Full-body 3D Model Of An African American Male Wit (4).png
+        Full-body 3D Model Of An African American Male Wit (5).png
+        Full-body 3D Model Of An African American Male Wit (6).png
+        Full-body 3D Model Of An African American Male Wit (7).png
+        input (2).jpg
+        input.jpg
+        jane-district-horror-witch-reporter.mp4
+        Leonardo_Lightning_XL_A_colossal_ancient_Relic_Shrine_carved_i_0 (1).jpg
+        Leonardo_Lightning_XL_A_colossal_ancient_Relic_Shrine_carved_i_0 (2).jpg
+        Leonardo_Lightning_XL_A_colossal_ancient_Relic_Shrine_carved_i_0 (3).jpg
+        Leonardo_Lightning_XL_A_colossal_ancient_Relic_Shrine_carved_i_0 (4).jpg
+        Leonardo_Lightning_XL_A_colossal_ancient_Relic_Shrine_carved_i_0.jpg
+        Leonardo_Lightning_XL_A_mythic_guardian_stands_atop_a_fracture_0 (1).jpg
+        Leonardo_Lightning_XL_A_mythic_guardian_stands_atop_a_fracture_0 (2).jpg
+        Leonardo_Lightning_XL_A_mythic_guardian_stands_atop_a_fracture_0 (3).jpg
+        Leonardo_Lightning_XL_A_mythic_guardian_stands_atop_a_fracture_0 (4).jpg
+        Leonardo_Lightning_XL_A_mythic_guardian_stands_atop_a_fracture_0 (5).jpg
+        Leonardo_Lightning_XL_A_mythic_guardian_stands_atop_a_fracture_0 (6).jpg
+        Leonardo_Lightning_XL_A_mythic_guardian_stands_atop_a_fracture_0.jpg
+        Leonardo_Lightning_XL_arcaneindustrial_golem_power_core_suspen_0.jpg
+        Leonardo_Lightning_XL_With_the_remains_of_a_Tengu_Kaiju_as_the_0 (1).jpg
+        Leonardo_Lightning_XL_With_the_remains_of_a_Tengu_Kaiju_as_the_0 (2).jpg
+        Leonardo_Lightning_XL_With_the_remains_of_a_Tengu_Kaiju_as_the_0.jpg
+        Soft, Green-colored Mist Envelops A Colossal, Armo (2).png
+        Soft, Green-colored Mist Envelops A Colossal, Armo (3).png
+        Soft, Green-colored Mist Envelops A Colossal, Armo (4).png
+        Soft, Green-colored Mist Envelops A Colossal, Armo (5).png
+        Soft, Green-colored Mist Envelops A Colossal, Armo (6).png
+        Soft, Green-colored Mist Envelops A Colossal, Armo (7).png
+        Soft, Green-colored Mist Envelops A Colossal, Armo.png
+        TA-2026-03-04-17-24-38-“Acolossal-4039776468.png
+        TA-2026-03-04-17-40-52-“Acolossal-875271390.png
+        TA-2026-03-04-22-21-14-“Acolossal-668726595.png
+        TA-2026-03-04-22-25-18-cyberpunk,-3753099568.png
+        upload_8bb85b9c-dc61-4ded-a75b-53a592e2dd78.png
+        Screenshot 2026-03-02 150901.png
+        Screenshot_2-3-2026_15820_photos.google.com.jpeg
+        siren-sorceress.png
+        siren-wirch.png
+        Soft Greencolored Mist Envelops A Colossal Armored.png
+        Soft, Green-colored Mist Envelops A Colossal, Armo (1).png
+        Leonardo_Lightning_XL_Afro_Dieselpunk_Wolfman_fighter_0.jpg
+        Leonardo_Lightning_XL_Arcanepowered_dieselpunk_locomotive_desi_0.jpg
+        Leonardo_Lightning_XL_Dreadlock_Dieselpunk_Black_Negu_Wolfman_0 (1).jpg
+        Leonardo_Lightning_XL_Dreadlock_Dieselpunk_Black_Negu_Wolfman_0 (2).jpg
+        Leonardo_Lightning_XL_Dreadlock_Dieselpunk_Black_Negu_Wolfman_0 (3).jpg
+        Leonardo_Lightning_XL_Dreadlock_Dieselpunk_Black_Negu_Wolfman_0 (4).jpg
+        Leonardo_Lightning_XL_Dreadlock_Dieselpunk_Black_Negu_Wolfman_0.jpg
+        Leonardo_Lightning_XL_Explore_the_gritty_industrial_world_of_w_0.jpg
+        Leonardo_Lightning_XL_Fullbody_3D_model_of_an_African_American_0 (9).jpg
+        Leonardo_Lightning_XL_Fullbody_3D_model_of_an_African_American_0 (10).jpg
+        Leonardo_Lightning_XL_Fullbody_3D_model_of_an_African_American_0 (11).jpg
+        Leonardo_Lightning_XL_Fullbody_3D_model_of_an_African_American_0 (12).jpg
+        Leonardo_Lightning_XL_Fullbody_3D_model_of_an_African_American_0 (13).jpg
+        Leonardo_Lightning_XL_Step_into_a_world_of_fantasy_and_technol_0 (1).jpg
+        Leonardo_Lightning_XL_Step_into_a_world_of_fantasy_and_technol_0.jpg
+        Leonardo_Lightning_XL_A_colossal_templeengine_forged_from_mono_0 (1).jpg
+        Leonardo_Lightning_XL_A_colossal_templeengine_forged_from_mono_0 (2).jpg
+        Leonardo_Lightning_XL_A_colossal_templeengine_forged_from_mono_0 (3).jpg
+        Leonardo_Lightning_XL_A_colossal_templeengine_forged_from_mono_0.jpg
+        Leonardo_Lightning_XL_A_monolithic_Brutalistera_locomotive_car_0 (1).jpg
+        Leonardo_Lightning_XL_A_monolithic_Brutalistera_locomotive_car_0 (2).jpg
+        Leonardo_Lightning_XL_A_monolithic_Brutalistera_locomotive_car_0 (3).jpg
+        Leonardo_Lightning_XL_A_monolithic_Brutalistera_locomotive_car_0.jpg
+        Leonardo_Lightning_XL_A_towering_priestengine_forged_from_corr_0.jpg
+        cst-chrono-equipped.jpg
+        
