@@ -18,9 +18,7 @@ if (!secretKey) {
   throw new Error('[Abyssum] STRIPE_SECRET_KEY is not set in .env.local');
 }
 
-const stripe = new Stripe(secretKey, {
-  apiVersion: '2024-06-20', // SSOT: locked version across all files
-});
+const stripe = new Stripe(secretKey);
 
 // ── POST /api/create-checkout-session ─────────────────────────────────────
 export async function POST(req: NextRequest) {
