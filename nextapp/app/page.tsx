@@ -1,54 +1,24 @@
 'use client';
+import './success.css';
+import Link from 'next/link';
 
-import { useState } from 'react';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import styles from './page.module.css';
-
-export default function Home() {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError]     = useState<string | null>(null);
-
-  async function handleMintCheckout() {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const res = await fetch('/api/create-checkout-session', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pilotId: '0x3a...Ee20', tier: 'Standard' }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || 'Checkout failed');
-      }
-
-      if (data.url) {
-        window.location.href = data.url;
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong');
-    } finally {
-      setLoading(false);
-    }
-  }
-
-
+export default function CancelPage() {
   return (
-    <main className={styles.main}>
-      <h1 className={styles.title}>ABYSSUM VIP</h1>
-      <ConnectButton />
-      <button
-        type="button"
-        className={`${styles.mintButton} ${loading ? styles.buttonLoading : ''}`}
-        onClick={handleMintCheckout}
-        disabled={loading}
-      >
-        {loading ? 'Redirecting to Stripe…' : 'Mint Pilot Chassis — $29.99'}
-      </button>
-      {error && <p className={styles.error}>{error}</p>}
+    <main style={{
+      background: '#0a0806',
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontFamily: 'serif',
+      color: '#e87c2a'
+    }}>
+      <h1 style={{ fontSize: '2rem', letterSpacing: '0.2em' }}>MISSION ABORTED</h1>
+      <p style={{ color: '#888', marginTop: '1rem' }}>Checkout was cancelled. No charge was made.</p>
+      <Link href="/" style={{ marginTop: '2rem', color: '#00d4c8', fontSize: '0.9rem' }}>
+        Return to Base
+      </Link>
     </main>
   );
 }
