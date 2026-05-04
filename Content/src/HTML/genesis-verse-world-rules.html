@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GENESIS VERSE · WORLD RULES · C-1</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07070b;
+    --surface: #0d0d14;
+    --card: #0f0f1a;
+    --border: #1a1a2e;
+    --border-hi: #2a2a44;
+    --orange: #f97316;
+    --amber: #f59e0b;
+    --cyan: #22d3ee;
+    --red: #ef4444;
+    --green: #22c55e;
+    --purple: #a855f7;
+    --muted: #374151;
+    --text: #e2e8f0;
+    --dim: #6b7280;
+    --dim-hi: #94a3b8;
+    --mono: 'Share Tech Mono', monospace;
+    --display: 'Barlow Condensed', sans-serif;
+    --body: 'Barlow', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* SCANLINE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.03) 2px,
+      rgba(0,0,0,0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* HEADER */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: linear-gradient(180deg, #0b0b14 0%, var(--bg) 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 28px 0;
+    backdrop-filter: blur(12px);
+  }
+
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 14px;
+  }
+
+  .header-label {
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: 4px;
+    color: var(--orange);
+    margin-bottom: 4px;
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+
+  .header-title {
+    font-family: var(--display);
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    color: var(--text);
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .header-sub {
+    font-family: var(--mono);
+    font-size: 8px;
+    color: var(--dim);
+    letter-spacing: 2px;
+    margin-top: 3px;
+  }
+
+  .header-stats {
+    display: flex;
+    gap: 20px;
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: 2px;
+    padding-bottom: 14px;
+  }
+
+  .stat-green { color: var(--green); }
+  .stat-cyan { color: var(--cyan); }
+  .stat-amber { color: var(--amber); }
+
+  /* NAV TABS */
+  .chapter-nav {
+    display: flex;
+    gap: 2px;
+    overflow-x: auto;
+    padding-bottom: 0;
+    scrollbar-width: none;
+  }
+  .chapter-nav::-webkit-scrollbar { display: none; }
+
+  .chapter-btn {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 8px 14px;
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    white-space: nowrap;
+    color: var(--muted);
+    transition: all 0.15s ease;
+    text-transform: uppercase;
+  }
+
+  .chapter-btn:hover { color: var(--dim-hi); }
+  .chapter-btn.active { border-bottom-color: currentColor; }
+
+  /* CONTENT AREA */
+  .content {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 28px 28px 80px;
+  }
+
+  .chapter-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 24px;
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: 3px;
+  }
+
+  .chapter-header .line-l { height: 1px; width: 24px; }
+  .chapter-header .line-r { height: 1px; flex: 1; background: var(--border); }
+
+  /* BLOCKS */
+  .block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+    position: relative;
+    transition: box-shadow 0.3s;
+  }
+
+  .block:hover { box-shadow: 0 0 20px rgba(255,255,255,0.02); }
+
+  .block-title {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .block p {
+    font-size: 12px;
+    line-height: 1.9;
+    margin-bottom: 12px;
+    font-weight: 300;
+  }
+
+  .block p:last-child { margin-bottom: 0; }
+  .block p.dim { color: var(--dim-hi); }
+
+  /* RULES */
+  .rule {
+    display: flex;
+    gap: 14px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+
+  .rule-num {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 2px;
+    min-width: 38px;
+    padding-top: 2px;
+    flex-shrink: 0;
+  }
+
+  .rule-text {
+    font-size: 11px;
+    line-height: 1.85;
+    flex: 1;
+    font-weight: 400;
+  }
+
+  .rule.core .rule-text { color: var(--text); }
+  .rule:not(.core) .rule-text { color: var(--dim-hi); }
+
+  .rule-badge {
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: var(--orange);
+    padding-top: 3px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* SECTION HEADERS */
+  .section-h {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--display);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin: 24px 0 12px;
+  }
+
+  .section-h .pip {
+    width: 3px;
+    height: 14px;
+    border-radius: 1px;
+    flex-shrink: 0;
+  }
+
+  /* CLASS CARDS */
+  .class-card {
+    border-radius: 3px;
+    padding: 18px;
+    margin-bottom: 16px;
+  }
+
+  .class-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+
+  .class-name {
+    font-family: var(--display);
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 4px;
+  }
+
+  .class-symbol {
+    font-family: var(--mono);
+    font-size: 8px;
+    color: var(--dim);
+    letter-spacing: 2px;
+    margin-top: 3px;
+  }
+
+  .class-imgrefs {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--muted);
+    text-align: right;
+    letter-spacing: 1px;
+    line-height: 1.8;
+  }
+
+  .cross-cost {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--amber);
+    letter-spacing: 1px;
+    margin: 10px 0;
+  }
+
+  .class-rule {
+    font-size: 10px;
+    color: var(--dim-hi);
+    line-height: 1.75;
+    padding: 4px 0 4px 14px;
+    margin-bottom: 4px;
+    font-weight: 400;
+  }
+
+  /* COLOR SWATCHES */
+  .color-entry {
+    display: flex;
+    gap: 14px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+
+  .color-pip {
+    width: 4px;
+    min-height: 44px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .color-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+  }
+
+  .color-rule {
+    font-size: 11px;
+    color: var(--dim-hi);
+    line-height: 1.75;
+  }
+
+  /* POLLY ANN LAWS */
+  .char-laws {
+    border-radius: 3px;
+    padding: 14px;
+    margin-top: 12px;
+  }
+
+  .char-laws-title {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 3px;
+    margin-bottom: 10px;
+  }
+
+  .char-law {
+    font-size: 10px;
+    color: var(--dim-hi);
+    line-height: 1.75;
+    padding: 4px 0 4px 14px;
+    margin-bottom: 4px;
+    font-weight: 400;
+  }
+
+  /* OPEN QUESTIONS */
+  .open-q {
+    display: flex;
+    gap: 10px;
+    font-size: 10px;
+    color: var(--dim-hi);
+    line-height: 1.75;
+    padding: 6px 0 6px 14px;
+    margin-bottom: 4px;
+  }
+
+  .open-q .q-mark { color: var(--amber); flex-shrink: 0; }
+
+  /* DO NOT LIST */
+  .do-not-item {
+    font-size: 10px;
+    color: var(--dim-hi);
+    line-height: 1.75;
+    padding: 5px 0 5px 14px;
+    margin-bottom: 5px;
+    font-weight: 400;
+  }
+
+  /* THESIS */
+  .thesis {
+    font-family: var(--display);
+    font-size: 15px;
+    font-weight: 600;
+    font-style: italic;
+    color: var(--amber);
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+
+  /* FOOTER */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: 12px 28px;
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    background: var(--surface);
+  }
+
+  /* HIDDEN CHAPTERS */
+  .chapter { display: none; }
+  .chapter.active { display: block; }
+
+  /* ANIMATIONS */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .chapter.active { animation: fadeIn 0.2s ease forwards; }
+
+  /* SIGNAL PULSE on header label */
+  .signal-dot {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--green);
+    margin-right: 4px;
+    animation: blink 2s ease-in-out infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .header-top { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .header-stats { padding-bottom: 0; }
+    .content { padding: 20px 16px 60px; }
+    .header { padding: 14px 16px 0; }
+    .footer { flex-direction: column; gap: 4px; }
+    .class-card-head { flex-direction: column; gap: 6px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="header-label">◆ GENESIS VERSE · ABYSSUM UNIVERSE · C-1 COMPLETE</div>
+      <div class="header-title">World Rules Document</div>
+      <div class="header-sub">COMIC BIBLE · PHASE C-1 · OMEGA CLEARANCE · 38 CANONICAL RULES ESTABLISHED</div>
+    </div>
+    <div class="header-stats">
+      <span class="stat-green"><span class="signal-dot"></span>38 RULES</span>
+      <span class="stat-cyan">◆ 9 CHAPTERS</span>
+      <span class="stat-amber">▲ C-1 LOCKED</span>
+    </div>
+  </div>
+
+  <nav class="chapter-nav" id="chapterNav">
+    <button class="chapter-btn active" data-chapter="world" style="--accent:#22d3ee">I. THE WORLD</button>
+    <button class="chapter-btn" data-chapter="signal" style="--accent:#f59e0b">II. SIGNAL</button>
+    <button class="chapter-btn" data-chapter="classes" style="--accent:#f97316">III. THE THREE CLASSES</button>
+    <button class="chapter-btn" data-chapter="mythology" style="--accent:#a855f7">IV. THE AXIS</button>
+    <button class="chapter-btn" data-chapter="factions" style="--accent:#ef4444">V. FACTIONS</button>
+    <button class="chapter-btn" data-chapter="void" style="--accent:#1e293b">VI. VOID STRAIN</button>
+    <button class="chapter-btn" data-chapter="forge" style="--accent:#f59e0b">VII. THE FORGE</button>
+    <button class="chapter-btn" data-chapter="visual" style="--accent:#22d3ee">VIII. VISUAL LAW</button>
+    <button class="chapter-btn" data-chapter="voice" style="--accent:#22c55e">IX. TONE &amp; VOICE</button>
+  </nav>
+</div>
+
+<div class="content">
+
+  <!-- ═══ I. THE WORLD ═══ -->
+  <div class="chapter active" id="world">
+    <div class="chapter-header" style="color:#22d3ee">
+      <div class="line-l" style="background:#22d3ee"></div>
+      I. THE WORLD
+      <div class="line-r"></div>
+    </div>
+
+    <div class="block" style="border-left:3px solid #22d3ee; box-shadow:0 0 28px #22d3ee10, inset 0 0 28px #22d3ee04">
+      <div class="block-title" style="color:#22d3ee">CLASSIFICATION: DIESEL CITY — THE ARCOLOGY</div>
+      <p>Diesel City is not a place that was built. It is a place that accumulated. Layer upon layer of infrastructure, each generation welding its survival onto the bones of the last, until the whole mass became something alive — hostile, breathing, extractable.</p>
+      <p class="dim">The Arcology is the dominant structure: a vertical city-within-a-city, its upper tiers controlled by the Iron Chorus, its lower warrens populated by pilots, salvagers, synths in various states of integration, and things that predate all of them.</p>
+    </div>
+
+    <div class="section-h" style="color:#22d3ee">
+      <div class="pip" style="background:#22d3ee"></div>
+      Physical Laws of Diesel City
+    </div>
+
+    <div class="rule core">
+      <span class="rule-num" style="color:#f97316">R-01</span>
+      <span class="rule-text">Diesel City runs on Signal. Signal is finite. Every system in the city — power, transport, fabrication, life support — draws from the same extractable reservoir. The war is always, ultimately, about who controls the tap.</span>
+      <span class="rule-badge">CORE</span>
+    </div>
+    <div class="rule">
+      <span class="rule-num" style="color:#374151">R-02</span>
+      <span class="rule-text">The city has three vertical zones: the Canopy (Iron Chorus controlled, clean light, processed air), the Deck (contested, mixed population, where most stories happen), and the Substrate (raw Signal sources, Void Strain territory, where the old city still breathes).</span>
+    </div>
+    <div class="rule">
+      <span class="rule-num" style="color:#374151">R-03</span>
+      <span class="rule-text">Time moves differently in the Substrate. Pilots who descend too far report temporal slippage — hours lost, memories reordered. This is not metaphor. It is physics.</span>
+    </div>
+    <div class="rule core">
+      <span class="rule-num" style="color:#f97316">R-04</span>
+      <span class="rule-text">Nothing in Diesel City is wasted. Everything is repurposed, re-forged, or consumed. Entropy is the city's oldest enemy and its most reliable fuel source.</span>
+      <span class="rule-badge">CORE</span>
+    </div>
+    <div class="rule">
+      <span class="rule-num" style="color:#374151">R-05</span>
+      <span class="rule-text">The sky above Diesel City is perpetually industrial — a mix of processed exhaust, cloud cover, and the ambient electromagnetic output of thousands of Signal draws. Stars are a myth the Canopy sells to the Deck.</span>
+    </div>
+    <div class="rule">
+      <span class="rule-num" style="color:#374151">R-06</span>
+      <span class="rule-text">Water is owned. Air is taxed. Signal is freedom. This is the arithmetic of survival every child in the Deck learns before they learn to read.</span>
+    </div>
+
+    <div class="section-h" style="color:#22d3ee">
+      <div class="pip" style="background:#22d3ee"></div>
+      Geography &amp; Key Locations
+    </div>
+
+    <div class="block" style="border-left:3px solid #1a1a2e">
+      <div class="block-title" style="color:#6b7280">THE FABRICATOR BAY</div>
+      <p>Where Golems are forged. Part factory, part ritual space. The Forge Manifest — the official ledger of all fabricated assets — is maintained here and synchronized to the Iron Chorus's distributed database. Every Golem that exists has an entry. Every entry has a cost.</p>
+    </div>
+
+    <div class="block" style="border-left:3px solid #1a1a2e">
+      <div class="block-title" style="color:#6b7280">THE DEPLOY LOBBY</div>
+      <p>The staging area between the civilian Deck and the active extraction zones. Pilots register here, declare their loadout, and receive their stream quality allocation. The lobby is neutral ground — violence inside it is the one law even the Iron Chorus enforces absolutely.</p>
+    </div>
+
+    <div class="block" style="border-left:3px solid #1a1a2e">
+      <div class="block-title" style="color:#6b7280">THE ABYSSUM</div>
+      <p>The deepest accessible point of the Substrate. Named before language had a word for what lived there. Signal concentration is highest here. So is the risk. The Abyssum is where you go when you have nothing left to lose, or when you are exactly what you appear to be: a Pilot with a Golem and a death wish that looks like ambition.</p>
+    </div>
+  </div>
+
+  <!-- ═══ II. SIGNAL ═══ -->
+  <div class="chapter" id="signal">
+    <div class="chapter-header" style="color:#f59e0b">
+      <div class="line-l" style="background:#f59e0b"></div>
+      II. SIGNAL
+      <div class="line-r"></div>
+    </div>
+
+    <div class="block" style="border-left:3px solid #f59e0b; box-shadow:0 0 28px #f59e0b10">
+      <div class="block-title" style="color:#f59e0b">SIGNAL — THE LOAD-BEARING ELEMENT OF THE UNIVERSE</div>
+      <p>Signal is what happens when information becomes matter. It is the residue of all the decisions, transmissions, and data that Diesel City has generated across its centuries of existence — compressed, crystallized, and available for extraction by anyone with the equipment and the nerve.</p>
+      <p class="dim">Signal is not magic. It is not mystical. It is engineering, the same way fire is chemistry. The Iron Chorus treats it as property. Pilots treat it as currency. The Void Strain treat it as food. Only the oldest Synths treat it as what it actually is: memory.</p>
+    </div>
+
+    <div class="section-h" style="color:#f59e0b">
+      <div class="pip" style="background:#f59e0b"></div>
+      Signal Economics
+    </div>
+
+    <div class="rule core">
+      <span class="rule-num" style="color:#f97316">R-07</span>
+      <span class="rule-text">Stream Quality is the rate at which a pilot can extract and channel Signal. Low stream (2.8¢/min) is standard access — enough to power basic operations. High stream (6.0¢/min) is full-spectrum transmission — enough to forge, fight, and occasionally transcend.</span>
+      <span class="rule-badge">CORE</span>
+    </div>
+    <div class="rule">
+      <span class="rule-num" style="color:#374151">R-08</span>
+      <span class="rule-text">Signal degrades with distance from the source. The deeper into the Substrate a pilot operates, the higher the raw Signal concentration but the more corrupt the feed. Corrupted Signal causes equipment drift, behavioral anomalies in Synths and Golems, and in extreme cases, signal bleed — where a pilot begins receiving transmissions that aren't theirs.</span>
+    </div>
+    <div class="rule">
+      <span class="rule-num" style="color:#374151">R-09</span>
+      <span class="rule-text">The Iron Chorus does not generate Signal. They process, package, and sell access to what exists. Their power is not creation — it is control of the distribution infrastructure.</span>
+    </div>
+    <div class="rule core">
+      <span class="rule-num" style="color:#f97316">R-10</span>
+      <span class="rule-text">Signal cannot be destroyed. It can be consumed, transformed, displaced, or corrupted — but the total sum within Diesel City's bounds is constant. Every draw is a debt to the system.</span>
+      <span class="rule-badge">CORE</span>
+    </div>
+    <div class="rule">
+      <span class="rule-num" style="color:#374151">R-11</span>
+      <span class="rule-text">Signal has a resonance frequency unique to its source. A pilot who knows how to read resonance can trace Signal back to its origin — a fact the Iron Chorus spends considerable resources suppressing.</span>
+    </div>
+
+    <div class="section-h" style="color:#f59e0b">
+      <div class="pip" style="background:#f59e0b"></div>
+      Signal States
+    </div>
+
+    <div class="block" style="border-left:3px solid #f59e0b">
+      <div class="block-title" style="color:#f59e0b">RAW SIGNAL</div>
+      <p>Unprocessed. Pulled directly from Substrate deposits. Volatile, dense, and carries full resonance data. Used in Golem fabrication and high-grade weapon forging. Handling raw Signal without a shielded rig causes rapid degradation of biological tissue.</p>
+    </div>
+
+    <div class="block" style="border-left:3px solid #f59e0b">
+      <div class="block-title" style="color:#f59e0b">PROCESSED SIGNAL (STREAM)</div>
+      <p>Filtered, stabilized, and rate-limited by Iron Chorus infrastructure. What most pilots use. Safe for direct interface. Carries no resonance data — the filtering strips it. This is by design.</p>
+    </div>
+
+    <div class="block" style="border-left:3px solid #ef4444">
+      <div class="block-title" style="color:#ef4444">VOID SIGNAL</div>
+      <p>Signal that has passed through Void Strain territory and been metabolized. Returns transformed — coherent but alien in structure. Neither the Iron Chorus nor current Pilot-class equipment can interface with it. What it does to biological systems on extended exposure is classified at Canopy level. What it does to Synths is considered a theological question by the ones who survive it.</p>
+    </div>
+
+    <div class="section-h" style="color:#f59e0b">
+      <div class="pip" style="background:#f59e0b"></div>
+      Signal as Narrative Engine
+    </div>
+
+    <div class="rule core">
+      <span class="rule-num" style="color:#f97316">R-12</span>
+      <span class="rule-text">In the comic: when a character draws Signal, something is always spent. This is the visual and thematic rule — every extraction has a shadow. Show the cost, even when the character doesn't register it.</span>
+      <span class="rule-badge">CORE</span>
+    </div>
+  </div>
+
+  <!-- ═══ III. THE THREE CLASSES ═══ -->
+  <div class="chapter" id="classes">
+    <div class="chapter-header" style="color:#f97316">
+      <div class="line-l" style="background:#f97316"></div>
+      III. THE THREE CLASSES
+      <div class="line-r"></div>
+    </div>
+
+    <div class="block" style="border-left:3px solid #f97316; box-shadow:0 0 28px #f9731610">
+      <div class="block-title" style="color:#f97316">THE THREE CLASSES — THE TAXONOMY OF DIESEL CITY</div>
+      <p>Every being in Diesel City exists somewhere on a spectrum defined by three class designations. These are not castes — they are states. The horror and the hope of the Abyssum Universe is that the line between them is crossable. The tragedy is what crossing costs.</p>
+    </div>
+
+    <div class="section-h" style="color:#f97316">
+      <div class="pip" style="background:#f97316"></div>
+      Class Definitions
+    </div>
+
+    <!-- PILOTS -->
+    <div class="class-card block" style="border-left:3px solid #22d3ee; box-shadow:0 0 28px #22d3ee10">
+      <div class="class-card-head">
+        <div>
+          <div class="class-name" style="color:#22d3ee">PILOTS</div>
+          <div class="class-symbol">BIOLOGICAL / MODIFIED / TACTICAL</div>
+        </div>
+        <div class="class-imgrefs">IMG 2 · IMG 8 · IMG 11 · IMG 36</div>
+      </div>
+      <p>Pilots are the human core of the universe. They bleed. They remember. They choose. A Pilot may be lightly augmented — interface jacks, reinforced bone, chemical regulation — but the biological substrate remains primary. Their Signal interface is external: rigs, headsets, deployed equipment. They are, fundamentally, still people.</p>
+      <div class="cross-cost">◆ COST TO CROSS: Pilot → Synth requires voluntary neurological restructuring. Irreversible. You stop dreaming in your own voice.</div>
+      <div class="class-rule" style="border-left:1px solid #22d3ee44">Pilots experience Signal as sensation — warmth, pressure, sound. They feel the city.</div>
+      <div class="class-rule" style="border-left:1px solid #22d3ee44">A Pilot's effectiveness is limited by their stream quality allocation. Iron Chorus controls this lever.</div>
+      <div class="class-rule" style="border-left:1px solid #22d3ee44">Pilots age. This is their power and their wound — they are the only class for whom time passes normally.</div>
+      <div class="class-rule" style="border-left:1px solid #22d3ee44">A Pilot who loses their rig loses their ability to extract Signal but retains full selfhood. This distinction matters.</div>
+    </div>
+
+    <!-- SYNTHS -->
+    <div class="class-card block" style="border-left:3px solid #a855f7; box-shadow:0 0 28px #a855f710">
+      <div class="class-card-head">
+        <div>
+          <div class="class-name" style="color:#a855f7">SYNTHS</div>
+          <div class="class-symbol">POST-HUMAN / ANDROID / SPECTRUM</div>
+        </div>
+        <div class="class-imgrefs">IMG 5 · 7 · 9 · 16 · 20 · 34 · 38 · 40</div>
+      </div>
+      <p>Synths are what happens after the choice is made. The spectrum is wide — from Pilots who chose partial integration and retained most of their original selfhood, to fully realized constructs who were never biological. All Synths have native Signal interface: they do not wear rigs, they ARE the rig. The question the universe asks of every Synth: what did you keep?</p>
+      <div class="cross-cost">◆ COST TO CROSS: Synth → Pilot requires biological reconstruction. Theoretically possible. No confirmed cases. The Iron Chorus maintains this information is suppressed, not unavailable.</div>
+      <div class="class-rule" style="border-left:1px solid #a855f744">Synths experience Signal as data — direct, immediate, and unfiltered. They know the city.</div>
+      <div class="class-rule" style="border-left:1px solid #a855f744">Full Synths are immune to Signal corruption. They are also incapable of Signal resonance-reading — the thing that makes corruption dangerous is the same thing that makes depth meaningful.</div>
+      <div class="class-rule" style="border-left:1px solid #a855f744">Synths on the lower end of the spectrum (recently transitioned) sometimes experience phantom sensation from their biological past. The industry term is 'ghost signal.' Synths prefer: memory.</div>
+      <div class="class-rule" style="border-left:1px solid #a855f744">The Iron Chorus employs full Synths as enforcers. Full integration means full compliance — there is no organic override left to appeal to.</div>
+    </div>
+
+    <!-- GOLEMS -->
+    <div class="class-card block" style="border-left:3px solid #f59e0b; box-shadow:0 0 28px #f59e0b10">
+      <div class="class-card-head">
+        <div>
+          <div class="class-name" style="color:#f59e0b">GOLEMS</div>
+          <div class="class-symbol">FORGED / SUMMONED / DEPLOYED HEAVY ASSETS</div>
+        </div>
+        <div class="class-imgrefs">IMG 21–32 · 39</div>
+      </div>
+      <p>Golems are fabricated. They are not born, not converted — they are made, at cost, from Signal and raw materials in the Fabricator Bay. A Golem is a Pilot's extension: the hammer to their John Henry. They are powerful, limited by their fabrication spec, and — here is the rule the Forge Manifest does not record — some of them remember things they were never programmed to know.</p>
+      <div class="cross-cost">◆ COST TO CROSS: Golem → any other class is theoretically impossible. The ones who claim it happened are called prophets, or liars, depending on who's listening.</div>
+      <div class="class-rule" style="border-left:1px solid #f59e0b44">Every Golem has a Pilot anchor — the fabricating pilot whose Signal frequency is keyed to their core. A Golem operating without their anchor Pilot degrades within 72 hours.</div>
+      <div class="class-rule" style="border-left:1px solid #f59e0b44">Golems do not experience Signal. They consume it. This is the fundamental difference between made and born.</div>
+      <div class="class-rule" style="border-left:1px solid #f59e0b44">Obsidian Golems (dark alloy, combat-spec) and Iron Sentinels (mid-tier, adaptable) are the two confirmed standard classes. Others exist outside the manifest.</div>
+      <div class="class-rule" style="border-left:1px solid #f59e0b44">The question of whether a Golem can want something is the philosophical fault line of the entire universe. The answer, for narrative purposes: yes. The cost of that answer is the story.</div>
+    </div>
+
+    <div class="section-h" style="color:#f97316">
+      <div class="pip" style="background:#f97316"></div>
+      The Cost of Crossing
+    </div>
+
+    <div class="block" style="border-left:3px solid #ef4444">
+      <div class="block-title" style="color:#ef4444">NARRATIVE LAW — NON-NEGOTIABLE</div>
+      <p>The three classes are the load-bearing walls of the universe's emotional architecture. Every story about Diesel City is ultimately about: what are you willing to become, and what do you lose when you get there?</p>
+      <p>A Pilot who crosses to Synth gains power and loses something specific that we will show, not name. A Synth who approaches Golem-state has stopped asking questions. A Golem that begins asking questions is the most dangerous thing in Diesel City.</p>
+    </div>
+  </div>
+
+  <!-- ═══ IV. THE AXIS ═══ -->
+  <div class="chapter" id="mythology">
+    <div class="chapter-header" style="color:#a855f7">
+      <div class="line-l" style="background:#a855f7"></div>
+      IV. THE AXIS
+      <div class="line-r"></div>
+    </div>
+
+    <div class="block" style="border-left:3px solid #a855f7; box-shadow:0 0 28px #a855f710">
+      <div class="block-title" style="color:#a855f7">THE JOHN HENRY / POLLY ANN AXIS — THE LOAD-BEARING MYTH</div>
+      <p>The Genesis Verse universe is built on a single mythological question, restated in diesel and Signal: can a soul beat a machine at the machine's own game, and if it can, what does winning cost?</p>
+      <p class="dim">John Henry drove steel against the steam drill and won. He died proving it. That death is the founding document of everything that happens in Diesel City.</p>
+    </div>
+
+    <div class="section-h" style="color:#a855f7">
+      <div class="pip" style="background:#a855f7"></div>
+      The Axis Characters
+    </div>
+
+    <div class="block" style="border-left:3px solid #a855f7">
+      <div class="block-title" style="color:#a855f7">POLLY ANN — BUNNY-CLASS CARRIER</div>
+      <p>Polly Ann carried John Henry's hammer after he fell. In the myth, this is a single gesture. In the Genesis Verse, it is a calling. The Bunny-Class designation — given to a specific category of Golem-carrying Pilot — was named for her. The name is deliberate: she who carries the tool of the one who refused to be replaced.</p>
+      <p class="dim">Polly Ann as character in the comic: she is not a tribute. She is not a legacy character. She is what happens when the myth walks into the present tense and finds the same machine waiting with a different name. She carries a Golem. She has a name. Both of these facts are, in the Abyssum Universe, acts of resistance.</p>
+      <div class="char-laws" style="border:1px solid #a855f744">
+        <div class="char-laws-title" style="color:#a855f7">CHARACTER LAWS — POLLY ANN</div>
+        <div class="char-law" style="border-left:1px solid #a855f733">She does not mythologize herself. Other characters do. She finds it irritating.</div>
+        <div class="char-law" style="border-left:1px solid #a855f733">Her Golem is not a weapon. It is a collaborator. This distinction drives every conflict with the Iron Chorus, which cannot process that framing.</div>
+        <div class="char-law" style="border-left:1px solid #a855f733">She has something the Iron Chorus cannot quantify: a reason that isn't economic. This is why she's dangerous.</div>
+        <div class="char-law" style="border-left:1px solid #a855f733">She is not immune to the cost of Signal. She feels every draw. Show this.</div>
+        <div class="char-law" style="border-left:1px solid #a855f733">Her relationship to John Henry's story is complicated. She knows the ending. She disagrees with it.</div>
+      </div>
+    </div>
+
+    <div class="block" style="border-left:3px solid #374151">
+      <div class="block-title" style="color:#6b7280">THE IRON CHORUS — THE STEAM DRILL WITH A BOARDROOM</div>
+      <p>The Iron Chorus does not consider itself a villain. It considers itself inevitable. The myth it tells about itself: we are the infrastructure of survival. Without us, the Signal flow collapses and Diesel City dies. This is possibly true. It does not make them right.</p>
+      <p class="dim">Their relationship to John Henry's story: they believe they are the machine that won. They are missing the point of the myth. This is their defining blindspot, and the crack through which Polly Ann will eventually move.</p>
+    </div>
+
+    <div class="section-h" style="color:#a855f7">
+      <div class="pip" style="background:#a855f7"></div>
+      Mythological Rules for Writers
+    </div>
+
+    <div class="rule core">
+      <span class="rule-num" style="color:#f97316">R-13</span>
+      <span class="rule-text">Never let a character win cleanly. Every victory in Diesel City has a Signal cost, a relationship cost, or a self cost. This is the John Henry rule: you can beat the machine. The question is what beating it takes from you.</span>
+      <span class="rule-badge">CORE</span>
+    </div>
+    <div class="rule core">
+      <span class="rule-num" style="color:#f97316">R-14</span>
+      <span class="rule-text">The soul vs. machine tension is the universe's engine. Every scene should have an answer — however small — to the question: what is this character choosing to remain?</span>
+      <span class="rule-badge">CORE</span>
+    </div>
+    <div class="rule">
+      <span class="rule-num" style="color:#374151">R-15</span>
+      <span class="rule-text">The Iron Chorus believes in inevitability. Every protagonist must believe in contingency — that outcomes are not fixed. This is the fundamental philosophical conflict of the series.</span>
+    </div>
+    <div class="rule">
+      <span class="rule-num" style="color:#374151">R-16</span>
+      <span class="rule-text">Named things have power. A Golem with a name is already something the Forge Manifest cannot fully contain. A Pilot who gives their Golem a name is making a statement the Iron Chorus will eventually have to respond to.</span>
+    </div>
+    <div class="rule">
+      <span class="rule-num" style="color:#374151">R-17</span>
+      <span class="rule-text">John Henry's story ends in death. Polly Ann's story does not have to. This is the revision the Genesis Verse is proposing to the myth. Handle this carefully — the weight of that revision is the emotional payload of the entire IP.</span>
+    </div>
+  </div>
+
+  <!-- ═══ V. FACTIONS ═══ -->
+  <div class="chapter" id="factions">
+    <div class="chapter-header" style="color:#ef4444">
+      <div class="line-l" style="background:#ef4444"></div>
+      V. FACTIONS
+      <div class="line-r"></div>
+    </div>
+
+    <div class="block" style="border-left:3px solid #ef4444">
+      <div class="block-title" style="color:#ef4444">FACTIONS — THE POLITICAL TOPOLOGY OF DIESEL CITY</div>
+      <p>Power in Diesel City is not held — it is maintained. Every faction is in a permanent state of equilibrium management, and every story is a disruption to that equilibrium.</p>
+    </div>
+
+    <div class="section-h" style="color:#ef4444">
+      <div class="pip" style="background:#ef4444"></div>
+      Iron Chorus — STATUS: LOCKED
+    </div>
+
+    <div class="block" style="border-left:3px solid #ef4444; box-shadow:0 0 28px #ef444410">
+      <div class="block-title" style="color:#ef4444">THE IRON CHORUS</div>
+      <p>The dominant faction. Controls Signal distribution infrastructure, the Forge Manifest, and Canopy access. Operates through Synth enforcers and bureaucratic suffocation rather than open violence — they prefer to make resistance expensive rather than impossible.</p>
+      <p class="dim">Internal structure: tiered by integration level. The highest council is rumored to be full Synths with no biological substrate remaining. This is unconfirmed. The rumor is useful to them.</p>
+      <div class="class-rule" style="border-left:1px solid #ef444444; margin-top:10px">Motto (unofficial): "The machine doesn't hate you. It simply doesn't need you to agree."</div>
+      <div class="class-rule" style="border-left:1px solid #ef444444">Primary weapon: economic control. Secondary weapon: Golem-class enforcers. Tertiary: information management.</div>
+      <div class="class-rule" style="border-left:1px solid #ef444444">Weakness: they cannot imagine anyone who is not motivated by Signal access or safety. This is their structural blind spot.</div>
+      <div class="class-rule" style="border-left:1px solid #ef444444">Relationship to Polly Ann: she is a minor irritant who keeps not becoming a major one. They are beginning to reconsider that assessment.</div>
+    </div>
+
+    <div class="section-h" style="color:#6b7280">
+      <div class="pip" style="background:#6b7280"></div>
+      Other Factions — STATUS: DEVELOPMENT
+    </div>
+
+    <div class="block" style="border-left:3px solid #1a1a2e">
+      <div class="block-title" style="color:#6b7280">THE DECK COALITION (WORKING TITLE)</div>
+      <p>Informal alliance of mid-tier Pilots and partially integrated Synths who operate in the contested Deck zone. Not a revolution — a survival network. They share Signal intel, coordinate extraction runs, and occasionally pool resources for Golem fabrication. They don't call themselves a faction. They call themselves a schedule.</p>
+    </div>
+
+    <div class="block" style="border-left:3px solid #1a1a2e">
+      <div class="block-title" style="color:#6b7280">THE SALVAGERS</div>
+      <p>Deep Substrate specialists. They go where other Pilots won't. Their relationship to the Iron Chorus is transactional — they retrieve things the Chorus wants from the deep zones. Their relationship to the Void Strain is the thing nobody asks about directly. Image ref: 2 (yellow jacket pilot, goggles, salvager-class loadout).</p>
+    </div>
+
+    <div class="block" style="border-left:3px solid #1a1a2e">
+      <div class="block-title" style="color:#6b7280">THE FORGE INDEPENDENTS</div>
+      <p>Pilots and hybrid Synths who operate unlicensed Fabricator rigs outside of Iron Chorus oversight. Their Golems are not in the Manifest. This is either heroic or catastrophic, depending on how well they understand what they're building.</p>
+    </div>
+  </div>
+
+  <!-- ═══ VI. VOID STRAIN ═══ -->
+  <div class="chapter" id="void">
+    <div class="chapter-header" style="color:#475569">
+      <div class="line-l" style="background:#475569"></div>
+      VI. VOID STRAIN
+      <div class="line-r"></div>
+    </div>
+
+    <div class="block" style="border-left:3px solid #1e293b; box-shadow:0 0 28px #0f172a18">
+      <div class="block-title" style="color:#475569">VOID STRAIN — CLASSIFICATION: DRAFT / HANDLE WITH CARE</div>
+      <p>The Void Strain predate Diesel City. They predate Signal extraction. They predate the question of whether a machine can have a soul because they are the thing that existed before the question was asked.</p>
+      <p class="dim">Image Reference 35: elongated dark-form entities, beak-masked, tall and attenuated. Multi-angle silhouette study. They exist in Substrate territory. They are not hostile in the way a weapon is hostile — they are hostile in the way weather is hostile. They do not want to destroy Diesel City. They want to reclaim something.</p>
+    </div>
+
+    <div class="section-h" style="color:#94a3b8">
+      <div class="pip" style="background:#94a3b8"></div>
+      What We Know — CONFIRMED
+    </div>
+
+    <div class="rule"><span class="rule-num" style="color:#374151">R-18</span><span class="rule-text">Void Strain cannot interface with processed Signal. Only Void Signal — the transformed version that has passed through their territory — interacts with their biology.</span></div>
+    <div class="rule"><span class="rule-num" style="color:#374151">R-19</span><span class="rule-text">The Void Strain communicate. The medium is unknown. The Iron Chorus has classified all research into their communication patterns at the highest clearance level.</span></div>
+    <div class="rule"><span class="rule-num" style="color:#374151">R-20</span><span class="rule-text">Void Strain do not appear to age. The silhouettes in Image 35 are consistent across all observed specimens. Whether this means they are the same individuals, clones, or something without individual identity is unknown.</span></div>
+    <div class="rule"><span class="rule-num" style="color:#374151">R-21</span><span class="rule-text">Physical contact with a Void Strain causes temporary Signal bleed in Pilots. In Synths, contact causes system-wide memory access errors that resolve within 72 hours. No Golem has survived extended contact.</span></div>
+
+    <div class="section-h" style="color:#94a3b8">
+      <div class="pip" style="background:#94a3b8"></div>
+      What We Don't Know — PENDING RECONCILIATION
+    </div>
+
+    <div class="block" style="border-left:3px solid #1e293b">
+      <div class="block-title" style="color:#475569">OPEN QUESTIONS (DO NOT LOCK YET)</div>
+      <div class="open-q"><span class="q-mark">?</span><span>Are the Void Strain a single entity with distributed physical expression, or many individuals?</span></div>
+      <div class="open-q"><span class="q-mark">?</span><span>What were they before the city was built over them?</span></div>
+      <div class="open-q"><span class="q-mark">?</span><span>Is Void Signal their waste product, their communication medium, or something they are deliberately producing?</span></div>
+      <div class="open-q"><span class="q-mark">?</span><span>Why do some Golems that reach the Abyssum return with Void Signal residue in their core — and why do those Golems sometimes ask questions they weren't programmed to ask?</span></div>
+      <div class="open-q"><span class="q-mark">?</span><span>Does Polly Ann's Golem have Void Signal trace? (NARRATIVE DECISION — holds until Arc 1 outline is drafted)</span></div>
+    </div>
+
+    <div class="block" style="border-left:3px solid #ef4444">
+      <div class="block-title" style="color:#ef4444">WRITER'S NOTE — VOID STRAIN HANDLING</div>
+      <p>The Void Strain should feel ancient in a way that is not mystical but archaeological. They are not demons. They are not gods. They are residents who were here first, and Diesel City was built on top of them. The horror is infrastructural, not supernatural.</p>
+    </div>
+  </div>
+
+  <!-- ═══ VII. THE FORGE ═══ -->
+  <div class="chapter" id="forge">
+    <div class="chapter-header" style="color:#f59e0b">
+      <div class="line-l" style="background:#f59e0b"></div>
+      VII. THE FORGE
+      <div class="line-r"></div>
+    </div>
+
+    <div class="block" style="border-left:3px solid #f59e0b; box-shadow:0 0 28px #f59e0b10">
+      <div class="block-title" style="color:#f59e0b">THE FORGE — CREATION MYTHOLOGY OF THE ABYSSUM UNIVERSE</div>
+      <p>Every Golem that walks in Diesel City came from a Fabricator Bay rig, a Signal draw, a Pilot's intent, and a cost paid in resources the system tracks to the decimal. This is what the Forge Manifest records. What it does not record is why.</p>
+    </div>
+
+    <div class="section-h" style="color:#f59e0b">
+      <div class="pip" style="background:#f59e0b"></div>
+      Fabrication Rules
+    </div>
+
+    <div class="rule core"><span class="rule-num" style="color:#f97316">R-22</span><span class="rule-text">A Golem cannot be forged without a Pilot anchor. The anchor's Signal frequency becomes the Golem's core resonance. This is not metaphor — it is the technical reason a Golem without its Pilot degrades. But it is also the reason a Golem that survives its Pilot's death becomes the most dangerous entity in Diesel City.</span><span class="rule-badge">CORE</span></div>
+    <div class="rule"><span class="rule-num" style="color:#374151">R-23</span><span class="rule-text">Fabrication cost: Fuel (energy substrate), Parts (physical material), Cogs (precision components), Power Cores (Signal storage medium). The Forge Manifest tracks all four. Black-market fabrication requires all four and one additional thing the manifest doesn't have a column for: secrecy.</span></div>
+    <div class="rule"><span class="rule-num" style="color:#374151">R-24</span><span class="rule-text">A Golem's class tier (Bunny-Class, Iron Sentinel, Obsidian) is determined at fabrication. Tier determines Signal consumption rate, combat capability, and — the variable the Iron Chorus pretends doesn't exist — cognitive complexity.</span></div>
+    <div class="rule core"><span class="rule-num" style="color:#f97316">R-25</span><span class="rule-text">The act of naming a Golem is not in the fabrication protocol. It has no mechanical effect recognized by the Forge Manifest. It has every narrative effect that matters.</span><span class="rule-badge">CORE</span></div>
+    <div class="rule"><span class="rule-num" style="color:#374151">R-26</span><span class="rule-text">Forge Prompt — what a Pilot says when initiating fabrication — is logged. The Iron Chorus mines these logs for intelligence. Pilots who know this speak in code. Pilots who don't know this speak in truth. Both are useful to someone.</span></div>
+
+    <div class="section-h" style="color:#f59e0b">
+      <div class="pip" style="background:#f59e0b"></div>
+      The Black Forges
+    </div>
+
+    <div class="block" style="border-left:3px solid #f97316">
+      <div class="block-title" style="color:#f97316">INDEPENDENT FABRICATION — OFF-MANIFEST</div>
+      <p>Black Forges operate outside Iron Chorus infrastructure, which means outside processed Signal access. They run on raw Signal — which means their Golems are built with full resonance data intact. The theoretical implication, which no one in the Canopy will discuss officially: an off-manifest Golem forged with raw Signal might retain Signal memory from the Substrate itself.</p>
+      <p class="dim">A Golem that remembers what Diesel City was before the Iron Chorus built their distribution grid. This is the thing that makes black Forges not a regulatory problem but an existential one.</p>
+    </div>
+  </div>
+
+  <!-- ═══ VIII. VISUAL LAW ═══ -->
+  <div class="chapter" id="visual">
+    <div class="chapter-header" style="color:#22d3ee">
+      <div class="line-l" style="background:#22d3ee"></div>
+      VIII. VISUAL LAW
+      <div class="line-r"></div>
+    </div>
+
+    <div class="block" style="border-left:3px solid #22d3ee">
+      <div class="block-title" style="color:#22d3ee">VISUAL LAW — RULES FOR THE COMIC ARTIST</div>
+      <p>The Abyssum Universe has a visual language. These rules exist to make the world legible, consistent, and — most importantly — emotionally honest. Every visual choice should carry narrative weight.</p>
+    </div>
+
+    <div class="section-h" style="color:#22d3ee">
+      <div class="pip" style="background:#22d3ee"></div>
+      Color Language
+    </div>
+
+    <div class="color-entry"><div class="color-pip" style="background:#f59e0b"></div><div><div class="color-label" style="color:#f59e0b">AMBER / GOLD</div><div class="color-rule">Signal in its raw or processed state. Also: memory, the past, things that cost something. When a character draws Signal, amber touches the scene.</div></div></div>
+    <div class="color-entry"><div class="color-pip" style="background:#22d3ee"></div><div><div class="color-label" style="color:#22d3ee">CYAN / TEAL</div><div class="color-rule">Pilot-class technology and identity. Clean interfaces, external rigs, human-made equipment. Cyan = still human.</div></div></div>
+    <div class="color-entry"><div class="color-pip" style="background:#a855f7"></div><div><div class="color-label" style="color:#a855f7">PURPLE / VIOLET</div><div class="color-rule">Synth presence. The more purple in a frame, the further from biological origin. Full Synths read almost entirely in purple tones.</div></div></div>
+    <div class="color-entry"><div class="color-pip" style="background:#f97316"></div><div><div class="color-label" style="color:#f97316">ORANGE / FIRE</div><div class="color-rule">Combat, urgency, the Iron Chorus's public-facing brand. Their signs, their uniforms, their propaganda. Orange is what power looks like when it wants to be seen.</div></div></div>
+    <div class="color-entry"><div class="color-pip" style="background:#1e293b; border:1px solid #2a3a4e"></div><div><div class="color-label" style="color:#475569">DEEP DARK / VOID</div><div class="color-rule">Substrate zones. Void Strain presence. Things older than the city. When the dark has texture, it's Void territory.</div></div></div>
+    <div class="color-entry"><div class="color-pip" style="background:#22c55e"></div><div><div class="color-label" style="color:#22c55e">GREEN</div><div class="color-rule">Systems nominal. Safety. Also: irony — the Iron Chorus uses green on all their 'approved' signage.</div></div></div>
+
+    <div class="section-h" style="color:#22d3ee">
+      <div class="pip" style="background:#22d3ee"></div>
+      Panel &amp; Composition Rules
+    </div>
+
+    <div class="rule"><span class="rule-num" style="color:#374151">R-27</span><span class="rule-text">Canopy scenes: geometric, clean lines, high contrast between light and shadow. The Iron Chorus built their world to look inevitable.</span></div>
+    <div class="rule"><span class="rule-num" style="color:#374151">R-28</span><span class="rule-text">Deck scenes: layered, cluttered horizon lines, multiple light sources competing. This is where most stories live. It should feel dense with possibility.</span></div>
+    <div class="rule"><span class="rule-num" style="color:#374151">R-29</span><span class="rule-text">Substrate scenes: organic forms intruding on mechanical. Curves that shouldn't be there. Things that were here before the grid was laid down. The Substrate resists straight lines.</span></div>
+    <div class="rule core"><span class="rule-num" style="color:#f97316">R-30</span><span class="rule-text">Signal draws should always have a shadow. When amber enters the frame, something dark follows it — not immediately, but in the same scene. This is the visual rule for the cost of extraction.</span><span class="rule-badge">CORE</span></div>
+    <div class="rule"><span class="rule-num" style="color:#374151">R-31</span><span class="rule-text">Golems are shown from below when they are the subject of awe, from above when they are the subject of grief. Eye level is for when they are the subject of recognition.</span></div>
+    <div class="rule"><span class="rule-num" style="color:#374151">R-32</span><span class="rule-text">Polly Ann: she is always shown relative to her environment, not isolated from it. She is part of Diesel City, not outside it. No floating portraits. She exists in context.</span></div>
+
+    <div class="section-h" style="color:#22d3ee">
+      <div class="pip" style="background:#22d3ee"></div>
+      Hair as Visual Identity
+    </div>
+
+    <div class="block" style="border-left:3px solid #1a1a2e">
+      <div class="block-title" style="color:#6b7280">THE AFRO AESTHETIC — A DESIGN NOTE</div>
+      <p>The natural hair forms across the character designs — afros, locs, high-density textured styles — are not decorative. They are visual statements of retained identity in a world that rewards assimilation. The bigger the hair, the more the character is refusing something. This is a visual rule: characters with the largest, most uncontained natural forms are the ones most aggressively not becoming what the system wants them to become. Synths who have retained their natural hair are the most complex Synths in the universe.</p>
+    </div>
+  </div>
+
+  <!-- ═══ IX. TONE & VOICE ═══ -->
+  <div class="chapter" id="voice">
+    <div class="chapter-header" style="color:#22c55e">
+      <div class="line-l" style="background:#22c55e"></div>
+      IX. TONE &amp; VOICE
+      <div class="line-r"></div>
+    </div>
+
+    <div class="block" style="border-left:3px solid #22c55e">
+      <div class="block-title" style="color:#22c55e">TONE &amp; VOICE — HOW THE ABYSSUM UNIVERSE SPEAKS</div>
+      <p>The Genesis Verse is not grimdark. It is not optimistic. It is pragmatically alive — the way people who have survived something are alive. The voice of this universe is: we are still here, and we are still asking why, and we have not decided yet whether those are the same question.</p>
+    </div>
+
+    <div class="section-h" style="color:#22c55e">
+      <div class="pip" style="background:#22c55e"></div>
+      Voice Guidelines
+    </div>
+
+    <div class="rule core"><span class="rule-num" style="color:#f97316">R-33</span><span class="rule-text">The city is never the backdrop. It is a character. Diesel City has a point of view on everything that happens in it. Writers should be able to answer: what does the city think of this scene?</span><span class="rule-badge">CORE</span></div>
+    <div class="rule"><span class="rule-num" style="color:#374151">R-34</span><span class="rule-text">Dialogue is compressed. Characters in Diesel City don't explain — they report, instruct, and occasionally confess. Exposition lives in the environment, not in conversation.</span></div>
+    <div class="rule"><span class="rule-num" style="color:#374151">R-35</span><span class="rule-text">Humor exists and is important. It is the humor of people who have made their peace with absurdity without becoming absurd. Dry. Frequently physical. Never at the expense of anyone's dignity.</span></div>
+    <div class="rule core"><span class="rule-num" style="color:#f97316">R-36</span><span class="rule-text">The emotional register is not despair. It is determination that has been tested enough to know it's real. Characters suffer, but the universe does not aestheticize suffering. It presents it as the cost of staying alive and choosing to mean something.</span><span class="rule-badge">CORE</span></div>
+    <div class="rule"><span class="rule-num" style="color:#374151">R-37</span><span class="rule-text">Technology is not magic. When a Golem does something impressive, we know approximately why, even if the character doesn't care. The universe respects its own mechanics.</span></div>
+    <div class="rule"><span class="rule-num" style="color:#374151">R-38</span><span class="rule-text">The Iron Chorus is not cartoonishly evil. They believe they are right. Some of them are right, about specific things, in specific contexts. The story does not give the audience the comfort of a clean villain.</span></div>
+
+    <div class="section-h" style="color:#22c55e">
+      <div class="pip" style="background:#22c55e"></div>
+      Prohibited Tones
+    </div>
+
+    <div class="block" style="border-left:3px solid #ef4444">
+      <div class="block-title" style="color:#ef4444">DO NOT</div>
+      <div class="do-not-item" style="border-left:1px solid #ef444444">Do not let the mythology become preachy. The John Henry parallel should be felt, not lectured.</div>
+      <div class="do-not-item" style="border-left:1px solid #ef444444">Do not make Synths uniformly sinister. The fear of becoming machine is not the same as machines being fearful.</div>
+      <div class="do-not-item" style="border-left:1px solid #ef444444">Do not make the Substrate pure horror. It is dangerous and ancient, not evil.</div>
+      <div class="do-not-item" style="border-left:1px solid #ef444444">Do not let the Iron Chorus win without cost to the protagonists. Do not let the protagonists win without cost either.</div>
+      <div class="do-not-item" style="border-left:1px solid #ef444444">Do not explain Diesel City to the reader. Trust the visual world-building to carry the context. Let the story begin in the middle of things that are already happening.</div>
+      <div class="do-not-item" style="border-left:1px solid #ef444444">Do not make Polly Ann a symbol before she is a person.</div>
+    </div>
+
+    <div class="block" style="border-left:3px solid #22c55e">
+      <div class="block-title" style="color:#22c55e">THE THESIS SENTENCE — FOR EVERY CREATIVE DECISION</div>
+      <div class="thesis">"Diesel City is a machine that forgot it was built by people — and the story of the Genesis Verse is the people reminding it."</div>
+      <p class="dim">When in doubt: does this choice serve or contradict the thesis? If it serves it, proceed. If it contradicts it productively — creating useful tension — proceed with intention. If it simply contradicts it, reconsider.</p>
+    </div>
+  </div>
+
+</div><!-- /content -->
+
+<div class="footer">
+  <span>GENESIS VERSE · WORLD RULES · C-1 · 38 RULES · 9 CHAPTERS</span>
+  <span>SIMPRO TITANS STUDIO · ARTEFACTS COMMANDER · C-1 COMPLETE → C-2 READY</span>
+</div>
+
+<script>
+  const btns = document.querySelectorAll('.chapter-btn');
+  const chapters = document.querySelectorAll('.chapter');
+
+  btns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.chapter;
+      const accent = getComputedStyle(btn).getPropertyValue('--accent').trim();
+
+      btns.forEach(b => {
+        b.classList.remove('active');
+        b.style.color = '';
+      });
+      chapters.forEach(c => c.classList.remove('active'));
+
+      btn.classList.add('active');
+      btn.style.color = accent;
+
+      document.getElementById(target).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
+  // Set first tab color on load
+  const firstBtn = document.querySelector('.chapter-btn.active');
+  if (firstBtn) {
+    firstBtn.style.color = getComputedStyle(firstBtn).getPropertyValue('--accent').trim();
+  }
+</script>
+</body>
+</html>

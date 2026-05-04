@@ -1,0 +1,130 @@
+.success-root {
+  background: #0a0806;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.success-card {
+  position: relative;
+  width: 360px;
+  border: 0.5px solid #e87c2a44;
+  border-radius: 12px;
+  background: #0f0c09;
+  padding: 2rem 1.5rem;
+  overflow: hidden;
+}
+
+.success-stripe-top {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 6px;
+  background: #e87c2a;
+}
+
+.success-stripe-bot {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: #00d4c8;
+}
+
+.success-rank-badge {
+  position: absolute;
+  top: 18px; left: 18px;
+  background: #00d4c811;
+  border: 0.5px solid #00d4c8;
+  color: #00d4c8;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  padding: 3px 8px;
+  border-radius: 3px;
+}
+
+.success-class-badge {
+  position: absolute;
+  top: 14px; right: 18px;
+  background: #e87c2a18;
+  border: 0.5px solid #e87c2a;
+  color: #e87c2a;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  padding: 3px 8px;
+  border-radius: 3px;
+}
+
+.success-title {
+  margin-top: 2rem;
+  font-size: 1.1rem;
+  letter-spacing: 0.2em;
+  color: #e87c2a;
+  text-align: center;
+}
+
+.success-subtitle {
+  font-size: 8px;
+  letter-spacing: 0.3em;
+  color: #c8932a;
+  text-align: center;
+  margin-top: 4px;
+}
+
+.success-divider {
+  height: 0.5px;
+  background: #e87c2a33;
+  margin: 1rem 0;
+}
+
+.success-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.success-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.success-field-key {
+  font-size: 8px;
+  letter-spacing: 0.14em;
+  color: #666;
+  text-transform: uppercase;
+}
+
+.success-field-val {
+  font-size: 11px;
+  color: #e8e0d0;
+  letter-spacing: 0.08em;
+}
+
+.success-field-val.teal { color: #00d4c8; }
+.success-field-val.gold { color: #c8932a; }
+
+.success-btn-enter {
+  display: block;
+  width: 100%;
+  margin-top: 1.5rem;
+  padding: 12px;
+  background: #e87c2a;
+  color: #0a0806;
+  text-align: center;
+  font-family: inherit;
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.success-session-id {
+  font-size: 7px;
+  color: #333;
+  text-align: center;
+  margin-top: 1rem;
+  letter-spacing: 0.06em;
+}

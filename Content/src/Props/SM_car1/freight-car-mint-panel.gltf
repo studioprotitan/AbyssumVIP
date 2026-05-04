@@ -1,0 +1,284 @@
+{
+	"asset":
+	{
+		"version": "2.0",
+		"generator": "Unreal Engine 5.4.4"
+	},
+	"scene": 0,
+	"accessors": [
+		{
+			"bufferView": 0,
+			"count": 1505166,
+			"type": "SCALAR",
+			"componentType": 5125
+		},
+		{
+			"bufferView": 1,
+			"count": 265629,
+			"type": "VEC3",
+			"componentType": 5126,
+			"min": [ -1.67151213, -0.300343931, 1.16706872 ],
+			"max": [ -1.57383239, 0.300343931, 1.68493485 ]
+		},
+		{
+			"bufferView": 2,
+			"count": 265629,
+			"type": "VEC3",
+			"componentType": 5126
+		},
+		{
+			"bufferView": 3,
+			"count": 265629,
+			"type": "VEC4",
+			"componentType": 5126
+		},
+		{
+			"bufferView": 4,
+			"count": 265629,
+			"type": "VEC2",
+			"componentType": 5126
+		},
+		{
+			"bufferView": 5,
+			"count": 265629,
+			"type": "VEC2",
+			"componentType": 5126
+		},
+		{
+			"bufferView": 6,
+			"count": 265629,
+			"type": "VEC2",
+			"componentType": 5126
+		},
+		{
+			"bufferView": 7,
+			"count": 711462,
+			"type": "SCALAR",
+			"componentType": 5125
+		},
+		{
+			"bufferView": 8,
+			"count": 129163,
+			"type": "VEC3",
+			"componentType": 5126,
+			"min": [ -1.62844312, -2.2959168, -10.6760015 ],
+			"max": [ 4.873487, 2.89619899, 7.82399845 ]
+		},
+		{
+			"bufferView": 9,
+			"count": 129163,
+			"type": "VEC3",
+			"componentType": 5126
+		},
+		{
+			"bufferView": 10,
+			"count": 129163,
+			"type": "VEC4",
+			"componentType": 5126
+		},
+		{
+			"bufferView": 11,
+			"count": 129163,
+			"type": "VEC2",
+			"componentType": 5126
+		},
+		{
+			"bufferView": 12,
+			"count": 129163,
+			"type": "VEC2",
+			"componentType": 5126
+		},
+		{
+			"bufferView": 13,
+			"count": 129163,
+			"type": "VEC2",
+			"componentType": 5126
+		}
+	],
+	"buffers": [
+		{
+			"uri": "freight-car-mint-panel.bin",
+			"byteLength": 34133200
+		}
+	],
+	"bufferViews": [
+		{
+			"buffer": 0,
+			"byteLength": 6020664,
+			"target": 34963
+		},
+		{
+			"buffer": 0,
+			"byteLength": 3187548,
+			"byteOffset": 6020664,
+			"target": 34962
+		},
+		{
+			"buffer": 0,
+			"byteLength": 3187548,
+			"byteOffset": 9208212,
+			"target": 34962
+		},
+		{
+			"buffer": 0,
+			"byteLength": 4250064,
+			"byteOffset": 12395760,
+			"target": 34962
+		},
+		{
+			"buffer": 0,
+			"byteLength": 2125032,
+			"byteOffset": 16645824,
+			"target": 34962
+		},
+		{
+			"buffer": 0,
+			"byteLength": 2125032,
+			"byteOffset": 18770856,
+			"target": 34962
+		},
+		{
+			"buffer": 0,
+			"byteLength": 2125032,
+			"byteOffset": 20895888,
+			"target": 34962
+		},
+		{
+			"buffer": 0,
+			"byteLength": 2845848,
+			"byteOffset": 23020920,
+			"target": 34963
+		},
+		{
+			"buffer": 0,
+			"byteLength": 1549956,
+			"byteOffset": 25866768,
+			"target": 34962
+		},
+		{
+			"buffer": 0,
+			"byteLength": 1549956,
+			"byteOffset": 27416724,
+			"target": 34962
+		},
+		{
+			"buffer": 0,
+			"byteLength": 2066608,
+			"byteOffset": 28966680,
+			"target": 34962
+		},
+		{
+			"buffer": 0,
+			"byteLength": 1033304,
+			"byteOffset": 31033288,
+			"target": 34962
+		},
+		{
+			"buffer": 0,
+			"byteLength": 1033304,
+			"byteOffset": 32066592,
+			"target": 34962
+		},
+		{
+			"buffer": 0,
+			"byteLength": 1033304,
+			"byteOffset": 33099896,
+			"target": 34962
+		}
+	],
+	"images": [
+		{
+			"uri": "futuristic%2Bdoor%2Block%2B3d%2Bmodel_basecolor_jpg.png"
+		},
+		{
+			"uri": "futuristictrain3dmodel_basecolor.png"
+		}
+	],
+	"materials": [
+		{
+			"name": "tripo_material_467852da-5c82-4ca6-8785-4e0b84031235_FreightCar_Mint_Panel",
+			"pbrMetallicRoughness":
+			{
+				"baseColorTexture":
+				{
+					"index": 0
+				},
+				"metallicFactor": 0,
+				"roughnessFactor": 0.5
+			}
+		},
+		{
+			"name": "tripo_mat_008b1607-2fe0-456b-bcc6-b9624cfb7d76_FreightCar_Mint_Panel",
+			"pbrMetallicRoughness":
+			{
+				"baseColorTexture":
+				{
+					"index": 1
+				},
+				"metallicFactor": 0,
+				"roughnessFactor": 0.899999976
+			}
+		}
+	],
+	"meshes": [
+		{
+			"name": "FreightCar_Mint_Panel",
+			"primitives": [
+				{
+					"attributes":
+					{
+						"POSITION": 1,
+						"NORMAL": 2,
+						"TANGENT": 3,
+						"TEXCOORD_0": 4,
+						"TEXCOORD_1": 5,
+						"TEXCOORD_2": 6
+					},
+					"indices": 0,
+					"material": 0
+				},
+				{
+					"attributes":
+					{
+						"POSITION": 8,
+						"NORMAL": 9,
+						"TANGENT": 10,
+						"TEXCOORD_0": 11,
+						"TEXCOORD_1": 12,
+						"TEXCOORD_2": 13
+					},
+					"indices": 7,
+					"material": 1
+				}
+			]
+		}
+	],
+	"nodes": [
+		{
+			"mesh": 0
+		}
+	],
+	"samplers": [
+		{
+			"minFilter": 9987,
+			"magFilter": 9729
+		}
+	],
+	"scenes": [
+		{
+			"nodes": [ 0 ]
+		}
+	],
+	"textures": [
+		{
+			"name": "futuristic+door+lock+3d+model_basecolor_jpg",
+			"sampler": 0,
+			"source": 0
+		},
+		{
+			"name": "futuristictrain3dmodel_basecolor",
+			"sampler": 0,
+			"source": 1
+		}
+	]
+}

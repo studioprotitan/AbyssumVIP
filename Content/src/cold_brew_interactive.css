@@ -1,0 +1,200 @@
+/* cold_brew_interactive.css
+   Styles for the Cold Brew interactive prototype.
+   Keep this file alongside cold_brew_interactive.html for a simple local
+   setup (no build/tooling required).
+*/
+
+body{
+  margin:0;
+  background:#05060a;
+  color:#e5f3ff;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+main{
+  max-width:1100px;
+  margin:0 auto;
+  padding:24px 16px 40px;
+}
+h1,h2{
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+}
+h1{font-size:1.4rem;margin-bottom:4px;}
+h2{font-size:0.9rem;color:#7fd0ff;margin-top:24px;}
+.tagline{color:#9fb3c8;font-size:0.9rem;margin-bottom:16px;}
+
+/* Scene layout */
+#episode{
+  margin-top:16px;
+  border-top:1px solid rgba(127,208,255,0.25);
+  padding-top:16px;
+}
+.scene-wrapper{
+  display:grid;
+  grid-template-columns:minmax(0,2fr) minmax(0,1.4fr);
+  gap:16px;
+}
+@media(max-width:800px){
+  .scene-wrapper{grid-template-columns:1fr;}
+}
+
+/* Left: visual stack */
+.scene-visual{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.scene-image{
+  position:relative;
+  border-radius:12px;
+  overflow:hidden;
+  background:#111827;
+  min-height:220px;
+}
+.scene-image img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.scene-label{
+  position:absolute;
+  left:10px;
+  bottom:10px;
+  padding:4px 8px;
+  font-size:0.7rem;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  background:rgba(5,6,10,0.7);
+  border-radius:999px;
+  border:1px solid rgba(127,208,255,0.6);
+}
+
+/* Optional AVX / iframe zone */
+.avx-row{
+  display:flex;
+  gap:10px;
+}
+.avx-slot{
+  flex:1;
+  border-radius:10px;
+  overflow:hidden;
+  background:#020308;
+  border:1px dashed rgba(127,208,255,0.35);
+  min-height:120px;
+  font-size:0.7rem;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#64748b;
+  text-align:center;
+  padding:6px;
+}
+
+/* Right: text + choices */
+.scene-text{
+  background:radial-gradient(circle at top left,#101827 0,#05060a 55%);
+  border-radius:12px;
+  border:1px solid rgba(127,208,255,0.35);
+  padding:14px 14px 10px;
+  font-size:0.9rem;
+  line-height:1.5;
+  min-height:180px;
+  white-space:pre-line;
+}
+.choices{
+  margin-top:10px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.choice-btn{
+  background:#0b1220;
+  color:#e5f3ff;
+  border-radius:999px;
+  border:1px solid rgba(127,208,255,0.7);
+  padding:7px 12px;
+  font-size:0.8rem;
+  text-align:left;
+  cursor:pointer;
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+  transition:background 0.15s,transform 0.1s,box-shadow 0.15s;
+}
+.choice-btn:hover{
+  background:#111827;
+  transform:translateY(-1px);
+  box-shadow:0 0 10px rgba(127,208,255,0.4);
+}
+
+/* Timer bar */
+.timer-wrap{
+  margin-top:8px;
+  height:4px;
+  border-radius:999px;
+  background:#020617;
+  overflow:hidden;
+}
+.timer-bar{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,#22c55e,#eab308,#ef4444);
+  transition:width linear;
+}
+
+/* Card carousel (lightweight) */
+#cards{
+  margin-top:28px;
+}
+.card-row{
+  display:flex;
+  gap:10px;
+  overflow-x:auto;
+  padding-bottom:6px;
+}
+.lore-card{
+  min-width:160px;
+  max-width:180px;
+  background:#020617;
+  border-radius:10px;
+  border:1px solid rgba(148,163,184,0.5);
+  padding:8px;
+  font-size:0.75rem;
+  cursor:pointer;
+  transition:transform 0.15s,box-shadow 0.15s,border 0.15s;
+}
+.lore-card.active{
+  border-color:#7fd0ff;
+  box-shadow:0 0 12px rgba(56,189,248,0.6);
+  transform:translateY(-2px);
+}
+.card-img{
+  height:90px;
+  border-radius:8px;
+  overflow:hidden;
+  background:#111827;
+  margin-bottom:6px;
+}
+.card-img img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.card-meta strong{color:#e5f3ff;}
+#card-detail{
+  margin-top:8px;
+  font-size:0.75rem;
+  color:#cbd5f5;
+}
+
+/* Reward screen */
+#reward{
+  margin-top:30px;
+  padding:16px;
+  border-radius:12px;
+  border:1px solid rgba(52,211,153,0.6);
+  background:rgba(6,95,70,0.15);
+  display:none;
+  font-size:0.9rem;
+}

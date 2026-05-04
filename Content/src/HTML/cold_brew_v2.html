@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cold Brew: Mystics of Mayhem</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<!--
+  ================================================================
+  COLD BREW: MYSTICS OF MAYHEM
+  Public Codename: Cold Brew
+  Division: CST-ERT Department — Astronomical Society
+  Classification: OMEGA
+
+  Episodes:
+    I  — Styx Station Infiltration
+    II — Swamp Ward Station (6-location branching)
+
+  Image paths: ../html_embeds/ (cb-* slugs post-rename)
+  Fallback paths included for pre-rename compatibility.
+
+  PIPELINE: Zero inline style= attributes.
+  Bars via CSS --w custom property + data-w.
+  Colors via accent-* utility classes.
+  Scene backgrounds via className swap.
+  ================================================================
+-->
+<style>
+/* ================================================================
+   DESIGN TOKENS
+================================================================ */
+:root {
+  /* Core palette */
+  --bg:        #05060a;
+  --bg1:       #090c12;
+  --bg2:       #0e1018;
+  --bg3:       #141820;
+  --rule:      #181c28;
+  --rule-l:    #222838;
+  --ash:       #5a6070;
+  --ash-l:     #8a9098;
+  --text:      #c0c8d0;
+  --white:     #eceef2;
+
+  /* Brand */
+  --gold:      #c8a84a;
+  --gold-l:    #f0cc6a;
+  --gold-d:    #7a6020;
+
+  /* Faction / system colors */
+  --oracle:    #2affee;
+  --oracle-d:  #083a38;
+  --rift:      #8a2aff;
+  --rift-l:    #bb88ff;
+  --flood:     #2a78ff;
+  --flood-l:   #6aabff;
+  --alert:     #ff5522;
+  --alert-l:   #ff8855;
+  --teal:      #2aff88;
+  --swamp:     #3a5a2a;
+  --swamp-l:   #6aaa3a;
+  --swamp-b:   #aaff44;
+  --forge:     #ff8c00;
+  --forge-l:   #ffcc44;
+  --red:       #ff2244;
+
+  /* HUD bar widths — JS setProperty only, never inline style= */
+  --b-flood:   20%;
+  --b-alert:    0%;
+  --b-oracle:  70%;
+  --b-prog:     0%;
+
+  /* Stat fill width — JS setProperty per element */
+  --w: 0%;
+}
+
+/* ================================================================
+   RESET
+================================================================ */
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 15px;
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: crosshair;
+}
+
+/* Atmosphere layers */
+body::before {
+  content:'';
+  position:fixed; inset:0; z-index:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 85%, rgba(58,90,42,.25) 0%, transparent 55%),
+    radial-gradient(ellipse 55% 40% at 85% 15%, rgba(10,30,40,.4)  0%, transparent 55%),
+    radial-gradient(ellipse 40% 30% at 50% 50%, rgba(138,42,255,.03) 0%, transparent 65%);
+  pointer-events:none;
+}
+
+/* Scanlines */
+body::after {
+  content:'';
+  position:fixed; inset:0; z-index:9998;
+  background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,.06) 3px, rgba(0,0,0,.06) 4px);
+  pointer-events:none;
+}
+
+/* ================================================================
+   INTRO CINEMATIC
+================================================================ */
+.intro-screen {
+  position:fixed; inset:0; z-index:1000;
+  background: var(--bg);
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:18px;
+  animation: introOut .5s ease 4.5s forwards;
+}
+.intro-screen.gone { display:none; }
+.intro-ep     { font-family:'Share Tech Mono',monospace; font-size:.6rem; letter-spacing:.4em; color:var(--rift-l); animation:fadeUp .7s both; }
+.intro-dept   { font-family:'Share Tech Mono',monospace; font-size:.55rem; letter-spacing:.25em; color:var(--ash); animation:fadeUp .7s .15s both; }
+.intro-main   { font-family:'Cinzel Decorative',serif; font-size:clamp(1.6rem,5vw,3rem); color:var(--gold-l); text-align:center; line-height:1.15; text-shadow:0 0 40px rgba(200,168,74,.4); animation:fadeUp .7s .3s both; }
+.intro-sub    { font-family:'Cinzel Decorative',serif; font-size:clamp(.62rem,1.4vw,.85rem); color:var(--ash-l); letter-spacing:.18em; animation:fadeUp .6s .55s both; }
+.intro-bar-w  { width:200px; height:2px; background:var(--rule-l); overflow:hidden; animation:fadeUp .4s 1s both; }
+.intro-bar    { height:100%; background:linear-gradient(90deg,var(--gold-d),var(--gold-l)); animation:loadBar 3s ease 1s forwards; width:0; }
+.intro-cmd    { font-family:'Share Tech Mono',monospace; font-size:.56rem; letter-spacing:.2em; color:var(--ash); animation:fadeUp .4s 1.4s both; }
+
+/* ================================================================
+   SHELL — 3-col grid: [icon-nav | main | icon-nav]
+================================================================ */
+.shell {
+  display:grid;
+  grid-template-columns: 54px 1fr 54px;
+  grid-template-rows: 44px 1fr;
+  min-height:100vh;
+  position:relative; z-index:2;
+}
+
+/* ── TOP BAR ── */
+.topbar {
+  grid-column:1/-1;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 16px; height:44px;
+  background:rgba(5,6,10,.96);
+  border-bottom:1px solid var(--rule-l);
+  position:sticky; top:0; z-index:200;
+}
+.topbar-left  { display:flex; align-items:center; gap:14px; }
+.topbar-dept  { font-family:'Share Tech Mono',monospace; font-size:.52rem; letter-spacing:.28em; color:var(--ash); }
+.topbar-div   { width:1px; height:18px; background:var(--rule-l); }
+.topbar-title { font-family:'Cinzel Decorative',serif; font-size:clamp(.8rem,1.8vw,1.05rem); color:var(--gold-l); letter-spacing:.07em; text-shadow:0 0 14px rgba(200,168,74,.3); }
+.topbar-right { display:flex; align-items:center; gap:12px; }
+.ep-selector  { display:flex; gap:6px; }
+.ep-btn {
+  padding:3px 10px;
+  background:transparent;
+  border:1px solid var(--rule-l);
+  color:var(--ash);
+  font-family:'Share Tech Mono',monospace;
+  font-size:.52rem; letter-spacing:.12em;
+  cursor:pointer; transition:all .18s;
+}
+.ep-btn.active { border-color:var(--gold-d); color:var(--gold-l); background:rgba(200,168,74,.07); }
+.ep-btn:hover:not(.active) { border-color:var(--ash); color:var(--text); }
+.live-dot  { width:6px; height:6px; border-radius:50%; background:var(--teal); box-shadow:0 0 6px var(--teal); animation:pulse 2s infinite; }
+.live-txt  { font-family:'Share Tech Mono',monospace; font-size:.52rem; letter-spacing:.16em; color:var(--teal); }
+
+/* ── ICON SIDEBARS ── */
+.nav-left, .nav-right {
+  display:flex; flex-direction:column; align-items:center; gap:5px;
+  padding:10px 0;
+  background:rgba(5,6,10,.92);
+  border-right:1px solid var(--rule);
+  position:sticky; top:44px;
+  height:calc(100vh - 44px);
+  overflow:hidden;
+}
+.nav-right { border-right:none; border-left:1px solid var(--rule); }
+
+.nav-icon {
+  width:34px; height:34px;
+  display:flex; align-items:center; justify-content:center;
+  border-radius:3px; cursor:pointer;
+  transition:all .17s; position:relative;
+  color:var(--ash); font-size:13px; flex-shrink:0;
+}
+.nav-icon:hover, .nav-icon.on { background:rgba(200,168,74,.09); color:var(--gold-l); }
+.nav-icon.on::before {
+  content:''; position:absolute; left:0; top:50%; transform:translateY(-50%);
+  width:2px; height:18px; background:var(--gold-l); box-shadow:0 0 7px var(--gold);
+}
+.nav-right .nav-icon.on::before { left:auto; right:0; }
+.nav-icon::after {
+  content:attr(data-tip);
+  position:absolute; left:calc(100% + 7px); top:50%; transform:translateY(-50%);
+  background:rgba(9,12,18,.97); border:1px solid var(--rule-l);
+  color:var(--ash-l); font-family:'Share Tech Mono',monospace;
+  font-size:.5rem; letter-spacing:.1em; padding:3px 8px;
+  white-space:nowrap; pointer-events:none; opacity:0; transition:opacity .14s; z-index:300;
+}
+.nav-right .nav-icon::after { left:auto; right:calc(100% + 7px); }
+.nav-icon:hover::after { opacity:1; }
+.nav-div { width:22px; height:1px; background:var(--rule-l); margin:3px 0; flex-shrink:0; }
+.nav-sub { width:26px; height:26px; font-size:10px; opacity:.55; }
+.nav-sub:hover, .nav-sub.on { opacity:1; color:var(--oracle); }
+
+/* Mini HUD bars in left nav */
+.nav-hud { display:flex; flex-direction:column; gap:4px; padding:6px 4px; width:100%; }
+.nhud-bar { display:flex; flex-direction:column; gap:2px; align-items:center; }
+.nhud-lbl { font-family:'Share Tech Mono',monospace; font-size:.4rem; letter-spacing:.1em; color:var(--ash); }
+.nhud-track { width:30px; height:3px; background:rgba(255,255,255,.04); border-radius:2px; overflow:hidden; }
+.nhud-fill  { height:100%; border-radius:2px; transition:width .6s ease; }
+.nf-flood  { width:var(--b-flood);  background:var(--flood-l); }
+.nf-alert  { width:var(--b-alert);  background:var(--alert); }
+.nf-oracle { width:var(--b-oracle); background:var(--oracle); }
+.nf-prog   { width:var(--b-prog);   background:var(--gold); }
+.nf-crit   { animation:pulseWarn .85s infinite; }
+
+/* ================================================================
+   MAIN CONTENT
+================================================================ */
+.main {
+  grid-column:2;
+  display:flex; flex-direction:column;
+  min-height:calc(100vh - 44px);
+  position:relative; overflow:hidden;
+}
+
+/* ── SCENE VIEWPORT ── */
+.scene-viewport {
+  position:relative; width:100%;
+  aspect-ratio:21/9; overflow:hidden;
+  background:var(--bg1); flex-shrink:0;
+}
+.scene-bg {
+  position:absolute; inset:0;
+  background-size:cover; background-position:center;
+  transition:opacity .5s ease;
+}
+.scene-bg.push { animation:scenePush .65s ease forwards; }
+.scene-grad {
+  position:absolute; inset:0;
+  background:
+    linear-gradient(to right,  rgba(5,6,10,.75) 0%, transparent 22%),
+    linear-gradient(to left,   rgba(5,6,10,.75) 0%, transparent 22%),
+    linear-gradient(to bottom, transparent 45%, rgba(5,6,10,.96) 100%);
+  pointer-events:none;
+}
+.scene-scan {
+  position:absolute; left:0; right:0; height:1px;
+  background:linear-gradient(90deg,transparent,rgba(42,255,238,.1),transparent);
+  animation:scanDown 4s linear infinite; pointer-events:none;
+}
+.scene-tag {
+  position:absolute; top:12px; left:14px;
+  font-family:'Share Tech Mono',monospace; font-size:.54rem; letter-spacing:.2em;
+  color:var(--oracle); background:rgba(5,6,10,.75); padding:3px 10px;
+  border-left:2px solid var(--oracle); text-shadow:0 0 8px rgba(42,255,238,.35);
+}
+.scene-ep-tag {
+  position:absolute; top:12px; right:14px;
+  font-family:'Share Tech Mono',monospace; font-size:.54rem; letter-spacing:.2em;
+  color:var(--ash); background:rgba(5,6,10,.75); padding:3px 10px;
+  border-right:2px solid var(--rule-l);
+}
+.scene-title-wrap {
+  position:absolute; bottom:0; left:0; right:0; padding:18px 22px 14px;
+}
+.scene-ep-label { font-family:'Share Tech Mono',monospace; font-size:.52rem; letter-spacing:.28em; color:var(--ash); margin-bottom:3px; }
+.scene-title    { font-family:'Cinzel Decorative',serif; font-size:clamp(.95rem,2.4vw,1.55rem); color:var(--gold-l); text-shadow:0 0 18px rgba(200,168,74,.28); letter-spacing:.05em; }
+
+/* ── CONTENT STRIP ── */
+.content-strip {
+  display:grid; grid-template-columns:1fr 1fr; gap:0;
+  border-top:1px solid var(--rule-l); flex:1;
+}
+.narrative-col {
+  padding:18px 22px; border-right:1px solid var(--rule);
+  background:rgba(9,12,18,.65); position:relative;
+}
+.narrative-text { font-size:.9rem; line-height:1.82; color:var(--white); font-weight:400; }
+.narrative-text p+p { margin-top:9px; }
+
+/* Oracle readout strip */
+.oracle-strip {
+  margin-top:14px; padding:9px 14px;
+  background:rgba(5,20,24,.7);
+  border:1px solid rgba(42,255,238,.1);
+  border-left:2px solid var(--oracle);
+  font-family:'Share Tech Mono',monospace;
+  font-size:.62rem; line-height:1.85; color:var(--oracle);
+  text-shadow:0 0 6px rgba(42,255,238,.25); min-height:58px;
+}
+.oracle-cursor {
+  display:inline-block; width:6px; height:11px;
+  background:var(--oracle); margin-left:2px;
+  animation:blink .75s step-end infinite; vertical-align:middle;
+}
+
+/* Choice column */
+.choices-col {
+  padding:18px 18px; display:flex; flex-direction:column; justify-content:center;
+  background:rgba(5,6,10,.45);
+}
+.choices-label { font-family:'Share Tech Mono',monospace; font-size:.52rem; letter-spacing:.28em; color:var(--ash); margin-bottom:10px; text-transform:uppercase; }
+
+/* ── CHOICE ROWS ── */
+.choice-row {
+  display:flex; align-items:stretch; gap:0;
+  margin-bottom:9px; border:1px solid var(--rule-l);
+  transition:border-color .18s; position:relative; overflow:hidden;
+}
+.choice-row::before {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(90deg,rgba(200,168,74,0),rgba(200,168,74,.06));
+  transform:translateX(-100%); transition:transform .25s ease;
+}
+.choice-row:hover { border-color:var(--gold-d); }
+.choice-row:hover::before { transform:translateX(0); }
+.choice-key {
+  width:34px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(200,168,74,.07);
+  font-family:'Cinzel Decorative',serif; font-size:.72rem; color:var(--gold);
+  border-right:1px solid var(--rule-l); transition:all .18s;
+}
+.choice-row:hover .choice-key { background:rgba(200,168,74,.16); color:var(--gold-l); }
+.choice-body { flex:1; padding:10px 13px; cursor:pointer; }
+.choice-main { font-size:.88rem; font-weight:600; color:var(--white); letter-spacing:.02em; transition:color .18s; }
+.choice-row:hover .choice-main { color:var(--gold-l); }
+.choice-fx   { font-family:'Share Tech Mono',monospace; font-size:.52rem; color:var(--ash); letter-spacing:.1em; margin-top:2px; }
+.choice-dir  { width:30px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:.75rem; color:var(--ash); border-left:1px solid var(--rule); transition:color .18s; }
+.choice-row:hover .choice-dir { color:var(--gold); }
+
+/* ── SWAMP WARD LOCATION MINI-MAP ── */
+.location-map {
+  margin-top:12px; padding:10px 12px;
+  background:rgba(10,20,8,.7);
+  border:1px solid rgba(106,170,58,.15);
+  border-left:2px solid var(--swamp-l);
+}
+.location-map-title {
+  font-family:'Share Tech Mono',monospace;
+  font-size:.52rem; letter-spacing:.2em; color:var(--swamp-l);
+  margin-bottom:8px; text-transform:uppercase;
+}
+.location-nodes {
+  display:flex; flex-wrap:wrap; gap:5px;
+}
+.loc-node {
+  padding:3px 8px;
+  border:1px solid var(--rule-l);
+  font-family:'Share Tech Mono',monospace;
+  font-size:.5rem; letter-spacing:.1em; color:var(--ash);
+  cursor:pointer; transition:all .15s;
+  white-space:nowrap;
+}
+.loc-node.active { border-color:var(--swamp-l); color:var(--swamp-b); background:rgba(106,170,58,.1); }
+.loc-node:hover:not(.active) { border-color:var(--ash); color:var(--text); }
+.loc-node.restricted { border-color:rgba(255,34,68,.25); color:rgba(255,34,68,.6); }
+.loc-node.restricted.active { border-color:var(--red); color:var(--red); background:rgba(255,34,68,.08); }
+
+/* ================================================================
+   IFRAME PANELS — slide in from left or right
+================================================================ */
+.panel {
+  position:fixed; top:44px;
+  width:40vw; height:calc(100vh - 44px);
+  background:rgba(5,6,10,.97);
+  border:1px solid var(--rule-l); z-index:500;
+  display:flex; flex-direction:column;
+  transition:transform .38s cubic-bezier(.22,.8,.36,1);
+  pointer-events:none;
+}
+.panel.left  { left:54px;  transform:translateX(-100%); }
+.panel.right { right:54px; transform:translateX(100%); }
+.panel.open  { transform:translateX(0); pointer-events:all; }
+
+.panel-bar {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 13px; height:36px;
+  border-bottom:1px solid var(--rule-l);
+  background:rgba(9,12,18,.95); flex-shrink:0;
+}
+.panel-title { font-family:'Share Tech Mono',monospace; font-size:.55rem; letter-spacing:.2em; color:var(--ash-l); }
+.panel-close {
+  width:26px; height:26px; display:flex; align-items:center; justify-content:center;
+  cursor:pointer; color:var(--ash); font-size:.8rem;
+  border:1px solid var(--rule); border-radius:2px;
+  background:none; transition:all .14s;
+}
+.panel-close:hover { color:var(--gold-l); border-color:var(--gold-d); }
+.panel-body { flex:1; overflow-y:auto; padding:14px 14px; display:flex; flex-direction:column; gap:12px; }
+
+/* ── ORACLE INTEL PANEL ── */
+.oracle-full { display:flex; flex-direction:column; gap:12px; }
+.oracle-hdr  { display:flex; align-items:center; gap:10px; padding-bottom:10px; border-bottom:1px solid rgba(42,255,238,.12); }
+.oracle-glyph { width:34px; height:34px; border:1px solid var(--oracle); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.95rem; color:var(--oracle); text-shadow:0 0 10px var(--oracle); flex-shrink:0; }
+.oracle-name  { font-family:'Cinzel Decorative',serif; font-size:.78rem; color:var(--oracle); text-shadow:0 0 8px rgba(42,255,238,.3); }
+.oracle-sub   { font-family:'Share Tech Mono',monospace; font-size:.5rem; letter-spacing:.14em; color:var(--ash); margin-top:2px; }
+.oracle-readout-full { font-family:'Share Tech Mono',monospace; font-size:.64rem; line-height:1.9; color:var(--oracle); text-shadow:0 0 5px rgba(42,255,238,.22); }
+
+/* State cells grid */
+.state-grid { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
+.state-cell { padding:8px 10px; background:rgba(42,255,238,.03); border:1px solid rgba(42,255,238,.08); }
+.sc-label { font-family:'Share Tech Mono',monospace; font-size:.48rem; letter-spacing:.18em; color:var(--ash); text-transform:uppercase; }
+.sc-val   { font-family:'Cinzel Decorative',serif; font-size:1.25rem; margin-top:2px; }
+.sc-bar   { height:3px; background:rgba(255,255,255,.04); border-radius:2px; overflow:hidden; margin-top:4px; }
+.sc-fill  { height:100%; border-radius:2px; transition:width .5s ease; width:var(--w,0%); }
+
+/* Astronomical Society block */
+.astro-block {
+  padding:10px 12px;
+  background:rgba(200,168,74,.04);
+  border:1px solid rgba(200,168,74,.1);
+  border-left:2px solid var(--gold-d);
+}
+.astro-block-title { font-family:'Share Tech Mono',monospace; font-size:.52rem; letter-spacing:.2em; color:var(--gold-d); margin-bottom:8px; }
+.astro-row { display:flex; justify-content:space-between; align-items:center; padding:4px 0; border-bottom:1px solid rgba(200,168,74,.06); }
+.astro-row:last-child { border-bottom:none; }
+.astro-key { font-family:'Share Tech Mono',monospace; font-size:.52rem; color:var(--ash); }
+.astro-val { font-family:'Rajdhani',sans-serif; font-size:.75rem; font-weight:600; color:var(--ash-l); }
+.astro-val.highlight { color:var(--gold-l); }
+
+/* ── COVEN PANEL ── */
+.coven-list { display:flex; flex-direction:column; gap:6px; }
+.coven-row  { display:flex; align-items:center; gap:9px; padding:6px 8px; border:1px solid var(--rule); background:rgba(9,12,18,.5); }
+.coven-thumb { width:32px; height:32px; border-radius:50%; background-size:cover; background-position:center top; border:1px solid var(--rule-l); flex-shrink:0; display:flex; align-items:center; justify-content:center; background-color:var(--bg2); font-size:.85rem; }
+.coven-info { flex:1; min-width:0; }
+.coven-name { font-family:'Rajdhani',sans-serif; font-size:.76rem; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.coven-role { font-family:'Share Tech Mono',monospace; font-size:.5rem; color:var(--ash); }
+.coven-hp   { font-family:'Share Tech Mono',monospace; font-size:.58rem; flex-shrink:0; }
+
+/* ── CARD CAROUSEL ── */
+.card-carousel { display:flex; flex-direction:column; gap:9px; }
+.carousel-lbl { font-family:'Share Tech Mono',monospace; font-size:.52rem; letter-spacing:.2em; color:var(--ash); border-bottom:1px solid var(--rule); padding-bottom:7px; }
+.card-grid { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
+.card-tile {
+  aspect-ratio:3/4; background:var(--bg2); border:1px solid var(--rule-l);
+  position:relative; overflow:hidden; cursor:pointer; transition:all .2s;
+}
+.card-tile:hover { border-color:var(--gold-d); transform:translateY(-3px); }
+.card-tile.active { border-color:var(--gold); }
+.card-tile.locked { opacity:.35; cursor:not-allowed; }
+.card-tile-bg { position:absolute; inset:0; background-size:cover; background-position:center top; opacity:.72; transition:opacity .28s; }
+.card-tile:hover .card-tile-bg { opacity:.9; }
+.card-tile-grad { position:absolute; inset:0; background:linear-gradient(to bottom,transparent 35%,rgba(5,6,10,.96) 100%); }
+.card-tile-info { position:absolute; bottom:0; left:0; right:0; padding:7px 9px; }
+.card-tile-name { font-family:'Rajdhani',sans-serif; font-size:.68rem; font-weight:700; color:var(--white); text-transform:uppercase; letter-spacing:.05em; position:relative; z-index:1; }
+.card-tile-stat { font-family:'Share Tech Mono',monospace; font-size:.5rem; color:var(--teal); margin-top:1px; position:relative; z-index:1; }
+.card-lock-icon { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:1.3rem; opacity:.4; }
+
+/* ── FACTION / LORE PANEL ── */
+.faction-block { display:flex; flex-direction:column; gap:10px; }
+.faction-header { font-family:'Cinzel Decorative',serif; font-size:.85rem; color:var(--gold-l); border-bottom:1px solid var(--rule-l); padding-bottom:8px; }
+.faction-entry { padding:8px 10px; border:1px solid var(--rule); background:rgba(9,12,18,.5); }
+.faction-name  { font-family:'Rajdhani',sans-serif; font-size:.82rem; font-weight:700; color:var(--rift-l); margin-bottom:3px; }
+.faction-desc  { font-family:'Share Tech Mono',monospace; font-size:.58rem; line-height:1.75; color:var(--ash-l); }
+
+/* ── SWAMP WARD CODEX PANEL ── */
+.swamp-codex { display:flex; flex-direction:column; gap:10px; }
+.swamp-loc { padding:9px 11px; border:1px solid var(--rule); background:rgba(10,20,8,.5); border-left:2px solid var(--swamp-l); }
+.swamp-loc.restricted { border-left-color:var(--red); }
+.swamp-loc-name { font-family:'Rajdhani',sans-serif; font-size:.78rem; font-weight:700; color:var(--swamp-b); margin-bottom:3px; }
+.swamp-loc.restricted .swamp-loc-name { color:var(--red); }
+.swamp-loc-desc { font-family:'Share Tech Mono',monospace; font-size:.56rem; line-height:1.7; color:var(--ash-l); }
+.swamp-loc-tag  { font-family:'Share Tech Mono',monospace; font-size:.48rem; letter-spacing:.15em; color:var(--swamp); margin-top:4px; }
+.swamp-loc.restricted .swamp-loc-tag { color:rgba(255,34,68,.5); }
+
+/* ── MTD CAROUSEL ── */
+.mtd-grid { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
+.mtd-tile { aspect-ratio:2/3; background:var(--bg2); border:1px solid var(--rule-l); position:relative; overflow:hidden; cursor:pointer; transition:border-color .2s; }
+.mtd-tile:hover { border-color:var(--gold-d); }
+.mtd-tile-bg    { position:absolute; inset:0; background-size:cover; background-position:center top; }
+.mtd-tile-grad  { position:absolute; inset:0; background:linear-gradient(to bottom,transparent 45%,rgba(5,6,10,.96) 100%); }
+.mtd-tile-info  { position:absolute; bottom:0; left:0; right:0; padding:6px 8px; }
+.mtd-tile-name  { font-family:'Rajdhani',sans-serif; font-size:.64rem; font-weight:700; color:var(--white); text-transform:uppercase; }
+.mtd-tile-stat  { font-family:'Share Tech Mono',monospace; font-size:.48rem; color:var(--teal); margin-top:1px; }
+
+/* ================================================================
+   BOTTOM STRIPS
+================================================================ */
+.roadmap-strip {
+  border-top:1px solid var(--rule); padding:10px 22px;
+  display:flex; flex-wrap:wrap; gap:7px;
+  background:rgba(5,6,10,.85);
+}
+.roadmap-chip { display:flex; align-items:center; gap:5px; padding:4px 9px; border:1px solid var(--rule); background:rgba(9,12,18,.5); }
+.rmap-ph { font-family:'Share Tech Mono',monospace; font-size:.54rem; color:var(--gold-d); }
+.rmap-nm { font-family:'Rajdhani',sans-serif; font-size:.74rem; font-weight:600; color:var(--ash-l); }
+
+/* ================================================================
+   ENDING OVERLAY
+================================================================ */
+.ending-overlay {
+  display:none; position:fixed; inset:0; z-index:900;
+  background:rgba(5,6,10,.97);
+  flex-direction:column; align-items:center; justify-content:center;
+  gap:18px; text-align:center; padding:40px;
+}
+.ending-overlay.active { display:flex; animation:fadeUp .8s ease; }
+.ending-bg { position:absolute; inset:0; background-size:cover; background-position:center; opacity:.05; }
+.ending-title { font-family:'Cinzel Decorative',serif; font-size:clamp(1.2rem,3vw,2rem); color:var(--gold-l); text-shadow:0 0 28px rgba(200,168,74,.35); position:relative; z-index:1; }
+.ending-desc  { max-width:540px; font-size:.92rem; line-height:1.78; color:var(--ash-l); position:relative; z-index:1; }
+.ending-ep2-hook { font-family:'Share Tech Mono',monospace; font-size:.62rem; letter-spacing:.15em; color:var(--swamp-b); margin-top:8px; position:relative; z-index:1; padding:8px 16px; border:1px solid rgba(106,170,58,.3); }
+.restart-btn  { padding:10px 34px; background:transparent; border:1px solid var(--gold); color:var(--gold-l); font-family:'Rajdhani',sans-serif; font-size:.92rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; cursor:pointer; transition:all .2s; position:relative; z-index:1; }
+.restart-btn:hover { background:rgba(200,168,74,.1); }
+
+/* ================================================================
+   UTILITY — pipeline helpers
+================================================================ */
+.hidden { display: none; }
+.ending-bg-alchemy {
+  background-image:
+    url('../html_embeds/cb-prop-alchemy-board-3.jpg'),
+    url('../html_embeds/alchemy-board-artefact-3.jpg');
+}
+
+/* ================================================================
+   ACCENT COLORS — replaces all inline color=
+================================================================ */
+.accent-rift   { color:#bb88ff; }
+.accent-flood  { color:var(--flood-l); }
+.accent-teal   { color:var(--teal); }
+.accent-alert  { color:var(--alert-l); }
+.accent-oracle { color:var(--oracle); }
+.accent-gold   { color:var(--gold-l); }
+.accent-swamp  { color:var(--swamp-b); }
+.accent-forge  { color:var(--forge-l); }
+.accent-red    { color:var(--red); }
+
+/* ================================================================
+   KEYFRAMES
+================================================================ */
+@keyframes introOut  { to { opacity:0; pointer-events:none; } }
+@keyframes fadeUp    { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:none; } }
+@keyframes loadBar   { to { width:100%; } }
+@keyframes pulse     { 0%,100%{opacity:1;}50%{opacity:.3;} }
+@keyframes blink     { 0%,100%{opacity:1;}50%{opacity:0;} }
+@keyframes pulseWarn { 0%,100%{opacity:1;}50%{opacity:.35;} }
+@keyframes scanDown  { from{transform:translateY(-100%);}to{transform:translateY(3000%);} }
+@keyframes scenePush { from{opacity:0;transform:translateX(40px);}to{opacity:1;transform:none;} }
+
+/* ================================================================
+   RESPONSIVE
+================================================================ */
+@media(max-width:820px) {
+  .content-strip { grid-template-columns:1fr; }
+  .narrative-col { border-right:none; border-bottom:1px solid var(--rule); }
+  .panel { width:78vw; }
+  .scene-viewport { aspect-ratio:16/9; }
+}
+@media(max-width:540px) {
+  .shell { grid-template-columns:42px 1fr 42px; }
+  .panel { width:calc(100vw - 84px); }
+}
+</style>
+</head>
+<body>
+
+<!-- INTRO ═══════════════════════════════════════════════════ -->
+<div class="intro-screen" id="introScreen">
+  <div class="intro-ep">◈ CST-ERT DEPARTMENT — ASTRONOMICAL SOCIETY ◈</div>
+  <div class="intro-dept">DIVISION: SOUL WITCH ASTRO TEAM &nbsp;|&nbsp; CODENAME: COLD BREW &nbsp;|&nbsp; OMEGA CLEARANCE</div>
+  <div class="intro-main">Cold Brew<br>Mystics of Mayhem</div>
+  <div class="intro-sub">Tactical Narrative Engine — Episode Select</div>
+  <div class="intro-bar-w"><div class="intro-bar"></div></div>
+  <div class="intro-cmd">Commander Antonio — Field Operations Online</div>
+</div>
+
+<!-- ENDING OVERLAY ══════════════════════════════════════════ -->
+<div class="ending-overlay" id="endingOverlay">
+  <div class="ending-bg" id="endingBg"></div>
+  <div class="ending-title" id="endingTitle"></div>
+  <div class="ending-desc"  id="endingDesc"></div>
+  <div class="ending-ep2-hook hidden" id="endingHook"></div>
+  <button class="restart-btn" onclick="restartGame()">↺  RESTART MISSION</button>
+</div>
+
+<!-- SHELL ═══════════════════════════════════════════════════ -->
+<div class="shell">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-dept">CST-ERT ◈ ASTRO SOC.</div>
+      <div class="topbar-div"></div>
+      <div class="topbar-title">Cold Brew: Mystics of Mayhem</div>
+    </div>
+    <div class="topbar-right">
+      <div class="ep-selector">
+        <button class="ep-btn active" onclick="switchEpisode(1)" id="ep1btn">EP I</button>
+        <button class="ep-btn"        onclick="switchEpisode(2)" id="ep2btn">EP II</button>
+      </div>
+      <div class="live-dot"></div>
+      <div class="live-txt" id="topStatus">LIVE</div>
+    </div>
+  </div>
+
+  <!-- LEFT NAV -->
+  <nav class="nav-left">
+    <div class="nav-hud">
+      <div class="nhud-bar"><div class="nhud-lbl">FLD</div><div class="nhud-track"><div class="nhud-fill nf-flood" id="nb-flood"></div></div></div>
+      <div class="nhud-bar"><div class="nhud-lbl">ALT</div><div class="nhud-track"><div class="nhud-fill nf-alert" id="nb-alert"></div></div></div>
+      <div class="nhud-bar"><div class="nhud-lbl">ORC</div><div class="nhud-track"><div class="nhud-fill nf-oracle" id="nb-oracle"></div></div></div>
+      <div class="nhud-bar"><div class="nhud-lbl">PRG</div><div class="nhud-track"><div class="nhud-fill nf-prog" id="nb-prog"></div></div></div>
+    </div>
+    <div class="nav-div"></div>
+    <div class="nav-icon on"  data-tip="ORACLE INTEL"   onclick="openPanel('left','oracle')">⬡</div>
+    <div class="nav-icon"     data-tip="COVEN ROSTER"   onclick="openPanel('left','coven')">◈</div>
+    <div class="nav-icon"     data-tip="MISSION LOG"    onclick="openPanel('left','log')">▤</div>
+    <div class="nav-div"></div>
+    <div class="nav-icon nav-sub" data-tip="FACTION DATA"   onclick="openPanel('left','factions')">⬢</div>
+    <div class="nav-icon nav-sub" data-tip="ASTRO SOCIETY"  onclick="openPanel('left','astro')">✦</div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main" id="mainContent">
+
+    <div class="scene-viewport">
+      <div class="scene-bg" id="sceneBg"></div>
+      <div class="scene-grad"></div>
+      <div class="scene-scan"></div>
+      <div class="scene-tag"    id="sceneTag">ORACLE AVX — BRIEFING</div>
+      <div class="scene-ep-tag" id="sceneNum">SCENE 1</div>
+      <div class="scene-title-wrap">
+        <div class="scene-ep-label" id="sceneEpLabel">◈ EPISODE I — STYX STATION INFILTRATION</div>
+        <div class="scene-title"    id="sceneTitle">Oracle AI Briefing</div>
+      </div>
+    </div>
+
+    <div class="content-strip">
+      <div class="narrative-col">
+        <div class="narrative-text" id="sceneNarrative"></div>
+        <div class="oracle-strip"   id="oracleReadout"><span class="oracle-cursor"></span></div>
+        <div id="locationMapWrap"></div>
+      </div>
+      <div class="choices-col">
+        <div class="choices-label" id="choicesLabel">▸ SELECT VECTOR</div>
+        <div id="choiceButtons"></div>
+      </div>
+    </div>
+
+    <div class="roadmap-strip" id="roadmapStrip"></div>
+  </main>
+
+  <!-- RIGHT NAV -->
+  <nav class="nav-right">
+    <div class="nav-icon on"      data-tip="OPERATIVE CARDS"  onclick="openPanel('right','cards')">⬢</div>
+    <div class="nav-icon"         data-tip="MTD CAROUSEL"     onclick="openPanel('right','mtd')">◉</div>
+    <div class="nav-icon"         data-tip="SWAMP WARD CODEX" onclick="openPanel('right','swamp')">⊞</div>
+    <div class="nav-div"></div>
+    <div class="nav-icon nav-sub" data-tip="SCENE GALLERY"    onclick="openPanel('right','gallery')">⊛</div>
+    <div class="nav-icon nav-sub" data-tip="PHASE ROADMAP"    onclick="openPanel('right','roadmap')">✦</div>
+  </nav>
+
+</div><!-- /.shell -->
+
+<!-- LEFT PANEL -->
+<div class="panel left" id="panelLeft">
+  <div class="panel-bar">
+    <span class="panel-title" id="panelLeftTitle">ORACLE INTEL</span>
+    <button class="panel-close" onclick="closePanel('left')">✕</button>
+  </div>
+  <div class="panel-body" id="panelLeftBody"></div>
+</div>
+
+<!-- RIGHT PANEL -->
+<div class="panel right" id="panelRight">
+  <div class="panel-bar">
+    <span class="panel-title" id="panelRightTitle">OPERATIVE CARDS</span>
+    <button class="panel-close" onclick="closePanel('right')">✕</button>
+  </div>
+  <div class="panel-body" id="panelRightBody"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     COLD BREW TACTICAL NARRATIVE ENGINE v2.1
+     Public Codename: Cold Brew
+     Division: CST-ERT — Astronomical Society
+     Classification: OMEGA (S.W.A.T. stays internal)
+     Commander Antonio
+═══════════════════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+/* ── ASSET BASE PATH ──────────────────────────────────────── */
+const B = '../html_embeds/';
+// cb-* slugs (post-rename). Fallback to old name as second url() value.
+const img = (cb, fb) => `url('${B}${cb}'), url('${B}${fb}')`;
+
+/* ── MISSION STATE ────────────────────────────────────────── */
+let MS = {
+  flood:1, alert:0, oracle:70,
+  taurAware:false, engineLocked:true,
+  swampAlert:0, riftWave:1, forgeCharge:0,
+  activeCards:['oracle'], progress:0,
+  episode:1, sceneIdx:0,
+  visitedLocs: new Set()
+};
+
+/* ── ASTRONOMICAL SOCIETY STRUCTURE (internal, never displayed publicly) ── */
+const ASTRO_SOCIETY = {
+  org:       'The Astronomical Society',
+  division:  'CST-ERT Department',
+  unit:      'Soul Witch Astro Team',
+  codename:  'Cold Brew',
+  clearance: 'OMEGA',
+  director:  'Commander Antonio',
+  oracle:    'AVX Node — Abyssum Network',
+  mission:   'Infiltrate Affiliate & Drowned Stations via covert network nodes'
+};
+
+/* ── COVEN ────────────────────────────────────────────────── */
+const COVEN = [
+  {name:'Ashari Warlock',     role:'Battle Mystic',      icon:'⚡',hp:100,accent:'accent-rift',
+   bg:'cb-prop-battle-mystic-blue.jpg',   fb:'battle-mystic-blue-line.jpg'},
+  {name:'Siren Witch',        role:'Tide Caller',        icon:'🌊',hp:100,accent:'accent-flood',
+   bg:'cb-cst-siren-witch.jpg',           fb:'siren-witch.jpg'},
+  {name:'Pulse Medic',        role:'Field Support',      icon:'💊',hp:100,accent:'accent-teal',
+   bg:'cb-cst-medic.jpg',                fb:'cst-medic.jpg'},
+  {name:'Railblade Vanguard', role:'Assault Specialist', icon:'⚔️',hp:85, accent:'accent-alert',
+   bg:'cb-cst-sniper.png',               fb:'cst-sniper.jpg'},
+  {name:'Oracle Channeler',   role:'Intel & Recon',      icon:'🔮',hp:100,accent:'accent-oracle',
+   bg:'cb-prop-alchemy-boards-rare.jpg', fb:'alchemy-rare-boards.jpg'},
+  {name:'Void Sigil Caster',  role:'Rift Specialist',    icon:'✦', hp:90, accent:'accent-gold',
+   bg:'cb-prop-glitch-goblin.jpg',       fb:'ash-born-glitch-goblin.jpg'},
+];
+
+/* ── OPERATIVE CARDS ──────────────────────────────────────── */
+const CARDS = [
+  {id:'oracle',   name:'Oracle Override',   bonus:'+20 CONF',   icon:'🔮',locked:false,
+   bg:'cb-prop-alchemy-boards-rare.jpg',fb:'alchemy-rare-boards.jpg'},
+  {id:'warlock',  name:'Ashari Warlock',    bonus:'−1 ALERT',   icon:'⚡',locked:false,
+   bg:'cb-prop-battle-mystic-blue.jpg', fb:'battle-mystic-blue-line.jpg'},
+  {id:'siren',    name:'Counter-Siren',     bonus:'AWARE=OFF',  icon:'🌊',locked:true,
+   bg:'cb-prop-kraken-ship.jpg',        fb:'ash-forged-kraken-ship.jpg'},
+  {id:'vanguard', name:'Railblade Vanguard',bonus:'+ASSAULT',   icon:'⚔️',locked:true,
+   bg:'cb-cst-sniper.png',             fb:'2-sniper.png'},
+  {id:'swamp',    name:'Swamp Rail Witch',  bonus:'RIFT −1',    icon:'🌿',locked:true,
+   bg:'cb-cst-patrol-swamp-rail.jpg',  fb:'cst-patrol-swamp-rail.jpg'},
+  {id:'forge',    name:'Forge Station Key', bonus:'MTD UNLOCK', icon:'🔥',locked:true,
+   bg:'cb-cst-train-engineer.jpg',     fb:'cst-train-engineer.jpg'},
+];
+
+/* ── FACTION DATA ─────────────────────────────────────────── */
+const FACTIONS = [
+  {name:'Taur-Nefarian',   color:'accent-rift',  desc:'Void-sigil faction led by Taur-Nuphari. Abyssal lineage, rift channeling, anti-Forge philosophy. Primary antagonists in Episode I.'},
+  {name:'Negu Children',   color:'accent-alert', desc:'Patrol units operating inside Styx Station and the Swamp Wards. Loyal to whoever controls the local rift energy supply.'},
+  {name:'Rift Rats',       color:'accent-swamp', desc:'Bipedal scavenger mutants — 23+ variants documented. Home territory: the Swamp Ward train ghost yard. Not always hostile but always territorial.'},
+  {name:'Croc-Men Drongos',color:'accent-swamp', desc:'Swamp Ward apex predators. Operate near deep water and old cargo storage. Do not engage without Swamp Rail Witch card active.'},
+  {name:'Golem Network',   color:'accent-gold',  desc:'Salvage golems and forge engines partially overgrown in the train depot. Some still functional. Can be reprogrammed with Oracle Override.'},
+  {name:'CST-ERT Div.',    color:'accent-oracle', desc:'Soul Witch Astro Team — covert operatives of the Astronomical Society. Use civilian network nodes as deep cover infrastructure.'},
+];
+
+/* ── SWAMP WARD LOCATIONS ─────────────────────────────────── */
+const SWAMP_LOCS = [
+  {id:'fuel',       name:'Formula Fuel Station',        restricted:false,
+   tag:'CIVILIAN COVER — CST NETWORK NODE',
+   desc:'Lone attendant post on the Swamp Ward perimeter. Formula Fuel trucks and passing vehicles are cover. Golem fuel pumps serve as data relay terminals for CST-ERT operatives.'},
+  {id:'burger',     name:'Kaiju Burger & Astro Shakes', restricted:false,
+   tag:'COVER ESTABLISHMENT — SIGNAL INTERCEPT',
+   desc:'Big Bluff Kaiju Burger sits on the lot to the right of the fuel station. Frequented by Rift Rat scavengers and local Drongos. CST uses it to monitor comms traffic without exposure.'},
+  {id:'golem',      name:'Golem Salvage Yard & Repair Bay',restricted:false,
+   tag:'OPERATIONAL — FREIGHT CAR WORKSHOP',
+   desc:'Small golem salvage operation and repair bay. Freight car makes up the back wall. Partially functional golems can be reprogrammed here. Mint-to-Deploy Forge Stations adjacent.'},
+  {id:'mtd',        name:'MTD Forge Stations & Capsules', restricted:false,
+   tag:'CST-ERT — MINT-TO-DEPLOY INFRASTRUCTURE',
+   desc:'Off to the side of the fuel station. Forge Stations and Deploy Capsules are the operational heart of the CST network node. Used to deploy assets directly from the Astronomical Society.'},
+  {id:'depot',      name:'Train Depot Ghost Yard',        restricted:false,
+   tag:'RIFT WAVE ZONE — HEAVY INTERFERENCE',
+   desc:'Graveyard of mystic forge engines and locomotives. Partially overgrown. Deep water puddles and small ponds hide the ground. Rift waves are heavy here. Rift Rats and Croc-Men Drongos scavenge freely.'},
+  {id:'cargo',      name:'Cargo Storage Facility',        restricted:true,
+   tag:'⚠ RESTRICTED — UNKNOWN ENTITY DETECTED',
+   desc:'Something moves in the shadows near the old Cargo Storage Facility. Area is restricted. Multiple Rift wave spikes recorded in the last 6 minutes. Identity of entity: UNKNOWN. Do not approach alone.'},
+];
+
+/* ── ROADMAP ──────────────────────────────────────────────── */
+const ROADMAP = [
+  {ph:'8.1',nm:'Deck Builder',    s:'✅'},
+  {ph:'8.2',nm:'Tournaments',     s:'✅'},
+  {ph:'8.3',nm:'Polly Ann Arc 2', s:'✅'},
+  {ph:'8.4',nm:'UE5 Parkour Pak', s:'⏳'},
+  {ph:'8.5',nm:'Theatre E',       s:'⏳'},
+  {ph:'9.0',nm:'Mobile Port',     s:'⏳'},
+];
+
+/* ── EPISODE 1 SCENES ─────────────────────────────────────── */
+const EP1 = [
+  {
+    num:'SCENE 1 / 5', title:'Oracle AI Briefing',
+    epLabel:'◈ EPISODE I — STYX STATION INFILTRATION',
+    bg:img('cb-prop-alchemy-boards-rare.jpg','alchemy-rare-boards.jpg'),
+    tag:'ORACLE AVX — BRIEFING', showMap:false,
+    narrative:`<p>The Oracle AVX terminal hums to life, bioluminescent circuitry casting teal light across the briefing chamber. You are <strong>Commander Antonio</strong> — field director of the Cold Brew coven, CST-ERT Department, Astronomical Society.</p>
+<p>The intel is grim: <strong>Taur-Nuphari</strong>, High Warlock of the Taur-Nefarian faction, has seized Styx Station's Engine Hall. The Forge Nuclear Option is primed. You have one window of opportunity.</p>
+<p><em>"Confidence at 70%. Six operatives ready. Station flooding has begun. Choose your infiltration vector, Commander."</em></p>`,
+    oracle:'> ORACLE AVX: ONLINE\n> CST-ERT DEPT: ACTIVE\n> TARGET: STYX STATION\n> TAUR-NUPHARI: ENGINE HALL\n> FORGE NUCLEAR: PRIMED\n> SELECT INFILTRATION VECTOR_',
+    choicesLabel:'▸ SELECT INFILTRATION VECTOR',
+    choices:[
+      {key:'A',icon:'💧',text:'Deploy through the flooded tunnels',   fx:'FLOOD +2 / ALERT +1',      fn:'e1cTunnel', dir:'←'},
+      {key:'B',icon:'🤖',text:'Send automaton scouts — full recon',   fx:'ORACLE +10 / ALERT +2',    fn:'e1cRecon',  dir:'→'},
+      {key:'C',icon:'🌑',text:'Shadow sigils — stealth approach',     fx:'ALERT −2 / PROGRESS +15',  fn:'e1cShadow', dir:'←'},
+    ]
+  },
+  {
+    num:'SCENE 2 / 5', title:'Approach to Styx Station',
+    epLabel:'◈ EPISODE I — STYX STATION INFILTRATION',
+    bg:img('cb-env-engine-hall.jpg','ancinet-engine-hall.jpg'),
+    tag:'STYX STATION — EXTERIOR', showMap:false,
+    narrative:`<p>Styx Station materializes from the fog — a decaying industrial fortress above flooding Abyssum waterways. Bioluminescent rift energy bleeds from the cracked hull.</p>
+<p><strong>Negu Children</strong> and <strong>Rift Rats</strong> patrol the lower decks. Oracle confidence is climbing. The water is rising fast.</p>
+<p><em>The Ashari Warlock raises a fist — the squad freezes. Something large stirs inside the Engine Hall.</em></p>`,
+    oracle:'> APPROACH: CONFIRMED\n> NEGU CHILDREN: ACTIVE PATROL\n> RIFT RATS: LOWER DECKS\n> ENGINE HALL: LOCKED\n> TAUR-NUPHARI: UNKNOWN POSITION_',
+    choicesLabel:'▸ BREACH VECTOR',
+    choices:[
+      {key:'A',icon:'⚔️',text:'Engage Negu patrol — clear by force',  fx:'ALERT +3 / PROGRESS +20', fn:'e1cEngage', dir:'←'},
+      {key:'B',icon:'✦', text:'Bypass via void sigil warding',        fx:'ALERT −1 / ORACLE +5',    fn:'e1cBypass', dir:'→'},
+      {key:'C',icon:'🌊',text:'Siren Witch — sonic distraction',       fx:'ALERT +1 / PROGRESS +15', fn:'e1cSiren',  dir:'←'},
+    ]
+  },
+  {
+    num:'SCENE 3 / 5', title:'Engine Hall Breach',
+    epLabel:'◈ EPISODE I — STYX STATION INFILTRATION',
+    bg:img('cb-env-engine-hall.jpg','ancinet-engine-hall.jpg'),
+    tag:'ENGINE HALL — BREACH POINT', showMap:false,
+    narrative:`<p>The Engine Hall doors are sealed with Taur-Nefarian void locks. The Oracle Channeler works the interface, tracing patterns older than the station itself.</p>
+<p>Floodwater laps at your boots. Through the viewport, the Forge pulses with nuclear light. The air burns with rift energy.</p>
+<p><em>"She knows we're here, Commander. Taur-Nuphari is waiting on the other side of those doors."</em></p>`,
+    oracle:'> ENGINE HALL: BREACH IMMINENT\n> FORGE NUCLEAR: ACTIVE\n> FLOODING: CRITICAL\n> TAUR-NUPHARI: WAITING\n> WINDOW: 90 SECONDS_',
+    choicesLabel:'▸ BREACH METHOD',
+    choices:[
+      {key:'A',icon:'💥',text:'Railblade forces entry — direct assault',  fx:'ALERT +4 / PROGRESS +25',   fn:'e1cAssault',    dir:'←'},
+      {key:'B',icon:'🔮',text:'Oracle Override — remote bypass',          fx:'ORACLE +20 / PROGRESS +30', fn:'e1cOracleCard', dir:'→'},
+      {key:'C',icon:'✦', text:'Void Sigil Caster — unravel lock runes',  fx:'ALERT −2 / PROGRESS +20',   fn:'e1cUnravel',    dir:'←'},
+    ]
+  },
+  {
+    num:'SCENE 4 / 5', title:'Taur-Nuphari Confrontation',
+    epLabel:'◈ EPISODE I — STYX STATION INFILTRATION',
+    bg:img('cb-prop-glitch-goblin.jpg','ash-born-glitch-goblin.jpg'),
+    tag:'ENGINE HALL — CONFRONTATION', showMap:false,
+    narrative:`<p><strong>Taur-Nuphari</strong> stands at the Forge array, her form wreathed in abyssal fire. Her eyes — twin voids of compressed rift energy — turn toward you without surprise.</p>
+<p><em>"Commander. I have been watching the Oracle's confidence readings for three days. You are exactly where I expected."</em></p>
+<p>The Forge pulses. Flooding is critical. The coven holds its breath.</p>`,
+    oracle:'> TAUR-NUPHARI: ENGAGED\n> RIFT ENERGY: MAXIMUM\n> FORGE COUNTDOWN: 60s\n> COVEN: READY\n> MAKE THE CALL_',
+    choicesLabel:'▸ FINAL APPROACH',
+    choices:[
+      {key:'A',icon:'🗣️',text:'Negotiate — offer Oracle data cache',     fx:'ALERT −3 / PROGRESS +20',  fn:'e1cNegotiate', dir:'←'},
+      {key:'B',icon:'⚡', text:'Full coven assault',                     fx:'ALERT +5 / PROGRESS +35',  fn:'e1cFull',      dir:'→'},
+      {key:'C',icon:'🌊',text:'Counter-Siren — neutralize awareness',    fx:'AWARE=OFF / PROG +25',      fn:'e1cCounter',   dir:'←'},
+    ]
+  },
+  {
+    num:'SCENE 5 / 5', title:'The Final Directive',
+    epLabel:'◈ EPISODE I — STYX STATION INFILTRATION',
+    bg:img('cb-prop-alchemy-board-3.jpg','alchemy-board-artefact-3.jpg'),
+    tag:'FORGE COUNTDOWN — T-MINUS 10', showMap:false,
+    narrative:`<p>The Forge countdown pulses its final sequence. The Engine Hall is half-submerged. Taur-Nuphari is cornered — or victorious — depending on the path you chose.</p>
+<p>Every decision, every card played, every route taken converges here. The Cold Brew coven stands at the precipice of history.</p>
+<p><em>Issue the final directive, Commander.</em></p>`,
+    oracle:'> FORGE: T-MINUS 10s\n> ENGINE HALL: FLOODING\n> TAUR-NUPHARI: CORNERED\n> COVEN: STANDING BY\n> FINAL DIRECTIVE REQUIRED_',
+    choicesLabel:'▸ FINAL DIRECTIVE',
+    choices:[
+      {key:'A',icon:'✅',text:'Disable the Forge — mission success',     fx:'MISSION COMPLETE',        fn:'e1EndDisable', dir:'←'},
+      {key:'B',icon:'☢️',text:'Trigger nuclear purge — scorched earth',  fx:'FORGE NUCLEAR OPTION',    fn:'e1EndNuclear', dir:'→'},
+      {key:'C',icon:'🚁',text:'Extract coven — tactical withdrawal',     fx:'PARTIAL VICTORY',         fn:'e1EndExtract', dir:'←'},
+    ]
+  }
+];
+
+/* ── EPISODE 2 SCENES ─────────────────────────────────────── */
+const EP2 = [
+  {
+    num:'SCENE 1 / 6', title:'Arrival — Swamp Ward Station',
+    epLabel:'◈ EPISODE II — SWAMP WARD STATION',
+    bg:img('cb-cst-patrol-swamp-rail.jpg','cst-patrol-swamp-rail.jpg'),
+    tag:'SWAMP WARD — EXTERIOR APPROACH', showMap:true, activeLoc:'fuel',
+    narrative:`<p>The Swamp Ward materializes through the fog — a grid of low industrial structures half-swallowed by the wetlands. You are the lone CST-ERT operative on this assignment. Your cover: fuel station attendant.</p>
+<p>The <strong>Formula Fuel Station</strong> sits at the node intersection. Golem fuel pumps hum. A Formula Fuel truck idles at pump three. To the right, the neon glow of <strong>Big Bluff Kaiju Burger</strong> cuts through the mist.</p>
+<p><em>Rift wave reading: elevated. Something in the train yard is active. The Oracle is picking up movement signatures near the restricted Cargo Storage Facility.</em></p>`,
+    oracle:'> EP II: SWAMP WARD STATION\n> CST NETWORK NODE: ACTIVE\n> COVER: FUEL ATTENDANT\n> RIFT WAVE LEVEL: ELEVATED\n> CARGO FACILITY: MOVEMENT DETECTED_',
+    choicesLabel:'▸ FIRST MOVE',
+    choices:[
+      {key:'A',icon:'🏪',text:'Enter Kaiju Burger — monitor comms',      fx:'INTEL +1 / SWAMP ALERT +0', fn:'e2cBurger',  dir:'←'},
+      {key:'B',icon:'🔧',text:'Check the Golem salvage yard',            fx:'FORGE CHARGE +1 / RIFT −1', fn:'e2cGolem',   dir:'→'},
+      {key:'C',icon:'🚂',text:'Approach the train depot — investigate',  fx:'SWAMP ALERT +2 / PROG +15', fn:'e2cDepot',   dir:'←'},
+    ]
+  },
+  {
+    num:'SCENE 2 / 6', title:'Network Node Check',
+    epLabel:'◈ EPISODE II — SWAMP WARD STATION',
+    bg:img('cb-cst-cargo-yards.jpg','cst-cargo-yards.jpg'),
+    tag:'MTD FORGE STATIONS — ACTIVE', showMap:true, activeLoc:'mtd',
+    narrative:`<p>The <strong>Mint-to-Deploy Forge Stations</strong> sit off to the side of the fuel station, partially obscured by overgrown rift grass. Three capsule bays are primed. The Golem repair bay freight car looms behind them.</p>
+<p>A small salvage golem trundles past — it registers your CST ident and continues without raising alert. The forge charge is building. Good.</p>
+<p><em>Oracle reports: two Rift Rats have taken a position on the roof of the freight car. They haven't seen you yet. The train depot is 200 meters east.</em></p>`,
+    oracle:'> MTD FORGE: ONLINE\n> CAPSULE BAYS: 3 PRIMED\n> GOLEM IDENT: CST-ERT CONFIRMED\n> RIFT RATS: ROOF POSITION\n> TRAIN DEPOT: 200M EAST_',
+    choicesLabel:'▸ NODE ACTION',
+    choices:[
+      {key:'A',icon:'🔥',text:'Charge the Forge — prime deploy capsule',  fx:'FORGE +2 / PROG +20',       fn:'e2cForge',    dir:'←'},
+      {key:'B',icon:'🤖',text:'Reprogram a salvage golem — scout asset', fx:'ORACLE +10 / RIFT −1',      fn:'e2cReprogram',dir:'→'},
+      {key:'C',icon:'🌿',text:'Stay hidden — observe Rift Rats',         fx:'SWAMP ALERT −1 / PROG +10', fn:'e2cObserve',  dir:'←'},
+    ]
+  },
+  {
+    num:'SCENE 3 / 6', title:'The Ghost Yard',
+    epLabel:'◈ EPISODE II — SWAMP WARD STATION',
+    bg:img('cb-cst-train-rail-heavy.jpg','cst-train-and-rail-heavy-armor.jpg'),
+    tag:'TRAIN DEPOT — GHOST YARD', showMap:true, activeLoc:'depot',
+    narrative:`<p>The train depot is a graveyard. Mystic forge engines and locomotives sit partially overgrown, their rift cores long dormant — or so it seemed. Deep water puddles hide the ground between the rails.</p>
+<p><strong>Rift Rats</strong> pick through the wreckage on the left flank. A <strong>Croc-Man Drongo</strong> wades through the water between two rusted freight cars ahead. The rift wave interference is heavy here — Oracle confidence is dropping.</p>
+<p><em>Movement near the Cargo Storage Facility — confirmed. Something large. Something that knows you're approaching.</em></p>`,
+    oracle:'> GHOST YARD: ENTERED\n> RIFT WAVE: HEAVY\n> CROC-MAN DRONGO: DETECTED\n> RIFT RATS: LEFT FLANK\n> CARGO FACILITY: ENTITY ACTIVE_',
+    choicesLabel:'▸ GHOST YARD APPROACH',
+    choices:[
+      {key:'A',icon:'🐊',text:'Neutralize the Croc-Man — clear path',    fx:'SWAMP ALERT +3 / PROG +20', fn:'e2cCroc',     dir:'←'},
+      {key:'B',icon:'🌑',text:'Void sigil warding — pass unseen',        fx:'SWAMP ALERT −1 / PROG +15', fn:'e2cVoidPass', dir:'→'},
+      {key:'C',icon:'🔮',text:'Oracle scan — identify the entity',       fx:'ORACLE +15 / PROG +10',     fn:'e2cScan',     dir:'←'},
+    ]
+  },
+  {
+    num:'SCENE 4 / 6', title:'Kaiju Burger Intel Drop',
+    epLabel:'◈ EPISODE II — SWAMP WARD STATION',
+    bg:img('cb-cst-station-manager.jpg','cst-station-manager.jpg'),
+    tag:'KAIJU BURGER — SIGNAL INTERCEPT', showMap:true, activeLoc:'burger',
+    narrative:`<p><strong>Big Bluff Kaiju Burger & Astro Shakes</strong> — the smell of rift-smoked meat and synthetic sweetener. Three Rift Rats occupy the corner booth. A Negu Children patrol operative sits at the counter, off-duty, nursing a shake.</p>
+<p>The station manager — a CST-ERT sleeper agent — slides a data chip across the counter with your order. The chip contains the Cargo Facility access code.</p>
+<p><em>The off-duty Negu operative glances at you. They know your face. You have maybe forty seconds before they make a call.</em></p>`,
+    oracle:'> INTEL DROP: RECEIVED\n> CARGO ACCESS CODE: ENCRYPTED\n> NEGU OPERATIVE: RECOGNIZES YOU\n> EXTRACTION WINDOW: 40s\n> SWAMP ALERT: RISING_',
+    choicesLabel:'▸ INTEL ACTION',
+    choices:[
+      {key:'A',icon:'🏃',text:'Extract immediately — break cover',       fx:'SWAMP ALERT +4 / PROG +25', fn:'e2cBreak',    dir:'←'},
+      {key:'B',icon:'🗣️',text:'Bluff — engage the operative',           fx:'ORACLE +5 / SWAMP ALERT +1',fn:'e2cBluff',    dir:'→'},
+      {key:'C',icon:'🌊',text:'Siren Witch sonic pulse — clear the room',fx:'SWAMP ALERT +2 / PROG +20', fn:'e2cSirenPulse',dir:'←'},
+    ]
+  },
+  {
+    num:'SCENE 5 / 6', title:'Restricted Zone — Cargo Storage',
+    epLabel:'◈ EPISODE II — SWAMP WARD STATION',
+    bg:img('cb-prop-glitch-goblin.jpg','ash-born-glitch-goblin.jpg'),
+    tag:'⚠ RESTRICTED — CARGO FACILITY', showMap:true, activeLoc:'cargo',
+    narrative:`<p>The old Cargo Storage Facility stands at the far edge of the train yard, rift grass growing thick around its base. The access panel accepts the chip. The doors groan open.</p>
+<p>Inside — darkness. Then a shape. Massive. Crystalline rift energy encased in a half-functioning golem frame, draped in something that looks like a Taur-Nefarian sigil shroud. It's been here for a long time.</p>
+<p><em>The Oracle goes silent for three full seconds. Then: "Commander. That is not a golem. That is a Rift Anchor. If it activates fully — this entire ward goes dark."</em></p>`,
+    oracle:'> RESTRICTED ZONE: BREACHED\n> ENTITY IDENTIFIED: RIFT ANCHOR\n> TAUR-NEFARIAN ORIGIN: CONFIRMED\n> ACTIVATION STATUS: 60%\n> ORACLE: ADVISING IMMEDIATE ACTION_',
+    choicesLabel:'▸ RIFT ANCHOR RESPONSE',
+    choices:[
+      {key:'A',icon:'💥',text:'Destroy it — forge charge detonation',    fx:'FORGE −2 / PROG +35',       fn:'e2cDestroy',  dir:'←'},
+      {key:'B',icon:'🔮',text:'Oracle Override — reprogram the anchor',  fx:'ORACLE −20 / PROG +30',     fn:'e2cOverride', dir:'→'},
+      {key:'C',icon:'📡',text:'Signal the Astronomical Society — evac',  fx:'PROG +20 / EPISODE HOOK',   fn:'e2cSignal',   dir:'←'},
+    ]
+  },
+  {
+    num:'SCENE 6 / 6', title:'Swamp Ward — Final Call',
+    epLabel:'◈ EPISODE II — SWAMP WARD STATION',
+    bg:img('cb-cst-sewer-patrol-witch.jpg','cst-sewer-city-patrol-witch.jpg'),
+    tag:'SWAMP WARD — FINAL DIRECTIVE', showMap:true, activeLoc:'cargo',
+    narrative:`<p>The Cargo Facility pulses with Rift Anchor energy. The Swamp Ward shudders. Rift Rats scatter from the train yard. The Croc-Men Drongos go silent — a bad sign.</p>
+<p>Your coven is in position. The forge is charged. The Oracle has one final read on the situation. Whatever you choose here determines whether this CST-ERT network node stays operational — or becomes another Drowned Station.</p>
+<p><em>The Oracle speaks: "This is what we trained for, Commander. The Astronomical Society is watching. Make the call."</em></p>`,
+    oracle:'> RIFT ANCHOR: 80% ACTIVATED\n> SWAMP WARD: DESTABILIZING\n> COVEN: FULL DEPLOYMENT READY\n> ASTRO SOC: MONITORING\n> FINAL CALL REQUIRED_',
+    choicesLabel:'▸ FINAL DIRECTIVE',
+    choices:[
+      {key:'A',icon:'✅',text:'Neutralize anchor — ward secured',        fx:'MISSION COMPLETE',          fn:'e2EndSecure',  dir:'←'},
+      {key:'B',icon:'📡',text:'Extract + beacon — Astro Soc. takes over',fx:'STRATEGIC WITHDRAWAL',      fn:'e2EndBeacon',  dir:'→'},
+      {key:'C',icon:'💥',text:'Scorched earth — destroy the whole node', fx:'NODE DESTROYED',            fn:'e2EndScorch',  dir:'←'},
+    ]
+  }
+];
+
+/* ── ENDINGS ──────────────────────────────────────────────── */
+const ENDINGS = {
+  // Episode 1
+  e1EndDisable:{ title:'✅ Engine Hall Disabled', progress:100, ep2hook:true,
+    desc:'The Forge goes dark. Taur-Nuphari vanishes into the rift. The Cold Brew coven stands victorious. But Oracle AVX is already flagging a new signal — from the Swamp Wards.',
+    hook:'▸ NEW DIRECTIVE INCOMING — SWAMP WARD STATION — EPISODE II UNLOCKED'},
+  e1EndNuclear:{ title:'☢️ Forge Nuclear Option', progress:75, ep2hook:true,
+    desc:'The station implodes. The coven escapes barely. The Oracle logs: tactically extreme. A distress beacon from a CST network node in the Swamp Wards is now active.',
+    hook:'▸ CST NETWORK NODE: DISTRESS SIGNAL — SWAMP WARD STATION — EPISODE II UNLOCKED'},
+  e1EndExtract:{ title:'🚁 Tactical Withdrawal', progress:50, ep2hook:true,
+    desc:'Taur-Nuphari escapes. Mission incomplete. Oracle AVX reclassifies the threat and redirects the coven to a priority signal from the Swamp Ward Station network node.',
+    hook:'▸ ORACLE REDIRECT — SWAMP WARD STATION — EPISODE II UNLOCKED'},
+  // Episode 2
+  e2EndSecure:{ title:'✅ Swamp Ward Secured', progress:100, ep2hook:false,
+    desc:'The Rift Anchor is neutralized. The Swamp Ward Station network node remains operational. The Astronomical Society logs a successful CST-ERT field operation. The Cold Brew coven adds another ward to the secured network.'},
+  e2EndBeacon:{ title:'📡 Strategic Withdrawal — Astro Soc. Inbound', progress:75, ep2hook:false,
+    desc:'You place the beacon and extract the coven. The Astronomical Society dispatches a full response team. The node is preserved. The Rift Anchor becomes a Society research asset. Smart call, Commander.'},
+  e2EndScorch:{ title:'💥 Node Destroyed', progress:50, ep2hook:false,
+    desc:'The Rift Anchor and the entire Swamp Ward Station node are destroyed. No more Drowned Station risk — but the CST-ERT loses a critical network hub. Oracle AVX: "We will need to rebuild. That will take time we may not have."'},
+};
+
+/* ── STATE ────────────────────────────────────────────────── */
+const LOG = [];
+let leftMode  = 'oracle';
+let rightMode = 'cards';
+const ROOT = document.documentElement;
+
+/* ── INIT ─────────────────────────────────────────────────── */
+window.addEventListener('load', () => {
+  buildRoadmap();
+  setTimeout(() => {
+    document.getElementById('introScreen').classList.add('gone');
+    loadScene(0);
+    addLog('CST-ERT Division online. Cold Brew coven assembled.', true);
+    addLog('Oracle AVX: Confidence 70%. Episode I — Styx Station.', true);
+    openPanel('left','oracle');
+    setTimeout(() => openPanel('right','cards'), 700);
+  }, 4700);
+});
+
+/* ── EPISODE SWITCH ───────────────────────────────────────── */
+function switchEpisode(ep) {
+  MS.episode = ep;
+  MS.sceneIdx = 0;
+  MS.progress = 0;
+  MS.swampAlert = 0;
+  MS.forgeCharge = 0;
+  MS.riftWave = 1;
+  MS.visitedLocs = new Set();
+  document.getElementById('ep1btn').classList.toggle('active', ep===1);
+  document.getElementById('ep2btn').classList.toggle('active', ep===2);
+  loadScene(0);
+  addLog(`Episode ${ep === 1 ? 'I — Styx Station' : 'II — Swamp Ward Station'} loaded.`, true);
+  updateHUD();
+}
+
+/* ── LOAD SCENE ───────────────────────────────────────────── */
+function loadScene(idx) {
+  const scenes = MS.episode === 1 ? EP1 : EP2;
+  const s = scenes[idx];
+  if (!s) return;
+  MS.sceneIdx = idx;
+
+  document.getElementById('sceneNum').textContent      = s.num;
+  document.getElementById('sceneTitle').textContent    = s.title;
+  document.getElementById('sceneTag').textContent      = s.tag;
+  document.getElementById('sceneEpLabel').textContent  = s.epLabel;
+  document.getElementById('sceneNarrative').innerHTML  = s.narrative;
+  document.getElementById('choicesLabel').textContent  = s.choicesLabel;
+
+  // Background swap — no inline style=
+  const bg = document.getElementById('sceneBg');
+  bg.style.backgroundImage = `url('${B}${s.bg.split("'")[1]?.replace(B,'') || ''}')`;
+  bg.classList.remove('push');
+  void bg.offsetWidth;
+  bg.classList.add('push');
+
+  typeOracle(s.oracle);
+  buildChoices(s.choices);
+
+  // Location map for Episode 2
+  const mapWrap = document.getElementById('locationMapWrap');
+  if (s.showMap && MS.episode === 2) {
+    mapWrap.innerHTML = buildLocationMap(s.activeLoc);
+  } else {
+    mapWrap.innerHTML = '';
+  }
+
+  updateHUD();
+  if (document.getElementById('panelLeft').classList.contains('open'))  renderPanel('left',  leftMode);
+  if (document.getElementById('panelRight').classList.contains('open')) renderPanel('right', rightMode);
+}
+
+/* ── LOCATION MAP ─────────────────────────────────────────── */
+function buildLocationMap(activeLoc) {
+  const nodes = SWAMP_LOCS.map(l => {
+    const visited  = MS.visitedLocs.has(l.id);
+    const isActive = l.id === activeLoc;
+    const cls = ['loc-node', isActive?'active':'', l.restricted?'restricted':'', visited?'visited':''].filter(Boolean).join(' ');
+    return `<div class="${cls}" title="${l.tag}">${l.restricted ? '⚠ ' : ''}${l.name}</div>`;
+  }).join('');
+  return `<div class="location-map">
+    <div class="location-map-title">◈ SWAMP WARD STATION — NETWORK NODE MAP</div>
+    <div class="location-nodes">${nodes}</div>
+  </div>`;
+}
+
+/* ── CHOICES ──────────────────────────────────────────────── */
+function buildChoices(choices) {
+  document.getElementById('choiceButtons').innerHTML = choices.map(c =>
+    `<div class="choice-row" onclick="${c.fn}()">
+      <div class="choice-key">${c.key}</div>
+      <div class="choice-body">
+        <div class="choice-main">${c.icon} ${c.text}</div>
+        <div class="choice-fx">${c.fx}</div>
+      </div>
+      <div class="choice-dir">${c.dir}</div>
+    </div>`
+  ).join('');
+}
+
+/* ── ORACLE TYPEWRITER ────────────────────────────────────── */
+function typeOracle(text) {
+  const el = document.getElementById('oracleReadout');
+  const lines = text.split('\n');
+  el.innerHTML = '';
+  let i = 0;
+  const t = setInterval(() => {
+    if (i >= lines.length) { el.innerHTML += '<span class="oracle-cursor"></span>'; clearInterval(t); return; }
+    el.innerHTML += (i > 0 ? '<br>' : '') + lines[i++];
+  }, 155);
+}
+
+/* ── HUD — CSS custom properties only, zero inline style= ─── */
+function updateHUD() {
+  ROOT.style.setProperty('--b-flood',  Math.min(MS.flood*20,100)+'%');
+  ROOT.style.setProperty('--b-alert',  Math.min(MS.alert*10,100)+'%');
+  ROOT.style.setProperty('--b-oracle', Math.min(MS.oracle,100)+'%');
+  ROOT.style.setProperty('--b-prog',   Math.min(MS.progress,100)+'%');
+
+  const fEl = document.getElementById('nb-flood');
+  const aEl = document.getElementById('nb-alert');
+  if (fEl) fEl.classList.toggle('nf-crit', MS.flood  >= 4);
+  if (aEl) aEl.classList.toggle('nf-crit', MS.alert  >= 7);
+
+  let st;
+  if (MS.episode === 2) {
+    st = MS.swampAlert >= 5 ? '⚠ SWAMP ALERT' : MS.riftWave >= 4 ? '⚠ RIFT HEAVY' : 'EP II LIVE';
+  } else {
+    st = (MS.taurAware && MS.alert>5) ? '⚠ TAUR AWARE'
+       : MS.flood>=4  ? '⚠ FLOOD CRITICAL'
+       : MS.alert>=5  ? '⚠ ALERT HIGH'
+       : 'EP I LIVE';
+  }
+  document.getElementById('topStatus').textContent = st;
+}
+
+/* ── LOG ──────────────────────────────────────────────────── */
+function addLog(msg, fresh) {
+  LOG.unshift({msg, fresh});
+  if (document.getElementById('panelLeft').classList.contains('open') && leftMode==='log') renderPanel('left','log');
+}
+
+/* ── ADVANCE ──────────────────────────────────────────────── */
+function advance(logMsg) {
+  addLog(logMsg, true);
+  const scenes = MS.episode === 1 ? EP1 : EP2;
+  const next = MS.sceneIdx + 1;
+  if (next < scenes.length) setTimeout(() => loadScene(next), 480);
+}
+
+/* ── CARD ACTIVATE ────────────────────────────────────────── */
+function activateCard(id) {
+  if (MS.activeCards.includes(id)) return;
+  const card = CARDS.find(c => c.id===id);
+  if (!card || card.locked) return;
+  if (id==='oracle')  { MS.oracle = Math.min(MS.oracle+20,100); addLog('Oracle Override — Conf +20.',true); }
+  if (id==='warlock') { MS.alert  = Math.max(MS.alert-1,0);     addLog('Ashari Warlock — Alert −1.',true); }
+  MS.activeCards.push(id);
+  updateHUD();
+  if (rightMode==='cards') renderPanel('right','cards');
+}
+
+/* ── EPISODE 1 CHOICES ────────────────────────────────────── */
+function e1cTunnel()    { MS.flood+=2; MS.alert+=1; MS.progress+=15; advance('TUNNEL ROUTE: Flood +2. Alert +1.'); }
+function e1cRecon()     { MS.oracle=Math.min(MS.oracle+10,100); MS.alert+=2; MS.progress+=10; advance('RECON: Oracle +10. Alert +2.'); }
+function e1cShadow()    { MS.alert=Math.max(MS.alert-2,0); MS.progress+=20; advance('SHADOW SIGILS: Alert −2. Coven unseen.'); }
+function e1cEngage()    { MS.alert+=3; MS.progress+=20; advance('NEGU PATROL: Neutralized. Alert +3.'); }
+function e1cBypass()    { MS.alert=Math.max(MS.alert-1,0); MS.oracle=Math.min(MS.oracle+5,100); MS.progress+=15; advance('VOID BYPASS: Oracle +5.'); }
+function e1cSiren()     { MS.alert+=1; MS.progress+=15; advance('SIREN DISTRACTION: Patrol redirected.'); }
+function e1cAssault()   { MS.alert+=4; MS.taurAware=true; MS.progress+=25; advance('DIRECT BREACH: Taur-Nuphari aware.'); }
+function e1cOracleCard(){ MS.oracle=Math.min(MS.oracle+20,100); MS.progress+=30; advance('ORACLE CARD: Void locks bypassed.'); }
+function e1cUnravel()   { MS.alert=Math.max(MS.alert-2,0); MS.progress+=20; advance('VOID UNRAVEL: Silent breach.'); }
+function e1cNegotiate() { MS.alert=Math.max(MS.alert-3,0); MS.progress+=20; advance('NEGOTIATION: Oracle cache offered.'); }
+function e1cFull()      { MS.alert+=5; MS.taurAware=true; MS.progress+=35; advance('COVEN ASSAULT: Full force.'); }
+function e1cCounter()   { MS.taurAware=false; MS.progress+=25; advance('COUNTER-SIREN: Awareness severed.'); }
+function e1EndDisable() { triggerEnd('e1EndDisable'); }
+function e1EndNuclear() { triggerEnd('e1EndNuclear'); }
+function e1EndExtract() { triggerEnd('e1EndExtract'); }
+
+/* ── EPISODE 2 CHOICES ────────────────────────────────────── */
+function e2cBurger()     { MS.visitedLocs.add('burger'); MS.progress+=10; advance('KAIJU BURGER: Intel intercept. Comms monitored.'); }
+function e2cGolem()      { MS.visitedLocs.add('golem'); MS.forgeCharge+=1; MS.riftWave=Math.max(MS.riftWave-1,0); MS.progress+=15; advance('GOLEM YARD: Forge charge +1. Rift −1.'); }
+function e2cDepot()      { MS.visitedLocs.add('depot'); MS.swampAlert+=2; MS.progress+=15; advance('TRAIN DEPOT: Entered ghost yard. Swamp Alert +2.'); }
+function e2cForge()      { MS.forgeCharge+=2; MS.progress+=20; advance('FORGE STATION: Deploy capsule primed. Forge +2.'); }
+function e2cReprogram()  { MS.oracle=Math.min(MS.oracle+10,100); MS.riftWave=Math.max(MS.riftWave-1,0); MS.progress+=15; advance('GOLEM REPROGRAMMED: Scout asset active. Oracle +10.'); }
+function e2cObserve()    { MS.swampAlert=Math.max(MS.swampAlert-1,0); MS.progress+=10; advance('OBSERVATION: Rift Rat positions logged. Swamp Alert −1.'); }
+function e2cCroc()       { MS.swampAlert+=3; MS.progress+=20; advance('CROC-MAN NEUTRALIZED: Path clear. Swamp Alert +3.'); }
+function e2cVoidPass()   { MS.swampAlert=Math.max(MS.swampAlert-1,0); MS.progress+=15; advance('VOID SIGILS: Passed unseen. Swamp Alert −1.'); }
+function e2cScan()       { MS.oracle=Math.min(MS.oracle+15,100); MS.progress+=10; advance('ORACLE SCAN: Entity identified. Oracle +15.'); }
+function e2cBreak()      { MS.swampAlert+=4; MS.progress+=25; advance('COVER BROKEN: Extracted with chip. Swamp Alert +4.'); }
+function e2cBluff()      { MS.oracle=Math.min(MS.oracle+5,100); MS.swampAlert+=1; MS.progress+=20; advance('BLUFF: Operative stood down. Oracle +5.'); }
+function e2cSirenPulse() { MS.swampAlert+=2; MS.progress+=20; advance('SIREN PULSE: Room cleared. Swamp Alert +2.'); }
+function e2cDestroy()    { MS.forgeCharge=Math.max(MS.forgeCharge-2,0); MS.progress+=35; advance('RIFT ANCHOR: Destroyed. Forge −2.'); }
+function e2cOverride()   { MS.oracle=Math.max(MS.oracle-20,0); MS.progress+=30; advance('ORACLE OVERRIDE: Anchor reprogrammed. Oracle −20.'); }
+function e2cSignal()     { MS.progress+=20; advance('ASTRO SOC. SIGNALED: Extraction beacon placed.'); }
+function e2EndSecure()   { triggerEnd('e2EndSecure'); }
+function e2EndBeacon()   { triggerEnd('e2EndBeacon'); }
+function e2EndScorch()   { triggerEnd('e2EndScorch'); }
+
+/* ── ENDING ───────────────────────────────────────────────── */
+function triggerEnd(key) {
+  const e = ENDINGS[key];
+  MS.progress = e.progress;
+  updateHUD();
+  addLog('EPISODE CONCLUDED — ' + e.title, true);
+  closePanel('left'); closePanel('right');
+  document.getElementById('endingTitle').textContent = e.title;
+  document.getElementById('endingDesc').textContent  = e.desc;
+  const hook = document.getElementById('endingHook');
+  hook.textContent = e.ep2hook ? e.hook : '';
+  hook.classList.toggle('hidden', !e.ep2hook);
+  document.getElementById('endingBg').className = 'ending-bg ending-bg-alchemy';
+  document.getElementById('endingOverlay').classList.add('active');
+}
+
+/* ── RESTART ──────────────────────────────────────────────── */
+function restartGame() {
+  MS = { flood:1, alert:0, oracle:70, taurAware:false, engineLocked:true,
+         swampAlert:0, riftWave:1, forgeCharge:0,
+         activeCards:['oracle'], progress:0, episode:MS.episode, sceneIdx:0,
+         visitedLocs: new Set() };
+  document.getElementById('endingOverlay').classList.remove('active');
+  loadScene(0);
+  addLog('Mission reset. Oracle AVX reinitializing.', true);
+  openPanel('left','oracle');
+  openPanel('right','cards');
+}
+
+/* ── PANEL SYSTEM ─────────────────────────────────────────── */
+function openPanel(side, mode) {
+  const panel = document.getElementById(side==='left' ? 'panelLeft' : 'panelRight');
+  const TITLES = {
+    oracle:'ORACLE INTEL', coven:'COVEN ROSTER', log:'MISSION LOG',
+    factions:'FACTION DATA', astro:'ASTRO SOCIETY',
+    cards:'OPERATIVE CARDS', mtd:'MTD CAROUSEL', swamp:'SWAMP WARD CODEX',
+    gallery:'SCENE GALLERY', roadmap:'PHASE ROADMAP'
+  };
+  document.getElementById(side==='left' ? 'panelLeftTitle':'panelRightTitle').textContent = TITLES[mode] || mode.toUpperCase();
+  if (side==='left')  leftMode  = mode;
+  if (side==='right') rightMode = mode;
+  renderPanel(side, mode);
+  panel.classList.add('open');
+  document.querySelectorAll(side==='left'?'.nav-left .nav-icon':'.nav-right .nav-icon').forEach(el => el.classList.remove('on'));
+}
+
+function closePanel(side) {
+  document.getElementById(side==='left'?'panelLeft':'panelRight').classList.remove('open');
+}
+
+function renderPanel(side, mode) {
+  const el = document.getElementById(side==='left'?'panelLeftBody':'panelRightBody');
+  const renders = { oracle:renderOracle, coven:renderCoven, log:renderLog,
+    factions:renderFactions, astro:renderAstro,
+    cards:renderCards, mtd:renderMTD, swamp:renderSwamp,
+    gallery:renderGallery, roadmap:renderRoadmapPanel };
+  if (renders[mode]) { el.innerHTML=''; renders[mode](el); }
+  else el.innerHTML = `<div style="font-family:'Share Tech Mono',monospace;font-size:.62rem;color:var(--ash);padding:12px;letter-spacing:.1em">◈ ${mode.toUpperCase()} — COMING PHASE 8.5</div>`;
+}
+
+/* ── PANEL RENDERERS ──────────────────────────────────────── */
+function renderOracle(el) {
+  const scenes = MS.episode===1 ? EP1 : EP2;
+  const oracle = scenes[MS.sceneIdx]?.oracle?.replace(/\n/g,'<br>') || '';
+  el.innerHTML = `
+    <div class="oracle-full">
+      <div class="oracle-hdr">
+        <div class="oracle-glyph">⬡</div>
+        <div>
+          <div class="oracle-name">Oracle AVX Node</div>
+          <div class="oracle-sub">CST-ERT DEPT — ABYSSUM INTELLIGENCE NETWORK</div>
+        </div>
+      </div>
+      <div class="oracle-readout-full">${oracle}<span class="oracle-cursor"></span></div>
+      <div class="state-grid">
+        ${stateCell('Flood Level', MS.flood, Math.min(MS.flood*20,100), 'var(--flood-l)')}
+        ${stateCell('Enemy Alert', MS.alert, Math.min(MS.alert*10,100), 'var(--alert)')}
+        ${stateCell('Oracle Conf.', MS.oracle+'%', MS.oracle, 'var(--oracle)')}
+        ${stateCell('Mission Prog.', MS.progress+'%', MS.progress, 'var(--gold)')}
+        ${MS.episode===2 ? stateCell('Swamp Alert', MS.swampAlert, Math.min(MS.swampAlert*15,100), 'var(--swamp-b)') : ''}
+        ${MS.episode===2 ? stateCell('Forge Charge', MS.forgeCharge, Math.min(MS.forgeCharge*25,100), 'var(--forge-l)') : ''}
+      </div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:.5rem;letter-spacing:.15em;color:var(--ash);margin-top:2px;">
+        EP: ${MS.episode===1?'I — STYX STATION':'II — SWAMP WARD'} &nbsp;|&nbsp;
+        TAUR-AWARE: ${MS.taurAware?'<span style="color:var(--alert)">YES ⚠</span>':'<span style="color:var(--teal)">NO ✓</span>'}
+        ${MS.episode===2 ? '&nbsp;|&nbsp; RIFT WAVE: <span style="color:var(--rift-l)">'+MS.riftWave+'</span>' : ''}
+      </div>
+    </div>`;
+}
+
+function stateCell(label, val, pct, color) {
+  return `<div class="state-cell">
+    <div class="sc-label">${label}</div>
+    <div class="sc-val" style="color:${color}">${val}</div>
+    <div class="sc-bar"><div class="sc-fill" style="width:${Math.min(pct,100)}%;background:${color}"></div></div>
+  </div>`;
+}
+
+function renderAstro(el) {
+  el.innerHTML = `
+    <div class="astro-block">
+      <div class="astro-block-title">◈ ASTRONOMICAL SOCIETY — FIELD DOSSIER</div>
+      ${Object.entries({
+        'Organization':   ASTRO_SOCIETY.org,
+        'Division':       ASTRO_SOCIETY.division,
+        'Unit':           '[ CLASSIFIED ]',
+        'Codename':       ASTRO_SOCIETY.codename,
+        'Clearance':      ASTRO_SOCIETY.clearance,
+        'Field Director': ASTRO_SOCIETY.director,
+        'Intel Node':     ASTRO_SOCIETY.oracle,
+      }).map(([k,v]) => `
+        <div class="astro-row">
+          <span class="astro-key">${k}</span>
+          <span class="astro-val ${k==='Codename'||k==='Clearance'?'highlight':''}">${v}</span>
+        </div>`).join('')}
+    </div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:.54rem;color:var(--ash);line-height:1.75;padding:8px 10px;border:1px solid var(--rule);margin-top:4px;">
+      The Astronomical Society deploys covert network nodes across the Swamp Wards and Drowned Stations. Each node operates as civilian infrastructure: fuel stations, food establishments, repair bays. Field operatives infiltrate Affiliate and enemy stations using these covers. Unit classification above OMEGA clearance.
+    </div>`;
+}
+
+function renderCoven(el) {
+  el.innerHTML = `<div class="coven-list">` + COVEN.map(m => `
+    <div class="coven-row">
+      <div class="coven-thumb" style="background-image:${img(m.bg,m.fb)}">${m.icon}</div>
+      <div class="coven-info">
+        <div class="coven-name ${m.accent}">${m.name}</div>
+        <div class="coven-role">${m.role}</div>
+      </div>
+      <div class="coven-hp ${m.accent}">${m.hp}%</div>
+    </div>`).join('') + `</div>`;
+}
+
+function renderLog(el) {
+  if (!LOG.length) { el.innerHTML=`<div style="font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--ash);letter-spacing:.1em">▸ No entries yet.</div>`; return; }
+  el.innerHTML = LOG.slice(0,14).map(e =>
+    `<div style="font-family:'Share Tech Mono',monospace;font-size:.62rem;line-height:1.85;color:${e.fresh?'var(--ash-l)':'var(--ash)'};border-left:2px solid ${e.fresh?'var(--gold-d)':'var(--rule-l)'};padding-left:10px;margin-bottom:4px;">▸ ${e.msg}</div>`
+  ).join('');
+}
+
+function renderFactions(el) {
+  el.innerHTML = `<div class="faction-block">
+    <div class="faction-header">Genesis Verse — Active Factions</div>
+    ${FACTIONS.map(f => `
+      <div class="faction-entry">
+        <div class="faction-name ${f.color}">${f.name}</div>
+        <div class="faction-desc">${f.desc}</div>
+      </div>`).join('')}
+  </div>`;
+}
+
+function renderCards(el) {
+  el.innerHTML = `<div class="card-carousel">
+    <div class="carousel-lbl">◈ OPERATIVE CARDS — EPISODE ${MS.episode===1?'I':'II'} DECK</div>
+    <div class="card-grid">` +
+    CARDS.map(c => `
+      <div class="card-tile ${MS.activeCards.includes(c.id)?'active':''} ${c.locked?'locked':''}"
+           onclick="${c.locked?'':''}" ${!c.locked?`onclick="activateCard('${c.id}')"`:''}>
+        <div class="card-tile-bg" style="background-image:${img(c.bg,c.fb)}"></div>
+        <div class="card-tile-grad"></div>
+        ${c.locked?`<div class="card-lock-icon">🔒</div>`:''}
+        <div class="card-tile-info">
+          <div class="card-tile-name">${c.icon} ${c.name}</div>
+          <div class="card-tile-stat">${c.locked?'LOCKED':c.bonus}</div>
+        </div>
+      </div>`).join('') + `</div></div>`;
+}
+
+function renderMTD(el) {
+  const chars = [
+    {label:'Mission Commander', bg:'cb-cst-commander.jpg',       fb:'cold-brew-mission-commander.jpg'},
+    {label:'Mystic A1',         bg:'cb-mystic-a1.jpg',           fb:'a1.jpg'},
+    {label:'Void Channeler',    bg:'cb-mystic-a2-variant.jpg',   fb:'a2-mystic.jpg'},
+    {label:'Rift Oracle',       bg:'cb-mystic-a3-variant.jpg',   fb:'a3-mystic.jpg'},
+    {label:'Swamp Rail Witch',  bg:'cb-cst-patrol-swamp-rail.jpg',fb:'cst-patrol-swamp-rail.jpg'},
+    {label:'Train Engineer',    bg:'cb-cst-train-engineer.jpg',  fb:'cst-train-engineer.jpg'},
+    {label:'Ranking Officer',   bg:'cb-cst-ranking-officer-shae.jpg',fb:'cst-ranking-officer-commander-S-hae.jpg'},
+    {label:'Station Manager',   bg:'cb-cst-station-manager.jpg', fb:'cst-station-manager.jpg'},
+  ];
+  el.innerHTML = `<div class="card-carousel">
+    <div class="carousel-lbl">◈ MINT-TO-DEPLOY — CST-ERT ROSTER</div>
+    <div class="mtd-grid">` +
+    chars.map(c => `
+      <div class="mtd-tile">
+        <div class="mtd-tile-bg" style="background-image:${img(c.bg,c.fb)}"></div>
+        <div class="mtd-tile-grad"></div>
+        <div class="mtd-tile-info">
+          <div class="mtd-tile-name">${c.label}</div>
+          <div class="mtd-tile-stat">MTD AVAILABLE</div>
+        </div>
+      </div>`).join('') + `</div></div>`;
+}
+
+function renderSwamp(el) {
+  el.innerHTML = `<div class="swamp-codex">
+    <div style="font-family:'Cinzel Decorative',serif;font-size:.82rem;color:var(--swamp-b);border-bottom:1px solid var(--rule-l);padding-bottom:8px;margin-bottom:4px;">Swamp Ward Station — Location Codex</div>
+    ${SWAMP_LOCS.map(l => `
+      <div class="swamp-loc ${l.restricted?'restricted':''}">
+        <div class="swamp-loc-name">${l.restricted?'⚠ ':''}${l.name}</div>
+        <div class="swamp-loc-desc">${l.desc}</div>
+        <div class="swamp-loc-tag">${l.tag}</div>
+      </div>`).join('')}
+  </div>`;
+}
+
+function renderGallery(el) {
+  const assets = [
+    {label:'Engine Hall',     bg:'cb-env-engine-hall.jpg',           fb:'ancinet-engine-hall.jpg'},
+    {label:'Alchemy Boards',  bg:'cb-prop-alchemy-boards-rare.jpg',  fb:'alchemy-rare-boards.jpg'},
+    {label:'Swamp Rail',      bg:'cb-cst-patrol-swamp-rail.jpg',     fb:'cst-patrol-swamp-rail.jpg'},
+    {label:'Train Rail Heavy',bg:'cb-cst-train-rail-heavy.jpg',      fb:'cst-train-and-rail-heavy-armor.jpg'},
+    {label:'Cargo Yards',     bg:'cb-cst-cargo-yards.jpg',           fb:'cst-cargo-yards.jpg'},
+    {label:'Glitch Witch',    bg:'cb-cst-glitch-witch.jpg',          fb:'glitch-witch-orange-ash.jpg'},
+  ];
+  el.innerHTML = `<div class="card-carousel">
+    <div class="carousel-lbl">◈ SCENE GALLERY — EP I + EP II ASSETS</div>
+    <div class="card-grid">` +
+    assets.map(a => `
+      <div class="card-tile">
+        <div class="card-tile-bg" style="background-image:${img(a.bg,a.fb)};opacity:.85"></div>
+        <div class="card-tile-grad"></div>
+        <div class="card-tile-info">
+          <div class="card-tile-name">${a.label}</div>
+        </div>
+      </div>`).join('') + `</div></div>`;
+}
+
+function renderRoadmapPanel(el) {
+  el.innerHTML = ROADMAP.map(r => `
+    <div style="display:flex;align-items:center;gap:9px;padding:9px 11px;border:1px solid var(--rule);background:rgba(9,12,18,.5);margin-bottom:6px;">
+      <span style="font-family:'Share Tech Mono',monospace;font-size:.56rem;color:var(--gold-d)">${r.ph}</span>
+      <span style="font-family:'Rajdhani',sans-serif;font-size:.78rem;font-weight:600;color:var(--ash-l);flex:1">${r.nm}</span>
+      <span style="font-size:.78rem">${r.s}</span>
+    </div>`).join('');
+}
+
+/* ── ROADMAP STRIP ────────────────────────────────────────── */
+function buildRoadmap() {
+  document.getElementById('roadmapStrip').innerHTML = ROADMAP.map(r =>
+    `<div class="roadmap-chip">
+      <span class="rmap-ph">${r.ph}</span>
+      <span class="rmap-nm">${r.nm}</span>
+      <span>${r.s}</span>
+    </div>`).join('');
+}
+</script>
+</body>
+</html>

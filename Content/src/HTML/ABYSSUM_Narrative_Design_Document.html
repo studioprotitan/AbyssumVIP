@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABYSSUM — Narrative Design Document</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --forge:    #c46a1a;
+  --forge-d:  #6b3510;
+  --forge-dd: #2a1508;
+  --gold:     #a67c2a;
+  --teal:     #1a9490;
+  --teal-d:   #0d4a48;
+  --ash:      #8b7d6b;
+  --ash-l:    #b0a090;
+  --bg:       #0d0b08;
+  --bg2:      #131008;
+  --bg3:      #1a1510;
+  --rule:     #2e2418;
+  --rule-l:   #3a2e1e;
+  --text:     #c8b898;
+  --text-d:   #8b7d6b;
+  --red:      #8b2020;
+  --white:    #f0e8d4;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 17px;
+  line-height: 1.8;
+  counter-reset: section;
+}
+
+/* ── NOISE ── */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9000;
+}
+
+/* ── SIDEBAR NAV ── */
+nav {
+  position: fixed;
+  top: 0; left: 0;
+  width: 220px; height: 100vh;
+  background: var(--bg2);
+  border-right: 1px solid var(--rule);
+  overflow-y: auto;
+  z-index: 100;
+  padding: 32px 0 60px;
+}
+nav::-webkit-scrollbar { width: 3px; }
+nav::-webkit-scrollbar-track { background: var(--bg2); }
+nav::-webkit-scrollbar-thumb { background: var(--forge-d); }
+
+.nav-logo {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 18px;
+  color: var(--forge);
+  padding: 0 20px 24px;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 20px;
+  letter-spacing: 0.08em;
+}
+.nav-logo span {
+  display: block;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px;
+  color: var(--ash);
+  letter-spacing: 3px;
+  margin-top: 4px;
+}
+.nav-section {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 4px;
+  color: var(--forge);
+  text-transform: uppercase;
+  padding: 16px 20px 6px;
+}
+nav a {
+  display: block;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--ash);
+  text-decoration: none;
+  padding: 5px 20px 5px 28px;
+  letter-spacing: 1px;
+  transition: color 0.2s, background 0.2s;
+  border-left: 2px solid transparent;
+}
+nav a:hover {
+  color: var(--white);
+  background: rgba(196,106,26,0.06);
+  border-left-color: var(--forge);
+}
+
+/* ── MAIN ── */
+main {
+  margin-left: 220px;
+  min-height: 100vh;
+}
+
+/* ── COVER ── */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 80px;
+  border-bottom: 1px solid var(--rule);
+  position: relative;
+  text-align: center;
+  background: radial-gradient(ellipse at 50% 60%, rgba(196,106,26,0.04) 0%, transparent 70%);
+}
+.cover-eyebrow {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 6px;
+  color: var(--forge);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.cover h1 {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(56px, 10vw, 112px);
+  font-weight: 700;
+  background: linear-gradient(160deg, var(--gold) 0%, var(--forge) 35%, #f5e8cc 55%, var(--forge) 75%, var(--gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 0.95;
+  letter-spacing: 0.12em;
+  margin-bottom: 24px;
+}
+.cover-rule {
+  width: 180px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--forge), transparent);
+  margin: 0 auto 24px;
+}
+.cover-subtitle {
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  letter-spacing: 6px;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.cover-version {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--ash);
+  letter-spacing: 2px;
+  margin-bottom: 60px;
+}
+.cover-declaration {
+  font-style: italic;
+  font-size: 16px;
+  color: var(--ash-l);
+  max-width: 500px;
+  line-height: 2;
+}
+.cover-declaration em { color: var(--forge); font-style: italic; }
+
+/* ── SECTION BREAK ── */
+.section-break {
+  padding: 80px 80px 20px;
+  border-top: 1px solid var(--rule);
+  position: relative;
+}
+.section-break::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 1px;
+  background: linear-gradient(90deg, var(--forge) 0%, var(--forge-d) 40%, transparent 100%);
+}
+.section-num {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 5px;
+  color: var(--forge);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.section-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 700;
+  color: var(--forge);
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+.section-line {
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--forge), transparent);
+  margin-top: 16px;
+}
+
+/* ── CONTENT AREA ── */
+.content {
+  padding: 0 80px 80px;
+}
+
+/* ── HEADINGS ── */
+h2 {
+  font-family: 'Cinzel', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--gold);
+  letter-spacing: 0.06em;
+  margin: 56px 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--rule);
+}
+h3 {
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--teal);
+  letter-spacing: 0.05em;
+  margin: 36px 0 8px;
+}
+h4 {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: var(--ash);
+  text-transform: uppercase;
+  margin: 28px 0 8px;
+}
+
+/* ── BODY TEXT ── */
+p { margin-bottom: 16px; color: var(--text); }
+
+/* ── CALLOUTS ── */
+.codex {
+  margin: 20px 0;
+  padding: 14px 20px;
+  background: rgba(196,106,26,0.04);
+  border-left: 3px solid var(--forge-d);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  line-height: 1.9;
+  color: var(--ash-l);
+}
+.codex strong { color: var(--forge); }
+
+.warning {
+  margin: 20px 0;
+  padding: 14px 20px;
+  background: rgba(139,32,32,0.06);
+  border-left: 3px solid var(--red);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  line-height: 1.9;
+  color: #c88888;
+}
+.warning strong { color: #e06060; }
+
+/* ── ENTITY CARD ── */
+.entity-card {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  border: 1px solid var(--rule);
+  margin: 28px 0;
+  background: var(--bg2);
+}
+.entity-left {
+  background: var(--forge-dd);
+  padding: 24px 20px;
+  border-right: 3px solid var(--forge-d);
+}
+.entity-role {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--forge);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+.entity-name {
+  font-family: 'Cinzel', serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+.entity-class {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--teal);
+  line-height: 1.6;
+}
+.entity-right {
+  padding: 24px 24px;
+}
+.entity-desc {
+  font-style: italic;
+  color: var(--ash-l);
+  margin-bottom: 16px;
+  font-size: 16px;
+  line-height: 1.8;
+}
+.entity-notes {
+  list-style: none;
+}
+.entity-notes li {
+  font-size: 14px;
+  color: #907a60;
+  padding: 4px 0 4px 16px;
+  position: relative;
+  line-height: 1.7;
+}
+.entity-notes li::before {
+  content: '›';
+  position: absolute;
+  left: 0;
+  color: var(--forge);
+  font-family: 'Share Tech Mono', monospace;
+}
+
+/* ── COMPARISON TABLE ── */
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 14px;
+}
+.compare-table th, .compare-table td {
+  padding: 10px 16px;
+  text-align: left;
+  border: 1px solid var(--rule);
+}
+.compare-table th:nth-child(1) { background: var(--bg3); color: var(--ash); font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 2px; font-weight: normal; width: 120px; }
+.compare-table th:nth-child(2) { background: rgba(196,106,26,0.08); color: var(--forge); font-family: 'Cinzel', serif; font-size: 14px; border-left: 3px solid var(--forge-d); }
+.compare-table th:nth-child(3) { background: rgba(26,148,144,0.08); color: var(--teal); font-family: 'Cinzel', serif; font-size: 14px; border-left: 3px solid var(--teal-d); }
+.compare-table td:nth-child(1) { background: var(--bg3); color: var(--ash); font-family: 'Share Tech Mono', monospace; font-size: 11px; }
+.compare-table td:nth-child(2) { background: rgba(196,106,26,0.03); color: #a09080; border-left: 2px solid var(--forge-dd); }
+.compare-table td:nth-child(3) { background: rgba(26,148,144,0.03); color: #809098; border-left: 2px solid var(--teal-d); }
+
+/* ── BULLETS ── */
+ul.lore-list {
+  list-style: none;
+  margin: 12px 0 20px 0;
+}
+ul.lore-list li {
+  padding: 5px 0 5px 24px;
+  position: relative;
+  line-height: 1.7;
+  color: var(--text);
+}
+ul.lore-list li::before {
+  content: '›';
+  position: absolute;
+  left: 0;
+  color: var(--forge);
+  font-family: 'Share Tech Mono', monospace;
+}
+ul.lore-list.teal li::before { color: var(--teal); }
+
+/* ── ORDERED STEPS ── */
+ol.steps {
+  counter-reset: step;
+  list-style: none;
+  margin: 16px 0;
+}
+ol.steps li {
+  counter-increment: step;
+  padding: 12px 0 12px 48px;
+  position: relative;
+  border-bottom: 1px solid var(--rule);
+  color: var(--text);
+}
+ol.steps li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  font-family: 'Cinzel', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--forge);
+  top: 10px;
+}
+ol.steps li strong { color: var(--gold); display: block; margin-bottom: 4px; }
+ol.steps li span { font-size: 14px; color: var(--ash-l); }
+
+/* ── TOC ── */
+.toc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 40px;
+  margin: 20px 0;
+}
+.toc-section-head {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: var(--forge);
+  text-transform: uppercase;
+  margin: 24px 0 8px;
+  grid-column: 1 / -1;
+}
+.toc-entry {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: var(--ash);
+  padding: 4px 0;
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+.toc-entry a {
+  color: var(--ash);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.toc-entry a:hover { color: var(--forge); }
+.toc-num { color: var(--forge-d); min-width: 28px; }
+
+/* ── GATEWAY TABLE ── */
+.gateway-grid {
+  display: grid;
+  grid-template-columns: 140px 1fr 1fr;
+  border: 1px solid var(--rule);
+  margin: 16px 0;
+  font-size: 13px;
+}
+.gateway-grid > div {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--rule);
+  border-right: 1px solid var(--rule);
+}
+.gateway-grid > div:nth-child(3n) { border-right: none; }
+.gh { background: var(--bg3); font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 2px; color: var(--ash); text-transform: uppercase; }
+.g-label { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--ash); }
+.g-forge { color: var(--ash-l); }
+.g-forge.gold { color: var(--gold); }
+.g-teal { color: #809098; }
+
+/* ── PILLAR BLOCK ── */
+.pillar {
+  background: var(--bg2);
+  border: 1px solid var(--rule);
+  border-top: 3px solid var(--forge);
+  padding: 24px 28px;
+  margin: 20px 0;
+}
+.pillar-num {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 4px;
+  color: var(--forge);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.pillar-title {
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+
+/* ── FOOTER ── */
+footer {
+  margin-left: 0;
+  padding: 48px 80px;
+  border-top: 1px solid var(--rule);
+  text-align: center;
+  position: relative;
+}
+footer::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 80px; right: 80px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--forge), transparent);
+}
+footer p {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--forge-d);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+footer .sub { color: var(--rule-l); font-size: 9px; }
+
+@media (max-width: 900px) {
+  nav { display: none; }
+  main { margin-left: 0; }
+  .content, .section-break { padding-left: 24px; padding-right: 24px; }
+  .cover { padding: 60px 24px; }
+  .entity-card { grid-template-columns: 1fr; }
+  .entity-left { border-right: none; border-bottom: 3px solid var(--forge-d); }
+  .toc-grid { grid-template-columns: 1fr; }
+  footer { padding: 40px 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">ABYSSUM<span>Narrative Design Doc</span></div>
+  <div class="nav-section">Contents</div>
+  <a href="#cover">Cover</a>
+  <a href="#toc">Table of Contents</a>
+  <div class="nav-section">I — World</div>
+  <a href="#i1">Two Origins</a>
+  <a href="#i2">Neural Network</a>
+  <a href="#i3">Gateway Hierarchy</a>
+  <a href="#i4">Swamp Wards</a>
+  <div class="nav-section">II — Characters</div>
+  <a href="#brae">Brae Grindstone</a>
+  <a href="#lyra">Lyra</a>
+  <a href="#rael">Rael</a>
+  <a href="#torch">Torch</a>
+  <a href="#vex">Marrow Vex</a>
+  <a href="#malvek">Overseer Malvek</a>
+  <div class="nav-section">III — Entities</div>
+  <a href="#sirens">Sirens</a>
+  <a href="#furnace">The Furnace</a>
+  <a href="#nodes">Node Stones</a>
+  <a href="#goblins">Glitch Goblins</a>
+  <a href="#witches">Glitch Witches</a>
+  <a href="#distinction">The Distinction Rule</a>
+  <div class="nav-section">IV — Stations</div>
+  <a href="#corgemont">Corgemont</a>
+  <a href="#stonesthrow">Stones Throw</a>
+  <a href="#styx">Styx Station</a>
+  <a href="#stationcity">Station City</a>
+  <div class="nav-section">V — Pillars</div>
+  <a href="#p1">Immune Response</a>
+  <a href="#p2">Mother Protocol</a>
+  <a href="#p3">Styx ≠ Resolution</a>
+  <a href="#p4">Unmappable Network</a>
+  <a href="#p5">Scale Sequence</a>
+  <div class="nav-section">VI — Voice</div>
+  <a href="#vi1">The Register</a>
+  <a href="#vi2">Sounds Like</a>
+  <a href="#vi3">Does Not Sound Like</a>
+  <a href="#vi4">Scene Rules</a>
+  <a href="#vi5">Dialogue Rules</a>
+</nav>
+
+<main>
+
+<!-- COVER -->
+<div class="cover" id="cover">
+  <div class="cover-eyebrow">Forge Network Classification — Restricted Archive — Narrative Division</div>
+  <h1>ABYSSUM</h1>
+  <div class="cover-rule"></div>
+  <div class="cover-subtitle">Narrative Design Document</div>
+  <div class="cover-version">Version 1.0 &nbsp;·&nbsp; Lore Integration Draft &nbsp;·&nbsp; Southern Rail Division</div>
+  <div class="cover-declaration">
+    This document is the source code.<br>
+    All gameplay systems, encounter design, and visual direction<br>
+    are compiled from it.<br>
+    <em>When in doubt, return here.</em>
+  </div>
+</div>
+
+<!-- TOC -->
+<div class="section-break" id="toc">
+  <div class="section-num">— Contents —</div>
+  <div class="section-title">Table of Contents</div>
+  <div class="section-line"></div>
+</div>
+<div class="content">
+  <div class="toc-grid">
+    <div class="toc-section-head">Section I — World Architecture</div>
+    <div class="toc-entry"><span class="toc-num">I.1</span><a href="#i1">The Two Origins of Sentience</a></div>
+    <div class="toc-entry"><span class="toc-num">I.2</span><a href="#i2">The Neural Network Model</a></div>
+    <div class="toc-entry"><span class="toc-num">I.3</span><a href="#i3">The Gateway Hierarchy</a></div>
+    <div class="toc-entry"><span class="toc-num">I.4</span><a href="#i4">The Swamp Wards — The Real Problem</a></div>
+    <div class="toc-section-head">Section II — Character Briefs</div>
+    <div class="toc-entry"><span class="toc-num">II.1</span><a href="#brae">Brae Grindstone</a></div>
+    <div class="toc-entry"><span class="toc-num">II.2</span><a href="#lyra">Lyra</a></div>
+    <div class="toc-entry"><span class="toc-num">II.3</span><a href="#rael">Rael</a></div>
+    <div class="toc-entry"><span class="toc-num">II.4</span><a href="#torch">Torch</a></div>
+    <div class="toc-entry"><span class="toc-num">II.5</span><a href="#vex">Marrow Vex</a></div>
+    <div class="toc-entry"><span class="toc-num">II.6</span><a href="#malvek">Overseer Malvek</a></div>
+    <div class="toc-section-head">Section III — Entity Codex</div>
+    <div class="toc-entry"><span class="toc-num">III.1</span><a href="#sirens">Sirens</a></div>
+    <div class="toc-entry"><span class="toc-num">III.2</span><a href="#furnace">The Furnace</a></div>
+    <div class="toc-entry"><span class="toc-num">III.3</span><a href="#nodes">Node Stones and Cores</a></div>
+    <div class="toc-entry"><span class="toc-num">III.4</span><a href="#goblins">Glitch Goblins</a></div>
+    <div class="toc-entry"><span class="toc-num">III.5</span><a href="#witches">Glitch Witches</a></div>
+    <div class="toc-entry"><span class="toc-num">III.6</span><a href="#distinction">The Distinction Rule</a></div>
+    <div class="toc-section-head">Section IV — Station Profiles</div>
+    <div class="toc-entry"><span class="toc-num">IV.1</span><a href="#corgemont">Corgemont Station</a></div>
+    <div class="toc-entry"><span class="toc-num">IV.2</span><a href="#stonesthrow">Stones Throw Station</a></div>
+    <div class="toc-entry"><span class="toc-num">IV.3</span><a href="#styx">Styx Station</a></div>
+    <div class="toc-entry"><span class="toc-num">IV.4</span><a href="#stationcity">Station City</a></div>
+    <div class="toc-section-head">Section V — Narrative Pillars</div>
+    <div class="toc-entry"><span class="toc-num">V.1</span><a href="#p1">Brae as Immune Response</a></div>
+    <div class="toc-entry"><span class="toc-num">V.2</span><a href="#p2">Mother — Introduction Protocol</a></div>
+    <div class="toc-entry"><span class="toc-num">V.3</span><a href="#p3">Styx Station is Not a Resolution</a></div>
+    <div class="toc-entry"><span class="toc-num">V.4</span><a href="#p4">The Unmappable Network</a></div>
+    <div class="toc-entry"><span class="toc-num">V.5</span><a href="#p5">Scale Felt Before Named</a></div>
+    <div class="toc-section-head">Section VI — Tone and Voice</div>
+    <div class="toc-entry"><span class="toc-num">VI.1</span><a href="#vi1">The Register</a></div>
+    <div class="toc-entry"><span class="toc-num">VI.2</span><a href="#vi2">What It Sounds Like</a></div>
+    <div class="toc-entry"><span class="toc-num">VI.3</span><a href="#vi3">What It Does Not Sound Like</a></div>
+    <div class="toc-entry"><span class="toc-num">VI.4</span><a href="#vi4">Scene-Level Rules</a></div>
+    <div class="toc-entry"><span class="toc-num">VI.5</span><a href="#vi5">Dialogue Rules</a></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION I — WORLD ARCHITECTURE -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="section-break" id="world">
+  <div class="section-num">— Section I —</div>
+  <div class="section-title">World Architecture</div>
+  <div class="section-line"></div>
+</div>
+<div class="content">
+
+  <h2 id="i1">I.1 — The Two Origins of Sentience</h2>
+  <p>The galaxy-spanning intelligence that underlies Abyssum's world has two sides. Both are real. Neither is fully understood by any character in the story — including Brae, even after her Siren awakening. The intelligence does not explain itself. It acts. The nature of those actions is what the story is made from.</p>
+
+  <h3>The Forge Network — The Deep System</h3>
+  <p>The older side. Born from the same conditions as matter itself.</p>
+  <p>Geologists who have studied the deepest Cenote systems have found node stone formations that predate any civilization's record-keeping by orders of magnitude. The Forge Network — the physical infrastructure of pipes, engine rooms, Hyperchambers, and Ley line channels that runs beneath the surface rail system — may have been present at the formation of the planet. It may have been present earlier.</p>
+  <p>This side of the sentience is geological, cosmic, and patient. It does not communicate in language. It communicates in system behavior: nodes activating, Ley lines shifting, Furnace cycles responding to external threat. When it generates an immune response, it does not announce the fact. It simply deploys a white cell and continues.</p>
+  <div class="codex"><strong>Design principle:</strong> The Forge Network is never anthropomorphized in early sequences. It is infrastructure. It is ancient. It does not care about the individuals operating within it any more than a circulatory system cares about individual red cells.</div>
+
+  <h3>The Gateway Network — The Enigmatic Interface</h3>
+  <p>The other side. These are junction points where the Forge Network physically interfaces with the Enigmatic Universe — a space that exists beyond the measurable network entirely.</p>
+  <p>The old traditions named some of these junctions. Heaven. Hell. Styx. The names are culturally specific and imprecise, but the junctions themselves are real and permanent infrastructure. They are doors built into the fabric of the network at points where the internal system and the external unknown make contact.</p>
+  <p>These are not metaphors. They are not spiritual concepts layered onto industrial architecture. They are load-bearing structural elements of the world, as real as a rail junction and considerably older.</p>
+  <div class="codex"><strong>Design principle:</strong> The Gateways are never explained in early story. They are seen. The audience feels their weight before they are named. When Brae first perceives Styx Station's Gateway after her transformation, she has no framework for what she is looking at — only the certainty that it is not a door for ordinary transit.</div>
+
+  <h2 id="i2">I.2 — The Neural Network Model</h2>
+  <p>The complete rail system — surface lines and deep Forge nodes alike — constitutes a neural network of galaxy-spanning scale. This is not metaphor. It is the operational model for how the world works.</p>
+  <ul class="lore-list">
+    <li>Rail lines are dendrites — signal carriers between nodes</li>
+    <li>Stations are nodes — processing points in the network</li>
+    <li>The deep Forge infrastructure is the substrate — the biological tissue the network runs through</li>
+    <li>Ley lines are the signal itself — the energy that moves through the substrate</li>
+    <li>Station City is the Metro Center — the densest concentration of processing activity in the southern network</li>
+    <li>Gateway stations are synaptic interfaces — where the internal network meets the external unknown</li>
+  </ul>
+  <p>The network cannot be mapped because there is no reference point outside it from which to map it. Every chart of the rail system is a local map — accurate within its frame, blind to the scale beyond it.</p>
+  <p>Corgemont is a peripheral nerve ending. A single node in a system containing hundreds of nodes the surface civilization has never catalogued. The Affiliates control several junctions. They do not control the network. This distinction is critical for every antagonist encounter in the game.</p>
+  <div class="codex"><strong>Story rule:</strong> No single conflict solves a network problem. Characters who believe defeating a local Affiliate commander will heal the system are wrong, and the story must make them wrong without punishing the player for fighting. The fight is real. The limitation of what fighting achieves is also real.</div>
+
+  <h2 id="i3">I.3 — The Gateway Hierarchy</h2>
+  <p>Not all stations are equivalent. The surface rail system treats them as nodes on a transit map. The Forge Network knows otherwise.</p>
+
+  <div class="gateway-grid">
+    <div class="gh">Type</div><div class="gh">Description</div><div class="gh">Examples</div>
+    <div class="g-label">Standard Node</div>
+    <div class="g-forge">Freight and transit stations — connected to surface rail and deep Forge substrate. No Gateway function.</div>
+    <div class="g-forge">Corgemont, Stones Throw, hundreds of others</div>
+    <div class="g-label">Gateway Node</div>
+    <div class="g-teal">Points where the Forge Network interfaces with the Enigmatic Universe. Real infrastructure. Ancient. Not metaphorical.</div>
+    <div class="g-teal">Styx Station, Heaven, Hell, others unlisted</div>
+    <div class="g-label">Metro Center</div>
+    <div class="g-forge" style="color:var(--gold)">Multiple Gateway convergence. The densest processing activity in the known network. The horizon of the story.</div>
+    <div class="g-forge" style="color:var(--gold)">Station City</div>
+  </div>
+
+  <div class="codex"><strong>Design principle:</strong> Station City is the horizon. It is always implied, never reached in the opening sequences. Its scale must be earned by everything that precedes it.</div>
+
+  <h2 id="i4">I.4 — The Swamp Wards — The Real Problem</h2>
+  <p>The Swamp Wards are the flooded districts of the southern network. Communities below the evacuation tier. People who cannot climb high enough to escape the Rift Flood. Rail connections that should have served them were severed — not by the Affiliates, but by systemic failure that preceded Affiliate involvement. The Affiliates have exploited the severance. They did not cause it.</p>
+  <p>This distinction is the moral engine of the story's opening arc. Brae's betrayal at Corgemont was motivated by a desire to escape — to reach Floor 784, high enough to be included in the final evacuation tier. Her transformation into a Siren white cell does not resolve the problem she was trying to escape. The Swamp Wards remain flooded. The people remain cut off.</p>
+  <p>No single fight in the opening sequences fixes this. No encounter, no boss defeat, no station recaptured. The systemic problem is systemic. Resolution will require operating at network scale — which is the arc the full game is built toward.</p>
+  <div class="warning"><strong>CRITICAL:</strong> Every writer, designer, and level team must understand this. Winning the fight at Styx Station is not a happy ending. It is a correct action in a larger campaign that has not yet been won. If any scene, UI element, or cutscene implies that Styx resolves the Swamp Wards situation, it is wrong and must be revised.</div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION II — CHARACTERS -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="section-break" id="characters">
+  <div class="section-num">— Section II —</div>
+  <div class="section-title">Character Briefs</div>
+  <div class="section-line"></div>
+</div>
+<div class="content">
+
+  <div class="entity-card" id="brae">
+    <div class="entity-left">
+      <div class="entity-role">Primary Operative<br>Siren Class Active</div>
+      <div class="entity-name">Brae Grindstone</div>
+      <div class="entity-class">Immune Response Unit<br>Node Stone Core: Rare<br>Classification Pending</div>
+    </div>
+    <div class="entity-right">
+      <p class="entity-desc">A mechanic. A traitor who didn't complete her betrayal. An immune response generated by a network that did not ask her permission. Brae spent ten years in the rail yards repairing rusted deploy rings and half-dead golems while the rest of civilization climbed above the floodlines. She sold out a train of passengers for a floor number high enough to feel safe. Then she didn't.</p>
+      <ul class="entity-notes">
+        <li>Operational function: White cell. Proximity and compatibility — not destiny — determined selection.</li>
+        <li>Post-Hyperchamber: Siren Class Active. Operational Class: Undefined. The network gave her capability. Mastery must still be learned.</li>
+        <li>Arc driver: Reconciling being a white cell — expendable by the network's logic — with being the person inside the experience.</li>
+        <li>What she is not: a chosen hero. Not special. Not prophesied. She was in the right place when the threat signature triggered.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="entity-card" id="lyra">
+    <div class="entity-left">
+      <div class="entity-role">Combat Specialist<br>CST Stones Throw Detail</div>
+      <div class="entity-name">Lyra</div>
+      <div class="entity-class">Provisional Ally<br>Allegiance: CST, not Brae</div>
+    </div>
+    <div class="entity-right">
+      <p class="entity-desc">Stones Throw gantry team. Dual-blade close combat configuration. First to identify Brae Grindstone by name from the rail system terminal during the Goblin swarm encounter. Lyra is not a villain and not a sidekick. She is a professional whose job has just become extremely complicated.</p>
+      <ul class="entity-notes">
+        <li>Dramatic function: Calibrates the player's understanding of how alarming Brae's transformation looks from the outside.</li>
+        <li>Arc potential: Her allegiance to CST is genuine and not corrupt. She is the pressure point when institutional response conflicts with what Brae needs.</li>
+        <li>Voice note: Lyra does not panic. She assesses. Her fear is cold and professional.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="entity-card" id="rael">
+    <div class="entity-left">
+      <div class="entity-role">Heavy Specialist<br>CST Stones Throw Detail</div>
+      <div class="entity-name">Rael</div>
+      <div class="entity-class">Provisional Ally<br>Combat Authority</div>
+    </div>
+    <div class="entity-right">
+      <p class="entity-desc">Stones Throw gantry team, senior position. First to understand that the Goblin swarm is not attacking — it is searching. Tactical intelligence under pressure. Where Lyra identifies Brae as a threat to be assessed, Rael identifies the situation as a problem to be solved.</p>
+      <ul class="entity-notes">
+        <li>Dramatic function: Provides the pragmatic read. His line — "They're not attacking the station. They're searching." — is the first correct read anyone makes in the Stones Throw sequence.</li>
+        <li>Arc potential: His pragmatism makes him useful to Brae before his loyalties resolve. He will work with her if it is the most rational option.</li>
+        <li>Relationship dynamic: Rael and Torch are a functional unit. Where Rael thinks, Torch acts.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="entity-card" id="torch">
+    <div class="entity-left">
+      <div class="entity-role">Tactical Specialist<br>CST Stones Throw Detail</div>
+      <div class="entity-name">Torch</div>
+      <div class="entity-class">Provisional Ally<br>Combat Instinct</div>
+    </div>
+    <div class="entity-right">
+      <p class="entity-desc">Stones Throw gantry team. The one who fires first and processes afterward. Not reckless — experienced enough to know when 'engage now' is the correct call. His line — "Tell me those are still asleep" — establishes his threat calibration before the encounter escalates.</p>
+      <ul class="entity-notes">
+        <li>Dramatic function: The human instinct pressure valve. Makes the team feel real by wanting the situation to be manageable.</li>
+        <li>Arc potential: Instinct-first approach becomes a liability or asset depending on what the story needs. Most likely to make the wrong call for the right reasons.</li>
+        <li>Relationship dynamic: Torch and Rael complete each other. Lyra manages both.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="entity-card" id="vex">
+    <div class="entity-left">
+      <div class="entity-role">Field Commander<br>Affiliate Southern Ops</div>
+      <div class="entity-name">Marrow Vex</div>
+      <div class="entity-class">Antagonist<br>Operational Authority<br>Styx Station</div>
+    </div>
+    <div class="entity-right">
+      <p class="entity-desc">The voice on the intercom. Cold, measured, corporate-military hybrid. A field commander for the Affiliates' southern operations — the immediate antagonist of the opening arc. He is not the architect of the infection. He is a symptom of it. Competent, credible, and ultimately a regional operative for something that does not require his survival.</p>
+      <ul class="entity-notes">
+        <li>What he wants: Control of the Styx Gateway. Unauthorized Furnace processing. Extension of Affiliate influence along the southern route.</li>
+        <li>What he does not know: The full scope of what is using the Styx Gateway. The network he is exploiting is orders of magnitude larger than his model accounts for.</li>
+        <li>Voice: Never raises his voice. His coldness is operational efficiency. He does not panic. He recalculates.</li>
+        <li>Arc end: Falls at Styx. His defeat is real and earned. It changes nothing systemic.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="entity-card" id="malvek">
+    <div class="entity-left">
+      <div class="entity-role">Hidden Architect<br>Affiliate Southern Network</div>
+      <div class="entity-name">Overseer Malvek</div>
+      <div class="entity-class">Deep Antagonist<br>The Affiliate Comptroller<br>Southern Lines</div>
+    </div>
+    <div class="entity-right">
+      <p class="entity-desc">The Affiliate Comptroller of the Southern Lines. Malvek does not appear in the field. He does not need to. His operational signature is present in every Affiliate action in the southern network — the unauthorized Furnace use, the Goblin deployment protocols, the exploitation of the Swamp Ward severance. He planned these. Vex executed them.</p>
+      <ul class="entity-notes">
+        <li>What he wants: Not yet fully known. His awareness of the Gateway network — whether he understands what Styx truly is — is the core mystery of the mid-game.</li>
+        <li>Design intent: Must feel like the answer to a question the player hasn't fully formulated yet. Not a bigger version of Vex.</li>
+        <li>First presence: Referenced before seen. His name on terminals, in captured communications, in the architecture of every system Brae dismantles.</li>
+        <li>Voice: When Malvek speaks, it will be rarely and without announcement. Statements of operational fact, not monologues.</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION III — ENTITY CODEX -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="section-break" id="entities">
+  <div class="section-num">— Section III —</div>
+  <div class="section-title">Entity Codex</div>
+  <div class="section-line"></div>
+</div>
+<div class="content">
+
+  <h2 id="sirens">III.1 — Sirens</h2>
+  <p>Sirens are Forge Network field operatives — the immune system's deployed units. They are not soldiers in the conventional sense. They are biological-mechanical response constructs, generated or awakened by the network when a threat signature exceeds passive defense thresholds.</p>
+  <p>A Siren's construction is part organic, part integrated Forge material. The integration is not surgical — it is organic, growing through the host's structure the way mycelium grows through soil. The result is a unit that retains the judgment, memory, and identity of its organic substrate while gaining the capability set and network connectivity of a Forge operative.</p>
+  <h4>Siren Capability Profile</h4>
+  <ul class="lore-list">
+    <li>Ley line perception — can see and read the energy flows of the Forge Network</li>
+    <li>Machine interface — direct access to Forge Network control systems via gauntlet interface</li>
+    <li>Golem command — can direct and communicate with network-linked mechanical units</li>
+    <li>Node stone Core — the center of Siren identity, power, and network connection</li>
+    <li>Furnace compatibility — can survive and benefit from Furnace processing</li>
+    <li>Node stone retrieval — can enter environments hot enough to retrieve forming stones</li>
+  </ul>
+  <p>Siren operational class is not assigned by the network. It is determined by what the Siren does after awakening. The network provides the capability. The individual determines the expression.</p>
+  <div class="codex"><strong>Story note:</strong> Brae's operational class being "Undefined" at the end of Sequence VIII is not a gap in the world — it is a feature. She has the tools. She does not yet know how she will use them. That process of discovery is the opening arc.</div>
+
+  <h2 id="furnace">III.2 — The Furnace</h2>
+  <p>The Furnace is not a weapon. It is not a creation system for new life. It is a resurrection and hardening system — the maintenance infrastructure for Siren units.</p>
+  <h4>Functions — In Order of Frequency</h4>
+  <ul class="lore-list">
+    <li><strong style="color:var(--gold)">Hardening:</strong> Intact Siren units processed through the Furnace emerge with elevated combat capacity. Structural reinforcement, Core stabilization, interface capability expansion. This is routine maintenance.</li>
+    <li><strong style="color:var(--gold)">Repair:</strong> Significantly damaged Siren units can be restored. The extent of restoration depends on Core integrity — if the node stone Core is substantially intact, the unit can be returned to full function.</li>
+    <li><strong style="color:var(--gold)">Resurrection:</strong> Critically destroyed Siren units whose Core survives can be fully reconstructed. The Core is the identity. If the Core survives, the Siren survives. This requires significant Forge Network energy allocation.</li>
+  </ul>
+  <h4>Furnace Failure State — The Glitch Witch Condition</h4>
+  <p>When a Siren whose node stone Core has been damaged beyond repair threshold is processed, the reconstruction fails. The Furnace attempts to rebuild the unit around a Core that cannot anchor the process correctly. It does not abort — it continues the cycle using whatever signal the damaged Core is still producing.</p>
+  <p>The result is a unit built around a broken signal. It has Siren capability without Siren coherence. The Furnace does not distinguish between authorized and unauthorized processing. This is the vulnerability the Affiliates have exploited.</p>
+  <div class="warning"><strong>Unauthorized Furnace use</strong> is the mechanism behind the Glitch Witch epidemic in the southern rail network. Every Glitch Witch encountered in the field is evidence of Affiliate criminal operation of Forge infrastructure.</div>
+
+  <h2 id="nodes">III.3 — Node Stones and Cores</h2>
+  <p>Node stones form in the hottest chambers of the Forge Network and along the Cenote vein systems — the deep geological channels that carry the network's Ley line energy through the planetary substrate. They carry the network's frequency in their mineral composition.</p>
+  <h4>Formation and Integration</h4>
+  <ul class="lore-list">
+    <li>Form at thermal convergence points in deep Forge chambers and Cenote vein intersections</li>
+    <li>Ambient synchronization: stones near active network elements gradually synchronize to local Ley line rhythm — observable as a pulse matching engine cycles</li>
+    <li>Retrieval: only Sirens can enter the formation environments — too hostile for other constructs</li>
+    <li>Integration is organic — the stone's material migrates into the Siren's structure over time, eventually occupying the Core position</li>
+  </ul>
+  <h4>Rare Stones</h4>
+  <p>Rare node stones surface occasionally — formations with frequency signatures or mineral compositions outside the normal distribution. The mechanism by which they form differently is not understood. A Siren bonded to a rare Core operates at a scale significantly beyond standard Siren capacity. Each rare stone is singular — there is no standard enhancement profile.</p>
+  <div class="codex"><strong>Story note:</strong> Brae's node stone was already synchronized to the Corgemont Forge engine cycle when she found it. The synchronization had been ongoing long enough to be complete. The network had not placed it there for her — but the timing of her arrival and the stone's readiness is either coincidence or evidence of something in the network's behavior that we do not yet have language for.</div>
+
+  <h2 id="goblins">III.4 — Glitch Goblins</h2>
+  <p>Glitch Goblins are manufactured Automaton units. They are not corrupted living things. They were never alive. There is no tragedy in them to feel bad about, and the story must never invite that misreading.</p>
+  <h4>Material Composition</h4>
+  <ul class="lore-list">
+    <li>Base material: ash residue produced by burning Kaiju bone at extreme Furnace temperature</li>
+    <li>Binding agent: rare ore from the deep cavern systems of the Cenotes — same geological formation as node stones, different mineral layer</li>
+    <li>Resulting alloy: harder than standard rail steel, carries permanent residual heat</li>
+    <li>Copper nerve-line systems engineered to mimic Forge Network internal logic pathways</li>
+  </ul>
+  <h4>Operational Logic</h4>
+  <p>Under normal operation, Goblins are Mint-to-Deploy controlled. When the Forge Network is active and broadcasting a threat-response signal, Goblins can receive and act on network instructions in lieu of Mint authorization. This is not reprogramming. It is the network asserting priority over the control layer built on top of it.</p>
+  <div class="codex"><strong>Design note:</strong> The Goblin's behavior in early sequences appears to have preferences, to evaluate, to decide. This is excellent pattern matching running on network-frequency data that no one else in the scene has access to. It is not judgment. It is not interiority. The story must allow both readings while knowing which is correct.</div>
+
+  <h2 id="witches">III.5 — Glitch Witches</h2>
+  <p>Glitch Witches are Sirens who survived the Furnace wrong. They are not manufactured. They are not new entities. They are what remains of a Siren unit after the resurrection process fails at the Core level.</p>
+  <h4>Behavioral Profile</h4>
+  <ul class="lore-list">
+    <li>Retains Siren-level structural capability and interface access</li>
+    <li>Network connection is corrupted — receives partial signals, misinterprets them, acts on the misinterpretation</li>
+    <li>The identity gap produces unpredictable priority hierarchies — a Witch may pursue something irrelevant to the tactical situation because the broken Core assigned it priority</li>
+    <li>Carries Forge interface tools and teal flame energy signature — these now serve no coherent network logic</li>
+    <li>Cannot be restored through standard Furnace processing — the Core that would need repair is the source of the malfunction</li>
+  </ul>
+  <p>A Glitch Witch remembers being a Siren. This memory is not comforting. It is the source of the malfunction. The gap between what it was and what it now is produces the specific behavior pattern that makes Glitch Witches more dangerous than standard hostile units.</p>
+
+  <h2 id="distinction">III.6 — The Distinction Rule</h2>
+  <p>This distinction must be maintained in every piece of writing, every design document, every dialogue line, every environmental storytelling beat across the entire project:</p>
+
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Glitch Goblin</th>
+        <th>Glitch Witch</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Origin</td><td>Manufactured from Kaiju bone ash and Cenote ore</td><td>Corrupted Siren — Furnace failure state</td></tr>
+      <tr><td>Was alive?</td><td>No. Never. Not in any sense.</td><td>Yes. Was a Siren. Remembers it.</td></tr>
+      <tr><td>Nature</td><td>Constructed Automaton — tool with sophisticated logic</td><td>Broken identity — capability without coherence</td></tr>
+      <tr><td>Tone</td><td>Mechanical horror. Industrial. Purposeful.</td><td>Tragic horror. Organic wrongness. Memory as wound.</td></tr>
+      <tr><td>Sympathy?</td><td>None invited. None warranted.</td><td>Horror that acknowledges what was lost.</td></tr>
+    </tbody>
+  </table>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION IV — STATION PROFILES -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="section-break" id="stations">
+  <div class="section-num">— Section IV —</div>
+  <div class="section-title">Station Profiles</div>
+  <div class="section-line"></div>
+</div>
+<div class="content">
+
+  <h2 id="corgemont">IV.1 — Corgemont Station</h2>
+  <h4>Classification</h4>
+  <ul class="lore-list">
+    <li>Southern Line — Peripheral Node</li>
+    <li>Freight dock and rail repair terminus</li>
+    <li>Deep Forge node: ancient, unmapped on surface charts, accessed by Brae in Act I</li>
+  </ul>
+  <h4>Narrative Function</h4>
+  <p>Corgemont is the beginning, not because it is important but because it is where Brae happens to be. The Forge Network's choice of Corgemont as activation point is a function of proximity, not significance. This is critical. If players or writers misread Corgemont as the heart of the story, the scale will collapse.</p>
+  <p>Corgemont is a peripheral nerve. The story begins here and does not return here in triumph. It is left behind. Its hidden Forge node is one of hundreds.</p>
+  <div class="codex"><strong>Visual character:</strong> Fog-wrapped. Industrial decay. Rail lines eaten by fungus. The fog moves wrong. Always sounds like it is dying. Wrong-yellow maintenance lamp light.</div>
+
+  <h2 id="stonesthrow">IV.2 — Stones Throw Station</h2>
+  <h4>Classification</h4>
+  <ul class="lore-list">
+    <li>Southern Line — Condemned Transit Node</li>
+    <li>Three towers above open water. Structural integrity: compromised.</li>
+    <li>Affiliate presence: significant. Site of Goblin swarm encounter and Marrow Vex's operational base.</li>
+  </ul>
+  <h4>Narrative Function</h4>
+  <p>Stones Throw is the place everyone says the name of like an apology. It is where the train was not supposed to reach, which makes it where the story goes.</p>
+  <div class="codex"><strong>Visual character:</strong> Three industrial towers, each progressively more damaged. Lights that work poorly and work wrong colors. Water visible beneath the platform gaps. Should feel like standing on a platform that knows it has already failed.</div>
+
+  <h2 id="styx">IV.3 — Styx Station</h2>
+  <h4>Classification</h4>
+  <ul class="lore-list">
+    <li>Gateway Node — Enigmatic Universe Interface</li>
+    <li>Southern Line junction point</li>
+    <li>Affiliate headquarters: southern operations command</li>
+  </ul>
+  <h4>Narrative Function</h4>
+  <p>Styx Station is not a transit hub with decorative Gateway architecture. It is a door. The entire station was built around the junction point where the Forge Network interfaces with the Enigmatic Universe. The Affiliates did not come here for the rail lines.</p>
+  <p>Defeating Marrow Vex at Styx is a correct action. It is not a resolution. The Swamp Wards remain flooded. The network problem is systemic. The Gateway — whatever is moving on the other side of it — predates the Affiliates' involvement by centuries.</p>
+  <div class="codex"><strong>Visual character:</strong> The Gateway is the central architectural feature — massive, ancient, built from materials that predate the station around it. The energy quality from the Gateway differs from Forge Network energy. It has direction. Urgency. Something moves behind it the way weather moves behind glass.</div>
+  <div class="warning"><strong>Scene rule:</strong> Brae must look at the Gateway after Vex falls and understand that she has solved something small inside something vast. This realization must land before the player leaves the station. If this scene does not exist, it must be written.</div>
+
+  <h2 id="stationcity">IV.4 — Station City</h2>
+  <h4>Classification</h4>
+  <ul class="lore-list">
+    <li>Metro Center — Gateway Convergence</li>
+    <li>Highest density of Forge Network processing in the known southern network</li>
+    <li>Multiple Gateway junction points — precise count not established in early story</li>
+  </ul>
+  <h4>Narrative Function</h4>
+  <p>Station City is the horizon. It appears in the first act as direction — the deep network points toward it, the Ley lines orient toward it, its existence implies a scale the opening sequences only gesture at. It is not reached in the opening arc. Its nature is not explained.</p>
+  <div class="codex"><strong>Visual character (early glimpses only):</strong> Density beyond comprehension. A city that grew around infrastructure rather than beside it. Multiple Gateway signatures visible even at distance to Siren perception. Station City does not exist at human scale — it exists at network scale.</div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION V — NARRATIVE PILLARS -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="section-break" id="pillars">
+  <div class="section-num">— Section V —</div>
+  <div class="section-title">Narrative Pillars</div>
+  <div class="section-line"></div>
+</div>
+<div class="content">
+
+  <div class="pillar" id="p1">
+    <div class="pillar-num">Pillar I</div>
+    <div class="pillar-title">Brae as Immune Response</div>
+    <p>This is the foundational framing of Brae's character and it must never be softened into conventional hero narrative.</p>
+    <p>White cells are generated by the immune system in response to detected pathogens. They are not chosen for virtue, destiny, or special quality. They are generated because they are compatible, available, and proximate to the threat. The immune system does not care about their survival beyond their operational utility.</p>
+    <p>Brae was not chosen. She was generated. The network identified a threat signature at Corgemont, found a compatible substrate in proximity to the activation point, and initiated the immune response. The fact that this happened to Brae specifically is logistics, not prophecy.</p>
+    <h4>What This Means for Writing Brae</h4>
+    <ul class="lore-list">
+      <li>She is never narratively protected by the story. Her survival is a function of capability and choices, not plot armor.</li>
+      <li>She is allowed to find the immune response framing uncomfortable. It is uncomfortable. She is a person, not a white cell, even if the network is treating her like one.</li>
+      <li>Her arc is the negotiation between the network's definition of her function and her own definition of herself.</li>
+      <li>She does not have access to the network's full knowledge. She was given tools and partial capability. The rest she has to figure out.</li>
+    </ul>
+    <div class="codex"><strong>Writing note:</strong> Brae's voice is practical, sardonic, and tired in the way of someone who has spent ten years doing necessary work that nobody values. Post-awakening, add underneath the tiredness something that is starting — not hope exactly, but the specific alertness of someone who now has access to more information than they've ever had and is not sure whether it makes things better or worse.</div>
+  </div>
+
+  <div class="pillar" id="p2">
+    <div class="pillar-num">Pillar II</div>
+    <div class="pillar-title">Mother — Protocol for Introduction</div>
+    <p>Mother is real. Mother is present throughout the story as the intelligence that animates the Forge Network. Mother is not available to the player or to Brae in the early sequences. This is not an oversight. It is the most important structural decision in the narrative architecture.</p>
+    <h4>The Rule</h4>
+    <p>Mother does not speak. Mother does not appear. Mother does not send messages, appear in terminals, or manifest in any personified form in the first act.</p>
+    <p>What is present instead:</p>
+    <ul class="lore-list">
+      <li>The Forge Network hum — toneless, patient, ancient, not communicative</li>
+      <li>System behavior that implies intelligence — but behavior that could be mechanical rather than intentional</li>
+      <li>The Hyperchamber's transformation — which could be read as designed or as automatic function encountering a compatible substrate</li>
+    </ul>
+    <h4>Why This Matters</h4>
+    <p>If Mother speaks too early, the scale collapses. She becomes a guide character — helpful, present, explaining things. The story becomes a tutorial. The silence is the point. The silence makes the first word, when it finally comes, one of the most significant moments in the story.</p>
+    <div class="warning"><strong>Development rule:</strong> Any draft in which Mother speaks in the first act must be revised. Any terminal message attributed to Mother must be rewritten as anonymous network data. Any moment where the Forge Network's behavior is explicitly personified as Mother's will must be reframed as system behavior whose intentionality remains ambiguous. Mother exists. Mother is not yet present.</div>
+  </div>
+
+  <div class="pillar" id="p3">
+    <div class="pillar-num">Pillar III</div>
+    <div class="pillar-title">Styx Station is Not a Resolution</div>
+    <p>This pillar exists because the structure of the opening arc creates a false resolution shape. Brae escapes Corgemont, reaches Stones Throw, defeats Vex, confronts the Affiliates at Styx. That is a story shape that implies completion. Abyssum explicitly refuses completion at Styx.</p>
+    <h4>What the Styx Encounter Must Establish</h4>
+    <ul class="lore-list">
+      <li>Vex was a field commander, not the architect. His defeat removes an operative. The operation continues under Malvek.</li>
+      <li>The Affiliates wanted the Gateway, not the rail lines. Whatever they were using it for is not stopped by Vex's death.</li>
+      <li>The Swamp Wards are still flooded — present in the scene through Ley line perception showing severed nodes still dark.</li>
+      <li>The Gateway is open and Brae has no idea what is on the other side. The movement behind the glass is seen, not explained.</li>
+      <li>Brae is one white cell. The network has already registered new threat signatures elsewhere.</li>
+    </ul>
+  </div>
+
+  <div class="pillar" id="p4">
+    <div class="pillar-num">Pillar IV</div>
+    <div class="pillar-title">The Unmappable Network</div>
+    <p>No character in the story has a complete map of the Forge Network. No document, no archive, no terminal display shows its full extent. This is not a gap in world-building — it is a feature of the world itself.</p>
+    <p>The network cannot be mapped because mapping requires a reference point outside the system being mapped. No such point exists. Every chart is a local view — accurate within its frame, blind to the scale beyond it.</p>
+    <ul class="lore-list">
+      <li>Characters who believe they understand the network's scope are always wrong — their understanding is always a subset of the actual</li>
+      <li>The Affiliates' operational confidence is based on a partial map they have mistaken for a complete one</li>
+      <li>Brae's post-awakening perception is more complete than any surface map — and still shows her a network that extends past the edges of what she can render</li>
+      <li>Mystery is structural. There is always more. The story never closes the frame.</li>
+    </ul>
+  </div>
+
+  <div class="pillar" id="p5">
+    <div class="pillar-num">Pillar V</div>
+    <div class="pillar-title">The Cosmological Scale Must Be Felt Before It Is Named</div>
+    <p>The two-origin model of the sentience is the largest idea in the world. It must be earned through sequence.</p>
+    <ol class="steps">
+      <li>
+        <strong>The player feels the Forge Network as strange and vast before it is named as anything.</strong>
+        <span>The hum beneath Corgemont. The node stones. The Hyperchamber's ancient machinery. Experienced before conceptualized.</span>
+      </li>
+      <li>
+        <strong>The player understands the network as infrastructure — old, functional, incomprehensibly large.</strong>
+        <span>The descent beneath Corgemont. Archive Tombs. Weapons Crypts. Hyperchambers. Civilization beneath civilization.</span>
+      </li>
+      <li>
+        <strong>The player perceives the Gateway at Styx and understands it is not what the station claims.</strong>
+        <span>The movement behind the glass. The different quality of energy. The age of the architecture. The sense of a door.</span>
+      </li>
+      <li>
+        <strong>Only then does the cosmological framing become available as language.</strong>
+        <span>The two origins. The Big Bang-age substrate. Heaven and Hell as Gateways. Station City as Metro Center. These words can now land because the player has already experienced what they describe.</span>
+      </li>
+    </ol>
+    <div class="warning"><strong>Development rule:</strong> If any scene requires the player to understand the cosmological model before having experienced the physical evidence of it, the scene is out of sequence and must be restructured. The world is not explained. It is discovered.</div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION VI — TONE AND VOICE -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="section-break" id="voice">
+  <div class="section-num">— Section VI —</div>
+  <div class="section-title">Tone and Voice</div>
+  <div class="section-line"></div>
+</div>
+<div class="content">
+
+  <h2 id="vi1">VI.1 — The Register</h2>
+  <p>Abyssum occupies a specific register that must be maintained across all writing in the project: <strong style="color:var(--gold)">industrial-gothic precision.</strong> It is not grimdark. It is not steampunk whimsy. It is not cyberpunk cool. It is something older and more patient.</p>
+  <p>The world is heavy with years. Every piece of infrastructure has been running for longer than the people using it understand. The fog is not decorative — it is evidence of something happening to the environment. The machines are impressive not for their size but for their age, their continued function, the fact that whatever maintains them has been doing so without acknowledgment for centuries.</p>
+
+  <h2 id="vi2">VI.2 — What Abyssum Sounds Like</h2>
+  <ul class="lore-list teal">
+    <li>Short declarative sentences at moments of high pressure. No poetic elaboration when the action is immediate.</li>
+    <li>Technical language used precisely. Forge script, Mint Cards, deploy nodes, Ley lines — words for things, used as words for things.</li>
+    <li>The machines have weight. Physical descriptions lean into mass, age, and function: "Pistons the size of cathedral pillars." Because that is what they are.</li>
+    <li>Silence is used. Brae does not fill silences with quips. The Goblin does not fill silences at all. The Forge Network hums.</li>
+    <li>The cosmological scale is felt in the gaps between things, not announced. The horror of the Hyperchamber is not that it is frightening — it is that it has been waiting for an unknown duration and will continue waiting after Brae leaves.</li>
+    <li>Brae's internal voice is sardonic and practical. She notices the impossible and responds with the vocabulary of someone who grew up fixing broken machines. "Guess we're doing this." Not awe. Adaptation.</li>
+  </ul>
+
+  <h2 id="vi3">VI.3 — What Abyssum Does Not Sound Like</h2>
+  <ul class="lore-list">
+    <li><strong style="color:var(--gold)">Exposition delivered as dialogue.</strong> No character explains the world to another character for the audience's benefit.</li>
+    <li><strong style="color:var(--gold)">Chosen one language.</strong> Brae is not the only one who could have done this. She was there. The story never uses destiny framing.</li>
+    <li><strong style="color:var(--gold)">Comic relief characters.</strong> The world can have dry humor — Brae's sardonic register provides this — but no character exists as a relief valve from the weight of the world.</li>
+    <li><strong style="color:var(--gold)">Victory music at Styx.</strong> The defeat of Vex is correct and real. It is not triumphant.</li>
+    <li><strong style="color:var(--gold)">Mother as a helpful AI.</strong> When Mother eventually speaks, she does not say helpful things. She does not explain. She does not reassure. She speaks from the perspective of a network running longer than human civilization.</li>
+    <li><strong style="color:var(--gold)">Affiliate characters as cartoons.</strong> Vex is cold and competent. Malvek is unknown and present in negative space. They are credible threats with operational logic that makes sense within their own worldview.</li>
+  </ul>
+
+  <h2 id="vi4">VI.4 — Scene-Level Rules</h2>
+  <h3>Opening Sequences — Before Transformation</h3>
+  <ul class="lore-list">
+    <li>Physical detail over emotional exposition. Show Brae's hands, her tools, the soot on her cheek. The world is built from specifics.</li>
+    <li>The Forge hum is felt before it is heard. Vibration in the weld scars, in the floor, in the station bones.</li>
+    <li>The Goblin's wrongness is material, not moral. It is made wrong. It was never anything else.</li>
+  </ul>
+  <h3>Transformation Sequence</h3>
+  <ul class="lore-list">
+    <li>Discomfort over transcendence. The Furnace is not a gift. The Hyperchamber is not a sanctuary. The node stone hurts on the way in.</li>
+    <li>New perception arrives without instructions. Brae can see the Ley lines. They do not explain themselves.</li>
+    <li>The network is indifferent. The chamber transforms her and returns to waiting. It was waiting before she arrived.</li>
+  </ul>
+  <h3>Post-Transformation Sequences</h3>
+  <ul class="lore-list">
+    <li>Capability without mastery. She has the gauntlet interface. She does not yet know how to use it fully.</li>
+    <li>The network continues its work. Brae's transformation is one event in a system running thousands simultaneously. The scale is always present.</li>
+  </ul>
+
+  <h2 id="vi5">VI.5 — Dialogue Rules</h2>
+  <h3>Brae</h3>
+  <ul class="lore-list">
+    <li>Declarative over interrogative under pressure. She states what she observes, decides, does.</li>
+    <li>Questions asked when she needs information, not when the audience does.</li>
+    <li>Sardonic register applies to the situation, not to other characters. Dry about the world. Not cruel to people.</li>
+  </ul>
+  <h3>Marrow Vex</h3>
+  <ul class="lore-list">
+    <li>Never raises his voice. His coldness is operational efficiency.</li>
+    <li>Refers to everything in terms of contracts, transactions, and deployment.</li>
+    <li>He is never wrong about the facts. He is wrong about the scale.</li>
+  </ul>
+  <h3>Rael, Torch, and Lyra</h3>
+  <ul class="lore-list">
+    <li>Rael: assesses first, concludes second. Short sentences. Tactical vocabulary.</li>
+    <li>Torch: acts first, processes second. Observations are instinctive and accurate.</li>
+    <li>Lyra: manages both. Slightly longer sentences. Carries the institutional weight of CST in her register.</li>
+  </ul>
+  <h3>The Forge Network — Before Mother Speaks</h3>
+  <ul class="lore-list">
+    <li>Does not speak. Does not message. Does not communicate in language.</li>
+    <li>Terminal readouts are operational data: FORGE NETWORK HANDSHAKE DETECTED. THREAT SIGNATURE: ACTIVE. Not explanations.</li>
+    <li>The Goblin's projections show maps and schematics — information, not guidance.</li>
+  </ul>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>ABYSSUM — Narrative Design Document &nbsp;·&nbsp; Version 1.0 &nbsp;·&nbsp; Lore Integration Draft</p>
+  <p>Southern Rail Division &nbsp;·&nbsp; Corgemont Node &nbsp;·&nbsp; Forge Network Active</p>
+  <p class="sub" style="margin-top:12px;">The story is the source code. All systems are compiled from it. When in doubt, return here.</p>
+</footer>
+
+</main>
+</body>
+</html>

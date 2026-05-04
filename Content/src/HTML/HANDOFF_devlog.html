@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ABYSSUM GENESIS — SESSION HANDOFF & DEV LOG</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #06060a;
+  --panel: #0d0d14;
+  --card: #111118;
+  --amber: #d4820a;
+  --teal: #00d4ff;
+  --teal-dim: #0099bb;
+  --orange: #ff6b1a;
+  --gold: #ffd700;
+  --success: #00ff88;
+  --danger: #ff3355;
+  --mid: #1a1a2a;
+  --soft: #888899;
+  --strong: #e8e8f0;
+  --muted: #444455;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--strong);font-family:'Crimson Pro',Georgia,serif;padding:40px;max-width:960px;margin:0 auto;}
+
+.cover-stamp{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.4em;color:var(--teal-dim);text-transform:uppercase;margin-bottom:8px;}
+h1{font-family:'Bebas Neue',sans-serif;font-size:48px;letter-spacing:.1em;color:var(--orange);line-height:.9;}
+h1 span{color:var(--teal);}
+.sub{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--soft);margin-top:10px;}
+.rule{height:2px;background:linear-gradient(90deg,var(--orange),var(--teal),transparent);margin:20px 0 28px;}
+
+.section{margin-bottom:32px;}
+.section-tag{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.4em;color:var(--amber);text-transform:uppercase;margin-bottom:6px;}
+h2{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:.1em;color:var(--strong);margin-bottom:12px;}
+p{font-size:15px;line-height:1.7;color:var(--soft);font-weight:300;}
+p+p{margin-top:8px;}
+strong{color:var(--strong);font-weight:600;}
+em{color:var(--teal);font-style:italic;}
+
+/* SCREENSHOT EMBED */
+.screenshot-frame{border:1px solid var(--mid);margin:16px 0;background:var(--card);position:relative;}
+.screenshot-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.2em;color:var(--orange);padding:8px 12px;border-bottom:1px solid var(--mid);}
+
+/* STATUS TABLE */
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:12px;}
+th{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:.3em;text-transform:uppercase;color:var(--amber);text-align:left;padding:8px 12px;border-bottom:1px solid var(--mid);}
+td{padding:8px 12px;border-bottom:1px solid rgba(26,26,42,.8);color:var(--soft);vertical-align:top;}
+td:first-child{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--strong);white-space:nowrap;}
+.badge{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:.15em;text-transform:uppercase;padding:3px 8px;border:1px solid;}
+.b-done{color:var(--success);border-color:var(--success);background:rgba(0,255,136,.06);}
+.b-next{color:var(--teal);border-color:var(--teal);background:rgba(0,212,255,.06);}
+.b-queue{color:var(--amber);border-color:var(--amber);background:rgba(212,130,10,.06);}
+.b-flag{color:var(--orange);border-color:var(--orange);background:rgba(255,107,26,.06);}
+
+/* RENAME CARDS */
+.rename-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;}
+.rename-card{border:1px solid var(--mid);background:var(--card);padding:14px 16px;}
+.rename-from{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--orange);letter-spacing:.1em;text-decoration:line-through;opacity:.6;margin-bottom:4px;}
+.rename-arrow{font-size:11px;color:var(--muted);margin:2px 0;}
+.rename-to{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--teal);letter-spacing:.1em;font-weight:600;}
+.rename-note{font-size:12px;color:var(--soft);margin-top:6px;line-height:1.5;}
+
+/* DEV KEY BOX */
+.dev-key-box{border:1px solid var(--amber);background:rgba(212,130,10,.05);padding:16px 20px;margin-top:14px;}
+.dev-key-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.35em;color:var(--amber);text-transform:uppercase;margin-bottom:8px;}
+.dev-key-body{font-size:14px;line-height:1.7;color:var(--soft);}
+.dev-key-code{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--gold);background:var(--mid);padding:8px 12px;margin-top:10px;letter-spacing:.08em;display:block;}
+
+/* CHECKPOINT STATUS */
+.cp-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid rgba(26,26,42,.6);}
+.cp-num{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--muted);min-width:28px;}
+.cp-main{flex:1;}
+.cp-title{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--strong);letter-spacing:.08em;}
+.cp-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+.cp-row.done .cp-num{color:var(--success);}
+.cp-row.done .cp-title{color:var(--success);}
+.cp-row.next .cp-num{color:var(--teal);}
+.cp-row.next .cp-title{color:var(--teal);}
+
+/* NOTE */
+.note{border-left:3px solid var(--amber);padding:12px 18px;background:rgba(212,130,10,.05);font-size:14px;font-style:italic;line-height:1.6;color:var(--soft);margin-top:16px;}
+
+.footer{border-top:1px solid var(--mid);margin-top:40px;padding-top:20px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+
+@media(max-width:640px){body{padding:20px;}.rename-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<div class="cover-stamp">CST-ERT // ABYSSUM GENESIS — CROSS-CHAT SESSION HANDOFF</div>
+<h1>Dev Log &amp; <span>Handoff</span><br>Brief</h1>
+<div class="sub">WEEK 1 · SESSION CLOSE · 75% WEEKLY LIMIT REACHED · FREIGHT CAR V3 CONFIRMED</div>
+<div class="rule"></div>
+
+<!-- DIAGNOSTIC OVERRIDE -->
+<div class="section">
+  <div class="section-tag" style="color:var(--danger)">Diagnostic Log — Bug 044-STLR</div>
+  <h2>Asset Visibility Conflict: "Stellar Woman"</h2>
+  <p><strong>Observation:</strong> The <em>CST Stellar Woman</em> asset (Ref: <code>CST_Stellar_v2.glb</code>) is failing to render in the <strong>Freight Car v4</strong> viewport. While the Forge Terminal reports the source as 'ARMED', the 3D model slot remains empty during the mission sequence.</p>
+  <p><strong>Current Action:</strong> System is held in diagnostic mode. All automatic scene-graph updates are currently <strong>ignored</strong> to prevent secondary drift while we verify the GLB hash and CDN routing.</p>
+
+  <div class="note" style="border-left-color:var(--danger); background:rgba(255,51,85,0.05); color:var(--danger);">
+    ⚠️ <strong>CRITICAL:</strong> Internal HMI-HUD triggers are firing, but the mesh is not registering in the Babylon.js <code>ImportMeshAsync</code> callback. Do not attempt further UI cleanup until the model instantiation is resolved.
+  </div>
+</div>
+
+<div class="rule" style="opacity:0.3;"></div>
+
+<!-- WHAT THE SCREENSHOT CONFIRMS -->
+<div class="section">
+  <div class="section-tag">Session Proof — Screenshot Confirmed</div>
+  <h2>What Shipped This Session</h2>
+  <p>The screenshot at session close confirms <strong>Freight Car v3 rendered correctly</strong> in-browser — full cockpit layout, four live unit cards in the roster strip (CST-ERT Vanguard, CST Witch Trooper, Battle Arcanist, Tanuki Golem), portrait images embedded, HP/Signal bars populated, condition tags active, Freight Status column visible. The Volume IV Bible and VLAAD Upgrade Triad Brief were also delivered as standalone HTML files.</p>
+
+  <table>
+    <tr><th>Deliverable</th><th>Status</th><th>Notes</th></tr>
+    <tr><td>Volume IV Bible</td><td><span class="badge b-done">Complete</span></td><td>4-section field codex — Glitch Witches, Freight Car Interface, CST Trooper, Echelon Class Siren. Image slots labelled.</td></tr>
+    <tr><td>VLAAD Cockpit v2</td><td><span class="badge b-done">Complete</span></td><td>Full state engine, event bus, mission loop, outcome overlays. Working single-file HTML.</td></tr>
+    <tr><td>freight-car-v3.html</td><td><span class="badge b-done">Complete</span></td><td>Upgrade A live — Telemetry Unit Cards strip with 4 named units, real portraits, faction glow, HP/Signal bars, condition tags.</td></tr>
+    <tr><td>Battlefield Map</td><td><span class="badge b-done">Complete</span></td><td>8-checkpoint interactive map. Phase 1 done, Phase 2 at Checkpoint A.</td></tr>
+    <tr><td>Upgrade B — Mission Spine</td><td><span class="badge b-next">Build Next</span></td><td>Static deployment loop → live clickable stage tracker. Active/complete/locked states.</td></tr>
+    <tr><td>Upgrade C — Contract Generator</td><td><span class="badge b-queue">Queued</span></td><td>Dynamic mission profiles. Faction, risk tier, narrative injection.</td></tr>
+  </table>
+</div>
+
+<!-- RENAME / CLEAN INSTRUCTIONS -->
+<div class="section">
+  <div class="section-tag">Production Cleanup — Rename & Hide Dev References</div>
+  <h2>Dev References to Remove or Rename</h2>
+  <p>The following labels are development scaffolding that should be <strong>renamed for the player-facing UI</strong> or moved behind a Developer Access Key gate. Do not delete them — they represent real system nodes. Just rename the labels and gate the raw API references.</p>
+
+  <div class="rename-grid">
+    <div class="rename-card">
+      <div class="rename-from">VLAAD</div>
+      <div class="rename-arrow">→</div>
+      <div class="rename-to">ABYSSUM COMMAND SPINE</div>
+      <div class="rename-note">The internal codename. Player-facing name should reference the world, not the dev system.</div>
+    </div>
+    <div class="rename-card">
+      <div class="rename-from">TRIPO3D MINT → FORGE</div>
+      <div class="rename-arrow">→</div>
+      <div class="rename-to">FORGE TERMINAL</div>
+      <div class="rename-note">Remove API vendor name from the panel header. Keep "Mint Card" and "Load Scene" buttons as-is.</div>
+    </div>
+    <div class="rename-card">
+      <div class="rename-from">DCC ASSET INVENTORY</div>
+      <div class="rename-arrow">→</div>
+      <div class="rename-to">ASSET VAULT</div>
+      <div class="rename-note">"DCC" is a dev abbreviation. Rename the left panel label to something world-consistent.</div>
+    </div>
+    <div class="rename-card">
+      <div class="rename-from">TRIPO3D API · ARMED</div>
+      <div class="rename-arrow">→</div>
+      <div class="rename-to">FORGE SOURCE · ARMED</div>
+      <div class="rename-note">Hide vendor name from Mint Source selector. Keep status label. Vendor detail goes in Dev panel.</div>
+    </div>
+    <div class="rename-card">
+      <div class="rename-from">GITHUB LFS / DROPBOX DIRECT</div>
+      <div class="rename-arrow">→</div>
+      <div class="rename-to">→ ADVANCED SETTINGS ONLY</div>
+      <div class="rename-note">These are raw pipeline endpoints. Gate behind Dev Access Key — not visible to players.</div>
+    </div>
+    <div class="rename-card">
+      <div class="rename-from">BJS_ENGINE_V6.X · WEBGL2 · 60 FPS</div>
+      <div class="rename-arrow">→</div>
+      <div class="rename-to">→ ADVANCED SETTINGS ONLY</div>
+      <div class="rename-note">Engine telemetry is dev info. Hide from default HUD. Can surface in Dev panel for debugging.</div>
+    </div>
+    <div class="rename-card">
+      <div class="rename-from">ERC-1155 (panel badge)</div>
+      <div class="rename-arrow">→</div>
+      <div class="rename-to">CONTRACT TYPE — or remove</div>
+      <div class="rename-note">Blockchain standard references are dev/investor language. Either rebrand or hide from casual players.</div>
+    </div>
+    <div class="rename-card">
+      <div class="rename-from">VLAAD ACTIVE · TRIPO3D ARMED · BJS 6.x OK (top bar)</div>
+      <div class="rename-arrow">→</div>
+      <div class="rename-to">→ ADVANCED SETTINGS ONLY</div>
+      <div class="rename-note">All three top-right status pills are dev health signals. Gate these. Replace with world-status indicators (LINK: ONLINE · SIGNAL: ACTIVE).</div>
+    </div>
+  </div>
+</div>
+
+<!-- DEV ACCESS KEY GATE -->
+<div class="section">
+  <div class="section-tag">Implementation Pattern — Dev Gate</div>
+  <h2>Advanced Settings / Developer Access Key</h2>
+  <p>The fastest implementation: <strong>a single hidden trigger</strong> in the cockpit that reveals a Dev Settings panel. No new architecture required — just a toggle gated by a local key. This preserves all dev tooling without surfacing it to players.</p>
+
+  <div class="dev-key-box">
+    <div class="dev-key-label">Suggested Implementation Pattern</div>
+    <div class="dev-key-body">
+      Add a small unlabelled gear icon to the command bar (far right, after existing status pills). Clicking it prompts for a 4-6 character access key. On correct entry, a slide-out Dev Panel opens showing: raw API endpoint selectors, engine telemetry, ERC contract type, VLAAD system label, pipeline health. On incorrect entry or dismiss, nothing changes in the main UI.
+    </div>
+    <code class="dev-key-code">
+// Dev gate pattern (vanilla JS — drops into existing cockpit script)<br>
+const DEV_KEY = "CST04";  // change before ship<br><br>
+document.getElementById('dev-trigger').addEventListener('click', () =&gt; {<br>
+&nbsp;&nbsp;const input = prompt("ADVANCED ACCESS KEY:");<br>
+&nbsp;&nbsp;if (input === DEV_KEY) showDevPanel();<br>
+});
+    </code>
+  </div>
+
+  <div class="note">
+    The dev panel should remain fully functional — this is not a removal, it's a routing. Everything that exists now stays. It just moves one click deeper for players who shouldn't see pipeline internals.
+  </div>
+</div>
+
+<!-- CHECKPOINT STATUS -->
+<div class="section">
+  <div class="section-tag">Battlefield Map — Current Position</div>
+  <h2>Where We Stand on the 8 Checkpoints</h2>
+
+  <div class="cp-row done"><div class="cp-num">A</div><div class="cp-main"><div class="cp-title">Volume IV Bible</div><div class="cp-sub">Complete — 4-section codex, named characters, image slots</div></div><span class="badge b-done">Done</span></div>
+  <div class="cp-row done"><div class="cp-num">B</div><div class="cp-main"><div class="cp-title">VLAAD Cockpit v2</div><div class="cp-sub">Complete — state engine, event bus, mission loop, outcome overlays</div></div><span class="badge b-done">Done</span></div>
+  <div class="cp-row done"><div class="cp-num">C</div><div class="cp-main"><div class="cp-title">Phase 3C Architecture</div><div class="cp-sub">Complete — doctrine locked, eject/loss/market/contract logic</div></div><span class="badge b-done">Done</span></div>
+  <div class="cp-row done"><div class="cp-num">D</div><div class="cp-main"><div class="cp-title">Telemetry Unit Cards (Upgrade A)</div><div class="cp-sub">Complete — freight-car-v3.html, 4 units live, portrait images embedded</div></div><span class="badge b-done">Done</span></div>
+  <div class="cp-row next"><div class="cp-num">E</div><div class="cp-main"><div class="cp-title">Clickable Mission Spine (Upgrade B)</div><div class="cp-sub">Next build — static loop text → live stage tracker</div></div><span class="badge b-next">Next</span></div>
+  <div class="cp-row"><div class="cp-num">F</div><div class="cp-main"><div class="cp-title">Contract Generator (Upgrade C)</div><div class="cp-sub">Queued — dynamic mission profiles, faction routing, narrative injection</div></div><span class="badge b-queue">Queued</span></div>
+  <div class="cp-row"><div class="cp-num">G</div><div class="cp-main"><div class="cp-title">Bible ↔ Cockpit Bridge</div><div class="cp-sub">Queued — Siren classes drive unit cards, Codex entries feed contracts</div></div><span class="badge b-queue">Queued</span></div>
+  <div class="cp-row"><div class="cp-num">H</div><div class="cp-main"><div class="cp-title">Multi-Device Test Loop</div><div class="cp-sub">Stop condition — two independent devices, shared world state, no dev tools</div></div><span class="badge b-flag">Stop Condition</span></div>
+</div>
+
+<!-- OPENING ORDERS FOR NEXT SESSION -->
+<div class="section">
+  <div class="section-tag">Opening Orders — Next Session</div>
+  <h2>How to Resume</h2>
+  <p>Upload <strong>freight-car-v3.html</strong> as the base file. Say <em>"Checkpoint E — build the Mission Spine"</em> and I will wire the static deployment loop into a live stage tracker that reads from gameState, with active glow, completed stage marks, and locked-stage dimming.</p>
+  <p>If you want the rename/dev-gate work done first, say <em>"Clean the dev references in freight-car-v3"</em> and I will apply all the renames from this doc and add the Dev Access Key gate in one pass.</p>
+  <p>Either order is fine. Rename first makes the cockpit look production-ready before we add more mechanics. Checkpoint E first keeps build momentum. Your call, Commander.</p>
+</div>
+
+<div class="footer">
+  <span>ABYSSUM GENESIS VERSE — DEV LOG · SESSION CLOSE</span>
+  <span>CHECKPOINTS COMPLETE: 4 of 8</span>
+  <span>NEXT: CHECKPOINT E — MISSION SPINE</span>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,5 @@
+ERROR|ironforge|KB3D_IRF_PropBarrel_B|.usd@</KB3D_IRF_PropBarrel_B/mtl/KB3D_IRF_WoodDamagedBrownA>. (instantiating stage on stage @e:/Cargo/kb3d_ironforge/Models/KB3D_IRF_PropBarrel_B/KB3D_IRF_PropBarrel_B.usd@ <00000252C9475600>)
+Error   : EXCEPTION_ACCESS_VIOLATION
+Address : 0x00007FF6A9B1F7D8
+Module  : blender.exe
+Thread  : 00005760

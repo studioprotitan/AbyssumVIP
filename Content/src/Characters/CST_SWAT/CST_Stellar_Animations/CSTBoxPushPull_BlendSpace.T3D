@@ -1,0 +1,20 @@
+Begin Object Class=/Script/Engine.BlendSpace1D Name="CSTBoxPushPull_BlendSpace" ExportPath="/Script/Engine.BlendSpace1D'/Game/Assets/CST_Stellar_Animations/CSTBoxPushPull_BlendSpace.CSTBoxPushPull_BlendSpace'"
+   Begin Object Class=/Script/UnrealEd.SceneThumbnailInfo Name="SceneThumbnailInfo_0" ExportPath="/Script/UnrealEd.SceneThumbnailInfo'/Game/Assets/CST_Stellar_Animations/CSTBoxPushPull_BlendSpace.CSTBoxPushPull_BlendSpace:SceneThumbnailInfo_0'"
+   End Object
+   Begin Object Name="SceneThumbnailInfo_0" ExportPath="/Script/UnrealEd.SceneThumbnailInfo'/Game/Assets/CST_Stellar_Animations/CSTBoxPushPull_BlendSpace.CSTBoxPushPull_BlendSpace:SceneThumbnailInfo_0'"
+   End Object
+   InterpolationParam(0)=(InterpolationTime=0.400000,InterpolationType=BSIT_Average)
+   bTargetWeightInterpolationEaseInOut=False
+   AnimLength=2.666667
+   bInterpolateUsingGrid=True
+   SampleData(0)=(Animation="/Script/Engine.AnimSequence'/Game/Assets/CST_Stellar_Animations/CSTAS_BoxIdle1.CSTAS_BoxIdle1'")
+   SampleData(1)=(Animation="/Script/Engine.AnimSequence'/Game/Assets/CST_Stellar_Animations/CSTAS_BoxPush1.CSTAS_BoxPush1'",SampleValue=(X=1.000000,Y=0.000000,Z=0.000000))
+   SampleData(2)=(Animation="/Script/Engine.AnimSequence'/Game/Assets/CST_Stellar_Animations/CSTAS_BoxPull1.CSTAS_BoxPull1'",SampleValue=(X=-1.000000,Y=0.000000,Z=0.000000))
+   GridSamples(0)=(Indices[0]=0,Indices[1]=2,Weights[1]=1.000000)
+   GridSamples(1)=(Indices[0]=0,Indices[1]=2,Weights[0]=1.000000)
+   GridSamples(2)=(Indices[0]=1,Indices[1]=0,Weights[0]=1.000000)
+   BlendParameters(0)=(DisplayName="Axis",Min=-1.000000,Max=1.000000,GridNum=2)
+   Skeleton="/Script/Engine.Skeleton'/Game/IdaFaber/Meshes/GirlUE4/SKEL_UE4_F.SKEL_UE4_F'"
+   ThumbnailInfo="/Script/UnrealEd.SceneThumbnailInfo'SceneThumbnailInfo_0'"
+   PreviewSkeletalMesh="/Game/Assets/CST_Stellar_Animations/SK_TROOPER_F_02.SK_TROOPER_F_02"
+End Object

@@ -1,0 +1,43 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #0a0806;
+  gap: 2rem;
+}
+
+.title {
+  color: #e87c2a;
+  font-family: serif;
+  letter-spacing: 0.1em;
+  font-size: 2rem;
+}
+
+.mintButton {
+  background: #e87c2a;
+  color: #0a0806;
+  border: none;
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+
+.mintButton:hover {
+  background: #c8932a;
+}
+
+.buttonLoading {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error {
+  color: #e87c2a;
+  font-size: 0.875rem;
+  margin-top: -1rem;
+}

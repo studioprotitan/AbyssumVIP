@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GENESIS VERES — Card Captor Dev Log & Asset Catalog</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --void: #03040a;
+    --obsidian: #0a0b14;
+    --slate: #12141f;
+    --stone: #1e2030;
+    --iron: #2a2d40;
+    --gold: #c8922a;
+    --gold-bright: #f0b840;
+    --green-skull: #00ff88;
+    --green-dark: #004d2a;
+    --neon-blue: #00b8ff;
+    --neon-purple: #9b30ff;
+    --neon-red: #ff2244;
+    --ash: #8a8fa8;
+    --bone: #c4c8d4;
+    --white: #eef0f8;
+    --legendary: linear-gradient(135deg, #c8922a, #f0b840, #c8922a);
+    --ultra-rare: linear-gradient(135deg, #9b30ff, #c060ff, #6010cc);
+    --rare-purple: linear-gradient(135deg, #6b0f8c, #9b30ff);
+    --rare-green: linear-gradient(135deg, #006644, #00ff88);
+    --uncommon: linear-gradient(135deg, #003366, #00b8ff);
+    --common: linear-gradient(135deg, #2a2d40, #4a4f68);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background-color: var(--void);
+    color: var(--bone);
+    font-family: 'Exo 2', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* ─── GRAIN OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.5;
+  }
+
+  /* ─── HEADER ─── */
+  .site-header {
+    position: relative;
+    text-align: center;
+    padding: 60px 20px 40px;
+    background: linear-gradient(180deg, #060810 0%, var(--void) 100%);
+    border-bottom: 2px solid var(--gold);
+    overflow: hidden;
+  }
+
+  .site-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(200,146,42,0.15) 0%, transparent 70%);
+  }
+
+  .site-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(2rem, 6vw, 4.5rem);
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    background: var(--legendary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+    position: relative;
+    z-index: 1;
+  }
+
+  .site-subtitle {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 0.3em;
+    color: var(--ash);
+    margin-top: 8px;
+    text-transform: uppercase;
+  }
+
+  .version-tag {
+    display: inline-block;
+    margin-top: 16px;
+    padding: 4px 16px;
+    border: 1px solid var(--green-skull);
+    color: var(--green-skull);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    border-radius: 2px;
+    text-shadow: 0 0 8px var(--green-skull);
+  }
+
+  /* ─── NAV TABS ─── */
+  .nav-tabs {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 20px;
+    background: var(--obsidian);
+    border-bottom: 1px solid var(--iron);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .nav-tab {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    padding: 8px 18px;
+    background: var(--stone);
+    border: 1px solid var(--iron);
+    color: var(--ash);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  .nav-tab:hover, .nav-tab.active {
+    border-color: var(--gold);
+    color: var(--gold-bright);
+    background: rgba(200,146,42,0.08);
+  }
+
+  /* ─── SECTION ─── */
+  .section {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 50px 24px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 40px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--iron);
+  }
+
+  .section-header h2 {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(1.1rem, 3vw, 1.8rem);
+    font-weight: 700;
+    color: var(--gold-bright);
+    letter-spacing: 0.06em;
+  }
+
+  .section-header .section-id {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--green-skull);
+    letter-spacing: 0.2em;
+    padding: 3px 10px;
+    border: 1px solid var(--green-dark);
+    text-shadow: 0 0 6px var(--green-skull);
+  }
+
+  /* ─── CARD GRID ─── */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+  }
+
+  /* ─── LORE CARD ─── */
+  .lore-card {
+    background: var(--obsidian);
+    border: 1px solid var(--iron);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+    animation: fadeIn 0.6s ease both;
+  }
+
+  .lore-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Rarity border glow */
+  .lore-card.legendary { border-color: var(--gold); box-shadow: 0 0 20px rgba(200,146,42,0.3), inset 0 0 20px rgba(200,146,42,0.05); }
+  .lore-card.ultra-rare { border-color: var(--neon-purple); box-shadow: 0 0 20px rgba(155,48,255,0.3); }
+  .lore-card.rare { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0,184,255,0.25); }
+  .lore-card.uncommon { border-color: var(--green-skull); box-shadow: 0 0 12px rgba(0,255,136,0.2); }
+  .lore-card.common { border-color: var(--iron); }
+  .lore-card.corrupted { border-color: var(--neon-red); box-shadow: 0 0 18px rgba(255,34,68,0.3); }
+
+  .card-rarity-bar {
+    height: 4px;
+    width: 100%;
+  }
+  .legendary .card-rarity-bar { background: var(--legendary); }
+  .ultra-rare .card-rarity-bar { background: var(--ultra-rare); }
+  .rare .card-rarity-bar { background: var(--uncommon); }
+  .uncommon .card-rarity-bar { background: var(--rare-green); }
+  .common .card-rarity-bar { background: var(--common); }
+  .corrupted .card-rarity-bar { background: linear-gradient(135deg, #ff2244, #660011); }
+
+  .card-image-frame {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    overflow: hidden;
+    background: var(--slate);
+  }
+
+  .card-image-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    transition: transform 0.5s;
+    filter: saturate(0.9) contrast(1.05);
+  }
+
+  .lore-card:hover .card-image-frame img {
+    transform: scale(1.06);
+  }
+
+  .card-image-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60%;
+    background: linear-gradient(0deg, var(--obsidian) 0%, transparent 100%);
+  }
+
+  .card-rarity-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    padding: 3px 10px;
+    text-transform: uppercase;
+    font-weight: bold;
+    z-index: 2;
+  }
+
+  .legendary .card-rarity-badge { background: rgba(0,0,0,0.8); color: var(--gold-bright); border: 1px solid var(--gold); text-shadow: 0 0 8px var(--gold-bright); }
+  .ultra-rare .card-rarity-badge { background: rgba(0,0,0,0.8); color: #c060ff; border: 1px solid var(--neon-purple); text-shadow: 0 0 8px #c060ff; }
+  .rare .card-rarity-badge { background: rgba(0,0,0,0.8); color: var(--neon-blue); border: 1px solid var(--neon-blue); }
+  .uncommon .card-rarity-badge { background: rgba(0,0,0,0.8); color: var(--green-skull); border: 1px solid var(--green-dark); }
+  .common .card-rarity-badge { background: rgba(0,0,0,0.8); color: var(--ash); border: 1px solid var(--iron); }
+  .corrupted .card-rarity-badge { background: rgba(0,0,0,0.8); color: var(--neon-red); border: 1px solid var(--neon-red); text-shadow: 0 0 6px var(--neon-red); }
+
+  .card-faction-tag {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    padding: 3px 8px;
+    background: rgba(0,0,0,0.75);
+    border-left: 2px solid var(--gold);
+    color: var(--ash);
+    z-index: 2;
+  }
+
+  .card-body {
+    padding: 18px 20px 20px;
+  }
+
+  .card-name {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--white);
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+
+  .card-subtitle {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--ash);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .card-lore {
+    font-size: 0.78rem;
+    line-height: 1.65;
+    color: #9aa0b8;
+    margin-bottom: 16px;
+    font-style: italic;
+    border-left: 2px solid var(--iron);
+    padding-left: 10px;
+  }
+
+  .card-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .stat-item {
+    background: var(--slate);
+    padding: 8px 10px;
+    border: 1px solid var(--iron);
+  }
+
+  .stat-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.58rem;
+    color: var(--ash);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .stat-value {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.82rem;
+    font-weight: bold;
+  }
+
+  .stat-value.gold { color: var(--gold-bright); }
+  .stat-value.blue { color: var(--neon-blue); }
+  .stat-value.green { color: var(--green-skull); }
+  .stat-value.purple { color: var(--neon-purple); }
+  .stat-value.red { color: var(--neon-red); }
+
+  /* ─── GAS DEPLOY PANEL ─── */
+  .gas-panel {
+    background: var(--slate);
+    border: 1px solid var(--iron);
+    padding: 12px 16px;
+    margin-top: 14px;
+  }
+
+  .gas-panel-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--green-skull);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    text-shadow: 0 0 6px var(--green-skull);
+  }
+
+  .gas-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+  }
+
+  .gas-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--ash);
+    letter-spacing: 0.08em;
+  }
+
+  .gas-value {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: var(--gold-bright);
+  }
+
+  .gas-value.stream-low { color: var(--neon-blue); }
+  .gas-value.stream-high { color: var(--neon-purple); }
+
+  .deploy-btn {
+    display: block;
+    width: 100%;
+    margin-top: 12px;
+    padding: 9px;
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold-bright);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-shadow: 0 0 6px rgba(200,146,42,0.4);
+  }
+
+  .deploy-btn:hover {
+    background: rgba(200,146,42,0.12);
+    box-shadow: 0 0 14px rgba(200,146,42,0.3);
+  }
+
+  .deploy-btn.corrupted-btn {
+    border-color: var(--neon-red);
+    color: var(--neon-red);
+    text-shadow: 0 0 6px rgba(255,34,68,0.4);
+  }
+
+  .deploy-btn.corrupted-btn:hover {
+    background: rgba(255,34,68,0.1);
+    box-shadow: 0 0 14px rgba(255,34,68,0.3);
+  }
+
+  /* ─── ABILITY TAGS ─── */
+  .ability-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 14px;
+  }
+
+  .ability-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.58rem;
+    padding: 3px 8px;
+    border-radius: 1px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .tag-atk { background: rgba(255,34,68,0.15); color: #ff6688; border: 1px solid rgba(255,34,68,0.3); }
+  .tag-def { background: rgba(0,184,255,0.1); color: #66d0ff; border: 1px solid rgba(0,184,255,0.3); }
+  .tag-spd { background: rgba(0,255,136,0.1); color: var(--green-skull); border: 1px solid rgba(0,255,136,0.3); }
+  .tag-psi { background: rgba(155,48,255,0.15); color: #c060ff; border: 1px solid rgba(155,48,255,0.3); }
+  .tag-flt { background: rgba(200,146,42,0.15); color: var(--gold-bright); border: 1px solid rgba(200,146,42,0.3); }
+  .tag-cor { background: rgba(255,34,68,0.2); color: var(--neon-red); border: 1px solid rgba(255,34,68,0.4); }
+
+  /* ─── ASSET CATALOG TABLE ─── */
+  .catalog-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--iron);
+  }
+
+  .catalog-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.72rem;
+  }
+
+  .catalog-table thead tr {
+    background: var(--stone);
+    border-bottom: 2px solid var(--gold);
+  }
+
+  .catalog-table th {
+    padding: 12px 14px;
+    text-align: left;
+    letter-spacing: 0.15em;
+    color: var(--gold-bright);
+    text-transform: uppercase;
+    font-size: 0.65rem;
+    white-space: nowrap;
+  }
+
+  .catalog-table tbody tr {
+    border-bottom: 1px solid var(--iron);
+    transition: background 0.15s;
+  }
+
+  .catalog-table tbody tr:hover { background: rgba(255,255,255,0.03); }
+
+  .catalog-table td {
+    padding: 10px 14px;
+    vertical-align: middle;
+    color: var(--bone);
+  }
+
+  .catalog-table td.filename {
+    color: var(--ash);
+    font-size: 0.62rem;
+  }
+
+  .rarity-pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 1px;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .pill-legendary { background: rgba(200,146,42,0.2); color: var(--gold-bright); border: 1px solid var(--gold); }
+  .pill-ultra-rare { background: rgba(155,48,255,0.2); color: #c060ff; border: 1px solid var(--neon-purple); }
+  .pill-rare { background: rgba(0,184,255,0.15); color: var(--neon-blue); border: 1px solid var(--neon-blue); }
+  .pill-uncommon { background: rgba(0,255,136,0.1); color: var(--green-skull); border: 1px solid var(--green-dark); }
+  .pill-common { background: rgba(100,105,130,0.2); color: var(--ash); border: 1px solid var(--iron); }
+  .pill-corrupted { background: rgba(255,34,68,0.2); color: var(--neon-red); border: 1px solid var(--neon-red); }
+
+  .gas-cell { color: var(--gold-bright); }
+  .gas-cell.low { color: var(--neon-blue); }
+  .gas-cell.high { color: var(--neon-purple); }
+
+  /* ─── DEV LOG ─── */
+  .devlog-entry {
+    background: var(--obsidian);
+    border: 1px solid var(--iron);
+    border-left: 4px solid var(--gold);
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    animation: fadeIn 0.5s ease both;
+  }
+
+  .devlog-entry.update { border-left-color: var(--neon-blue); }
+  .devlog-entry.warning { border-left-color: var(--neon-red); }
+  .devlog-entry.new { border-left-color: var(--green-skull); }
+
+  .devlog-date {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--green-skull);
+    letter-spacing: 0.2em;
+    margin-bottom: 6px;
+    text-shadow: 0 0 6px var(--green-skull);
+  }
+
+  .devlog-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 12px;
+    letter-spacing: 0.04em;
+  }
+
+  .devlog-body {
+    font-size: 0.82rem;
+    line-height: 1.75;
+    color: #9aa0b8;
+  }
+
+  .devlog-body ul {
+    padding-left: 20px;
+    margin: 10px 0;
+  }
+
+  .devlog-body li {
+    margin-bottom: 5px;
+    padding-left: 4px;
+  }
+
+  .devlog-body li::marker { color: var(--gold); }
+
+  .devlog-body strong { color: var(--gold-bright); font-weight: 600; }
+  .devlog-body code {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--green-skull);
+    background: rgba(0,255,136,0.07);
+    padding: 1px 5px;
+    border: 1px solid rgba(0,255,136,0.15);
+  }
+
+  /* ─── LOCATION CARDS ─── */
+  .location-card {
+    background: var(--obsidian);
+    border: 1px solid var(--iron);
+    padding: 0;
+    overflow: hidden;
+    transition: transform 0.3s;
+    animation: fadeIn 0.6s ease both;
+  }
+
+  .location-card:hover { transform: translateY(-3px); }
+
+  .location-header {
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid var(--iron);
+  }
+
+  .location-name {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 0.9rem;
+    color: var(--white);
+    letter-spacing: 0.04em;
+    margin-bottom: 3px;
+  }
+
+  .location-type {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--ash);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .portal-count {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    padding: 3px 10px;
+    background: rgba(0,255,136,0.07);
+    border: 1px solid var(--green-dark);
+    color: var(--green-skull);
+    white-space: nowrap;
+  }
+
+  .location-body {
+    padding: 16px 20px;
+  }
+
+  .location-desc {
+    font-size: 0.78rem;
+    color: #9aa0b8;
+    line-height: 1.65;
+    margin-bottom: 14px;
+    font-style: italic;
+  }
+
+  .location-portals {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 12px;
+  }
+
+  .portal-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.58rem;
+    padding: 3px 8px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .portal-boss { background: rgba(255,34,68,0.15); color: #ff6688; border: 1px solid rgba(255,34,68,0.3); }
+  .portal-cold { background: rgba(0,184,255,0.1); color: #66d0ff; border: 1px solid rgba(0,184,255,0.3); }
+  .portal-dead { background: rgba(100,100,100,0.2); color: #aaa; border: 1px solid #555; }
+  .portal-styx { background: rgba(155,48,255,0.15); color: #c060ff; border: 1px solid rgba(155,48,255,0.3); }
+  .portal-stones { background: rgba(200,146,42,0.15); color: var(--gold-bright); border: 1px solid rgba(200,146,42,0.3); }
+  .portal-noskog { background: rgba(0,255,136,0.1); color: var(--green-skull); border: 1px solid var(--green-dark); }
+  .portal-terror { background: rgba(255,34,68,0.25); color: var(--neon-red); border: 1px solid var(--neon-red); }
+  .portal-one { background: rgba(200,146,42,0.2); color: var(--gold-bright); border: 1px solid var(--gold); }
+
+  .location-gas {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .loc-gas-item {
+    flex: 1;
+    min-width: 120px;
+    background: var(--slate);
+    border: 1px solid var(--iron);
+    padding: 8px 10px;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    text-align: center;
+    padding: 40px 20px;
+    border-top: 1px solid var(--iron);
+    background: var(--obsidian);
+  }
+
+  footer p {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--iron);
+    letter-spacing: 0.15em;
+    line-height: 2;
+  }
+
+  footer span { color: var(--gold); }
+
+  /* ─── DIVIDER ─── */
+  .rune-divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 50px 0 30px;
+  }
+
+  .rune-divider::before, .rune-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--iron));
+  }
+
+  .rune-divider::after {
+    background: linear-gradient(90deg, var(--iron), transparent);
+  }
+
+  .rune-glyph {
+    font-family: 'Cinzel Decorative', serif;
+    color: var(--gold);
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    white-space: nowrap;
+  }
+
+  /* ─── FACTION BANNER ─── */
+  .faction-banner {
+    background: var(--slate);
+    border: 1px solid var(--iron);
+    border-left: 4px solid var(--gold);
+    padding: 14px 20px;
+    margin-bottom: 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .faction-name {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 0.9rem;
+    color: var(--gold-bright);
+    letter-spacing: 0.05em;
+  }
+
+  .faction-desc {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--ash);
+    letter-spacing: 0.1em;
+    margin-top: 4px;
+  }
+
+  .faction-count {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    padding: 4px 12px;
+    border: 1px solid var(--iron);
+    color: var(--ash);
+  }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--void); }
+  ::-webkit-scrollbar-thumb { background: var(--iron); border-radius: 0; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 640px) {
+    .card-grid { grid-template-columns: 1fr; }
+    .catalog-table th, .catalog-table td { padding: 8px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="site-title">GENESIS VERES</div>
+  <div class="site-subtitle">Card Captor Deck — NFT/NFC Asset Catalog & Lore Registry</div>
+  <div class="version-tag">⬡ BUILD v0.4.1 — AFRO DIESELPUNK REALM ⬡</div>
+</header>
+
+<!-- NAV -->
+<nav class="nav-tabs">
+  <a class="nav-tab active" href="#characters">Characters</a>
+  <a class="nav-tab" href="#corestones">Core Stones</a>
+  <a class="nav-tab" href="#locations">Stations & Realms</a>
+  <a class="nav-tab" href="#portals">Gateway Portals</a>
+  <a class="nav-tab" href="#catalog">Asset Catalog</a>
+  <a class="nav-tab" href="#devlog">Dev Log</a>
+</nav>
+
+
+<!-- ══════════════════════════════════════════════
+     SECTION 1 — CHARACTER LORE CARDS
+══════════════════════════════════════════════ -->
+<section id="characters" class="section">
+  <div class="section-header">
+    <div class="section-id">§ 001</div>
+    <h2>Character Lore Cards</h2>
+  </div>
+
+  <!-- FACTION: Ghostface Assassin / ERT -->
+  <div class="faction-banner">
+    <div>
+      <div class="faction-name">⚡ Ghostface Assassin Division</div>
+      <div class="faction-desc">CST Emergency Response Team — Glitch Witch Hunter Specialists</div>
+    </div>
+    <div class="faction-count">Selected By: Astronomical Society + World Pilots Union</div>
+  </div>
+
+  <div class="card-grid">
+
+    <!-- CARD 01: Shade Vael — Ghostface Assassin -->
+    <div class="lore-card ultra-rare">
+      <div class="card-rarity-bar"></div>
+      <div class="card-image-frame">
+        <img src="Default_Imagine_Ghostface_Assassin_Golem_standing_on_a_dieselp_0.jpg" alt="Ghostface Assassin">
+        <div class="card-image-overlay"></div>
+        <div class="card-rarity-badge">Ultra Rare</div>
+        <div class="card-faction-tag">CST — ERT Division</div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Shade Vael — Ghostface Assassin</div>
+        <div class="card-subtitle">ERT Formula Pilot · Glitch Witch Hunter · Rank: Wraith Commander</div>
+        <div class="ability-tags">
+          <span class="ability-tag tag-atk">ATK: Shadow Strike</span>
+          <span class="ability-tag tag-spd">SPD: Phantom Drift</span>
+          <span class="ability-tag tag-psi">PSI: Null Resonance</span>
+        </div>
+        <div class="card-lore">"Handpicked from the Top 12 Pilots on Deck by unanimous vote of the Astronomical Society. Where Glitch Witches scatter code into the sky, Shade Vael reads it like scripture — then silences it."</div>
+        <div class="card-stats">
+          <div class="stat-item"><span class="stat-label">ATK Power</span><span class="stat-value red">9 200</span></div>
+          <div class="stat-item"><span class="stat-label">DEF Armor</span><span class="stat-value blue">7 400</span></div>
+          <div class="stat-item"><span class="stat-label">Speed Class</span><span class="stat-value green">S-Tier</span></div>
+          <div class="stat-item"><span class="stat-label">Pilot Rank</span><span class="stat-value purple">⬡ WR-01</span></div>
+        </div>
+        <div class="gas-panel">
+          <div class="gas-panel-title">⛽ Gas API — Deploy Fuel Cost</div>
+          <div class="gas-row"><span class="gas-label">Low Stream (1.6 km)</span><span class="gas-value stream-low">0.0018 GVR</span></div>
+          <div class="gas-row"><span class="gas-label">High Quality Stream</span><span class="gas-value stream-high">0.0072 GVR</span></div>
+          <div class="gas-row"><span class="gas-label">Deploy to Location</span><span class="gas-value">0.0240 GVR</span></div>
+          <div class="gas-row"><span class="gas-label">Activation Seal</span><span class="gas-value">2 × Boundary Stone</span></div>
+        </div>
+        <button class="deploy-btn">⬡ DEPLOY CARD TO LOCATION</button>
+      </div>
+    </div>
+
+    <!-- CARD 02: Nyxi Glitch — Glitch Witch Siren -->
+    <div class="lore-card rare">
+      <div class="card-rarity-bar"></div>
+      <div class="card-image-frame">
+        <img src="A_Closeup_Of_A_Woman_In_A_Blue_And_Gold_Costume_W.png" alt="Glitch Witch Siren">
+        <div class="card-image-overlay"></div>
+        <div class="card-rarity-badge">Rare</div>
+        <div class="card-faction-tag">Siren Division</div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Nyxi Glitch — Siren Witch</div>
+        <div class="card-subtitle">Signal Disruptor · Tidal Frequency Caster · Glitch Wave Emitter</div>
+        <div class="ability-tags">
+          <span class="ability-tag tag-psi">PSI: Signal Shatter</span>
+          <span class="ability-tag tag-atk">ATK: Sonic Reef</span>
+          <span class="ability-tag tag-cor">STATUS: Glitch Pulse</span>
+        </div>
+        <div class="card-lore">"Born where the digital tides meet corrupted ley lines. Nyxi carries the frequency of broken gateways in her voice — enough to rewrite a pilot's coordinates mid-flight."</div>
+        <div class="card-stats">
+          <div class="stat-item"><span class="stat-label">ATK Power</span><span class="stat-value red">7 100</span></div>
+          <div class="stat-item"><span class="stat-label">PSI Output</span><span class="stat-value purple">8 800</span></div>
+          <div class="stat-item"><span class="stat-label">Speed Class</span><span class="stat-value green">A-Tier</span></div>
+          <div class="stat-item"><span class="stat-label">Threat Level</span><span class="stat-value red">◆ CONTAIN</span></div>
+        </div>
+        <div class="gas-panel">
+          <div class="gas-panel-title">⛽ Gas API — Deploy Fuel Cost</div>
+          <div class="gas-row"><span class="gas-label">Low Stream (1.6 km)</span><span class="gas-value stream-low">0.0012 GVR</span></div>
+          <div class="gas-row"><span class="gas-label">High Quality Stream</span><span class="gas-value stream-high">0.0052 GVR</span></div>
+          <div class="gas-row"><span class="gas-label">Deploy to Location</span><span class="gas-value">0.0160 GVR</span></div>
+          <div class="gas-row"><span class="gas-label">Activation Seal</span><span class="gas-value">1 × Boundary Stone</span></div>
+        </div>
+        <button class="deploy-btn">⬡ DEPLOY CARD TO LOCATION</button>
+      </div>
+    </div>
+
+    <!-- CARD 03: Tengu Warlord — Steamfitters Golem -->
+    <div class="lore-card legendary">
+      <div class="card-rarity-bar"></div>
+      <div class="card-image-frame">
+        <img src="Default_Imagine_Dieselpunk_Tengu_Golem_standing_on_a_dieselpun_0.jpg" alt="Tengu Golem">
+        <div class="card-image-overlay"></div>
+        <div class="card-rarity-badge">Legendary</div>
+        <div class="card-faction-tag">Steamfitters Guild</div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Kazenōbu — Tengu Golem Warlord</div>
+        <div class="card-subtitle">Steamfitters Armory Unit · Flight Apparatus Mk-IV · Sky Siege Class</div>
+        <div class="ability-tags">
+          <span class="ability-tag tag-flt">FLT: Thermal Ascent</span>
+          <span class="ability-tag tag-atk">ATK: Storm Talons</span>
+          <span class="ability-tag tag-def">DEF: Iron Plumage</span>
+        </div>
+        <div class="card-lore">"Forged in the furnaces of the Steamfitters Armory at Keystone Bridge Station, Kazenōbu wears the ancient mask of the mountain wind and the mechanical skeleton of the new age. He does not fly — he rules the sky lanes."</div>
+        <div class="card-stats">
+          <div class="stat-item"><span class="stat-label">ATK Power</span><span class="stat-value red">11 500</span></div>
+          <div class="stat-item"><span class="stat-label">DEF Armor</span><span class="stat-value blue">10 200</span></div>
+          <div class="stat-item"><span class="stat-label">Flight Ceiling</span><span class="stat-value green">8 400 m</span></div>
+          <div class="stat-item"><span class="stat-label">Pilot Rank</span><span class="stat-value gold">⬡ LEGEND</span></div>
+        </div>
+        <div class="gas-panel">
+          <div class="gas-panel-title">⛽ Gas API — Deploy Fuel Cost</div>
+          <div class="gas-row"><span class="gas-label">Low Stream (1.6 km)</span><span class="gas-value stream-low">0.0035 GVR</span></div>
+          <div class="gas-row"><span class="gas-label">High Quality Stream</span><span class="gas-value stream-high">0.0140 GVR</span></div>
+          <div class="gas-row"><span class="gas-label">Deploy to Location</span><span class="gas-value">0.0520 GVR</span></div>
+          <div class="gas-row"><span class="gas-label">Activation Seal</span><span class="gas-value">3 × Legendary Core Stone</span></div>
+        </div>
+        <button class="deploy-btn">⬡ DEPLOY CARD TO LOCATION</button>
+      </div>
+    </div>
+
+    <!-- CARD 04: Yellow Crowned Witch — Corgemont Station -->
+    <div class="lore-card legendary">
+      <div class="card-rarity-bar"></div>
+      <div class="card-image-frame">
+        <img src="corestoneyellowglitchwitch.jpg" alt="Yellow Crowned Witch">
+        <div class="card-image-overlay"></div>
+        <div class="card-rarity-badge">Legendary</div>
+        <div class="card-faction-tag">Corgemont Station — Main Character</div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Auremis — The Yellow Crowned Witch</div>
+        <div class="card-subtitle">Corgemont Station Sovereign · Oracle Conduit · Glitch Frequency Architect</div>
+        <div class="ability-tags">
+          <span class="ability-tag tag-psi">PSI: Crown Broadcast</span>
+          <span class="ability-tag tag-flt">FLT: Ley Stream Riding</span>
+          <span class="ability-tag tag-cor">STATUS: Frequency Lock</span>
+        </div>
+        <div class="card-lore">"At the center of Corgemont Station, Auremis sits crowned in signal gold — neither tyrant nor servant. She is the frequency the city runs on. When she speaks, every Core Stone in a 3km radius pulses once in reply."</div>
+        <div class="card-stats">
+          <div class="stat-item"><span class="stat-label">PSI Output</span><span class="stat-value purple">13 000</span></div>
+          <div class="stat-item"><span class="stat-label">DEF Armor</span><span class="stat-value blue">8 500</span></div>
+          <div class="stat-item"><span class="stat-label">Aura Range</span><span class="stat-value gold">3.0 km</span></div>
+          <div class="stat-item"><span class="stat-label">Station Rank</span><span class="stat-value gold">⬡ SOVEREIGN</span></div>
+        </div>
+        <div class="gas-panel">
+          <div class="gas-panel-title">⛽ Gas API — Deploy Fuel Cost</div>
+          <div class="gas-row"><span class="gas-label">Low Stream (1.6 km)</span><span class="gas-value stream-low">0.0044 GVR</span></div>
+          <div class="gas-row"><span class="gas-label">High Quality Stream</span><span class="gas-value stream-high">0.0175 GVR</span></div>
+          <div class="gas-row"><span class="gas-label">Deploy to Location</span><span class="gas-value">0.0680 GVR</span></div>
+          <div class="gas-row"><span class="gas-label">Activation Seal</span><span class="gas-value">Corgemont Core Stone ×1</span></div>
+        </div>
+        <button class="deploy-btn">⬡ DEPLOY CARD TO LOCATION</button>
+      </div>
+    </div>
+
+    <!-- CARD 05: Oracle AI Intelligence -->
+    <div class="lore-card ultra-rare">
+      <div class="card-rarity-bar"></div>
+      <div class="card-image-frame">
+        <img src="A_Ritual_mechanical_HMI_Headset_Designed_As_A_Crow.png" alt="Oracle AI">
+        <div class="card-image-overlay"></div>
+        <div class="card-rarity-badge">Ultra Rare</div>
+        <div class="card-faction-tag">Astronomical Institute</div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">ORACLE-7 — Astronomical AI</div>
+        <div class="card-subtitle">Distributed Intelligence · Realm Cartographer · Pilot Assignment System</div>
+        <div class="ability-tags">
+          <span class="ability-tag tag-psi">PSI: Predictive Mapping</span>
+          <span class="ability-tag tag-def">DEF: Signal Fortress</span>
+          <span class="ability-tag tag-spd">SPD: Quantum Parse</span>
+        </div>
+        <div class="card-lore">"ORACLE-7 does not have a body. It has every network, every boundary stone sensor, every pilot telemetry feed simultaneously. It chose the Ghostface Assassins. It is watching the portals. It has been watching since before the Corruption."</div>
+        <div class="card-stats">
+          <div class="stat-item"><span class="stat-label">PSI Output</span><span class="stat-value purple">∞ NET</span></div>
+          <div class="stat-item"><span class="stat-label">DEF Armor</span><span class="stat-value blue">12 000</span></div>
+          <div class="stat-item"><span class="stat-label">Net Range</span><span class="stat-value green">Global</span></div>
+          <div class="stat-item"><span class="stat-label">Origin</span><span class="stat-value red">⚠ UNKNOWN</span></div>
+        </div>
+        <div class="gas-panel">
+          <div class="gas-panel-title">⛽ Gas API — Deploy Fuel Cost</div>
+          <div class="gas-row"><span class="gas-label">Low Stream (1.6 km)</span><span class="gas-value stream-low">0.0028 GVR</span></div>
+          <div class="gas-row"><span class="gas-label">High Quality Stream</span><span class="gas-value stream-high">0.0110 GVR</span></div>
+          <div class="gas-row"><span class="gas-label">Deploy to Location</span><span class="gas-value">0.0480 GVR</span></div>
+          <div class="gas-row"><span class="gas-label">Activation Seal</span><span class="gas-value">Boundary Stone ×1 + Oracle Key</span></div>
+        </div>
+        <button class="deploy-btn">⬡ DEPLOY CARD TO LOCATION</button>
+      </div>
+    </div>
+
+    <!-- CARD 06: Kaiju Kraken Drone Pilot -->
+    <div class="lore-card rare">
+      <div class="card-rarity-bar"></div>
+      <div class="card-image-frame">
+        <img src="Pirate_SalvagerShipPilot.PNG" alt="Kraken Drone Pilot">
+        <div class="card-image-overlay"></div>
+        <div class="card-rarity-badge">Rare</div>
+        <div class="card-faction-tag">Kaiju Fleet — Kraken Division</div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Kade Nox — Kraken Drone Pilot</div>
+        <div class="card-subtitle">Kaiju Fleet Salvager · Deep Tidal Vessel Operator · Sky-Sea Hybrid Class</div>
+        <div class="ability-tags">
+          <span class="ability-tag tag-atk">ATK: Depth Charge</span>
+          <span class="ability-tag tag-def">DEF: Hull Slam</span>
+          <span class="ability-tag tag-spd">SPD: Kraken Rush</span>
+        </div>
+        <div class="card-lore">"The Kraken-class drone ships don't fight fair — they swallow terrain. Kade Nox pilots the flagship, a vessel part diesel engine, part living coral, part weaponized signal tower. The ocean and the sky are the same battlefield."</div>
+        <div class="card-stats">
+          <div class="stat-item"><span class="stat-label">ATK Power</span><span class="stat-value red">8 600</span></div>
+          <div class="stat-item"><span class="stat-label">Hull Integrity</span><span class="stat-value blue">9 100</span></div>
+          <div class="stat-item"><span class="stat-label">Vessel Class</span><span class="stat-value gold">Kraken-IV</span></div>
+          <div class="stat-item"><span class="stat-label">Speed Class</span><span class="stat-value green">B-Tier</span></div>
+        </div>
+        <div class="gas-panel">
+          <div class="gas-panel-title">⛽ Gas API — Deploy Fuel Cost</div>
+          <div class="gas-row"><span class="gas-label">Low Stream (1.6 km)</span><span class="gas-value stream-low">0.0015 GVR</span></div>
+          <div class="gas-row"><span class="gas-label">High Quality Stream</span><span class="gas-value stream-high">0.0058 GVR</span></div>
+          <div class="gas-row"><span class="gas-label">Deploy to Location</span><span class="gas-value">0.0200 GVR</span></div>
+          <div class="gas-row"><span class="gas-label">Activation Seal</span><span class="gas-value">1 × Raijin Core Stone</span></div>
+        </div>
+        <button class="deploy-btn">⬡ DEPLOY CARD TO LOCATION</button>
+      </div>
+    </div>
+
+    <!-- CARD 07: Astronomical Scout Droid — Ancient Armor -->
+    <div class="lore-card uncommon">
+      <div class="card-rarity-bar"></div>
+      <div class="card-image-frame">
+        <img src="A_Ritualmechanical_Hmi_Headset_Designed_As_A_Crown_3.png" alt="Scout Droid">
+        <div class="card-image-overlay"></div>
+        <div class="card-rarity-badge">Uncommon</div>
+        <div class="card-faction-tag">Astronomical Institute</div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Argent Scout — Ancient Armor Droid</div>
+        <div class="card-subtitle">Astronomical Institute Patrol Unit · Pre-Corruption Origin · Lore: CLASSIFIED</div>
+        <div class="ability-tags">
+          <span class="ability-tag tag-def">DEF: Ancient Shell</span>
+          <span class="ability-tag tag-psi">PSI: Relic Scan</span>
+          <span class="ability-tag tag-cor">STATUS: Origins Unknown</span>
+        </div>
+        <div class="card-lore">"The armor these droids wear predates every known dieselpunk manufacturing record. No forge mark. No steamfitters guild seal. ORACLE-7 has scanned them 1,140 times. The scans come back empty."</div>
+        <div class="card-stats">
+          <div class="stat-item"><span class="stat-label">ATK Power</span><span class="stat-value red">5 400</span></div>
+          <div class="stat-item"><span class="stat-label">Armor Rating</span><span class="stat-value gold">⚠ ANCIENT</span></div>
+          <div class="stat-item"><span class="stat-label">Origin Era</span><span class="stat-value red">UNKNOWN</span></div>
+          <div class="stat-item"><span class="stat-label">Droid Class</span><span class="stat-value green">A-S Scout</span></div>
+        </div>
+        <div class="gas-panel">
+          <div class="gas-panel-title">⛽ Gas API — Deploy Fuel Cost</div>
+          <div class="gas-row"><span class="gas-label">Low Stream (1.6 km)</span><span class="gas-value stream-low">0.0008 GVR</span></div>
+          <div class="gas-row"><span class="gas-label">High Quality Stream</span><span class="gas-value stream-high">0.0030 GVR</span></div>
+          <div class="gas-row"><span class="gas-label">Deploy to Location</span><span class="gas-value">0.0090 GVR</span></div>
+          <div class="gas-row"><span class="gas-label">Activation Seal</span><span class="gas-value">1 × Boundary Stone</span></div>
+        </div>
+        <button class="deploy-btn">⬡ DEPLOY CARD TO LOCATION</button>
+      </div>
+    </div>
+
+    <!-- CARD 08: Siren Tidal Dragon Armor -->
+    <div class="lore-card ultra-rare">
+      <div class="card-rarity-bar"></div>
+      <div class="card-image-frame">
+        <img src="rareraijingreencolossus.jpg" alt="Siren Tidal Dragon Armor">
+        <div class="card-image-overlay"></div>
+        <div class="card-rarity-badge">Ultra Rare</div>
+        <div class="card-faction-tag">Siren Division — Tidal Class</div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Thalvara — Siren Tidal Dragon Armor</div>
+        <div class="card-subtitle">Biomechanical Fusion Suit · Deep Current Raider · Ultra Rare Combat Class</div>
+        <div class="ability-tags">
+          <span class="ability-tag tag-atk">ATK: Dragon Surge</span>
+          <span class="ability-tag tag-def">DEF: Tidal Scales</span>
+          <span class="ability-tag tag-psi">PSI: Current Whisper</span>
+          <span class="ability-tag tag-flt">FLT: Crest Ride</span>
+        </div>
+        <div class="card-lore">"Thalvara isn't worn — it's bonded. The armor grew from coral, diesel sinew, and the skeleton of a Tidal Dragon that chose to give its bones. She who wears it can breathe the current and ride the signal wave at 400 km/h."</div>
+        <div class="card-stats">
+          <div class="stat-item"><span class="stat-label">ATK Power</span><span class="stat-value red">10 800</span></div>
+          <div class="stat-item"><span class="stat-label">DEF Armor</span><span class="stat-value blue">11 200</span></div>
+          <div class="stat-item"><span class="stat-label">Speed Class</span><span class="stat-value green">S+-Tier</span></div>
+          <div class="stat-item"><span class="stat-label">Bond Type</span><span class="stat-value purple">Biomech Fusion</span></div>
+        </div>
+        <div class="gas-panel">
+          <div class="gas-panel-title">⛽ Gas API — Deploy Fuel Cost</div>
+          <div class="gas-row"><span class="gas-label">Low Stream (1.6 km)</span><span class="gas-value stream-low">0.0032 GVR</span></div>
+          <div class="gas-row"><span class="gas-label">High Quality Stream</span><span class="gas-value stream-high">0.0128 GVR</span></div>
+          <div class="gas-row"><span class="gas-label">Deploy to Location</span><span class="gas-value">0.0560 GVR</span></div>
+          <div class="gas-row"><span class="gas-label">Activation Seal</span><span class="gas-value">Raijin Stone + Boundary Stone</span></div>
+        </div>
+        <button class="deploy-btn">⬡ DEPLOY CARD TO LOCATION</button>
+      </div>
+    </div>
+
+  </div><!-- /card-grid -->
+
+
+  <!-- ─── RUNE DIVIDER ─── -->
+  <div class="rune-divider"><span class="rune-glyph">⬡ CITY SKY REALM TROOPERS ⬡</span></div>
+
+  <!-- FACTION: CST Troopers -->
+  <div class="faction-banner" style="border-left-color:var(--neon-blue);">
+    <div>
+      <div class="faction-name" style="color:var(--neon-blue);">◈ City Sky Realm — CST Trooper Corps</div>
+      <div class="faction-desc">Aerial Urban Enforcement · Boundary Station Garrison · Sky Lane Patrol</div>
+    </div>
+    <div class="faction-count">HQ: Coldstone Station</div>
+  </div>
+
+  <div class="card-grid">
+
+    <!-- CARD 09: CST Trooper -->
+    <div class="lore-card uncommon">
+      <div class="card-rarity-bar"></div>
+      <div class="card-image-frame">
+        <img src="A_Highly_Detailed_Afro_Dieselpunk_Artwork_Depicts__2.jpg" alt="CST Trooper">
+        <div class="card-image-overlay"></div>
+        <div class="card-rarity-badge">Uncommon</div>
+        <div class="card-faction-tag">CST — Sky Garrison</div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Vox Trooper — CST Sky Corps</div>
+        <div class="card-subtitle">City Sky Realm Enforcer · Boundary Station Guard · Aerial Patrol Unit</div>
+        <div class="ability-tags">
+          <span class="ability-tag tag-def">DEF: City Shield</span>
+          <span class="ability-tag tag-flt">FLT: Lane Patrol</span>
+          <span class="ability-tag tag-atk">ATK: Volley Strike</span>
+        </div>
+        <div class="card-lore">"Every sky lane in the City Sky Realm has a Vox Trooper pair on a 6-hour rotation. They are the first to see corrupted portal emergence events. They are not the last thing those portals encounter."</div>
+        <div class="card-stats">
+          <div class="stat-item"><span class="stat-label">ATK Power</span><span class="stat-value red">4 200</span></div>
+          <div class="stat-item"><span class="stat-label">DEF Armor</span><span class="stat-value blue">5 800</span></div>
+          <div class="stat-item"><span class="stat-label">Speed Class</span><span class="stat-value green">C-Tier</span></div>
+          <div class="stat-item"><span class="stat-label">Patrol Zone</span><span class="stat-value gold">Sky Lane 1–6</span></div>
+        </div>
+        <div class="gas-panel">
+          <div class="gas-panel-title">⛽ Gas API — Deploy Fuel Cost</div>
+          <div class="gas-row"><span class="gas-label">Low Stream (1.6 km)</span><span class="gas-value stream-low">0.0006 GVR</span></div>
+          <div class="gas-row"><span class="gas-label">High Quality Stream</span><span class="gas-value stream-high">0.0022 GVR</span></div>
+          <div class="gas-row"><span class="gas-label">Deploy to Location</span><span class="gas-value">0.0070 GVR</span></div>
+          <div class="gas-row"><span class="gas-label">Activation Seal</span><span class="gas-value">1 × Ash Core Stone</span></div>
+        </div>
+        <button class="deploy-btn">⬡ DEPLOY CARD TO LOCATION</button>
+      </div>
+    </div>
+
+  </div><!-- /card-grid -->
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     SECTION 2 — CORE STONES
+══════════════════════════════════════════════ -->
+<section id="corestones" class="section" style="background: linear-gradient(180deg, var(--void) 0%, rgba(10,11,20,0.95) 100%);">
+  <div class="section-header">
+    <div class="section-id">§ 002</div>
+    <h2>Core Stone Registry — Chibi Forge Furnace Series</h2>
+  </div>
+
+  <div class="card-grid">
+
+    <!-- LEGENDARY CORESTONE -->
+    <div class="lore-card legendary">
+      <div class="card-rarity-bar"></div>
+      <div class="card-image-frame">
+        <img src="corestonelegendary.jpg" alt="Legendary Core Stone">
+        <div class="card-image-overlay"></div>
+        <div class="card-rarity-badge">Legendary</div>
+        <div class="card-faction-tag">Forge Furnace Series</div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Sol Warden — Legendary Core Stone</div>
+        <div class="card-subtitle">Sun Temple Origin · Radiant Eyes · Sealed Power Class: Ω</div>
+        <div class="card-lore">"The gold etchings on Sol Warden's crown are not decoration — they are the original activation code for the Sun Temple's primary reactor, compressed into rune form. No one has completed the sequence in 400 years."</div>
+        <div class="card-stats">
+          <div class="stat-item"><span class="stat-label">Power Rating</span><span class="stat-value gold">Ω — MAX</span></div>
+          <div class="stat-item"><span class="stat-label">Aura Radius</span><span class="stat-value green">5.0 km</span></div>
+          <div class="stat-item"><span class="stat-label">Fuel Multiplier</span><span class="stat-value gold">×3.0</span></div>
+          <div class="stat-item"><span class="stat-label">Stone Series</span><span class="stat-value gold">Sun Temple</span></div>
+        </div>
+        <div class="gas-panel">
+          <div class="gas-panel-title">⛽ Gas API — Activation Cost</div>
+          <div class="gas-row"><span class="gas-label">Mint Cost</span><span class="gas-value">0.12 GVR</span></div>
+          <div class="gas-row"><span class="gas-label">Deploy Amplifier (Low)</span><span class="gas-value stream-low">+0.0060 GVR</span></div>
+          <div class="gas-row"><span class="gas-label">Deploy Amplifier (High)</span><span class="gas-value stream-high">+0.0240 GVR</span></div>
+        </div>
+        <button class="deploy-btn">⬡ ACTIVATE CORE STONE</button>
+      </div>
+    </div>
+
+    <!-- CORGEMONT RARE -->
+    <div class="lore-card ultra-rare">
+      <div class="card-rarity-bar"></div>
+      <div class="card-image-frame">
+        <img src="corgemontrarecorestone.jpg" alt="Corgemont Core Stone">
+        <div class="card-image-overlay"></div>
+        <div class="card-rarity-badge">Ultra Rare</div>
+        <div class="card-faction-tag">Corgemont Station Series</div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Vex Corgemont — Lightning Chibi Stone</div>
+        <div class="card-subtitle">Corgemont Station Idol · Purple Lightning Conduit · Forge Furnace Chibi</div>
+        <div class="card-lore">"Found only within a 2km radius of Corgemont Station. The purple lightning in the cracks isn't decay — it's charge. Touch one to a Boundary Stone and it screams."</div>
+        <div class="card-stats">
+          <div class="stat-item"><span class="stat-label">Power Rating</span><span class="stat-value purple">Ψ — HIGH</span></div>
+          <div class="stat-item"><span class="stat-label">Lightning Dmg</span><span class="stat-value purple">+2 400</span></div>
+          <div class="stat-item"><span class="stat-label">Fuel Multiplier</span><span class="stat-value gold">×2.2</span></div>
+          <div class="stat-item"><span class="stat-label">Stone Origin</span><span class="stat-value gold">Corgemont</span></div>
+        </div>
+        <div class="gas-panel">
+          <div class="gas-panel-title">⛽ Gas API — Activation Cost</div>
+          <div class="gas-row"><span class="gas-label">Mint Cost</span><span class="gas-value">0.075 GVR</span></div>
+          <div class="gas-row"><span class="gas-label">Deploy Amplifier (Low)</span><span class="gas-value stream-low">+0.0040 GVR</span></div>
+          <div class="gas-row"><span class="gas-label">Deploy Amplifier (High)</span><span class="gas-value stream-high">+0.0165 GVR</span></div>
+        </div>
+        <button class="deploy-btn">⬡ ACTIVATE CORE STONE</button>
+      </div>
+    </div>
+
+    <!-- CORRUPT ASH STONE -->
+    <div class="lore-card corrupted">
+      <div class="card-rarity-bar"></div>
+      <div class="card-image-frame">
+        <img src="corruptashstone.jpg" alt="Corrupted Ash Stone">
+        <div class="card-image-overlay"></div>
+        <div class="card-rarity-badge">Corrupted</div>
+        <div class="card-faction-tag">Gateway Corruption — Green Skull</div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Mortex Gate — Corrupted Ash Stone</div>
+        <div class="card-subtitle">Corrupted Gateway Origin · Green Skull Wall · BIOHAZARD: Signal Decay</div>
+        <div class="ability-tags">
+          <span class="ability-tag tag-cor">STATUS: Active Corruption</span>
+          <span class="ability-tag tag-psi">PSI: Skull Broadcast</span>
+        </div>
+        <div class="card-lore">"The Green Skull Eyes never close. A Corrupted Ash Stone placed at any Gateway Portal will begin rewriting the portal's destination in 4 hours. The CST Troopers have standing orders: do not approach. Call ORACLE-7."</div>
+        <div class="card-stats">
+          <div class="stat-item"><span class="stat-label">Corruption Rate</span><span class="stat-value red">4h / Portal</span></div>
+          <div class="stat-item"><span class="stat-label">Skull Broadcast</span><span class="stat-value green">0.8 km</span></div>
+          <div class="stat-item"><span class="stat-label">Containment</span><span class="stat-value red">⚠ ERT Only</span></div>
+          <div class="stat-item"><span class="stat-label">Threat Level</span><span class="stat-value red">◆ RED OMEGA</span></div>
+        </div>
+        <div class="gas-panel">
+          <div class="gas-panel-title">⛽ Gas API — Containment Cost</div>
+          <div class="gas-row"><span class="gas-label">Seal Cost (Low Stream)</span><span class="gas-value stream-low">0.0050 GVR</span></div>
+          <div class="gas-row"><span class="gas-label">Seal Cost (High Stream)</span><span class="gas-value stream-high">0.0200 GVR</span></div>
+          <div class="gas-row"><span class="gas-label">Purge Cost</span><span class="gas-value">0.0900 GVR + ERT Auth</span></div>
+        </div>
+        <button class="deploy-btn corrupted-btn">⚠ CONTAIN / PURGE STONE</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     SECTION 3 — LOCATIONS
+══════════════════════════════════════════════ -->
+<section id="locations" class="section">
+  <div class="section-header">
+    <div class="section-id">§ 003</div>
+    <h2>Stations, Realms & Key Locations</h2>
+  </div>
+
+  <div class="card-grid">
+
+    <div class="location-card">
+      <div class="card-rarity-bar" style="background: linear-gradient(135deg, #9b30ff, #c060ff);"></div>
+      <div class="location-header">
+        <div>
+          <div class="location-name">Corgemont Station</div>
+          <div class="location-type">City Sky Realm — Faction HQ — Main Story Node</div>
+        </div>
+        <div class="portal-count">1 Active Portal</div>
+      </div>
+      <div class="location-body">
+        <div class="location-desc">"Heart of the Corgemont lightning fields. Home to Auremis the Yellow Crowned Witch. Every major card faction routes through here. The purple stone towers hum with accumulated charge from a thousand Core Stone activations."</div>
+        <div class="location-portals">
+          <span class="portal-tag portal-styx">◈ Portal: Corgemont Ultra Rare</span>
+          <span class="portal-tag portal-boss">◈ Faction: Glitch Witch Territory</span>
+        </div>
+        <div class="location-gas">
+          <div class="loc-gas-item">
+            <span class="stat-label">Access Cost (Low / 1.6km)</span>
+            <span class="stat-value green" style="font-size:0.78rem;">0.0022 GVR</span>
+          </div>
+          <div class="loc-gas-item">
+            <span class="stat-label">Access Cost (High Stream)</span>
+            <span class="stat-value purple" style="font-size:0.78rem;">0.0088 GVR</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="location-card">
+      <div class="card-rarity-bar" style="background: linear-gradient(135deg, #003366, #00b8ff);"></div>
+      <div class="location-header">
+        <div>
+          <div class="location-name">Coldstone Station</div>
+          <div class="location-type">CST Garrison — Boundary Portal Hub — Arctic Sky Realm</div>
+        </div>
+        <div class="portal-count">2 Active Portals</div>
+      </div>
+      <div class="location-body">
+        <div class="location-desc">"The coldest deployment point in the City Sky Realm network. CST Trooper HQ operates from the Coldstone ice-lattice towers. Boundary Portal Node 3 (Dead Station) connects here. Temperature affects Core Stone activation range by -15%."</div>
+        <div class="location-portals">
+          <span class="portal-tag portal-cold">◈ Portal 3: Dead Stone Station</span>
+          <span class="portal-tag portal-cold">◈ CST Garrison Base</span>
+        </div>
+        <div class="location-gas">
+          <div class="loc-gas-item">
+            <span class="stat-label">Access Cost (Low / 1.6km)</span>
+            <span class="stat-value" style="color:var(--neon-blue);font-size:0.78rem;">0.0014 GVR</span>
+          </div>
+          <div class="loc-gas-item">
+            <span class="stat-label">Access Cost (High Stream)</span>
+            <span class="stat-value purple" style="font-size:0.78rem;">0.0058 GVR</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="location-card">
+      <div class="card-rarity-bar" style="background: linear-gradient(135deg, #c8922a, #f0b840);"></div>
+      <div class="location-header">
+        <div>
+          <div class="location-name">Keystone Bridge Station</div>
+          <div class="location-type">Steamfitters Armory — Industrial Crossing — Transit Hub</div>
+        </div>
+        <div class="portal-count">Transit Node</div>
+      </div>
+      <div class="location-body">
+        <div class="location-desc">"Where the Steamfitters Guild built its greatest armory. The Keystone itself — that massive carved stone face — is said to be a sealed gate to the forge dimension where all golems originate. The Tengu Warlords were born here."</div>
+        <div class="location-portals">
+          <span class="portal-tag portal-stones">◈ Steamfitters Armory</span>
+          <span class="portal-tag portal-boss">◈ Golem Manufacture Point</span>
+        </div>
+        <div class="location-gas">
+          <div class="loc-gas-item">
+            <span class="stat-label">Access Cost (Low / 1.6km)</span>
+            <span class="stat-value" style="color:var(--neon-blue);font-size:0.78rem;">0.0018 GVR</span>
+          </div>
+          <div class="loc-gas-item">
+            <span class="stat-label">Access Cost (High Stream)</span>
+            <span class="stat-value purple" style="font-size:0.78rem;">0.0074 GVR</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="location-card">
+      <div class="card-rarity-bar" style="background: linear-gradient(135deg, #006644, #00ff88);"></div>
+      <div class="location-header">
+        <div>
+          <div class="location-name">Sun Temple Core</div>
+          <div class="location-type">Ancient Realm Locus — Core Stone Wellspring</div>
+        </div>
+        <div class="portal-count">Origin Site</div>
+      </div>
+      <div class="location-body">
+        <div class="location-desc">"All Legendary Core Stones trace their origin energy signature back to the Sun Temple. ORACLE-7 has identified it as a pre-Corruption power node. The Astronomical Institute has been trying to access it for 60 years."</div>
+        <div class="location-portals">
+          <span class="portal-tag portal-boss">◈ Sol Warden Spawn Point</span>
+          <span class="portal-tag portal-stones">◈ Legendary Stone Origin</span>
+        </div>
+        <div class="location-gas">
+          <div class="loc-gas-item">
+            <span class="stat-label">Access Cost (Low / 1.6km)</span>
+            <span class="stat-value" style="color:var(--green-skull);font-size:0.78rem;">0.0030 GVR</span>
+          </div>
+          <div class="loc-gas-item">
+            <span class="stat-label">Access Cost (High Stream)</span>
+            <span class="stat-value purple" style="font-size:0.78rem;">0.0120 GVR</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     SECTION 4 — GATEWAY PORTALS
+══════════════════════════════════════════════ -->
+<section id="portals" class="section" style="background:rgba(6,8,16,0.95);">
+  <div class="section-header">
+    <div class="section-id">§ 004</div>
+    <h2>Corrupted Gateway Realm Portals — Green Skull Wall Network</h2>
+  </div>
+
+  <div class="card-grid">
+
+    <div class="lore-card corrupted">
+      <div class="card-rarity-bar"></div>
+      <div class="card-image-frame">
+        <img src="boundarystone1portalbossraid.jpg" alt="Boss Raid Portal">
+        <div class="card-image-overlay"></div>
+        <div class="card-rarity-badge">Corrupted</div>
+        <div class="card-faction-tag">Boundary Stone — Portal 1</div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Portal 1 — Boss Raid Gateway</div>
+        <div class="card-subtitle">Active Corruption · Green Skull Wall · Boss Encounter Zone</div>
+        <div class="card-lore">"The skull at the center breathes green. What it exhales is not air — it is corrupted portal data that hijacks any unshielded card's deployment coordinates. ERT-certified cards only."</div>
+        <div class="card-stats">
+          <div class="stat-item"><span class="stat-label">Portal Class</span><span class="stat-value red">BOSS RAID</span></div>
+          <div class="stat-item"><span class="stat-label">Corruption</span><span class="stat-value red">◆ ACTIVE</span></div>
+          <div class="stat-item"><span class="stat-label">Required Auth</span><span class="stat-value gold">ERT Level 3</span></div>
+          <div class="stat-item"><span class="stat-label">Fuel Surcharge</span><span class="stat-value red">+0.080 GVR</span></div>
+        </div>
+        <button class="deploy-btn corrupted-btn">⚠ ENTER CORRUPTED PORTAL</button>
+      </div>
+    </div>
+
+    <div class="lore-card corrupted">
+      <div class="card-rarity-bar"></div>
+      <div class="card-image-frame">
+        <img src="corruptashstonemushrooms.jpg" alt="Corrupted Mushroom Portal">
+        <div class="card-image-overlay"></div>
+        <div class="card-rarity-badge">Corrupted</div>
+        <div class="card-faction-tag">Boundary Stone — Portal 2</div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Portal 2 — Mushroom Spore Realm</div>
+        <div class="card-subtitle">Bio-Corruption Variant · Signal Spore Emitter · Organic Glitch Zone</div>
+        <div class="card-lore">"The mushrooms growing through the skull cracks are not natural. They are made of crystallized data corruption — each spore carries a partial rewrite command. Breathing them in rewrites your next three deployments."</div>
+        <div class="card-stats">
+          <div class="stat-item"><span class="stat-label">Portal Class</span><span class="stat-value red">BIO-CORRUPT</span></div>
+          <div class="stat-item"><span class="stat-label">Spore Range</span><span class="stat-value green">1.2 km</span></div>
+          <div class="stat-item"><span class="stat-label">Required Auth</span><span class="stat-value gold">ERT Level 2</span></div>
+          <div class="stat-item"><span class="stat-label">Fuel Surcharge</span><span class="stat-value red">+0.055 GVR</span></div>
+        </div>
+        <button class="deploy-btn corrupted-btn">⚠ ENTER CORRUPTED PORTAL</button>
+      </div>
+    </div>
+
+    <div class="lore-card corrupted">
+      <div class="card-rarity-bar"></div>
+      <div class="card-image-frame">
+        <img src="boundarystone8portalterrorking.jpg" alt="Terror King Portal">
+        <div class="card-image-overlay"></div>
+        <div class="card-rarity-badge">Corrupted — ⚠ OMEGA</div>
+        <div class="card-faction-tag">Boundary Stone — Portal 8</div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Portal 8 — Terror King Gate</div>
+        <div class="card-subtitle">OMEGA CLASS · Maximum Corruption · Terror King Boss Threshold</div>
+        <div class="card-lore">"The Terror King does not enter through Portal 8 — Portal 8 is the Terror King. The boundary stone was consumed from the inside. No card below Legendary has ever returned from a Portal 8 deployment."</div>
+        <div class="card-stats">
+          <div class="stat-item"><span class="stat-label">Portal Class</span><span class="stat-value red">OMEGA</span></div>
+          <div class="stat-item"><span class="stat-label">Corruption</span><span class="stat-value red">◆ MAX</span></div>
+          <div class="stat-item"><span class="stat-label">Required Auth</span><span class="stat-value red">Legendary + ORACLE</span></div>
+          <div class="stat-item"><span class="stat-label">Fuel Surcharge</span><span class="stat-value red">+0.240 GVR</span></div>
+        </div>
+        <button class="deploy-btn corrupted-btn">⚠ ENTER OMEGA PORTAL — ORACLE AUTH REQUIRED</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     SECTION 5 — ASSET CATALOG TABLE
+══════════════════════════════════════════════ -->
+<section id="catalog" class="section">
+  <div class="section-header">
+    <div class="section-id">§ 005</div>
+    <h2>NFT/NFC Visual Asset Catalog</h2>
+  </div>
+
+  <div class="catalog-table-wrap">
+    <table class="catalog-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Card Name</th>
+          <th>Asset File</th>
+          <th>Type</th>
+          <th>Rarity</th>
+          <th>Gas Low (1.6km)</th>
+          <th>Gas High</th>
+          <th>Deploy GVR</th>
+          <th>Faction</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>001</td><td>Shade Vael — Ghostface Assassin</td><td class="filename">Default_Imagine_Ghostface_Assassin_Golem_standing_on_a_dieselp_0.jpg</td><td>Character</td><td><span class="rarity-pill pill-ultra-rare">Ultra Rare</span></td><td class="gas-cell low">0.0018</td><td class="gas-cell high">0.0072</td><td class="gas-cell">0.0240</td><td>CST — ERT</td></tr>
+        <tr><td>002</td><td>Nyxi Glitch — Siren Witch</td><td class="filename">A_Closeup_Of_A_Woman_In_A_Blue_And_Gold_Costume_W.png</td><td>Character</td><td><span class="rarity-pill pill-rare">Rare</span></td><td class="gas-cell low">0.0012</td><td class="gas-cell high">0.0052</td><td class="gas-cell">0.0160</td><td>Siren Division</td></tr>
+        <tr><td>003</td><td>Kazenōbu — Tengu Golem Warlord</td><td class="filename">Default_Imagine_Dieselpunk_Tengu_Golem_standing_on_a_dieselpun_0.jpg</td><td>Character</td><td><span class="rarity-pill pill-legendary">Legendary</span></td><td class="gas-cell low">0.0035</td><td class="gas-cell high">0.0140</td><td class="gas-cell">0.0520</td><td>Steamfitters</td></tr>
+        <tr><td>004</td><td>Auremis — Yellow Crowned Witch</td><td class="filename">corestoneyellowglitchwitch.jpg</td><td>Character — Main</td><td><span class="rarity-pill pill-legendary">Legendary</span></td><td class="gas-cell low">0.0044</td><td class="gas-cell high">0.0175</td><td class="gas-cell">0.0680</td><td>Corgemont Station</td></tr>
+        <tr><td>005</td><td>ORACLE-7 — Astronomical AI</td><td class="filename">A_Ritual_mechanical_HMI_Headset_Designed_As_A_Crow.png</td><td>Character — AI</td><td><span class="rarity-pill pill-ultra-rare">Ultra Rare</span></td><td class="gas-cell low">0.0028</td><td class="gas-cell high">0.0110</td><td class="gas-cell">0.0480</td><td>Astronomical Inst.</td></tr>
+        <tr><td>006</td><td>Kade Nox — Kraken Drone Pilot</td><td class="filename">Pirate_SalvagerShipPilot.PNG</td><td>Character</td><td><span class="rarity-pill pill-rare">Rare</span></td><td class="gas-cell low">0.0015</td><td class="gas-cell high">0.0058</td><td class="gas-cell">0.0200</td><td>Kaiju Fleet</td></tr>
+        <tr><td>007</td><td>Argent Scout — Ancient Armor Droid</td><td class="filename">A_Ritualmechanical_Hmi_Headset_Designed_As_A_Crown_3.png</td><td>Character — Droid</td><td><span class="rarity-pill pill-uncommon">Uncommon</span></td><td class="gas-cell low">0.0008</td><td class="gas-cell high">0.0030</td><td class="gas-cell">0.0090</td><td>Astronomical Inst.</td></tr>
+        <tr><td>008</td><td>Thalvara — Siren Tidal Dragon Armor</td><td class="filename">rareraijingreencolossus.jpg</td><td>Character — Armor</td><td><span class="rarity-pill pill-ultra-rare">Ultra Rare</span></td><td class="gas-cell low">0.0032</td><td class="gas-cell high">0.0128</td><td class="gas-cell">0.0560</td><td>Siren Division</td></tr>
+        <tr><td>009</td><td>Vox Trooper — CST Sky Corps</td><td class="filename">A_Highly_Detailed_Afro_Dieselpunk_Artwork_Depicts__2.jpg</td><td>Character</td><td><span class="rarity-pill pill-uncommon">Uncommon</span></td><td class="gas-cell low">0.0006</td><td class="gas-cell high">0.0022</td><td class="gas-cell">0.0070</td><td>CST Garrison</td></tr>
+        <tr><td>010</td><td>Sol Warden — Legendary Core Stone</td><td class="filename">corestonelegendary.jpg</td><td>Core Stone</td><td><span class="rarity-pill pill-legendary">Legendary</span></td><td class="gas-cell low">+0.0060</td><td class="gas-cell high">+0.0240</td><td class="gas-cell">0.1200</td><td>Sun Temple</td></tr>
+        <tr><td>011</td><td>Vex Corgemont — Lightning Chibi</td><td class="filename">corgemontrarecorestone.jpg</td><td>Core Stone</td><td><span class="rarity-pill pill-ultra-rare">Ultra Rare</span></td><td class="gas-cell low">+0.0040</td><td class="gas-cell high">+0.0165</td><td class="gas-cell">0.0750</td><td>Corgemont</td></tr>
+        <tr><td>012</td><td>Mortex Gate — Corrupted Ash Stone</td><td class="filename">corruptashstone.jpg</td><td>Core Stone — Corrupted</td><td><span class="rarity-pill pill-corrupted">Corrupted</span></td><td class="gas-cell low">0.0050</td><td class="gas-cell high">0.0200</td><td class="gas-cell">0.0900</td><td>Gateway Corruption</td></tr>
+        <tr><td>013</td><td>Portal 1 — Boss Raid Gateway</td><td class="filename">boundarystone1portalbossraid.jpg</td><td>Portal — Corrupted</td><td><span class="rarity-pill pill-corrupted">Corrupted</span></td><td class="gas-cell low">—</td><td class="gas-cell high">—</td><td class="gas-cell">+0.0800</td><td>Green Skull Wall</td></tr>
+        <tr><td>014</td><td>Portal 2 — Mushroom Spore Realm</td><td class="filename">corruptashstonemushrooms.jpg</td><td>Portal — Corrupted</td><td><span class="rarity-pill pill-corrupted">Corrupted</span></td><td class="gas-cell low">—</td><td class="gas-cell high">—</td><td class="gas-cell">+0.0550</td><td>Green Skull Wall</td></tr>
+        <tr><td>015</td><td>Portal 3 — Dead Stone Station</td><td class="filename">boundarystone3portaldeadstonestation.jpg</td><td>Portal</td><td><span class="rarity-pill pill-rare">Rare</span></td><td class="gas-cell low">—</td><td class="gas-cell high">—</td><td class="gas-cell">+0.0180</td><td>Coldstone Station</td></tr>
+        <tr><td>016</td><td>Portal 6 — Stones Throw Station</td><td class="filename">boundarystone6portalstonesthrowstation.jpg</td><td>Portal</td><td><span class="rarity-pill pill-uncommon">Uncommon</span></td><td class="gas-cell low">—</td><td class="gas-cell high">—</td><td class="gas-cell">+0.0120</td><td>Stones Throw</td></tr>
+        <tr><td>017</td><td>Portal 7 — Styx Station</td><td class="filename">boundarystone7portalstyxstation.jpg</td><td>Portal</td><td><span class="rarity-pill pill-ultra-rare">Ultra Rare</span></td><td class="gas-cell low">—</td><td class="gas-cell high">—</td><td class="gas-cell">+0.0320</td><td>Styx Network</td></tr>
+        <tr><td>018</td><td>Portal 8 — Terror King Gate</td><td class="filename">boundarystone8portalterrorking.jpg</td><td>Portal — OMEGA</td><td><span class="rarity-pill pill-corrupted">Corrupted ⚠</span></td><td class="gas-cell low">—</td><td class="gas-cell high">—</td><td class="gas-cell">+0.2400</td><td>Terror King</td></tr>
+        <tr><td>019</td><td>Steamfitters Keystone</td><td class="filename">steamfittersarmorykeystone.jpg</td><td>Location Stone</td><td><span class="rarity-pill pill-rare">Rare</span></td><td class="gas-cell low">0.0018</td><td class="gas-cell high">0.0074</td><td class="gas-cell">—</td><td>Steamfitters</td></tr>
+        <tr><td>020</td><td>Dark Throne Forge Mystic</td><td class="filename">DarkThrone_ForgeMystic.jpg</td><td>Character</td><td><span class="rarity-pill pill-ultra-rare">Ultra Rare</span></td><td class="gas-cell low">0.0025</td><td class="gas-cell high">0.0100</td><td class="gas-cell">0.0380</td><td>Dark Throne</td></tr>
+        <tr><td>021</td><td>Ashborn Core Stone (Rare)</td><td class="filename">ashborncorestonerare.jpg</td><td>Core Stone</td><td><span class="rarity-pill pill-rare">Rare</span></td><td class="gas-cell low">+0.0018</td><td class="gas-cell high">+0.0070</td><td class="gas-cell">0.0420</td><td>Ash Forge</td></tr>
+        <tr><td>022</td><td>Boundary Seal Stone</td><td class="filename">boundarystoneseal.jpg</td><td>Seal / Key Item</td><td><span class="rarity-pill pill-uncommon">Uncommon</span></td><td class="gas-cell low">0.0005</td><td class="gas-cell high">0.0020</td><td class="gas-cell">—</td><td>All Factions</td></tr>
+        <tr><td>023</td><td>Yellow Crowns — Corgemont Bust</td><td class="filename">corestonebustyellowley.jpg</td><td>Core Stone Bust</td><td><span class="rarity-pill pill-rare">Rare</span></td><td class="gas-cell low">+0.0016</td><td class="gas-cell high">+0.0065</td><td class="gas-cell">0.0320</td><td>Corgemont</td></tr>
+        <tr><td>024</td><td>Ultra Rare Wildcard Core Stone</td><td class="filename">corestoneultrararewildcard.jpg</td><td>Core Stone — Wild</td><td><span class="rarity-pill pill-ultra-rare">Ultra Rare</span></td><td class="gas-cell low">+0.0045</td><td class="gas-cell high">+0.0180</td><td class="gas-cell">0.0850</td><td>Wildcard</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     SECTION 6 — ITCH.IO DEV LOG
+══════════════════════════════════════════════ -->
+<section id="devlog" class="section">
+  <div class="section-header">
+    <div class="section-id">§ 006</div>
+    <h2>Itch.io Dev Log — Cross Chat Game Thread</h2>
+  </div>
+
+  <div class="devlog-entry new">
+    <div class="devlog-date">// DEV LOG — 2026.03.11 — BUILD v0.4.1</div>
+    <div class="devlog-title">📦 Major Asset Drop: Forge Furnace Core Stones + New Faction Entries</div>
+    <div class="devlog-body">
+      <p>Big update to the Genesis Veres Card Captor asset registry today. We've officially catalogued the <strong>Forge Furnace Core Stone chibi statue series</strong> — these are the foundational NFT/NFC activation items for all card deployments. Each Core Stone has a unique Gas API fuel cost modifier that stacks on top of base deployment costs.</p>
+      <ul>
+        <li><strong>Sol Warden (Legendary)</strong> — Sun Temple origin, ×3.0 fuel multiplier, Ω power class. Mint cost: <code>0.12 GVR</code></li>
+        <li><strong>Vex Corgemont (Ultra Rare)</strong> — Purple lightning chibi, Corgemont Station native. Mint: <code>0.075 GVR</code></li>
+        <li><strong>Mortex Gate (Corrupted)</strong> — Green Skull Wall origin, active corruption status. Containment: <code>0.09 GVR + ERT Auth</code></li>
+        <li>Full Core Stone series (Ashborn, Raijin, Renji, Tanuki, Negu, Ossuary, Komainu, Glitch variants) all catalogued in the asset table</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="devlog-entry update">
+    <div class="devlog-date">// DEV LOG — 2026.03.11 — FACTION UPDATE</div>
+    <div class="devlog-title">⚡ New Factions: Glitch Witch Sirens, Ghostface ERT, Kaiju Fleet Pilots</div>
+    <div class="devlog-body">
+      <p>Three major faction entries are now live in the lore registry:</p>
+      <ul>
+        <li><strong>Ghostface Assassin Division (ERT)</strong> — Elite CST Emergency Response Team pilots, handpicked by the <strong>Astronomical Society + World Pilots Union</strong> from Top Pilots on Deck. Mission: locate and contain Glitch Witch activity with prejudice. Cards in this faction carry an <code>ERT Auth</code> tag enabling Portal 8 access.</li>
+        <li><strong>Siren / Glitch Witch Faction</strong> — Signal disruptors with tidal frequency powers. <strong>Nyxi Glitch</strong> (Rare) and <strong>Thalvara Tidal Dragon Armor</strong> (Ultra Rare) are the inaugural cards. Glitch Pulse status effects interfere with opponent deployment coordinates.</li>
+        <li><strong>Kaiju Kraken Drone Fleet</strong> — Deep-water/sky-sea hybrid vessel pilots. <strong>Kade Nox</strong> pilots the Kraken-IV flagship. Vessel-class cards consume Raijin Core Stones for activation.</li>
+      </ul>
+      <p>Gas API costs for faction cards: Low Stream rate is calibrated to <code>1.6 km deployment radius</code>. High Quality Stream scales up based on card tier and pilot rank designation.</p>
+    </div>
+  </div>
+
+  <div class="devlog-entry">
+    <div class="devlog-date">// DEV LOG — 2026.03.11 — LOCATION NODE</div>
+    <div class="devlog-title">🏙️ Station Lore: Corgemont, Coldstone, Keystone Bridge Now Active</div>
+    <div class="devlog-body">
+      <p>Three new <strong>Station Location Nodes</strong> are deployed and playable in the card game framework:</p>
+      <ul>
+        <li><strong>Corgemont Station</strong> — Home of <strong>Auremis (Yellow Crowned Witch)</strong>, the first confirmed Main Story Character. Script outline is incoming — this station will serve as a primary story chapter hub. Rendered via Leonardo AI. Corgemont Core Stone drops exclusively here.</li>
+        <li><strong>Coldstone Station</strong> — CST Trooper HQ. Portal 3 (Dead Stone Station) connects here. Arctic Sky Realm aesthetic. Cold climate reduces Core Stone aura radius by 15%.</li>
+        <li><strong>Keystone Bridge Station</strong> — Steamfitters Armory production floor. The carved stone keystone face is a lore mystery asset — the sealed forge dimension gate hypothesis has not been confirmed or denied in canon yet.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="devlog-entry warning">
+    <div class="devlog-date">// DEV LOG — 2026.03.11 — ORACLE INTELLIGENCE NOTE</div>
+    <div class="devlog-title">⚠️ ORACLE-7 Lore Status + Ancient Armor Droids — Origins Unresolved</div>
+    <div class="devlog-body">
+      <p><strong>ORACLE-7</strong> (Astronomical Institute AI Intelligence) is now a registered card in the Ultra Rare tier. Key design note: ORACLE-7 has no body card variant — it exists as a <em>network presence</em>. In game terms, this means it can be deployed to <strong>any location simultaneously</strong> for a shared activation cost.</p>
+      <p>The <strong>Astronomical Institute Scout Droids</strong> wearing Ancient Armor present an open lore thread. No forge mark, no guild seal, no manufacturing record found. ORACLE-7 has flagged them internally as <code>PRE-ORIGIN CLASS</code>. This is a deliberate mystery arc — their backstory and the source of the ancient armor will be addressed in a future script chapter.</p>
+      <ul>
+        <li>Ancient Armor Droids are catalogued as <strong>Uncommon</strong> temporarily pending lore resolution</li>
+        <li>Rarity tier may be upgraded to Rare or Ultra Rare once origin is revealed</li>
+        <li>All droid scan results currently return <code>NULL DATA</code> — this is intentional in the game system</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="devlog-entry new">
+    <div class="devlog-date">// DEV LOG — 2026.03.11 — PORTAL SYSTEM</div>
+    <div class="devlog-title">🌀 Corrupted Gateway Portals — Green Skull Wall System Documented</div>
+    <div class="devlog-body">
+      <p>All 8 Boundary Stone portal variants are now catalogued. The <strong>Corrupted Gateway Portals</strong> are identifiable in-game by their <strong>Green Skull Wall visual signature</strong> — any portal displaying green skull eyes indicates active corruption status.</p>
+      <ul>
+        <li>Portals 1–8 each have unique fuel surcharges on top of base deployment costs</li>
+        <li><strong>Portal 8 (Terror King Gate)</strong> is the only Omega-class portal — requires Legendary card + ORACLE-7 authorization to enter</li>
+        <li><strong>Portal 4 (Noskog)</strong> and <strong>Portal 5</strong> are standard access portals with no corruption markup</li>
+        <li>Corrupted portal cards cannot be deployed to locations by common-tier cards — the gas API will reject the transaction</li>
+      </ul>
+      <p>Next: Script outline for <strong>Corgemont Station</strong> will add narrative context to why Portals 1 and 8 became corrupted. Awaiting delivery.</p>
+    </div>
+  </div>
+
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p><span>GENESIS VERES</span> — Card Captor NFT/NFC Deck System</p>
+  <p>Cross Chat Game Thread Format · Itch.io Dev Log Format</p>
+  <p>Gas API Unit: <span>GVR (Genesis Veres Realm Token)</span> · Low Stream: <span>1.6 km</span> · High Stream: Variable by Tier</p>
+  <p>All card names, factions, and lore generated for worldbuilding reference · Asset filenames linked to project images</p>
+  <p>Build v0.4.1 · <span>Yellow Crowned Witch Script Outline — PENDING</span></p>
+</footer>
+
+</body>
+</html>

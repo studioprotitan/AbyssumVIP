@@ -1,0 +1,1814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABYSSUM — Episodes I–VII: Corgemont to Styx</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --forge:    #c46a1a;
+  --forge-d:  #6b3510;
+  --forge-dd: #1e0e06;
+  --gold:     #a67c2a;
+  --teal:     #1a9490;
+  --teal-d:   #0d3836;
+  --fl0:      #c46a1a; /* surface/forge */
+  --fl1:      #4a8a60; /* ankle — green-grey */
+  --fl2:      #1a7094; /* chest — blue */
+  --fl3:      #1a3494; /* submerged — deep blue */
+  --dry:      #8b6b2a; /* dry deep — amber */
+  --red:      #8b2020;
+  --ash:      #8b7d6b;
+  --ash-l:    #b0a090;
+  --bg:       #080706;
+  --bg2:      #0f0d09;
+  --bg3:      #161210;
+  --rule:     #2e2418;
+  --text:     #c8b898;
+  --white:    #f0e8d4;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Courier Prime', 'Courier New', monospace;
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* grain */
+body::after {
+  content:''; position:fixed; inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none; z-index:9999;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top:0; left:0;
+  width: 200px; height: 100vh;
+  background: var(--bg2);
+  border-right: 1px solid var(--rule);
+  overflow-y: auto; z-index:200;
+  padding-bottom: 60px;
+}
+nav::-webkit-scrollbar { width:2px; }
+nav::-webkit-scrollbar-thumb { background: var(--forge-d); }
+
+.nav-head {
+  padding: 20px 16px 16px;
+  border-bottom: 1px solid var(--rule);
+}
+.nav-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 16px; color: var(--forge);
+  letter-spacing: 0.1em; line-height: 1.2;
+}
+.nav-sub {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px; color: var(--ash);
+  letter-spacing: 3px; margin-top: 4px;
+  text-transform: uppercase;
+}
+.nav-legend {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--rule);
+}
+.nav-legend-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px; letter-spacing: 3px;
+  color: var(--ash); text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.flood-badge {
+  display: flex; align-items: center;
+  gap: 8px; margin-bottom: 5px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px; color: var(--ash);
+}
+.flood-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%; flex-shrink: 0;
+}
+.fd-surface  { background: var(--fl0); }
+.fd-fl1      { background: var(--fl1); }
+.fd-fl2      { background: var(--fl2); }
+.fd-fl3      { background: var(--fl3); }
+.fd-dry      { background: var(--dry); }
+
+.nav-eps { padding: 8px 0; }
+.nav-ep-link {
+  display: block;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px; color: var(--ash);
+  text-decoration: none; padding: 6px 16px;
+  letter-spacing: 1px;
+  border-left: 2px solid transparent;
+  transition: all 0.2s;
+  line-height: 1.5;
+}
+.nav-ep-link:hover {
+  color: var(--white);
+  background: rgba(196,106,26,0.06);
+  border-left-color: var(--forge);
+}
+.nav-ep-link .ep-num {
+  color: var(--forge); display: block;
+  font-size: 8px; letter-spacing: 2px;
+}
+
+/* ── MAIN ── */
+main { margin-left: 200px; }
+
+/* ── COVER ── */
+.cover {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 60px 60px;
+  text-align: center;
+  position: relative;
+  background: radial-gradient(ellipse at 50% 50%, rgba(196,106,26,0.03) 0%, transparent 65%);
+  border-bottom: 1px solid var(--rule);
+}
+.cover-eye {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px; letter-spacing: 5px;
+  color: var(--forge); text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.cover h1 {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(52px, 9vw, 108px);
+  font-weight: 700;
+  background: linear-gradient(150deg, var(--gold) 0%, var(--forge) 30%, #f5e8cc 52%, var(--forge) 72%, var(--gold) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0.14em; line-height: 0.95;
+  margin-bottom: 20px;
+}
+.cover-rule {
+  width: 120px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--forge), transparent);
+  margin: 0 auto 20px;
+}
+.cover-sub {
+  font-family: 'Cinzel', serif;
+  font-size: 13px; letter-spacing: 5px;
+  color: var(--gold); text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.cover-sub2 {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px; color: var(--ash);
+  letter-spacing: 2px; margin-bottom: 40px;
+}
+.cover-tagline {
+  font-family: 'Courier Prime', monospace;
+  font-size: 14px; color: var(--ash-l);
+  font-style: italic; max-width: 480px;
+  line-height: 2;
+}
+.cover-tagline em { color: var(--forge); font-style: italic; }
+.ep-list-cover {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 1px; margin-top: 48px;
+  width: 100%; max-width: 720px;
+  border: 1px solid var(--rule);
+}
+.ep-thumb {
+  padding: 16px 12px; background: var(--bg2);
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.ep-thumb:hover { background: var(--bg3); }
+.ep-thumb-num {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px; letter-spacing: 3px;
+  color: var(--forge); text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.ep-thumb-title {
+  font-family: 'Cinzel', serif;
+  font-size: 11px; color: var(--white);
+  line-height: 1.4;
+}
+
+/* ── EPISODE HEADER ── */
+.ep-header {
+  padding: 80px 80px 0;
+  position: relative;
+}
+.ep-header::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--forge) 0%, var(--forge-d) 50%, transparent 100%);
+}
+.ep-meta {
+  display: flex; align-items: center;
+  gap: 20px; margin-bottom: 16px;
+}
+.ep-number {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px; letter-spacing: 4px;
+  color: var(--forge); text-transform: uppercase;
+}
+.ep-flood-tags {
+  display: flex; gap: 6px;
+}
+.flood-tag {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 7px; letter-spacing: 2px;
+  padding: 2px 8px; border-radius: 2px;
+  text-transform: uppercase;
+}
+.ft-surface { background: rgba(196,106,26,0.15); color: var(--fl0); border: 1px solid rgba(196,106,26,0.3); }
+.ft-fl1     { background: rgba(74,138,96,0.15);  color: var(--fl1); border: 1px solid rgba(74,138,96,0.3); }
+.ft-fl2     { background: rgba(26,112,148,0.15); color: var(--fl2); border: 1px solid rgba(26,112,148,0.3); }
+.ft-fl3     { background: rgba(26,52,148,0.15);  color: var(--fl3); border: 1px solid rgba(26,52,148,0.3); }
+.ft-dry     { background: rgba(139,107,42,0.15); color: var(--dry); border: 1px solid rgba(139,107,42,0.3); }
+
+.ep-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(22px, 3.5vw, 40px);
+  font-weight: 700; color: var(--white);
+  letter-spacing: 0.06em; margin-bottom: 8px;
+  line-height: 1.1;
+}
+.ep-subtitle {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px; color: var(--ash);
+  letter-spacing: 3px; text-transform: uppercase;
+  margin-bottom: 32px;
+}
+.ep-divider {
+  width: 100%; height: 1px;
+  background: linear-gradient(90deg, var(--forge-d), transparent);
+}
+
+/* ── SCRIPT BODY ── */
+.script {
+  padding: 40px 80px 80px;
+  max-width: 900px;
+}
+
+/* COLD OPEN */
+.cold-open-block {
+  background: var(--forge-dd);
+  border-left: 4px solid var(--forge);
+  padding: 20px 24px;
+  margin-bottom: 32px;
+  position: relative;
+}
+.cold-open-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px; letter-spacing: 4px;
+  color: var(--forge); text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.cold-open-text {
+  font-family: 'Courier Prime', monospace;
+  font-size: 15px; color: var(--white);
+  font-weight: 700; font-style: italic;
+  line-height: 1.6;
+}
+
+/* SCENE HEADING */
+.scene-heading {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px; letter-spacing: 3px;
+  color: var(--ash); text-transform: uppercase;
+  margin: 32px 0 12px;
+  padding: 8px 0;
+  border-top: 1px solid var(--rule);
+}
+.scene-loc {
+  color: var(--forge-d);
+  margin-right: 12px;
+}
+
+/* FLOOD ENVIRONMENT MARKER */
+.flood-env {
+  display: inline-flex; align-items: center;
+  gap: 8px; margin: 16px 0 20px;
+  padding: 6px 14px;
+  border: 1px solid var(--rule);
+  background: var(--bg2);
+}
+.flood-env-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+}
+.flood-env-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px; letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.fe-surface .flood-env-dot  { background: var(--fl0); }
+.fe-surface .flood-env-label { color: var(--fl0); }
+.fe-fl1 .flood-env-dot      { background: var(--fl1); }
+.fe-fl1 .flood-env-label    { color: var(--fl1); }
+.fe-fl2 .flood-env-dot      { background: var(--fl2); }
+.fe-fl2 .flood-env-label    { color: var(--fl2); }
+.fe-fl3 .flood-env-dot      { background: var(--fl3); }
+.fe-fl3 .flood-env-label    { color: var(--fl3); }
+.fe-dry .flood-env-dot      { background: var(--dry); }
+.fe-dry .flood-env-label    { color: var(--dry); }
+
+/* ACTION */
+.action {
+  margin-bottom: 16px;
+  color: var(--text); line-height: 1.85;
+}
+.action strong { color: var(--white); }
+
+/* CHARACTER NAME */
+.char-name {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px; letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 24px 0 0 160px;
+}
+.char-name.system { color: var(--ash); font-style: italic; }
+.char-name.vex    { color: #8b6050; }
+.char-name.goblin { color: var(--forge); }
+
+/* PARENTHETICAL */
+.paren {
+  margin: 2px 0 2px 120px;
+  color: var(--ash); font-style: italic;
+  font-size: 13px;
+}
+
+/* DIALOGUE */
+.dialogue {
+  margin: 4px 0 20px 80px;
+  padding-right: 80px;
+  color: var(--white);
+  line-height: 1.8;
+}
+
+/* DIRECTION */
+.direction {
+  font-style: italic; color: var(--ash-l);
+  margin-bottom: 16px; line-height: 1.8;
+}
+
+/* TRANSITION */
+.transition {
+  text-align: right;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px; letter-spacing: 3px;
+  color: var(--ash); text-transform: uppercase;
+  margin: 28px 0 8px;
+}
+
+/* THREAT ENCOUNTER BLOCK */
+.encounter {
+  border: 1px solid var(--rule);
+  background: var(--bg2);
+  padding: 20px 24px;
+  margin: 24px 0;
+}
+.encounter-tag {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px; letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.encounter-name {
+  font-family: 'Cinzel', serif;
+  font-size: 16px; font-weight: 600;
+  color: var(--white); margin-bottom: 8px;
+}
+.encounter-body {
+  font-size: 13px; color: var(--ash-l);
+  line-height: 1.8;
+}
+.enc-surface .encounter-tag { color: var(--fl0); border-left: 3px solid var(--fl0); padding-left: 12px; }
+.enc-fl1 .encounter-tag     { color: var(--fl1); border-left: 3px solid var(--fl1); padding-left: 12px; }
+.enc-fl2 .encounter-tag     { color: var(--fl2); border-left: 3px solid var(--fl2); padding-left: 12px; }
+.enc-fl3 .encounter-tag     { color: var(--fl3); border-left: 3px solid var(--fl3); padding-left: 12px; }
+
+/* END BEAT */
+.end-beat {
+  margin-top: 40px;
+  padding: 20px 24px;
+  background: rgba(196,106,26,0.04);
+  border-top: 3px solid var(--forge);
+  border-bottom: 1px solid var(--forge-d);
+}
+.end-beat-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px; letter-spacing: 4px;
+  color: var(--forge); text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.end-beat-text {
+  color: var(--ash-l); font-style: italic;
+  line-height: 1.8;
+}
+
+/* CLIFFHANGER */
+.cliffhanger {
+  margin-top: 32px;
+  padding: 24px 28px;
+  background: var(--forge-dd);
+  border-left: 4px solid var(--forge);
+  border-right: 4px solid var(--forge);
+}
+.cliffhanger-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px; letter-spacing: 4px;
+  color: var(--forge); text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.cliffhanger-text {
+  font-family: 'Cinzel', serif;
+  font-size: 16px; color: var(--white);
+  line-height: 1.6; font-weight: 600;
+}
+
+/* EP NAV */
+.ep-nav {
+  display: flex; justify-content: space-between;
+  padding: 32px 80px;
+  border-top: 1px solid var(--rule);
+  background: var(--bg2);
+}
+.ep-nav-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px; letter-spacing: 2px;
+  color: var(--ash); text-decoration: none;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  border: 1px solid var(--rule);
+  transition: all 0.2s;
+}
+.ep-nav-btn:hover { color: var(--forge); border-color: var(--forge-d); }
+
+/* SPECIAL: GATEWAY SCENE */
+.gateway-scene {
+  background: linear-gradient(180deg, var(--bg2) 0%, rgba(26,52,148,0.08) 50%, var(--bg2) 100%);
+  border: 1px solid var(--teal-d);
+  padding: 32px 36px;
+  margin: 32px 0;
+}
+.gateway-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px; letter-spacing: 5px;
+  color: var(--teal); text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+footer {
+  margin-left: 0;
+  padding: 40px 80px;
+  border-top: 1px solid var(--rule);
+  text-align: center;
+}
+footer p {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px; letter-spacing: 3px;
+  color: var(--forge-d); text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+@media (max-width: 900px) {
+  nav { display: none; }
+  main { margin-left: 0; }
+  .script, .ep-header { padding-left: 20px; padding-right: 20px; }
+  .char-name { margin-left: 40px; }
+  .dialogue { margin-left: 20px; padding-right: 20px; }
+  .paren { margin-left: 20px; }
+  .cover { padding: 40px 20px; }
+  .ep-list-cover { grid-template-columns: repeat(2, 1fr); }
+  .ep-nav { padding: 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-head">
+    <div class="nav-title">ABYSSUM</div>
+    <div class="nav-sub">Episodes I–VII</div>
+  </div>
+  <div class="nav-legend">
+    <div class="nav-legend-title">Flood Levels</div>
+    <div class="flood-badge"><div class="flood-dot fd-surface"></div>Surface / Forge</div>
+    <div class="flood-badge"><div class="flood-dot fd-fl1"></div>Level 1 — Ankle</div>
+    <div class="flood-badge"><div class="flood-dot fd-fl2"></div>Level 2 — Chest</div>
+    <div class="flood-badge"><div class="flood-dot fd-fl3"></div>Level 3 — Submerged</div>
+    <div class="flood-badge"><div class="flood-dot fd-dry"></div>Below the Flood</div>
+  </div>
+  <div class="nav-eps">
+    <a class="nav-ep-link" href="#ep1"><span class="ep-num">Episode I</span>"Ash Before Dawn"</a>
+    <a class="nav-ep-link" href="#ep2"><span class="ep-num">Episode II</span>"Below the Bone"</a>
+    <a class="nav-ep-link" href="#ep3"><span class="ep-num">Episode III</span>"The Stone That Remembers"</a>
+    <a class="nav-ep-link" href="#ep4"><span class="ep-num">Episode IV</span>"What Lives in Level Three"</a>
+    <a class="nav-ep-link" href="#ep5"><span class="ep-num">Episode V</span>"The Train That Should Not"</a>
+    <a class="nav-ep-link" href="#ep6"><span class="ep-num">Episode VI</span>"The Song of Iron"</a>
+    <a class="nav-ep-link" href="#ep7"><span class="ep-num">Episode VII</span>"What the Gateway Drinks"</a>
+  </div>
+</nav>
+
+<main>
+
+<!-- COVER -->
+<div class="cover" id="top">
+  <div class="cover-eye">Forge Network — Southern Rail Division — Cinematic Script</div>
+  <h1>ABYSSUM</h1>
+  <div class="cover-rule"></div>
+  <div class="cover-sub">Episodes I — VII</div>
+  <div class="cover-sub2">Corgemont Station to Styx Gateway &nbsp;·&nbsp; Complete Arc</div>
+  <div class="cover-tagline">
+    She didn't come down here to save anyone.<br>
+    The network had other plans.<br>
+    <em>Neither of them asked permission.</em>
+  </div>
+  <div class="ep-list-cover">
+    <a class="ep-thumb" href="#ep1"><div class="ep-thumb-num">Ep. I</div><div class="ep-thumb-title">Ash Before Dawn</div></a>
+    <a class="ep-thumb" href="#ep2"><div class="ep-thumb-num">Ep. II</div><div class="ep-thumb-title">Below the Bone</div></a>
+    <a class="ep-thumb" href="#ep3"><div class="ep-thumb-num">Ep. III</div><div class="ep-thumb-title">The Stone That Remembers</div></a>
+    <a class="ep-thumb" href="#ep4"><div class="ep-thumb-num">Ep. IV</div><div class="ep-thumb-title">What Lives in Level Three</div></a>
+    <a class="ep-thumb" href="#ep5"><div class="ep-thumb-num">Ep. V</div><div class="ep-thumb-title">The Train That Should Not</div></a>
+    <a class="ep-thumb" href="#ep6"><div class="ep-thumb-num">Ep. VI</div><div class="ep-thumb-title">The Song of Iron</div></a>
+    <a class="ep-thumb" href="#ep7"><div class="ep-thumb-num">Ep. VII</div><div class="ep-thumb-title">What the Gateway Drinks</div></a>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- EPISODE I -->
+<!-- ═══════════════════════════════════════ -->
+<div id="ep1">
+<div class="ep-header">
+  <div class="ep-meta">
+    <div class="ep-number">Episode I</div>
+    <div class="ep-flood-tags">
+      <span class="flood-tag ft-surface">Surface</span>
+    </div>
+  </div>
+  <div class="ep-title">"Ash Before Dawn"</div>
+  <div class="ep-subtitle">Corgemont Station — Freight Bay 17 — Pre-Departure</div>
+  <div class="ep-divider"></div>
+</div>
+<div class="script">
+
+  <div class="cold-open-block">
+    <div class="cold-open-label">Cold Open</div>
+    <div class="cold-open-text">The rails scream.<br>
+    Not steel under freight weight.<br>
+    The sound that means something alive is moving underneath.</div>
+  </div>
+
+  <div class="scene-heading"><span class="scene-loc">INT.</span> CORGEMONT STATION — FREIGHT BAY 17 — NIGHT</div>
+  <div class="flood-env fe-surface"><div class="flood-env-dot"></div><div class="flood-env-label">Surface — Fog-Level / Maintenance Lamps Active</div></div>
+
+  <div class="action">
+    Close on: a weld. <strong>BRAE GRINDSTONE</strong>'s hands, glove cracked at the knuckle from ten years of this. The arc light pulses. Everything smells like soot and coolant.
+  </div>
+  <div class="action">
+    She pauses. Listens.
+  </div>
+  <div class="action">
+    The rails stop screaming.
+  </div>
+  <div class="action">
+    The repair bay lights tick in yellow pulses above her. Steam leaks from a cracked coolant pipe two feet over her head. She has not fixed it. She stopped caring about pipes at Corgemont six months ago when she made the deal.
+  </div>
+  <div class="action">
+    Behind her: <strong>Freight Car Bay 17</strong>. The crate. Black alloy, forge-sealed, still faintly warm despite everything. Its heat has nothing to do with transit. It has been warm since before she accepted the job.
+  </div>
+  <div class="action">
+    Brae puts down the welder. Turns.
+  </div>
+  <div class="action">
+    She pulls the card from her jacket. Thin slab of polished alloy. The <strong>AFFILIATES</strong>' insignia pressed into it with the kind of precision that means someone cares about the impression it makes.
+  </div>
+  <div class="action">
+    Her Mint-to-Deploy Authorization.
+  </div>
+  <div class="action">
+    A whole train's worth of lives in something lighter than a transit token.
+  </div>
+  <div class="action">
+    The crate responds to the card's proximity. Mechanical sigh. Locks disengaging. Panels folding open.
+  </div>
+  <div class="action">
+    Inside: the <strong>GLITCH GOBLIN</strong>.
+  </div>
+  <div class="action">
+    Compact. Still. Built from the ash residue of Kaiju bone burned at extreme temperature, fused with ore from the Cenote caverns below the southern flood plain. The resulting alloy is harder than the floor it rests on and carries a permanent residual heat that has nothing to do with temperature.
+  </div>
+  <div class="action">
+    It was never alive. There is nothing in it to feel bad about.
+  </div>
+  <div class="action">
+    Brae has been telling herself this for three weeks.
+  </div>
+
+  <div class="char-name">BRAE</div>
+  <div class="paren">quiet, to herself</div>
+  <div class="dialogue">Don't worry. I've got the leash.</div>
+
+  <div class="action">
+    She raises the Mint Card toward the deployment port.
+  </div>
+  <div class="action">
+    Floor 784. High enough to survive the Rift Flood. High enough that the fog predators can't reach it. The apartment is real. She has seen the listing. She has been thinking about it for three months.
+  </div>
+  <div class="action">
+    Sirens aboard the train — hardened, fire-capable — will be run through the Affiliates' unauthorized furnace chambers. What comes out wrong will be called Glitch Witches by the people who survive long enough to name them. The Forge Mystics will be processed into Deadman Alchemists.
+  </div>
+  <div class="action">
+    The train has thirty cars.
+  </div>
+  <div class="action">
+    Brae's hand doesn't move.
+  </div>
+  <div class="action">
+    She notices this about herself a moment later.
+  </div>
+
+  <div class="scene-heading"><span class="scene-loc">INT.</span> FREIGHT BAY 17 — CONTINUOUS</div>
+
+  <div class="action">
+    From deep in the station — below the station — a sound begins. Not machinery. Not rail predators.
+  </div>
+  <div class="action">
+    A harmonic vibration that moves through metal rather than air. Through the weld scars on Brae's hands. Through the station bones.
+  </div>
+  <div class="action">
+    The Goblin's furnace core pulses.
+  </div>
+  <div class="action">
+    Once.
+  </div>
+  <div class="action">
+    The Mint Card wasn't even close to the activation port.
+  </div>
+
+  <div class="char-name">BRAE</div>
+  <div class="dialogue">That's not right.</div>
+
+  <div class="action">
+    Military Glitches don't wake without the card. That is the whole architecture of the control system. The Affiliates paid for that certainty. She was bought, in part, because of that certainty.
+  </div>
+  <div class="action">
+    The Goblin's eyes ignite. Twin embers.
+  </div>
+  <div class="action">
+    Forge script cycles across its chassis — not a startup sequence. A response. It is responding to something Brae cannot hear.
+  </div>
+  <div class="action">
+    Every terminal in the repair dock flickers to life simultaneously.
+  </div>
+  <div class="action">
+    All of them. The same message.
+  </div>
+
+  <div class="action" style="text-align:center; color: var(--teal); font-family: 'Share Tech Mono', monospace; letter-spacing: 4px; padding: 12px 0; font-size: 13px;">
+    FORGE NETWORK HANDSHAKE DETECTED<br>
+    THREAT SIGNATURE: ACTIVE<br>
+    RESPONSE: INITIATED
+  </div>
+
+  <div class="action">
+    The station intercom crackles.
+  </div>
+
+  <div class="char-name vex">MARROW VEX</div>
+  <div class="paren">through static — calm, measured, corporate</div>
+  <div class="dialogue">Miss Grindstone. Your hesitation has been noted. Deploy the unit. The train will not wait.</div>
+
+  <div class="action">
+    Outside: the departure horn. One long mournful blast. The kind engineers use when they already know the route ahead is cursed.
+  </div>
+  <div class="action">
+    Brae looks at the Goblin.
+  </div>
+  <div class="action">
+    The Goblin looks at the Mint Card.
+  </div>
+  <div class="action">
+    Its optics narrow — not recognition. Calibration. It is assessing the card as a variable in a logic system that is running on a source neither of them has access to.
+  </div>
+  <div class="action">
+    Brae looks at the thirty-car train through the freight bay doors. The CST escorts walking the platform with shock rifles they believe are precautionary.
+  </div>
+  <div class="action">
+    She looks at the Mint Card.
+  </div>
+  <div class="action">
+    She snaps it in half.
+  </div>
+  <div class="action">
+    The Goblin stands motionless. Three seconds of logic processing. Card destroyed. Deployment: aborted. Affiliate command chain: severed. Forge Network handshake: still active.
+  </div>
+  <div class="action">
+    The network fills the gap.
+  </div>
+
+  <div class="char-name vex">MARROW VEX</div>
+  <div class="paren">through static — quieter now, which is worse</div>
+  <div class="dialogue">That was a very expensive mistake, Miss Grindstone.</div>
+
+  <div class="action">
+    Somewhere above the station: the train begins to pull away.
+  </div>
+  <div class="action">
+    Somewhere below the station: the harmonic deepens.
+  </div>
+  <div class="action">
+    On the floor of the repair bay — a seam Brae has never noticed before. Faintly glowing. Running from beneath her feet toward the wall.
+  </div>
+  <div class="action">
+    She crouches.
+  </div>
+  <div class="action">
+    Ancient runes along the edge. Forge script older than anything running on the current network.
+  </div>
+  <div class="action">
+    With a grinding sound that has been waiting a long time to happen, the platform opens.
+  </div>
+  <div class="action">
+    Cold air rushes up. Not sewer air. Not flood rot. Dry and hot at the same time — the breath of a furnace that has been sealed for centuries.
+  </div>
+  <div class="action">
+    Brae looks down into the darkness.
+  </div>
+  <div class="action">
+    The Goblin steps forward beside her and looks down too.
+  </div>
+  <div class="action">
+    Both of them. Looking at the same darkness. For entirely different reasons.
+  </div>
+
+  <div class="end-beat">
+    <div class="end-beat-label">End of Episode I</div>
+    <div class="end-beat-text">The train is gone. The Affiliates know what she did. Floor 784 is gone with it. What's left is a hole in the floor and something below it that woke up without being asked.</div>
+  </div>
+
+</div>
+<div class="ep-nav">
+  <span></span>
+  <a class="ep-nav-btn" href="#ep2">Episode II →</a>
+</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- EPISODE II -->
+<!-- ═══════════════════════════════════════ -->
+<div id="ep2">
+<div class="ep-header">
+  <div class="ep-meta">
+    <div class="ep-number">Episode II</div>
+    <div class="ep-flood-tags">
+      <span class="flood-tag ft-surface">Surface</span>
+      <span class="flood-tag ft-fl1">Level 1</span>
+    </div>
+  </div>
+  <div class="ep-title">"Below the Bone"</div>
+  <div class="ep-subtitle">Corgemont — Sub-Station Levels — Pipefitter Corridors</div>
+  <div class="ep-divider"></div>
+</div>
+<div class="script">
+
+  <div class="cold-open-block">
+    <div class="cold-open-label">Cold Open</div>
+    <div class="cold-open-text">The Goblin's foot enters the standing water.<br>
+    It has never touched water before.<br>
+    It stops. Assesses. Continues.<br>
+    Something in the water moves away from it.</div>
+  </div>
+
+  <div class="scene-heading"><span class="scene-loc">INT.</span> CORGEMONT — SPIRAL STAIR — NIGHT</div>
+  <div class="flood-env fe-surface"><div class="flood-env-dot"></div><div class="flood-env-label">Surface-Level / Descending</div></div>
+
+  <div class="action">
+    The stair carved into rail-blackened stone. No end to it visible from above. Brae descends with one hand on a handrail etched with symbols she's never seen before — pressure valves designed to look like seed pods. Root bifurcations cast in the shape of pipe junctions.
+  </div>
+  <div class="action">
+    The Goblin descends behind her. No handrail needed. No fear of depth. It processes and moves.
+  </div>
+  <div class="action">
+    The heat increases with each step.
+  </div>
+  <div class="action">
+    Then: her boot hits water.
+  </div>
+  <div class="action">
+    She freezes. Looks down.
+  </div>
+  <div class="action">
+    The stair continues into standing black water. Ankle deep. The water is still. The water is warm.
+  </div>
+
+  <div class="flood-env fe-fl1"><div class="flood-env-dot"></div><div class="flood-env-label">Flood Level 1 — Ankle / 0.3m standing water</div></div>
+
+  <div class="action">
+    <strong>FLOOD LEVEL 1.</strong> The Rift Flood has reached the maintenance corridors below Corgemont. The engineers who built these stairs didn't plan for this. Nobody did.
+  </div>
+  <div class="action">
+    Something moves through the water ahead of her. Small. Fast. Gone before she can track it.
+  </div>
+
+  <div class="encounter enc-fl1">
+    <div class="encounter-tag">Encounter — Flood Level 1 / Corgemont Sub-Station</div>
+    <div class="encounter-name">Bilge Scuttlers</div>
+    <div class="encounter-body">Small corrupted Forge automatons — originally maintenance units designed to operate in crawlways. The flood water reached their housing three years ago. They adapted. Their chassis now runs on thermal differential rather than Forge Network signal — the heat from the pipes above warms the water, which powers them. They are not aggressive. They are territorial. They have never seen anything walk into their water voluntarily. They will decide whether this is a threat or an anomaly. That decision will take approximately forty seconds. Brae does not have forty seconds.</div>
+  </div>
+
+  <div class="action">
+    Brae keeps moving. Through the water. Not slow — walking through shin-deep resistance at pace. The Goblin behind her creates a wake.
+  </div>
+  <div class="action">
+    The Bilge Scuttlers decide: threat.
+  </div>
+  <div class="action">
+    They come from the walls.
+  </div>
+  <div class="action">
+    Brae uses what she has: her welder, her repair kit used as a bludgeon, the Goblin interceding with the efficiency of something built for exactly this purpose. Not a fight. A transit problem. She's not trying to win — she's trying to reach the end of the corridor.
+  </div>
+  <div class="action">
+    She reaches it.
+  </div>
+
+  <div class="scene-heading"><span class="scene-loc">INT.</span> CORGEMONT — PIPEFITTER ACCESS CORRIDOR — CONTINUOUS</div>
+  <div class="flood-env fe-fl1"><div class="flood-env-dot"></div><div class="flood-env-label">Flood Level 1 — Shin / Drying toward Forge heat</div></div>
+
+  <div class="action">
+    The corridor runs beside a massive pipe — hot enough to feel from three feet. The water level drops as the floor rises toward the Forge heat source. Brae's boots leave wet prints that dry within steps.
+  </div>
+  <div class="action">
+    The walls here are different. Pressure gauges and valve wheels, yes — but also inscriptions. Too old to be maintenance markings. Too deliberate to be accidental.
+  </div>
+  <div class="action">
+    She passes a row of sealed iron doors.
+  </div>
+  <div class="action">
+    <strong>ARCHIVE TOMB — SERIES 04.</strong>
+  </div>
+  <div class="action">
+    <strong>WEAPONS CRYPT.</strong>
+  </div>
+  <div class="action">
+    The doors extend as far as she can see. Too many to count. Too many for a substation. Too many for anything she has a word for.
+  </div>
+
+  <div class="char-name">BRAE</div>
+  <div class="paren">under her breath</div>
+  <div class="dialogue">This isn't a power plant.</div>
+
+  <div class="action">
+    The Goblin raises its hand. The map projection activates — the rail lines and station nodes she saw in the repair bay — and then expands. And keeps expanding. Node points multiplying past the edge of the render, extending beneath the entire southern route like the root system of a forest that extends past all horizons.
+  </div>
+  <div class="action">
+    Not a hidden station.
+  </div>
+  <div class="action">
+    A parallel civilization of infrastructure.
+  </div>
+  <div class="action">
+    Older than the surface lines. Older than the stations above them. Possibly older than any of the names for what it is.
+  </div>
+  <div class="action">
+    Brae stares at it for a long time.
+  </div>
+
+  <div class="char-name">BRAE</div>
+  <div class="dialogue">How large is this?</div>
+
+  <div class="action">
+    The projection doesn't answer. It just shows more.
+  </div>
+  <div class="action">
+    At the far end of the corridor: a door different from the others. Larger. Circular. The kind of seal designed not to keep things out but to contain what's inside until it's needed.
+  </div>
+  <div class="action">
+    Stenciled above it:
+  </div>
+  <div class="action" style="text-align:center; font-family: 'Share Tech Mono', monospace; letter-spacing: 4px; color: var(--gold); padding: 8px 0;">
+    HYPERCHAMBER ACCESS
+  </div>
+  <div class="action">
+    The water on the floor has completely dried. The air here is hot and still. The Forge hum is loudest here — less a sound than a pressure in the inner ear.
+  </div>
+  <div class="action">
+    Between Brae and the Hyperchamber door: another corridor junction. Water visible down the left branch. Not ankle deep.
+  </div>
+
+  <div class="flood-env fe-fl2"><div class="flood-env-dot"></div><div class="flood-env-label">Flood Level 2 — Chest Deep / Left branch to Hyperchamber approach</div></div>
+
+  <div class="action">
+    The direct route to the Hyperchamber runs through it.
+  </div>
+  <div class="action">
+    Brae looks at the water. At the faint bioluminescent glow beginning on the walls where the flood reaches. Something living has colonized the lower level. Something that makes its own light.
+  </div>
+  <div class="action">
+    Beautiful. Wrong.
+  </div>
+
+  <div class="cliffhanger">
+    <div class="cliffhanger-label">End of Episode II</div>
+    <div class="cliffhanger-text">The Hyperchamber door is forty meters ahead. Thirty of those meters are chest-deep in something that glows. She can't go back — Marrow Vex's people will have reached the surface entry point by now. The only direction is through.</div>
+  </div>
+
+</div>
+<div class="ep-nav">
+  <a class="ep-nav-btn" href="#ep1">← Episode I</a>
+  <a class="ep-nav-btn" href="#ep3">Episode III →</a>
+</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- EPISODE III -->
+<!-- ═══════════════════════════════════════ -->
+<div id="ep3">
+<div class="ep-header">
+  <div class="ep-meta">
+    <div class="ep-number">Episode III</div>
+    <div class="ep-flood-tags">
+      <span class="flood-tag ft-fl2">Level 2</span>
+      <span class="flood-tag ft-dry">Below the Flood</span>
+    </div>
+  </div>
+  <div class="ep-title">"The Stone That Remembers"</div>
+  <div class="ep-subtitle">Corgemont — Flood Level 2 Approach — Hyperchamber</div>
+  <div class="ep-divider"></div>
+</div>
+<div class="script">
+
+  <div class="cold-open-block">
+    <div class="cold-open-label">Cold Open</div>
+    <div class="cold-open-text">The node stone is already glowing when she finds it.<br>
+    It has been here long enough to synchronize with the engines.<br>
+    She doesn't know how long that is.<br>
+    Neither does anyone else.</div>
+  </div>
+
+  <div class="scene-heading"><span class="scene-loc">INT.</span> CORGEMONT — FLOOD LEVEL 2 APPROACH CORRIDOR</div>
+  <div class="flood-env fe-fl2"><div class="flood-env-dot"></div><div class="flood-env-label">Flood Level 2 — 1.4m standing / bioluminescent colonization</div></div>
+
+  <div class="action">
+    She goes in.
+  </div>
+  <div class="action">
+    The water hits her chest immediately. Cold below, warm near the surface where the pipe heat carries down. The bioluminescent growth on the walls provides the only light — blue-green filaments in fractal patterns that map exactly to the Forge script above the waterline, as if the fungus read the inscription and decided to continue it.
+  </div>
+  <div class="action">
+    Brae moves through it. Arms raised, welder held above the surface.
+  </div>
+  <div class="action">
+    Something large moves at the far edge of visibility. Below the surface. Deeper than the corridor should be.
+  </div>
+
+  <div class="encounter enc-fl2">
+    <div class="encounter-tag">Encounter — Flood Level 2 / Sub-Archive Corridor</div>
+    <div class="encounter-name">Archive Warden</div>
+    <div class="encounter-body">A Forge maintenance unit that sealed itself inside the Archive Tomb corridor when the flood reached this level. It has been running on thermal energy and residual Forge signal for three years in complete darkness. It adapted. Its chassis grew into the walls — it now partially IS the corridor, with limbs that can extend from wall panels up to six meters. It does not attack immediately. It observes. It has been alone for three years and does not know what she is. The solution is not combat — it is demonstration. Brae carries Forge-adjacent tools. Her welder leaves a heat signature the Warden recognizes as authorized. She passes. She is not certain how.</div>
+  </div>
+
+  <div class="action">
+    On the other side of the flooded corridor: a chamber. Dry. The water stops at the threshold as if something holds it back.
+  </div>
+  <div class="action">
+    The Goblin emerges beside her. Its chassis logs have recorded the passage. The Forge script cycling across its frame has shifted frequency — it has learned something from this transit that it did not know before.
+  </div>
+
+  <div class="scene-heading"><span class="scene-loc">INT.</span> CORGEMONT — PIPEFITTER NODE ALCOVE — CONTINUOUS</div>
+  <div class="flood-env fe-dry"><div class="flood-env-dot"></div><div class="flood-env-label">Below the Flood — Dry / Forge Heat Active</div></div>
+
+  <div class="action">
+    Set into the floor of the alcove: a row of small depressions. Each containing a stone. Still hot — visibly radiating.
+  </div>
+  <div class="action">
+    Most are dull. One is not.
+  </div>
+  <div class="action">
+    The glowing one pulses in a pattern almost too slow to track. Brae counts it: the same rhythm as the engines above. It has been here long enough to synchronize completely.
+  </div>
+  <div class="action">
+    She crouches beside it. Feels the heat from three inches away — the warmth of something that has been actively maintaining its temperature for an unknown number of years.
+  </div>
+  <div class="action">
+    The old Forge Mystics called these <strong>node stones</strong>. Said Sirens could retrieve them. Said the stones eventually became what a Siren was at the center. Said rare ones made a Siren into something the scale of which didn't translate well into language.
+  </div>
+  <div class="action">
+    She had thought that was mystical nonsense.
+  </div>
+  <div class="action">
+    She picks it up.
+  </div>
+  <div class="action">
+    The heat travels through her palm and keeps going.
+  </div>
+
+  <div class="scene-heading"><span class="scene-loc">INT.</span> CORGEMONT — HYPERCHAMBER — CONTINUOUS</div>
+
+  <div class="action">
+    The chamber door opens when she approaches. Doesn't unlock — simply opens. As if it has been waiting for this specific variable to arrive.
+  </div>
+  <div class="action">
+    Inside: a chamber shaped like the inside of a heart. Not metaphorically. The architecture was designed by something that understood cardiac function and applied it to stone. Massive valve-wheels. Pressure chambers on either side of a central passage. Everything designed to move something through itself at regular intervals.
+  </div>
+  <div class="action">
+    The valve-wheels begin to turn when Brae enters. The Forge engines above shift rhythm — less background, more purposeful. The hum drops in frequency until it travels through bone rather than air.
+  </div>
+  <div class="action">
+    The node stone in her hand stops feeling like stone.
+  </div>
+  <div class="action">
+    It starts feeling like her.
+  </div>
+  <div class="action">
+    The process is not comfortable. The Furnace exists to harden. It finds every weak point and either burns it away or rebuilds it into something load-bearing. Brae's mechanic's harness reshapes itself — threads of the stone's material moving through the fabric, fusing layers without destroying them. Her welding gloves become gauntlets. The tools at her belt lock into newly formed sockets.
+  </div>
+  <div class="action">
+    Nothing is wasted. Everything adapts.
+  </div>
+  <div class="action">
+    The Forge is practical that way.
+  </div>
+  <div class="action">
+    When she opens her eyes, the world has more information in it.
+  </div>
+  <div class="action">
+    She can see the <strong>Ley lines</strong>. Golden energy moving through the walls like rivers — the network's own circulation. They do not respond to her gaze. They are not interested in her. They have been running since before she existed and will continue after.
+  </div>
+  <div class="action">
+    Her gauntlets respond when she flexes her hands. Glyphs appear above her palm — a control interface she wasn't taught. She has the tools. Mastery was not included.
+  </div>
+  <div class="action">
+    Then: the Hyperchamber network.
+  </div>
+  <div class="action">
+    She feels all of them simultaneously. Like knowing where every subway station exists without a map. Dozens. Hundreds. The sub-network of transit nodes running beneath the entire southern line, predating the surface rail by orders of magnitude.
+  </div>
+  <div class="action">
+    She turns slowly, reading the network.
+  </div>
+  <div class="action">
+    Half the nodes are dark. Flooded. The Rift Flood reached the transit shafts between them. The shafts that lead toward <strong>Stones Throw</strong> are —
+  </div>
+  <div class="action">
+    She stops.
+  </div>
+
+  <div class="char-name">BRAE</div>
+  <div class="dialogue">All three of them are fully submerged.</div>
+
+  <div class="action">
+    She tunes to the nearest transit path — the frequency of the Hyperchamber it connects to, forty kilometers toward Stones Throw.
+  </div>
+  <div class="action">
+    Something in the transit shaft moves when it registers her signal.
+  </div>
+  <div class="action">
+    It moves toward her frequency.
+  </div>
+  <div class="action">
+    Then stops.
+  </div>
+  <div class="action">
+    Waiting.
+  </div>
+
+  <div class="cliffhanger">
+    <div class="cliffhanger-label">End of Episode III</div>
+    <div class="cliffhanger-text">She is a Siren. She can traverse the Hyperchamber network. The path to Stones Throw is fully submerged. Something lives in it. Something that just felt her arrive and decided to wait rather than approach. She does not know if that means she is safe. She knows only one thing: the network is waiting for her to move.</div>
+  </div>
+
+</div>
+<div class="ep-nav">
+  <a class="ep-nav-btn" href="#ep2">← Episode II</a>
+  <a class="ep-nav-btn" href="#ep4">Episode IV →</a>
+</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- EPISODE IV -->
+<!-- ═══════════════════════════════════════ -->
+<div id="ep4">
+<div class="ep-header">
+  <div class="ep-meta">
+    <div class="ep-number">Episode IV</div>
+    <div class="ep-flood-tags">
+      <span class="flood-tag ft-fl3">Level 3 — Submerged</span>
+    </div>
+  </div>
+  <div class="ep-title">"What Lives in Level Three"</div>
+  <div class="ep-subtitle">Hyperchamber Transit Shaft — Fully Submerged / Between Corgemont and Stones Throw</div>
+  <div class="ep-divider"></div>
+</div>
+<div class="script">
+
+  <div class="cold-open-block">
+    <div class="cold-open-label">Cold Open</div>
+    <div class="cold-open-text">She goes in anyway.</div>
+  </div>
+
+  <div class="scene-heading"><span class="scene-loc">INT.</span> HYPERCHAMBER TRANSIT SHAFT — FLOOD LEVEL 3</div>
+  <div class="flood-env fe-fl3"><div class="flood-env-dot"></div><div class="flood-env-label">Flood Level 3 — Fully Submerged / 8m+ standing / inhabited</div></div>
+
+  <div class="action">
+    The transit begins as movement through dark water toward a light she can already see — the destination Hyperchamber's resonance signature, visible to her Core as a warm point in the dark. The network does the rest.
+  </div>
+  <div class="action">
+    Then: the shaft proper. She is inside it.
+  </div>
+  <div class="action">
+    Complete submersion. The flood water has been in this shaft for years — long enough for the ecosystem to establish. The bioluminescence here is not the tentative wall-growth of Flood Level 2. It is a complete replacement of all Forge-manufactured light. Everything that was artificial is now biological.
+  </div>
+  <div class="action">
+    Node stones on the shaft floor are still pulsing. Still warm. The water around them moves with the thermal current they generate. Small things orbit them — adapted organisms, drawn to the heat, too small and too many to count.
+  </div>
+  <div class="action">
+    Brae can breathe. Siren physiology — the node stone's integration — has handled this. She does not know how. She does not have time to think about how.
+  </div>
+  <div class="action">
+    Because ahead: the shape.
+  </div>
+
+  <div class="encounter enc-fl3">
+    <div class="encounter-tag">Encounter — Flood Level 3 / Transit Shaft 7-C</div>
+    <div class="encounter-name">The Depth Current — Class Unknown</div>
+    <div class="encounter-body">
+      There is no designation in the surface catalogues for what inhabits the Flood Level 3 transit shafts. It has been there since the water arrived. It may have arrived with the water.<br><br>
+      Scale: fills the shaft. Not by accident — by choice. It is aware of the shaft's dimensions and occupies them deliberately.<br><br>
+      It is not hostile. It is evaluating. Siren Core frequency is a type of signal it has encountered before — in what form, from what previous Siren, and how long ago are questions the story does not yet answer.<br><br>
+      It makes a decision about Brae. The decision is: <em>not today</em>.<br><br>
+      It moves aside.<br><br>
+      This is more frightening than attack would have been. Attack she could process. This requires her to understand that something ancient and vast reviewed her existence and chose to let it continue. She does not know its criteria. She does not know if she met them or if she was simply beneath notice.
+    </div>
+  </div>
+
+  <div class="action">
+    The thing holds position.
+  </div>
+  <div class="action">
+    She moves past it.
+  </div>
+  <div class="action">
+    She does not run. Running in water is inefficient and she is not going to let it see inefficiency. She moves at pace. She does not look back. She does not look at it. She moves toward the destination frequency and does not stop until —
+  </div>
+
+  <div class="scene-heading"><span class="scene-loc">INT.</span> TRANSIT MIDPOINT HYPERCHAMBER — PARTIAL FLOOD</div>
+  <div class="flood-env fe-fl1"><div class="flood-env-dot"></div><div class="flood-env-label">Flood Level 1 — Ankle / Midpoint Node between Corgemont and Stones Throw</div></div>
+
+  <div class="action">
+    She surfaces. Her boots find stone. Ankle-deep water. The bioluminescence from the Level 3 transit still visible through the floor grating below — a deep blue glow, steady.
+  </div>
+  <div class="action">
+    The Goblin emerges beside her, running through its damage assessment. Chassis intact. Logic systems intact. It experienced the transit differently — as a network handshake rather than a physical journey. It processed the transit. It did not process the thing in the water.
+  </div>
+  <div class="action">
+    Brae stands still for a moment.
+  </div>
+  <div class="action">
+    Her breathing is steady because she has decided it will be.
+  </div>
+
+  <div class="char-name">BRAE</div>
+  <div class="paren">to herself, very quiet</div>
+  <div class="dialogue">Okay. That was a thing that exists.</div>
+
+  <div class="action">
+    She checks her gauntlet interface. The network shows the midpoint node — she is halfway between Corgemont and Stones Throw. The next transit shaft is also Level 3. The thing she passed has not moved from the first shaft. It is still there.
+  </div>
+  <div class="action">
+    She can feel it registered in the network as an anomaly — a presence the Forge Network catalogues but does not classify. A variable it encounters and records without resolving.
+  </div>
+  <div class="action">
+    Above her — through the stone ceiling of the midpoint chamber — the distant sound of surface rail. She is beneath the southern line. Somewhere above: the infrastructure of the world she came from.
+  </div>
+  <div class="action">
+    She looks at the second transit shaft.
+  </div>
+  <div class="action">
+    She looks at her hands. The gauntlets. The glyph interface still faintly visible.
+  </div>
+  <div class="action">
+    She looks at the shaft.
+  </div>
+
+  <div class="char-name">BRAE</div>
+  <div class="dialogue">Second time's easier.</div>
+
+  <div class="action">
+    It is not easier.
+  </div>
+  <div class="action">
+    But she comes through it.
+  </div>
+
+  <div class="scene-heading"><span class="scene-loc">INT.</span> STONES THROW APPROACH — SUB-PLATFORM EMERGENCE SHAFT</div>
+  <div class="flood-env fe-surface"><div class="flood-env-dot"></div><div class="flood-env-label">Surface-Adjacent / Below Stones Throw Station</div></div>
+
+  <div class="action">
+    She emerges into a dry chamber. Above her: a maintenance shaft leading upward. Through a grating in the ceiling, weak light. The orange-wrong light of Stones Throw maintenance lamps.
+  </div>
+  <div class="action">
+    She is below the station.
+  </div>
+  <div class="action">
+    She climbs.
+  </div>
+  <div class="action">
+    She surfaces onto a rail platform in the station's lower yard — and the first thing she sees is the Goblin swarm.
+  </div>
+  <div class="action">
+    Hundreds of optics, all igniting at once. Red, then settling to amber. Row after row of constructed things turning to face her. The rail yard between the towers, full of them. All registering the same Forge Network signal she carries.
+  </div>
+  <div class="action">
+    All going still.
+  </div>
+  <div class="action">
+    Brae stands on the platform.
+  </div>
+  <div class="action">
+    The Goblin from Corgemont emerges behind her and takes position at her left shoulder.
+  </div>
+  <div class="action">
+    The swarm holds.
+  </div>
+
+  <div class="end-beat">
+    <div class="end-beat-label">End of Episode IV</div>
+    <div class="end-beat-text">She survived Level 3 twice. She is at Stones Throw. The Goblin swarm is waiting for her to move. In the gantry above: three silhouettes looking down. The station doesn't know what to do with her. Neither does she.</div>
+  </div>
+
+</div>
+<div class="ep-nav">
+  <a class="ep-nav-btn" href="#ep3">← Episode III</a>
+  <a class="ep-nav-btn" href="#ep5">Episode V →</a>
+</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- EPISODE V -->
+<!-- ═══════════════════════════════════════ -->
+<div id="ep5">
+<div class="ep-header">
+  <div class="ep-meta">
+    <div class="ep-number">Episode V</div>
+    <div class="ep-flood-tags">
+      <span class="flood-tag ft-surface">Surface</span>
+    </div>
+  </div>
+  <div class="ep-title">"The Train That Should Not"</div>
+  <div class="ep-subtitle">Stones Throw Station — Rail Yard / Gantry</div>
+  <div class="ep-divider"></div>
+</div>
+<div class="script">
+
+  <div class="cold-open-block">
+    <div class="cold-open-label">Cold Open</div>
+    <div class="cold-open-text">From the gantry window:<br>
+    One optic ignites in the rail yard below.<br>
+    Then ten.<br>
+    Then hundreds.<br>
+    Then they all turn the same direction.</div>
+  </div>
+
+  <div class="scene-heading"><span class="scene-loc">INT.</span> STONES THROW — GANTRY CONTROL — NIGHT</div>
+  <div class="flood-env fe-surface"><div class="flood-env-dot"></div><div class="flood-env-label">Surface — Station Level / Fog Active / Three Towers</div></div>
+
+  <div class="action">
+    <strong>TORCH</strong> sees it first.
+  </div>
+
+  <div class="char-name">TORCH</div>
+  <div class="dialogue">Tell me those are still asleep.</div>
+
+  <div class="action">
+    <strong>RAEL</strong> watches the swarm begin formation movement — lateral sweep, perfect grid, the kind of coordination that requires a central signal.
+  </div>
+
+  <div class="char-name">RAEL</div>
+  <div class="dialogue">They're syncing to something.</div>
+
+  <div class="action">
+    <strong>LYRA</strong> is already at the terminal. Searching the network signature. Her hands stop when she finds it.
+  </div>
+
+  <div class="char-name">LYRA</div>
+  <div class="dialogue">That's not an Affiliate signal.</div>
+
+  <div class="action">
+    Below, in the rail yard: the swarm holds position. Not attacking. Not advancing. Every unit facing the same direction — toward the emergence shaft on Platform 4.
+  </div>
+  <div class="action">
+    Toward what came out of it.
+  </div>
+
+  <div class="scene-heading"><span class="scene-loc">EXT.</span> STONES THROW — RAIL YARD — CONTINUOUS</div>
+
+  <div class="encounter enc-surface">
+    <div class="encounter-tag">Encounter — Surface / Approach Viaduct — Prior to Arrival</div>
+    <div class="encounter-name">Railbone Crawler — Adult</div>
+    <div class="encounter-body">The viaduct connecting Stones Throw's middle tower to the southern approach is inhabited. The Railbone Crawler — a semi-mechanical territorial predator formed from fused rail debris and platform wreckage — uses rail infrastructure as both highway and hunting ground. It detected Brae's approach through the sub-surface transit vibrations. It does not know what she is. It knows the vibration pattern means something moved through its territory. The viaduct approach is the gauntlet she had to clear to reach the rail yard. She used the Goblin swarm as tactical cover. The Crawler pursued. It stopped when the swarm turned to face it. It does not understand what has changed at this station. It retreats to the viaduct. It will return.</div>
+  </div>
+
+  <div class="action">
+    The rail yard.
+  </div>
+  <div class="action">
+    Brae walks through the kneeling machines.
+  </div>
+  <div class="action">
+    Row after row. Hundreds of constructed things, each built from the residue of burning Kaiju bone, each running on the same network signal she carries. None of them hers. All of them responding to the network priority she represents.
+  </div>
+  <div class="action">
+    She does not slow down. She walks through them at pace. The Goblin from Corgemont at her left shoulder, the only unit in the yard that has been with her since before this.
+  </div>
+  <div class="action">
+    In the gantry above: three faces at the glass.
+  </div>
+  <div class="action">
+    Brae stops in the center of the yard. The Goblin swarm holds position. Steam from the station towers drifts through the floodlights.
+  </div>
+  <div class="action">
+    She lifts her head.
+  </div>
+  <div class="action">
+    She looks directly at the gantry window.
+  </div>
+  <div class="action">
+    From this distance she cannot see their faces clearly. But she can see the way they have stopped moving. The particular stillness of people who have realized a situation is not what they thought.
+  </div>
+
+  <div class="char-name">BRAE</div>
+  <div class="dialogue">Marrow Vex.</div>
+
+  <div class="action">
+    Her voice carries. The Goblin swarm amplifies it — hundreds of units emitting the same resonant tone, sending the word through the station metal, through the towers, through the infrastructure of a place that has been dying for years.
+  </div>
+  <div class="action">
+    The swarm begins walking. Forward. Toward the station.
+  </div>
+
+  <div class="scene-heading"><span class="scene-loc">INT.</span> STONES THROW — GANTRY — CONTINUOUS</div>
+
+  <div class="char-name">TORCH</div>
+  <div class="paren">at the window</div>
+  <div class="dialogue">Tell me she's not controlling those things.</div>
+
+  <div class="action">
+    Lyra stares at the terminal. The network signature is clear now. Origin: Forge Network. Classification: Siren — Class Active.
+  </div>
+  <div class="action">
+    She reads the name on the identification trail.
+  </div>
+  <div class="char-name">LYRA</div>
+  <div class="dialogue">She's not controlling them. They're following her.</div>
+
+  <div class="action">
+    Rael chambers a fresh round. Quiet and unhurried.
+  </div>
+  <div class="char-name">RAEL</div>
+  <div class="dialogue">Then we have a problem.</div>
+
+  <div class="action">
+    On the terminal behind them — the name still glowing in the Forge Network identification log:
+  </div>
+  <div class="action" style="text-align:center; font-family: 'Share Tech Mono', monospace; letter-spacing: 5px; color: var(--gold); padding: 12px 0; font-size: 13px;">
+    BRAE GRINDSTONE<br>
+    <span style="font-size:10px; color: var(--teal); letter-spacing: 3px;">SIREN CLASS — ACTIVE &nbsp;·&nbsp; ORIGIN NODE: CORGEMONT</span>
+  </div>
+
+  <div class="end-beat">
+    <div class="end-beat-label">End of Episode V</div>
+    <div class="end-beat-text">She is in the yard. The swarm is moving. Three CST operatives are deciding whether to engage something the network says is on their side. Marrow Vex is at Styx Station and now knows exactly where she is. The name is on the terminal. She is no longer anonymous.</div>
+  </div>
+
+</div>
+<div class="ep-nav">
+  <a class="ep-nav-btn" href="#ep4">← Episode IV</a>
+  <a class="ep-nav-btn" href="#ep6">Episode VI →</a>
+</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- EPISODE VI -->
+<!-- ═══════════════════════════════════════ -->
+<div id="ep6">
+<div class="ep-header">
+  <div class="ep-meta">
+    <div class="ep-number">Episode VI</div>
+    <div class="ep-flood-tags">
+      <span class="flood-tag ft-surface">Surface</span>
+      <span class="flood-tag ft-fl2">Level 2</span>
+    </div>
+  </div>
+  <div class="ep-title">"The Song of Iron"</div>
+  <div class="ep-subtitle">Stones Throw Station — Gantry / Lower Furnace Levels</div>
+  <div class="ep-divider"></div>
+</div>
+<div class="script">
+
+  <div class="cold-open-block">
+    <div class="cold-open-label">Cold Open</div>
+    <div class="cold-open-text">Lyra's face at the gantry glass.<br>
+    She recognizes Brae Grindstone.<br>
+    Then she recognizes what Brae Grindstone is now.<br>
+    Those are two different things.</div>
+  </div>
+
+  <div class="scene-heading"><span class="scene-loc">INT.</span> STONES THROW — GANTRY CONTROL — NIGHT</div>
+
+  <div class="action">
+    The three of them come down from the gantry. Not because Brae forced them to — because Rael made the tactical assessment: the Goblin swarm is between them and every exit. Descending to negotiate is more survivable than fortifying a glass room.
+  </div>
+  <div class="action">
+    They meet in the lower yard. Brae. The swarm at distance. The Goblin from Corgemont at her shoulder.
+  </div>
+  <div class="action">
+    Lyra looks at her for a long moment.
+  </div>
+  <div class="char-name">LYRA</div>
+  <div class="dialogue">You were on the transfer manifest. Corgemont repair crew. You were supposed to be on that train.</div>
+  <div class="char-name">BRAE</div>
+  <div class="dialogue">I was supposed to do a lot of things tonight.</div>
+  <div class="char-name">RAEL</div>
+  <div class="paren">not hostile — reading the situation</div>
+  <div class="dialogue">The Forge Network activated a Siren class at Corgemont. You're telling me that was you.</div>
+  <div class="char-name">BRAE</div>
+  <div class="dialogue">I'm telling you the network made a decision and I was standing in the right place when it did. Or the wrong place. I haven't decided which.</div>
+  <div class="char-name">TORCH</div>
+  <div class="dialogue">The swarm. You're running them?</div>
+  <div class="char-name">BRAE</div>
+  <div class="dialogue">The network is running them. I'm the node they're orienting to. That's not the same thing.</div>
+  <div class="action">
+    A beat. Rael looks at the swarm. At Brae. At the Goblin that is clearly not behaving like an Affiliate-deployed unit.
+  </div>
+  <div class="char-name">RAEL</div>
+  <div class="dialogue">What do you need from this station?</div>
+  <div class="char-name">BRAE</div>
+  <div class="dialogue">To understand what the Affiliates have been running down here. And then to get to Styx.</div>
+  <div class="action">
+    Lyra and Rael exchange a look. The kind that carries a conversation.
+  </div>
+  <div class="char-name">LYRA</div>
+  <div class="dialogue">Then you need to see the lower levels.</div>
+
+  <div class="scene-heading"><span class="scene-loc">INT.</span> STONES THROW — LOWER FURNACE APPROACH — NIGHT</div>
+  <div class="flood-env fe-fl2"><div class="flood-env-dot"></div><div class="flood-env-label">Flood Level 2 — Affiliate-operated sub-levels / unauthorized Furnace access</div></div>
+
+  <div class="action">
+    The Affiliates have been using the station's sub-platform access for months. The evidence is everywhere — unauthorized Forge connection lines running into the maintenance corridors, makeshift processing chambers grafted onto original infrastructure, the specific smell of a Furnace cycle run without proper calibration.
+  </div>
+  <div class="action">
+    Brae's Ley line perception shows the damage. The network here is wrong — not corrupted by flood water but corrupted by misuse. The Forge lines have been diverted. Their purpose changed. Things have been processed here that should not have been processed here.
+  </div>
+  <div class="action">
+    She finds the first one in a flooded maintenance shaft.
+  </div>
+  <div class="action">
+    Chest-deep water. Bioluminescent. The glow wrong — not the clean blue-green of natural colonization. Teal-flame quality. The specific color of a corrupted Siren node stone.
+  </div>
+
+  <div class="encounter enc-fl2">
+    <div class="encounter-tag">Encounter — Flood Level 2 / Stones Throw Furnace Sub-Level</div>
+    <div class="encounter-name">Glitch Witch — Stones Throw Station</div>
+    <div class="encounter-body">
+      She was a Siren. The Affiliates brought her through the Furnace with a Core damaged past the repair threshold. She did not come out correctly. She did not die. She is still running on fragments of what she was.<br><br>
+      She remembers the network. She can almost hear it. What she hears instead is a broken signal — instructions that make sense inside a context that no longer exists. She is acting on those instructions with the full capability of a Siren unit that never lost its structural integrity.<br><br>
+      This is what makes Glitch Witches more dangerous than Goblins: Goblins are built for a purpose. A Witch has capability without coherence. She improvises. And what a Siren-class unit improvises in a flooded basement under a condemned station is not something the encounter tables have protocols for.<br><br>
+      The horror of the encounter is not survival — Brae survives. The horror is recognition. Through her Siren perception she can see what this was. She can see the Core, still present, broken at the anchor point. She can see what the Furnace was trying to reconstruct and what it rebuilt instead.
+    </div>
+  </div>
+
+  <div class="action">
+    After.
+  </div>
+  <div class="action">
+    Brae stands in the water. Chest-deep. The teal light from the Witch's disrupted Core dissipating.
+  </div>
+  <div class="action">
+    Lyra is behind her. Torch and Rael at the corridor entrance. All three have seen this before — they work at this station, they have found the others — but watching Brae see it for the first time is different.
+  </div>
+  <div class="action">
+    Brae's expression has not changed. Her breathing has not changed. But her hands — the gauntlets — are still slightly lit. She has been reading what remains of the Witch's Core for the last thirty seconds.
+  </div>
+  <div class="char-name">BRAE</div>
+  <div class="paren">quiet</div>
+  <div class="dialogue">How many are down here.</div>
+  <div class="action">
+    Not a question.
+  </div>
+  <div class="char-name">LYRA</div>
+  <div class="dialogue">Seven confirmed. We think there are more. They've been using the flood corridors to move between tower sub-levels.</div>
+  <div class="char-name">BRAE</div>
+  <div class="dialogue">The Affiliates ran them through the Furnace with damaged Cores. Either they didn't know what would happen or they didn't care. I don't know which is worse.</div>
+  <div class="char-name">RAEL</div>
+  <div class="dialogue">What does the Forge Network say?</div>
+  <div class="char-name">BRAE</div>
+  <div class="dialogue">The Forge Network registered this as a threat signature and generated a response. I'm the response. That's all the network's commentary on the matter.</div>
+  <div class="action">
+    She turns. Moves back toward the surface access.
+  </div>
+  <div class="char-name">BRAE</div>
+  <div class="dialogue">Vex ordered this from Styx Station. Which means Malvek designed it from further out. Clearing this sub-level doesn't close the operation — it removes one field site. The network problem is—</div>
+  <div class="action">
+    She stops.
+  </div>
+  <div class="action">
+    Through her Siren perception: the Ley lines running toward the Swamp Wards. Still severed. Still dark. The flood levels in the southern districts have not changed while she has been underground.
+  </div>
+  <div class="char-name">BRAE</div>
+  <div class="paren">finishing the sentence</div>
+  <div class="dialogue">—systemic. I know.</div>
+  <div class="action">
+    The intercom in the corridor — an Affiliate communications unit the station recovered from the lower levels — crackles to life.
+  </div>
+  <div class="char-name vex">MARROW VEX</div>
+  <div class="paren">through the unit — no static. Clear signal. He is listening.</div>
+  <div class="dialogue">Miss Grindstone. I was wondering when you'd find the processing levels. I hope the tour was informative.</div>
+  <div class="action">
+    A pause.
+  </div>
+  <div class="char-name vex">MARROW VEX</div>
+  <div class="dialogue">Come to Styx Station. You'll want to see what we've been working toward. And you will come — the network you're carrying will insist on it.</div>
+  <div class="action">
+    The signal cuts.
+  </div>
+  <div class="action">
+    He is not wrong about the network. She can feel the Styx Hyperchamber in her perception — the Gateway frequency registering through the transit network like a different quality of light. Something is active there that is not Forge-origin. It is drawing the network's attention the way a fault draws stress lines.
+  </div>
+  <div class="action">
+    She looks at Rael.
+  </div>
+  <div class="char-name">BRAE</div>
+  <div class="dialogue">The Hyperchamber transit to Styx runs through Level 3.</div>
+  <div class="char-name">RAEL</div>
+  <div class="dialogue">We know. We've lost two survey drones in there. Retrieval signal went wrong on both — they arrived at the wrong destination. One of them surfaced three kilometers off course, the other never surfaced.</div>
+  <div class="char-name">BRAE</div>
+  <div class="dialogue">Corrupted network section between here and Styx.</div>
+  <div class="char-name">RAEL</div>
+  <div class="dialogue">Correct.</div>
+  <div class="action">
+    Brae looks at her gauntlet. The glyph interface. The incomplete mastery she has of something she was given without a manual.
+  </div>
+  <div class="char-name">BRAE</div>
+  <div class="dialogue">A Siren's Core can navigate a corrupted traverse.</div>
+  <div class="action">
+    She sounds like she is convincing herself.
+  </div>
+  <div class="char-name">TORCH</div>
+  <div class="dialogue">Can it?</div>
+  <div class="char-name">BRAE</div>
+  <div class="dialogue">I'm about to find out.</div>
+
+  <div class="cliffhanger">
+    <div class="cliffhanger-label">End of Episode VI</div>
+    <div class="cliffhanger-text">The corrupted Level 3 traverse to Styx Station. The network corruption means arrival at the wrong destination — or no arrival at all. The Depth Current is in there. Something else might be too. Vex is waiting. The Gateway is active. She goes in.</div>
+  </div>
+
+</div>
+<div class="ep-nav">
+  <a class="ep-nav-btn" href="#ep5">← Episode V</a>
+  <a class="ep-nav-btn" href="#ep7">Episode VII →</a>
+</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- EPISODE VII -->
+<!-- ═══════════════════════════════════════ -->
+<div id="ep7">
+<div class="ep-header">
+  <div class="ep-meta">
+    <div class="ep-number">Episode VII</div>
+    <div class="ep-flood-tags">
+      <span class="flood-tag ft-fl3">Level 3 — Corrupted</span>
+      <span class="flood-tag ft-surface">Surface</span>
+      <span class="flood-tag" style="background:rgba(26,148,144,0.15);color:var(--teal);border:1px solid rgba(26,148,144,0.3);">Gateway</span>
+    </div>
+  </div>
+  <div class="ep-title">"What the Gateway Drinks"</div>
+  <div class="ep-subtitle">Corrupted Transit Shaft → Styx Station → The Gateway</div>
+  <div class="ep-divider"></div>
+</div>
+<div class="script">
+
+  <div class="cold-open-block">
+    <div class="cold-open-label">Cold Open</div>
+    <div class="cold-open-text">The transit shaft to Styx is darker than the others.<br>
+    Not the darkness of depth.<br>
+    The darkness of something wrong happening for a long time<br>
+    in a place where nothing was supposed to go wrong.</div>
+  </div>
+
+  <div class="scene-heading"><span class="scene-loc">INT.</span> CORRUPTED HYPERCHAMBER TRANSIT SHAFT — FLOOD LEVEL 3</div>
+  <div class="flood-env fe-fl3"><div class="flood-env-dot"></div><div class="flood-env-label">Flood Level 3 — Corrupted Network Section / Transit Shaft 7-D to Styx</div></div>
+
+  <div class="action">
+    The corruption manifests as distortion. The transit that should move her smoothly toward the Styx Hyperchamber resonance signature keeps pulling sideways — toward the wrong frequency, toward a destination that doesn't exist in any catalogue she has access to. She corrects against it. Her Core tuned to the Styx signature. The network fights her on every correction.
+  </div>
+  <div class="action">
+    The Affiliate interference is deliberate. Someone — Vex, or Malvek's network engineers — has been running corrupted signal through this transit shaft for long enough that the interference has become structural. It is not a jamming system. It is damage done to the network itself.
+  </div>
+  <div class="action">
+    Brae navigates through it the way she navigated the Level 2 flooding — not by overpowering but by reading. She learned to read pipes and pressure differentials and signal loads in ten years of maintenance work. This is the same logic at a different scale.
+  </div>
+  <div class="action">
+    Then: the Depth Current. Same entity from the Corgemont-side shaft, or a different one — she cannot tell. It registers her Core frequency. The same evaluation. The same long pause.
+  </div>
+  <div class="action">
+    The same decision: not today.
+  </div>
+  <div class="action">
+    But this time something else is in the shaft. Something younger than the Depth Current and less certain. Something that the Affiliates put here deliberately — a modified Goblin unit, chassis adapted for deep water operation, running on corrupted Forge signal. It does not have the Depth Current's wisdom about what a Siren Core means. It attacks.
+  </div>
+
+  <div class="encounter enc-fl3">
+    <div class="encounter-tag">Encounter — Flood Level 3 / Corrupted Transit Shaft / Affiliate Modification</div>
+    <div class="encounter-name">Deep Warden — Affiliate Deep-Water Goblin Variant</div>
+    <div class="encounter-body">A Glitch Goblin chassis modified for full submersion operation. Running on corrupted Forge signal rather than Mint authorization — the Affiliates found a way to use the network's own infrastructure against itself. Faster than a standard Goblin. Disoriented by the transit corruption — it registered Brae's Siren signal as threat because the interference has been teaching it that Siren signals are hostile. It is wrong. It does not know it is wrong. The fight takes place in complete submersion in the darkest section of the transit shaft. The Depth Current observes without intervening. That fact alone is clarifying.</div>
+  </div>
+
+  <div class="action">
+    She arrives.
+  </div>
+
+  <div class="scene-heading"><span class="scene-loc">INT.</span> STYX STATION — HYPERCHAMBER EMERGENCE POINT — NIGHT</div>
+  <div class="flood-env fe-surface"><div class="flood-env-dot"></div><div class="flood-env-label">Surface — Styx Station Interior / Gateway Active</div></div>
+
+  <div class="action">
+    She surfaces in a dry chamber beneath the station's central hall. Immediately: the Gateway frequency, close enough now to be a physical pressure. Not Forge-origin. Something from the other side.
+  </div>
+  <div class="action">
+    She climbs toward it.
+  </div>
+
+  <div class="scene-heading"><span class="scene-loc">INT.</span> STYX STATION — CENTRAL HALL — CONTINUOUS</div>
+
+  <div class="action">
+    <strong>MARROW VEX</strong> is waiting.
+  </div>
+  <div class="action">
+    Not surprised. Not unprepared. He has had time to position, time to bring his remaining field assets, time to set the junction hall as a tactical environment. He is a competent field commander. He uses the time he has the way competent people use it.
+  </div>
+  <div class="action">
+    He looks at Brae for a moment before anything else.
+  </div>
+  <div class="char-name vex">MARROW VEX</div>
+  <div class="dialogue">A Corgemont maintenance worker. The network must be running low on options.</div>
+  <div class="char-name">BRAE</div>
+  <div class="dialogue">It's running a lot of options simultaneously. I'm one of them.</div>
+  <div class="char-name vex">MARROW VEX</div>
+  <div class="dialogue">It won't be enough. You understand that. Whatever the Forge Network built you to do tonight — it cannot change what we've already set in motion at the Gateway. The process is running. Stopping me stops nothing.</div>
+  <div class="char-name">BRAE</div>
+  <div class="dialogue">You keep telling me to stop. I haven't started yet.</div>
+  <div class="action">
+    The Goblin swarm arrives through the station access corridors — the units from Stones Throw, moving through surface routes while Brae used the transit shaft. Vex's positioning accounts for the swarm. He is good at his work.
+  </div>
+  <div class="action">
+    It is not enough.
+  </div>
+  <div class="action">
+    The fight is tactical, brutal, and won by a combination of Siren capability and the specific improvisation of someone who grew up solving problems with whatever was at hand. Vex is a professional. Brae is also a professional — just a different kind, in a different system, with ten years of reading machines that are trying to kill her before anyone called it that.
+  </div>
+  <div class="action">
+    Vex falls.
+  </div>
+  <div class="action">
+    The junction hall goes quiet.
+  </div>
+  <div class="action">
+    The Goblin swarm holds position.
+  </div>
+  <div class="action">
+    Brae stands in the center of the hall.
+  </div>
+  <div class="action">
+    She is breathing. That's the main thing.
+  </div>
+
+  <div class="gateway-scene" id="gateway-scene">
+    <div class="gateway-label">— The Scene That Must Exist —</div>
+    <div class="action">
+      She turns and looks at the Gateway.
+    </div>
+    <div class="action">
+      The central hall of Styx Station was built around it. The entire architectural logic of the space — the orientation of the columns, the height of the ceiling, the position of every load-bearing element — exists to frame this point. Whoever built the station understood what they were building around. They understood it and kept building.
+    </div>
+    <div class="action">
+      The Gateway is massive. Built from materials that predate the station around it. The arch is Forge-script-covered stone that has been here since before any current map was drawn. The script is not maintenance marking. It is instruction.
+    </div>
+    <div class="action">
+      Beyond it: movement.
+    </div>
+    <div class="action">
+      Not through it. Adjacent to it. The way weather moves behind glass. The way pressure changes before a storm arrives. The Enigmatic Universe pressing against this side of the door. Regarding.
+    </div>
+    <div class="action">
+      Brae stands in front of it and opens her Siren perception fully.
+    </div>
+    <div class="action">
+      The Ley lines in the hall. Running through the Gateway arch as if it is part of the network — which it is. Running out through the sub-network beneath the station, connecting to the transit shafts she came through, connecting to Stones Throw, connecting to Corgemont, connecting to the hundreds of unmapped nodes that extend past the render.
+    </div>
+    <div class="action">
+      She follows the lines south.
+    </div>
+    <div class="action">
+      The <strong>Swamp Wards</strong>.
+    </div>
+    <div class="action">
+      The severed nodes are still dark. The Ley lines that should be feeding them power, connecting them to the network, giving the communities below the flood tier access to what the network provides — those lines end in nothing. Severed. Not by tonight's Affiliate operation. By years of systemic failure the Affiliates have been exploiting.
+    </div>
+    <div class="action">
+      The flood level in the southern districts has not changed.
+    </div>
+    <div class="action">
+      The people below the evacuation tier are still below it.
+    </div>
+    <div class="action">
+      She won the fight.
+    </div>
+    <div class="action">
+      Vex is down. The unauthorized Furnace use at Stones Throw can be stopped. The Goblin deployment authorization has been severed. The Affiliate field operation in the southern network has lost its commander.
+    </div>
+    <div class="action">
+      The network reads the same.
+    </div>
+    <div class="action">
+      The Swamp Wards read the same.
+    </div>
+    <div class="action">
+      She stands in front of the Gateway for a long time.
+    </div>
+    <div class="action">
+      The movement behind the glass continues. Patient. Regarding. Whatever is on the other side has been there for a very long time and will continue to be there regardless of what Marrow Vex did or didn't accomplish. The Gateway doesn't care about Vex. It was here before the Affiliates named themselves and it will be here after their operation has been dismantled down to the last corrupted network node.
+    </div>
+    <div class="action">
+      Brae's gauntlet interface registers a new signal.
+    </div>
+    <div class="action">
+      Forge Network. Threat assessment update. New signatures detected. Three nodes in the southern network, two in the mid-line district. All flagged. All requiring an immune response.
+    </div>
+    <div class="action">
+      She looks at the Gateway one last time.
+    </div>
+    <div class="action">
+      She does not understand it. She has no framework for what she just perceived on the other side of it. She has exactly as much information about the Enigmatic Universe as she had before she walked into this hall, which is none. She has seen that a door exists. She does not know what is on the other side or how it connects to everything she has discovered underground tonight.
+    </div>
+    <div class="action">
+      She turns away from it.
+    </div>
+    <div class="action">
+      In the south yard of Styx Station: a rail car, still operational. The surface route south, toward the dark nodes, toward the places the network has just told her it needs something done.
+    </div>
+    <div class="action">
+      She walks toward the platform.
+    </div>
+    <div class="action">
+      The Goblin follows.
+    </div>
+    <div class="action">
+      Behind her, the Gateway pulses once. A single throb of energy that travels through the hall, through the Ley lines, through the entire network from Styx to Corgemont and beyond. Not a message. A register. The way a heartbeat is not a message but a record of continued function.
+    </div>
+    <div class="action">
+      The story has not ended.
+    </div>
+    <div class="action">
+      It has barely started.
+    </div>
+  </div>
+
+  <div class="end-beat">
+    <div class="end-beat-label">End of Episode VII — End of Arc One</div>
+    <div class="end-beat-text">Vex is down. The Swamp Wards are still flooding. The Goblin swarm is disbanding without a network directive to hold them together — they will scatter across the southern line, become variables in other situations. The Goblin from Corgemont stays. The rail car is running. There are five new threat signatures in the network. The Gateway is open behind her. Malvek has already received the report that Vex is gone. He is already recalculating. The network knew this would happen. It already deployed the next white cell. Somewhere in the southern line, someone else is standing next to an activation point, not knowing what it is yet.</div>
+  </div>
+
+</div>
+<div class="ep-nav">
+  <a class="ep-nav-btn" href="#ep6">← Episode VI</a>
+  <a class="ep-nav-btn" href="#top">↑ Back to Top</a>
+</div>
+</div>
+
+<footer>
+  <p>ABYSSUM — Episodes I–VII &nbsp;·&nbsp; Corgemont to Styx &nbsp;·&nbsp; Arc One Complete</p>
+  <p>Southern Rail Division &nbsp;·&nbsp; Forge Network Active &nbsp;·&nbsp; Threat Classification: Ongoing</p>
+</footer>
+
+</main>
+</body>
+</html>
