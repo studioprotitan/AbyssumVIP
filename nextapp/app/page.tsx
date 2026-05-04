@@ -2,7 +2,11 @@
 
 export default function Home() {
   async function handleEnter() {
-    const res = await fetch('/api/create-checkout-session', { method: 'POST' });
+    const res = await fetch('/api/create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pilotId: 'GLITCH_GOBLIN_' + Date.now(), tier: 'Standard' }),
+    });
     const data = await res.json();
     if (data.url) window.location.href = data.url;
   }
