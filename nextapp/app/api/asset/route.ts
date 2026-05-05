@@ -6,9 +6,9 @@ export async function GET(req: NextRequest) {
   const assetName = req.nextUrl.pathname.replace('/api/asset/', '');
   const upstream = `${CDN_BASE}/${assetName}`;
 
-  const response = await fetch(upstream);
+  const response = await fetch(upstream, { redirect: 'follow' });
   if (!response.ok) {
-    return NextResponse.json({ error: 'Asset not found' }, { status: 404 });
+    return NextResponse.json({ error: 'Asset not found', upstream }, { status: 404 });
   }
 
   const buffer = await response.arrayBuffer();
