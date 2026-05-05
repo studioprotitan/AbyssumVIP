@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const CDN_BASE = 'https://github.com/studioprotitan/AbyssumVIP/releases/download';
+const CDN_BASE = 'https://github.com/studioprotitan/AbyssumVIP/releases/download/assets-v1';
 
 export async function GET(req: NextRequest) {
   const assetName = req.nextUrl.pathname.replace('/api/asset/', '');
-  const upstream = `${CDN_BASE}/assets/${assetName}`;
+  const upstream = `${CDN_BASE}/${assetName}`;
 
   const response = await fetch(upstream);
   if (!response.ok) {
