@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(req: NextRequest) {
-  const assetName = req.nextUrl.pathname.replace('/api/asset/', '');
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { path: string[] } }
+) {
+  const assetName = params.path.join('/');
   const upstream = `https://github.com/studioprotitan/AbyssumVIP/releases/download/assets-v1/${assetName}`;
 
   try {
@@ -11,7 +14,7 @@ export async function GET(req: NextRequest) {
     });
 
     if (!response.ok) {
-      return NextResponse.json({ error: 'Asset not found', status: response.status, upstream }, { status: 404 });
+      return NextResponse.json({ error: 'Asset not found', upstream }, { status: 404 });
     }
 
     const buffer = await response.arrayBuffer();
