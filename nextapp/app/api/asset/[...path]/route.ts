@@ -1,31 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+const GITHUB_RELEASE_BASE = 'https://github.com/studioprotitan/AbyssumVIP/releases/download/assets-v1';
+
 export async function GET(
   req: NextRequest,
-  { params }: { params: { path: string[] } }
+  { params }: { params: Promise<{ path: string[] }> }
 ) {
-  const assetName = params.path.join('/');
-  const upstream = `https://github.com/studioprotitan/AbyssumVIP/releases/download/assets-v1/${assetName}`;
+  const { path } = await params;
+  const assetName = path.join('/');
+  const upstream = `${GITHUB_RELEASE_BASE}/${assetName}`;
 
-  try {
-    const response = await fetch(upstream, {
-      redirect: 'follow',
-      headers: { 'User-Agent': 'AbyssumVIP-Proxy/1.0' },
-    });
-
-    if (!response.ok) {
-      return NextResponse.json({ error: 'Asset not found', upstream }, { status: 404 });
-    }
-
-    const buffer = await response.arrayBuffer();
-    return new NextResponse(buffer, {
-      headers: {
-        'Content-Type': 'model/gltf-binary',
-        'Cache-Control': 'public, max-age=86400',
-        'Access-Control-Allow-Origin': '*',
-      },
-    });
-  } catch (err) {
-    return NextResponse.json({ error: String(err), upstream }, { status: 500 });
+  const response = await fetch(upstream);
+  if (!response.ok) {
+    return NextResponse.json({ error: 'Asset not found', asset: assetName }, { status: 404 });
   }
+
+  const buffer = await response.arrayBuffer();
+  return new NextResponse(buffer, {
+    headers: {
+      'Content-Type': 'model/gltf-binary',
+      'Cache-Control': 'public, max-age=86400',
+    },
+  });
 }
