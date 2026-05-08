@@ -9,7 +9,7 @@
 <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/forge-confirm/ForgeConfirm_v6_combined.css">
+<link rel="stylesheet" href="ForgeConfirm_v6_combined.css">
 </head>
 <body>
 
@@ -32,7 +32,7 @@
   <div class="nav-status">
     <div class="status-dot"><span class="dot dot-online"></span>LINK: ONLINE</div>
     <div class="status-dot"><span class="dot dot-active"></span>SIGNAL: ACTIVE</div>
-    <button class="btn-wallet">◈ CONNECT WALLET</button>
+    <button class="btn-wallet" id="btn-wallet" onclick="connectWallet()">◈ CONNECT WALLET</button>
     <button class="btn-access">⚡ GET ACCESS</button>
   </div>
 </nav>
@@ -579,13 +579,16 @@
 
     // Camera
     // Camera — pulled back, looking at platform center, beta-limited above ground
-    const camera = new BABYLON.ArcRotateCamera('cam', -Math.PI / 2, Math.PI / 2.6, 5.5, new BABYLON.Vector3(0, 1.0, 0), sceneBJS);
-    camera.lowerRadiusLimit    = 2.0;
-    camera.upperRadiusLimit    = 14;
-    camera.lowerBetaLimit      = 0.2;
-    camera.upperBetaLimit      = Math.PI / 2;
-    camera.wheelDeltaPercentage = 0.01;
-    camera.attachControl(canvas, true);
+    const camera = new BABYLON.ArcRotateCamera('cam', -Math.PI / 2, Math.PI / 3, 5.5, new BABYLON.Vector3(0, 1.0, 0), sceneBJS);
+camera.lowerRadiusLimit     = 2.0;
+camera.upperRadiusLimit     = 14;
+camera.lowerBetaLimit       = 0.2;
+camera.upperBetaLimit       = Math.PI / 2 + 0.3;  // allows slight below-ground angle
+camera.wheelDeltaPercentage = 0.01;
+camera.angularSensibilityX  = 500;                 // horizontal drag feel
+camera.angularSensibilityY  = 500;                 // vertical drag feel
+camera.inertia              = 0.6;                 // natural deceleration on release
+camera.attachControl(canvas, true);
 
     // Lighting
     const hemi = new BABYLON.HemisphericLight('hemi', new BABYLON.Vector3(0,1,0), sceneBJS);
@@ -605,13 +608,13 @@
     engineBJS.runRenderLoop(() => sceneBJS.render());
     window.addEventListener('resize', () => engineBJS.resize());
 
-    // Glow overlay engine (transparent, ambient atmosphere only)
-    try {
-      const glowEngine = new BABYLON.Engine(glowCanvas, true, { preserveDrawingBuffer: false, stencil: false });
-      const glowScene  = new BABYLON.Scene(glowEngine);
-      glowScene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
-      glowEngine.runRenderLoop(() => glowScene.render());
-    } catch(e) { console.warn('Glow overlay skipped:', e.message); }
+   const glowEngine = new BABYLON.Engine(glowCanvas, true, { preserveDrawingBuffer: false, stencil: false });
+const glowScene  = new BABYLON.Scene(glowEngine);
+glowScene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
+// Dummy camera required — Babylon.js v9 throws if scene renders with no camera
+const glowCam = new BABYLON.FreeCamera('glow-cam', new BABYLON.Vector3(0,0,-1), glowScene);
+glowCam.setTarget(BABYLON.Vector3.Zero());
+glowEngine.runRenderLoop(() => glowScene.render());
 
     // Load GLB — relative path (same directory as HTML)
     log('GLB LOAD INITIATED — CST MVP ANIMS', 'info');
@@ -845,16 +848,116 @@
     initBabylon();
   }
 
-  window.proceedToGateway = function() {
-    log('COMMANDER AUTHORIZED — DEPLOYING OPERATIVE', 'ok');
-    const btn = document.getElementById('deploy-btn');
-    btn.textContent = '◈ DEPLOYING...';
-    btn.style.pointerEvents = 'none';
-    setTimeout(() => {
-      btn.textContent = '◈ MINT TO DEPLOY';
-      btn.style.pointerEvents = 'all';
-      log('Wire proceedToGateway() to gateway route', 'warn');
-    }, 1200);
+  // ── WALLET CONNECT + ORACLE QUERY ──────────────────────────────
+  let walletConnected = false;
+
+  window.connectWallet = async function() {
+    const btn = document.getElementById('btn-wallet');
+
+    if (walletConnected) {
+      walletConnected = false;
+      if (btn) { btn.textContent = '◈ CONNECT WALLET'; btn.style.color = ''; }
+      document.querySelector('.pilot-id').textContent = '6F3A..D12F';
+      document.getElementById('mi-state-text').textContent = 'SIGNAL LOCK';
+      document.getElementById('t4').textContent = 'ENTROPY_FLUX: 0.37';
+      document.getElementById('t5').textContent = 'DRIFT_SCORE: 2.41%';
+      document.getElementById('t6').textContent = 'BOND_LEVEL: 78%';
+      log('WALLET DISCONNECTED — SIGNAL CLEARED', 'warn');
+      return;
+    }
+
+    if (!window.ethereum) {
+      log('NO WEB3 WALLET DETECTED — INSTALL METAMASK', 'warn');
+      if (btn) btn.textContent = '◈ NO WALLET';
+      return;
+    }
+
+    try {
+      if (btn) btn.textContent = '◈ CONNECTING...';
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const wallet = accounts[0];
+      const display = wallet.slice(0, 6) + '...' + wallet.slice(-4);
+      walletConnected = true;
+      if (btn) { btn.textContent = '◈ ' + display + ' · DISCONNECT'; btn.style.color = 'var(--teal)'; }
+      log('WALLET CONNECTED — ' + display, 'ok');
+      // Update Pilot Identity display
+      const pilotIdEl = document.querySelector('.pilot-id');
+      if (pilotIdEl) pilotIdEl.textContent = display;
+
+      const isNextJS = window.location.port !== '5500' && window.location.port !== '5501';
+      if (isNextJS) {
+        // Oracle query
+        log('ORACLE QUERY — AUTHENTICATING PILOT SIGNAL', 'info');
+        try {
+          const res = await fetch('/api/oracle?wallet=' + encodeURIComponent(wallet));
+          if (!res.ok) throw new Error('Oracle ' + res.status);
+          const oracle = await res.json();
+
+          // Update telemetry with live Oracle data
+          const t4 = document.getElementById('t4');
+          const t5 = document.getElementById('t5');
+          const t6 = document.getElementById('t6');
+          if (t4) t4.textContent = 'ENTROPY_FLUX: ' + (oracle.integrity ?? 0).toFixed(2);
+          if (t5) t5.textContent = 'GAS: ' + (oracle.gas?.fast || 0) + ' GWEI · ' + (oracle.gas?.signal || 'UNKNOWN');
+          if (t6) t6.textContent = 'SIGNAL: ' + (oracle.gas?.signal || 'CRITICAL');
+
+          // Oracle Fourth Wall transmission
+          if (oracle.transmission) {
+            log('ORACLE: ' + oracle.transmission, oracle.pilot ? 'ok' : 'warn');
+          }
+
+          // If pilot verified — update Model Intel viewer state
+          if (oracle.pilot) {
+            const stateText = document.getElementById('mi-state-text');
+            if (stateText) stateText.textContent = 'PILOT VERIFIED';
+            updateModelIntel(null);
+          } else {
+            log('ORACLE: PILOT NOT IN MANIFEST — UNVERIFIED SIGNAL', 'warn');
+          }
+        } catch (oracleErr) {
+          log('ORACLE UNAVAILABLE: ' + (oracleErr.message || oracleErr), 'warn');
+          document.getElementById('t6').textContent = 'SIGNAL: DEGRADED';
+        }
+      } else {
+        log('LIVE SERVER MODE — ORACLE QUERY SKIPPED', 'info');
+        document.getElementById('t4').textContent = 'ENTROPY_FLUX: LOCAL';
+        document.getElementById('t5').textContent = 'GAS: OFFLINE (LOCAL)';
+        document.getElementById('t6').textContent = 'SIGNAL: LOCAL MODE';
+      }
+    } catch (err) {
+      walletConnected = false;
+      log('WALLET CONNECTION FAILED: ' + (err.message || err), 'warn');
+      if (btn) { btn.textContent = '◈ CONNECT WALLET'; btn.style.color = ''; }
+    }
+  };
+
+  setTimeout(boot, 400);
+</script>
+</body>
+</html>
+      const t4 = document.getElementById('t4');
+      const t5 = document.getElementById('t5');
+      const t6 = document.getElementById('t6');
+      if (t4) t4.textContent = 'ENTROPY_FLUX: ' + oracle.integrity.toFixed(2);
+      if (t5) t5.textContent = 'GAS: ' + (oracle.gas?.fast || 0) + ' GWEI · ' + (oracle.gas?.signal || 'UNKNOWN');
+      if (t6) t6.textContent = 'SIGNAL: ' + (oracle.gas?.signal || 'CRITICAL');
+
+      // Oracle Fourth Wall transmission
+      if (oracle.transmission) {
+        log('ORACLE: ' + oracle.transmission, oracle.pilot ? 'ok' : 'warn');
+      }
+
+      // If pilot verified — update Model Intel viewer state
+      if (oracle.pilot) {
+        const stateText = document.getElementById('mi-state-text');
+        if (stateText) stateText.textContent = 'PILOT VERIFIED';
+        updateModelIntel(null);
+      }
+
+    } catch (err) {
+      log('WALLET CONNECTION FAILED: ' + (err.message || err), 'warn');
+      if (btn) btn.textContent = '◈ CONNECT WALLET';
+    }
   };
 
   setTimeout(boot, 400);
