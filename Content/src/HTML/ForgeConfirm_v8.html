@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Abyssum · Forge Confirm v8</title>
-<!-- BabylonJS — both scripts from BabylonJS CDN, version-matched -->
 <script src="https://cdn.babylonjs.com/babylon.js"></script>
 <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -59,136 +58,87 @@
 <!-- ── MAIN ── -->
 <div class="main">
 
-  <!-- LEFT PANEL — SYSTEM INTEGRITY -->
+  <!-- LEFT PANEL -->
   <div class="left-panel">
     <div class="panel-header">
       <span class="panel-title" style="color:var(--forge);">SYSTEM INTEGRITY</span>
       <span style="font-family:var(--font-mono);font-size:8px;color:var(--teal);" class="pulse" id="scan-status">SCANNING</span>
     </div>
-
-    <!-- Ring indicators (from freight-car) -->
     <div style="display:flex;flex:1;overflow:hidden;min-height:0;">
       <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:0 6px;border-right:1px solid var(--border);width:36px;flex-shrink:0;">
-        <div title="ENGINE" style="width:24px;height:24px;">
-          <svg viewBox="0 0 28 28" width="24" height="24"><circle cx="14" cy="14" r="12" fill="none" stroke="#e07a20" stroke-width="1.5"/><circle cx="14" cy="14" r="7" fill="none" stroke="#e07a20" stroke-width="1" opacity=".6"/><circle cx="14" cy="14" r="3" fill="#e07a20" id="ring1-core"/></svg>
-        </div>
-        <div title="WEBGL2" style="width:24px;height:24px;">
-          <svg viewBox="0 0 28 28" width="24" height="24"><circle cx="14" cy="14" r="12" fill="none" stroke="#3a3a3a" stroke-width="1.5" id="ring2-outer"/><circle cx="14" cy="14" r="7" fill="none" stroke="#3a3a3a" stroke-width="1" opacity=".5" id="ring2-mid"/><circle cx="14" cy="14" r="3" fill="#3a3a3a" id="ring2-core"/></svg>
-        </div>
-        <div title="MESH" style="width:24px;height:24px;">
-          <svg viewBox="0 0 28 28" width="24" height="24"><circle cx="14" cy="14" r="12" fill="none" stroke="#2a2a2a" stroke-width="1.5" id="ring3-outer"/><circle cx="14" cy="14" r="7" fill="none" stroke="#2a2a2a" stroke-width="1" opacity=".4" id="ring3-mid"/><circle cx="14" cy="14" r="3" fill="none" stroke="#2a2a2a" stroke-width="1" id="ring3-core"/></svg>
-        </div>
-        <div title="STATE" style="width:24px;height:24px;">
-          <svg viewBox="0 0 28 28" width="24" height="24"><circle cx="14" cy="14" r="12" fill="none" stroke="#2a2a2a" stroke-width="1.5" id="ring4-outer"/><circle cx="14" cy="14" r="3" fill="none" stroke="#2a2a2a" stroke-width="1" id="ring4-core"/></svg>
-        </div>
-        <div title="SYNC" style="width:24px;height:24px;">
-          <svg viewBox="0 0 28 28" width="24" height="24"><circle cx="14" cy="14" r="12" fill="none" stroke="#2a2a2a" stroke-width="1.5" id="ring5-outer"/><circle cx="14" cy="14" r="3" fill="none" stroke="#2a2a2a" stroke-width="1" id="ring5-core"/></svg>
-        </div>
-        <div title="STABILITY" style="width:24px;height:24px;">
-          <svg viewBox="0 0 28 28" width="24" height="24"><circle cx="14" cy="14" r="12" fill="none" stroke="#2a2a2a" stroke-width="1.5" id="ring6-outer"/><circle cx="14" cy="14" r="3" fill="none" stroke="#2a2a2a" stroke-width="1" id="ring6-core"/></svg>
-        </div>
+        <div title="ENGINE" style="width:24px;height:24px;"><svg viewBox="0 0 28 28" width="24" height="24"><circle cx="14" cy="14" r="12" fill="none" stroke="#e07a20" stroke-width="1.5"/><circle cx="14" cy="14" r="7" fill="none" stroke="#e07a20" stroke-width="1" opacity=".6"/><circle cx="14" cy="14" r="3" fill="#e07a20" id="ring1-core"/></svg></div>
+        <div title="WEBGL2" style="width:24px;height:24px;"><svg viewBox="0 0 28 28" width="24" height="24"><circle cx="14" cy="14" r="12" fill="none" stroke="#3a3a3a" stroke-width="1.5" id="ring2-outer"/><circle cx="14" cy="14" r="7" fill="none" stroke="#3a3a3a" stroke-width="1" opacity=".5" id="ring2-mid"/><circle cx="14" cy="14" r="3" fill="#3a3a3a" id="ring2-core"/></svg></div>
+        <div title="MESH" style="width:24px;height:24px;"><svg viewBox="0 0 28 28" width="24" height="24"><circle cx="14" cy="14" r="12" fill="none" stroke="#2a2a2a" stroke-width="1.5" id="ring3-outer"/><circle cx="14" cy="14" r="7" fill="none" stroke="#2a2a2a" stroke-width="1" opacity=".4" id="ring3-mid"/><circle cx="14" cy="14" r="3" fill="none" stroke="#2a2a2a" stroke-width="1" id="ring3-core"/></svg></div>
+        <div title="STATE" style="width:24px;height:24px;"><svg viewBox="0 0 28 28" width="24" height="24"><circle cx="14" cy="14" r="12" fill="none" stroke="#2a2a2a" stroke-width="1.5" id="ring4-outer"/><circle cx="14" cy="14" r="3" fill="none" stroke="#2a2a2a" stroke-width="1" id="ring4-core"/></svg></div>
+        <div title="SYNC" style="width:24px;height:24px;"><svg viewBox="0 0 28 28" width="24" height="24"><circle cx="14" cy="14" r="12" fill="none" stroke="#2a2a2a" stroke-width="1.5" id="ring5-outer"/><circle cx="14" cy="14" r="3" fill="none" stroke="#2a2a2a" stroke-width="1" id="ring5-core"/></svg></div>
+        <div title="STABILITY" style="width:24px;height:24px;"><svg viewBox="0 0 28 28" width="24" height="24"><circle cx="14" cy="14" r="12" fill="none" stroke="#2a2a2a" stroke-width="1.5" id="ring6-outer"/><circle cx="14" cy="14" r="3" fill="none" stroke="#2a2a2a" stroke-width="1" id="ring6-core"/></svg></div>
       </div>
-
-      <!-- System check rows + telem -->
       <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
         <div class="sys-section">
           <div class="sys-section-label">CORE SYSTEMS</div>
-          <div class="sys-row" id="chk-babylon">
-            <span class="sys-name">FORGE_ENGINE</span>
-            <span class="sys-status">SCANNING</span>
-          </div>
-          <div class="sys-row" id="chk-webgl">
-            <span class="sys-name">GOLEM_DISPLAY</span>
-            <span class="sys-status">SCANNING</span>
-          </div>
-          <div class="sys-row" id="chk-mesh">
-            <span class="sys-name">FORGE_MESH</span>
-            <span class="sys-status">SCANNING</span>
-          </div>
-          <div class="sys-row" id="chk-ssot">
-            <span class="sys-name">STATE_CORE</span>
-            <span class="sys-status">SCANNING</span>
-          </div>
-          <div class="sys-row" id="chk-moai">
-            <span class="sys-name">SYNC_BRIDGE</span>
-            <span class="sys-status">SCANNING</span>
-          </div>
-          <div class="sys-row" id="chk-sentinel">
-            <span class="sys-name">STABILITY_CHECK</span>
-            <span class="sys-status">SCANNING</span>
-          </div>
+          <div class="sys-row" id="chk-babylon"><span class="sys-name">FORGE_ENGINE</span><span class="sys-status">SCANNING</span></div>
+          <div class="sys-row" id="chk-webgl"><span class="sys-name">GOLEM_DISPLAY</span><span class="sys-status">SCANNING</span></div>
+          <div class="sys-row" id="chk-mesh"><span class="sys-name">FORGE_MESH</span><span class="sys-status">SCANNING</span></div>
+          <div class="sys-row" id="chk-ssot"><span class="sys-name">STATE_CORE</span><span class="sys-status">SCANNING</span></div>
+          <div class="sys-row" id="chk-moai"><span class="sys-name">SYNC_BRIDGE</span><span class="sys-status">SCANNING</span></div>
+          <div class="sys-row" id="chk-sentinel"><span class="sys-name">STABILITY_CHECK</span><span class="sys-status">SCANNING</span></div>
         </div>
-
-        <!-- Telemetry -->
         <div class="sys-section" style="flex:1;overflow-y:auto;">
           <div class="sys-section-label">TELEMETRY</div>
-          <div class="telem-line" id="t1">FORGE ENGINE: Babylon.js v7.54.3</div>
+          <div class="telem-line" id="t1">FORGE ENGINE: Babylon.js v9</div>
           <div class="telem-line" id="t2">GOLEM DISPLAY: WebGL2</div>
           <div class="telem-line" id="t3">SHADER: PARALLEL COMPILE</div>
           <div class="telem-line" id="t4">ENTROPY_FLUX: --</div>
-          <div class="telem-line" id="t5">DRIFT_SCORE: --</div>
-          <div class="telem-line" id="t6">BOND_LEVEL: --</div>
+          <div class="telem-line" id="t5">GAS: -- GWEI</div>
+          <div class="telem-line" id="t6">ORACLE: COLD</div>
         </div>
-
-        <!-- Progress -->
         <div class="progress-wrap">
           <div class="progress-label" id="prog-label">INITIALIZING FORGE ATOM</div>
-          <div class="progress-track">
-            <div class="progress-fill" id="prog-fill"></div>
-          </div>
+          <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- CENTER — BABYLON FORGE CONFIRM -->
+  <!-- CENTER -->
   <div class="center">
     <div class="forge-viewport">
-
       <div class="mission-label" id="mission-label">FORGE CONFIRM ACTIVE · PHASE 8.5 · STELLAR WOMAN SEQUENCE</div>
 
-      <!-- ANIMATION CONTROL PANEL — left of canvas -->
+      <!-- ANIM CONTROL -->
       <div class="tripo-forge" id="tripo-forge-panel">
         <div class="tripo-forge-title">ANIM CONTROL</div>
-
         <div class="tripo-section-label">STATUS</div>
         <div class="anim-status-line" id="anim-main-status">LOADING CLIPS…</div>
-
         <div style="display:flex;align-items:center;justify-content:space-between;">
           <div class="tripo-section-label" style="margin-bottom:0;">CLIPS LOADED</div>
           <span class="anim-count-badge" id="anim-count">0 / 28</span>
         </div>
-
         <div class="anim-controls">
           <button class="anim-ctrl-btn ctrl-active" id="btn-loop" onclick="toggleLoop()">⟳ LOOP</button>
           <button class="anim-ctrl-btn" id="btn-pause" onclick="togglePause()">⏸ PAUSE</button>
           <button class="anim-ctrl-btn" id="btn-prev" onclick="prevClip()">◂ PREV</button>
           <button class="anim-ctrl-btn" id="btn-next" onclick="nextClip()">NEXT ▸</button>
         </div>
-
         <div class="speed-row">
           <span>SPD</span>
           <input type="range" id="speed-slider" aria-label="Animation playback speed" min="0.1" max="3" step="0.1" value="1" oninput="setSpeed(this.value)">
           <span class="speed-val" id="speed-val">1.0×</span>
         </div>
-
         <div class="tripo-section-label">ACTIVE CLIP</div>
         <div class="anim-status-line live" id="anim-active-clip">—</div>
-
         <div class="tripo-section-label" style="margin-top:4px;">ALL 28 MVP CLIPS</div>
         <div class="anim-grid" id="anim-grid">
-          <!-- populated by JS after GLB loads -->
           <div style="font-family:var(--font-mono);font-size:8px;color:var(--text-dim);padding:4px 0;">AWAITING GLB…</div>
         </div>
       </div>
 
-      <!-- Babylon canvas -->
+      <!-- CANVAS -->
       <div class="canvas-area">
         <div class="vp-bracket-tl" id="c-tl"></div>
         <div class="vp-bracket-tr" id="c-tr"></div>
         <div class="vp-bracket-bl" id="c-bl"></div>
         <div class="vp-bracket-br" id="c-br"></div>
-
         <svg id="orbital" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
           <circle cx="150" cy="150" r="120" stroke="white" stroke-width="0.5" stroke-dasharray="4 8"/>
           <circle cx="150" cy="150" r="90"  stroke="white" stroke-width="0.5" stroke-dasharray="2 6"/>
@@ -196,13 +146,8 @@
           <line x1="30" y1="150" x2="270" y2="150" stroke="white" stroke-width="0.5" stroke-dasharray="6 10"/>
           <line x1="150" y1="30" x2="150" y2="270" stroke="white" stroke-width="0.5" stroke-dasharray="6 10"/>
         </svg>
-
-        <!-- Babylon.js GLB render canvas — full viewport -->
         <canvas id="renderCanvas" style="width:100%;height:100%;display:block;outline:none;position:absolute;inset:0;z-index:1;"></canvas>
-
-        <!-- Glow overlay canvas (transparent atmosphere layer) -->
         <canvas id="glowCanvas" style="position:absolute;inset:0;width:100%;height:100%;outline:none;pointer-events:none;z-index:2;opacity:0;transition:opacity 1s ease;"></canvas>
-
         <div class="canvas-label" id="canvas-label">
           <span>BABYLON.JS · FORGE VIEWER</span>
           <span class="dot-sep">·</span>
@@ -210,43 +155,24 @@
         </div>
       </div>
 
-      <!-- MODEL INTEL — pilot-facing, right of canvas -->
+      <!-- MODEL INTEL -->
       <div class="model-intel" id="moai-status-panel">
         <div class="mi-title">MODEL INTEL</div>
-
         <div class="mi-divider"></div>
-
         <div class="mi-type-badge">
           <span class="mi-type-label">DESIGNATION</span>
-          <span class="mi-type-val forge" id="mi-designation">STEAMPUNK</span>
+          <span class="mi-type-val forge" id="mi-designation">CST-ERT</span>
         </div>
-
         <div class="mi-type-badge">
           <span class="mi-type-label">CLASS</span>
-          <span class="mi-type-val" id="mi-class">DEMONIC</span>
+          <span class="mi-type-val" id="mi-class">STELLAR</span>
         </div>
-
         <div class="mi-divider"></div>
-
-        <div class="mi-trait">
-          <span class="mi-trait-name">ARMOUR</span>
-          <span class="mi-trait-val orange" id="mi-armour">HEAVY</span>
-        </div>
-        <div class="mi-trait">
-          <span class="mi-trait-name">REACTOR</span>
-          <span class="mi-trait-val teal" id="mi-reactor">ACTIVE</span>
-        </div>
-        <div class="mi-trait">
-          <span class="mi-trait-name">TUBES</span>
-          <span class="mi-trait-val" id="mi-tubes">×4 VENT</span>
-        </div>
-        <div class="mi-trait">
-          <span class="mi-trait-name">EYE GLOW</span>
-          <span class="mi-trait-val orange" id="mi-glow">ORANGE</span>
-        </div>
-
+        <div class="mi-trait"><span class="mi-trait-name">ARMOUR</span><span class="mi-trait-val orange" id="mi-armour">TROOPER</span></div>
+        <div class="mi-trait"><span class="mi-trait-name">REACTOR</span><span class="mi-trait-val teal" id="mi-reactor">ACTIVE</span></div>
+        <div class="mi-trait"><span class="mi-trait-name">TUBES</span><span class="mi-trait-val" id="mi-tubes">26 CLIPS</span></div>
+        <div class="mi-trait"><span class="mi-trait-name">EYE GLOW</span><span class="mi-trait-val orange" id="mi-glow">FORGE</span></div>
         <div class="mi-divider"></div>
-
         <div class="mi-rarity">
           <span class="mi-rarity-label">RARITY</span>
           <div class="mi-pip" id="pip1"></div>
@@ -255,44 +181,26 @@
           <div class="mi-pip" id="pip4"></div>
           <div class="mi-pip" id="pip5"></div>
         </div>
-
         <div class="mi-divider"></div>
-
         <div class="mi-viewer-state" id="mi-viewer-state">
           <div class="mi-state-dot"></div>
           <span id="mi-state-text">LOADING</span>
         </div>
       </div>
-
-    </div><!-- /forge-viewport -->
+    </div>
 
     <!-- MISSION SPINE -->
     <div class="mission-spine">
       <span class="spine-label">FORGE PIPELINE · LFS → SUBMODULE → CONFIRM → DEPLOY</span>
-      <div class="spine-node">
-        <div class="spine-circle done">✓</div>
-        <div class="spine-node-label">LFS<br>CLEAN</div>
-      </div>
+      <div class="spine-node"><div class="spine-circle done">✓</div><div class="spine-node-label">LFS<br>CLEAN</div></div>
       <div class="spine-line done"></div>
-      <div class="spine-node">
-        <div class="spine-circle done">✓</div>
-        <div class="spine-node-label">SUBMOD<br>WIRED</div>
-      </div>
+      <div class="spine-node"><div class="spine-circle done">✓</div><div class="spine-node-label">SUBMOD<br>WIRED</div></div>
       <div class="spine-line done"></div>
-      <div class="spine-node">
-        <div class="spine-circle active">3</div>
-        <div class="spine-node-label active">FORGE<br>CONFIRM</div>
-      </div>
+      <div class="spine-node"><div class="spine-circle active">3</div><div class="spine-node-label active">FORGE<br>CONFIRM</div></div>
       <div class="spine-line"></div>
-      <div class="spine-node">
-        <div class="spine-circle">4</div>
-        <div class="spine-node-label">STELLAR<br>DEPLOY</div>
-      </div>
+      <div class="spine-node"><div class="spine-circle">4</div><div class="spine-node-label">STELLAR<br>DEPLOY</div></div>
       <div class="spine-line"></div>
-      <div class="spine-node">
-        <div class="spine-circle">5</div>
-        <div class="spine-node-label">PHASE<br>8.5</div>
-      </div>
+      <div class="spine-node"><div class="spine-circle">5</div><div class="spine-node-label">PHASE<br>8.5</div></div>
     </div>
 
     <!-- CHARACTER CAROUSEL -->
@@ -309,33 +217,27 @@
         </div>
       </div>
       <div class="carousel-cards">
-        <div class="char-card active-card">
-          <div class="char-card-img"><div class="char-img-placeholder">⬡</div><div class="char-tier-badge tier-cst">CST-ERT</div><div class="char-status-dot pulse dot-teal-shadow"></div></div>
-          <div class="char-body"><div class="char-name">CST STELLAR</div><div class="char-sub">STELLAR-WOMAN · LEAD</div><div class="char-stats"><div class="cstat"><div class="cstat-bar-bg"><div class="cstat-bar-fill w-88 bg-forge"></div></div><div class="cstat-val">88</div></div><div class="cstat"><div class="cstat-bar-bg"><div class="cstat-bar-fill w-74 bg-teal"></div></div><div class="cstat-val">74</div></div></div><div class="char-tags"><span class="ctag ctag-green">DEPLOYED</span><span class="ctag ctag-orange">FORGE-LINKED</span></div></div>
-        </div>
+        <div class="char-card active-card"><div class="char-card-img"><div class="char-img-placeholder">⬡</div><div class="char-tier-badge tier-cst">CST-ERT</div><div class="char-status-dot pulse dot-teal-shadow"></div></div><div class="char-body"><div class="char-name">CST STELLAR</div><div class="char-sub">STELLAR-WOMAN · LEAD</div><div class="char-stats"><div class="cstat"><div class="cstat-bar-bg"><div class="cstat-bar-fill w-88 bg-forge"></div></div><div class="cstat-val">88</div></div><div class="cstat"><div class="cstat-bar-bg"><div class="cstat-bar-fill w-74 bg-teal"></div></div><div class="cstat-val">74</div></div></div><div class="char-tags"><span class="ctag ctag-green">DEPLOYED</span><span class="ctag ctag-orange">FORGE-LINKED</span></div></div></div>
         <div class="char-card"><div class="char-card-img"><div class="char-img-placeholder">⬡</div><div class="char-tier-badge tier-cst">CST</div><div class="char-status-dot dot-teal-shadow"></div></div><div class="char-body"><div class="char-name">CST WITCH TROOPER</div><div class="char-sub">ADEYEMI-3 · COMMAND</div><div class="char-stats"><div class="cstat"><div class="cstat-bar-bg"><div class="cstat-bar-fill w-74 bg-forge"></div></div><div class="cstat-val">74</div></div><div class="cstat"><div class="cstat-bar-bg"><div class="cstat-bar-fill w-100p bg-teal"></div></div><div class="cstat-val">100</div></div></div><div class="char-tags"><span class="ctag ctag-teal">SIGNAL-ENHANCED</span></div></div></div>
         <div class="char-card"><div class="char-card-img"><div class="char-img-placeholder">⬡</div><div class="char-tier-badge tier-arc">ARCANE</div><div class="char-status-dot dot-gold-shadow"></div></div><div class="char-body"><div class="char-name">BATTLE ARCANIST</div><div class="char-sub">OGST-PRIME · ARCANIST</div><div class="char-stats"><div class="cstat"><div class="cstat-bar-bg"><div class="cstat-bar-fill w-62 bg-forge"></div></div><div class="cstat-val">62</div></div><div class="cstat"><div class="cstat-bar-bg"><div class="cstat-bar-fill w-91 bg-teal"></div></div><div class="cstat-val">91</div></div></div><div class="char-tags"><span class="ctag ctag-teal">RIFT-ATTUNED</span><span class="ctag ctag-red">LOW-HP</span></div></div></div>
         <div class="char-card"><div class="char-card-img"><div class="char-img-placeholder">⬡</div><div class="char-tier-badge tier-war">HELEM</div><div class="char-status-dot dot-gold-shadow"></div></div><div class="char-body"><div class="char-name">TANUKI GOLEM</div><div class="char-sub">UNIT-TANG-4 · HEAVY</div><div class="char-stats"><div class="cstat"><div class="cstat-bar-bg"><div class="cstat-bar-fill w-95 bg-forge"></div></div><div class="cstat-val">95</div></div><div class="cstat"><div class="cstat-bar-bg"><div class="cstat-bar-fill w-44 bg-teal"></div></div><div class="cstat-val">44</div></div></div><div class="char-tags"><span class="ctag ctag-orange">ARMOURED</span></div></div></div>
         <div class="char-card"><div class="char-card-img"><div class="char-img-placeholder">⬡</div><div class="char-tier-badge tier-cst">WARDEN</div><div class="char-status-dot dot-grey"></div></div><div class="char-body"><div class="char-name">EASTERN WARDEN</div><div class="char-sub">OHENE-1 · SENTINEL</div><div class="char-stats"><div class="cstat"><div class="cstat-bar-bg"><div class="cstat-bar-fill w-80 bg-forge"></div></div><div class="cstat-val">80</div></div><div class="cstat"><div class="cstat-bar-bg"><div class="cstat-bar-fill w-66 bg-teal"></div></div><div class="cstat-val">66</div></div></div><div class="char-tags"><span class="ctag ctag-teal">LINE ONLINE</span><span class="ctag ctag-green">RESERVE</span></div></div></div>
       </div>
     </div>
-  </div><!-- /center -->
+  </div>
 
-  <!-- RIGHT PANEL — PILOT + DEPLOY -->
+  <!-- RIGHT PANEL -->
   <div class="right-panel">
-
     <div class="rp-section pilot-header-row">
       <div><div class="pilot-name">CST STELLAR<br>TROOPER</div></div>
       <div class="tier-legendary-tag">LEGENDARY</div>
     </div>
-
     <div class="rp-section">
       <div class="rp-label">PILOT IDENTITY</div>
-      <div class="pilot-id pulse">6F3A..D12F</div>
+      <div class="pilot-id pulse" id="pilot-id">UNVERIFIED</div>
       <div class="pilot-meta"><div class="pilot-gear-icon">⚙</div><div class="pilot-verse">GENESIS VERSE</div></div>
       <div class="pilot-station">STATION: ABYSSUM GATEWAY</div>
     </div>
-
     <div class="rp-section">
       <div class="rp-label">COMBAT STATS</div>
       <div class="stat-grid">
@@ -345,7 +247,6 @@
         <div class="stat-box"><div class="stat-key">PWR</div><div class="stat-val sv-orange">85</div></div>
       </div>
     </div>
-
     <div class="rp-section">
       <div class="rp-label">LOADOUT</div>
       <div class="loadout-item"><div class="loadout-icon"></div>RITUAL HEADSET</div>
@@ -361,7 +262,6 @@
         <div class="fp-desc">Rift fracture resistance +40%. Parkour chain extends combo window by 0.8s.</div>
       </div>
     </div>
-
     <div class="rp-section">
       <div class="rp-label">FORGE SOURCE</div>
       <div class="forge-src-row"><div class="fsr-left"><div class="fsr-diamond active"></div><div><div class="fsr-name">FORGE SOURCE · PRIMARY</div><div class="fsr-meta">TEXTURE + MATERIAL STREAM</div></div></div><div class="fsr-status status-armed">ARMED</div></div>
@@ -369,17 +269,22 @@
       <div class="forge-src-row"><div class="fsr-left"><div class="fsr-diamond"></div><div><div class="fsr-name">FORGE SOURCE · ARCHIVE</div><div class="fsr-meta">AVATAR VAULT · RAW</div></div></div><div class="fsr-status status-standby">STANDBY</div></div>
     </div>
 
-    <!-- LOG TERMINAL -->
     <div id="log-terminal"></div>
+
+    <!-- ORACLE TRANSMISSION PANEL -->
+    <div class="rp-section" id="oracle-panel" style="border:1px solid var(--forge);padding:8px;margin-bottom:6px;display:none;">
+      <div class="rp-label" style="color:var(--forge);">ORACLE TRANSMISSION</div>
+      <div id="oracle-transmission" style="font-family:var(--font-mono);font-size:9px;color:var(--teal);line-height:1.5;margin-top:4px;"></div>
+    </div>
 
     <div class="rp-section">
       <div class="rp-label">DEPLOY TERMINAL</div>
       <div class="gas-block">
-        <div class="gas-title">GAS API <span class="gas-live pulse">LIVE</span></div>
-        <div class="gas-row"><span class="gas-key">BASE FEE</span><span class="gas-val">0.0012 ETH</span></div>
-        <div class="gas-row"><span class="gas-key">PRIORITY TIP</span><span class="gas-val">0.0003 ETH</span></div>
-        <div class="gas-row"><span class="gas-key">EST. TOTAL</span><span class="gas-val gold">0.0015 ETH</span></div>
-        <div class="gas-row"><span class="gas-key">FUEL COST</span><span class="gas-val teal">84 FUEL</span></div>
+        <div class="gas-title">GAS API <span class="gas-live pulse" id="gas-status">SCANNING</span></div>
+        <div class="gas-row"><span class="gas-key">BASE FEE</span><span class="gas-val" id="gas-safe">-- GWEI</span></div>
+        <div class="gas-row"><span class="gas-key">PRIORITY TIP</span><span class="gas-val" id="gas-propose">-- GWEI</span></div>
+        <div class="gas-row"><span class="gas-key">FAST GAS</span><span class="gas-val gold" id="gas-fast">-- GWEI</span></div>
+        <div class="gas-row"><span class="gas-key">SIGNAL</span><span class="gas-val teal" id="gas-signal">--</span></div>
       </div>
       <div class="deploy-btns">
         <button class="btn-deploy btn-fuel">⚡ FUEL TO DEPLOY</button>
@@ -388,25 +293,21 @@
     </div>
 
     <div class="rp-section">
-      <div class="mint-footer">
-        <div class="mint-stats"><span>40</span><span class="mstat-sep">|</span><span>80</span><span class="mstat-sep">|</span><span>09</span></div>
-      </div>
+      <div class="mint-footer"><div class="mint-stats"><span>40</span><span class="mstat-sep">|</span><span>80</span><span class="mstat-sep">|</span><span>09</span></div></div>
       <div class="mint-id-label">MINT ID 19990731</div>
       <div class="mint-footer-note">ANIMATION LOADOUT ·▸</div>
     </div>
+  </div>
 
-  </div><!-- /right-panel -->
-
-</div><!-- /main -->
+</div>
 
 <script>
   // ═══════════════════════════════════════════════════════════════
-  //  FORGE CONFIRM v6 — COMBINED · MOAI COMMAND HANDOFF READY
-  //  GLB path: relative → works with VS Code Live Server (port 5500)
-  //  Fix: updateModelIntel() now fires after GLB confirms
+  //  FORGE CONFIRM v8 — ORACLE WIRED · WALLET CONNECT LIVE
+  //  Fourth Wall: CONFIRMED BROKEN
+  //  Oracle reads: Gas API + Supabase pilot record
   // ═══════════════════════════════════════════════════════════════
 
-  // ── CURSOR ──────────────────────────────────────────────────────
   const cursor = document.getElementById('cursor');
   document.addEventListener('mousemove', e => {
     cursor.style.left = e.clientX + 'px';
@@ -436,14 +337,6 @@
     if (label) progLabel.textContent = label;
   }
 
-  // ── CONFIRM BADGE ───────────────────────────────────────────────
-  function setBadge(text, cls) {
-    const badge = document.getElementById('confirm-badge');
-    badge.textContent = text;
-    badge.className = cls || '';
-  }
-
-  // ── RING WARM ───────────────────────────────────────────────────
   function warmRing(n, color) {
     const c = color || '#e07a20';
     const outer = document.getElementById(`ring${n}-outer`);
@@ -454,7 +347,6 @@
     if (core)  { core.setAttribute('stroke', c); core.setAttribute('fill', c); }
   }
 
-  // ── SYS CHECK ───────────────────────────────────────────────────
   function confirmCheck(id, statusText, ringNum) {
     const row = document.getElementById(id);
     if (!row) return;
@@ -467,7 +359,6 @@
     if (checksConfirmed === totalChecks) onAllGreen();
   }
 
-  // ── ALL GREEN ───────────────────────────────────────────────────
   function onAllGreen() {
     ['c-tl','c-tr','c-bl','c-br'].forEach(id => document.getElementById(id).classList.add('hot'));
     document.getElementById('orbital').classList.add('hot');
@@ -477,10 +368,8 @@
     document.getElementById('moai-status-panel').classList.add('warm');
     document.getElementById('scan-status').textContent = 'ALL GREEN';
     document.getElementById('scan-status').style.color = '#2aff7a';
-
     document.getElementById('confirm-badge').textContent = 'ALL SYSTEMS GREEN — 28 CLIPS LIVE';
     document.getElementById('confirm-badge').className = 'green';
-
     setTimeout(() => {
       ['pip1','pip2','pip3'].forEach(id => document.getElementById(id).classList.add('filled-forge'));
       document.getElementById('pip4').classList.add('filled-teal');
@@ -491,16 +380,12 @@
       vs.classList.remove('warm'); vs.classList.add('live');
       document.getElementById('mi-state-text').textContent = 'VIEWER LIVE';
     }, 400);
-
     setProgress(100, 'ALL SYSTEMS CONFIRMED — OPERATIVE READY');
     const btn = document.getElementById('deploy-btn');
     if (btn) { btn.disabled = false; btn.classList.add('armed'); }
-
     log('CST STELLAR TROOPER — ANIMATIONS LIVE', 'ok');
     log('SYNC_BRIDGE ACTIVE — STATE_MACHINE TRIGGER', 'ok');
-    log('COMMANDER AUTHORIZATION REQUIRED', 'warn');
-
-    // Ramp ember light
+    log('CONNECT WALLET TO AUTHENTICATE PILOT', 'warn');
     if (window.emberLight) {
       let i = 0;
       const ramp = setInterval(() => {
@@ -509,9 +394,10 @@
         if (i >= 1.4) clearInterval(ramp);
       }, 55);
     }
+    // Auto-query gas on load (no wallet needed)
+    queryOracleGas();
   }
 
-  // ── TELEM REVEAL ────────────────────────────────────────────────
   function revealTelem(id, delay, cls) {
     setTimeout(() => {
       const el = document.getElementById(id);
@@ -519,40 +405,105 @@
     }, delay);
   }
 
-  // ── MODEL INTEL — fires after GLB confirms ───────────────────────
-  // Populated from actual GLB animation group names + mesh metadata
   function updateModelIntel(animGroupNames) {
     const count = animGroupNames ? animGroupNames.length : 28;
-
-    // Detect designation from clip naming convention
-    // e.g. "cst-ert-*" → CST-ERT / STELLAR TROOPER
-    let designation = 'CST-ERT';
-    let cls         = 'STELLAR';
-    let armour      = 'TROOPER';
-
+    let designation = 'CST-ERT', cls = 'STELLAR', armour = 'TROOPER';
     if (animGroupNames && animGroupNames.length > 0) {
       const first = animGroupNames[0].toLowerCase();
       if (first.includes('cst-ert')) { designation = 'CST-ERT'; cls = 'STELLAR'; armour = 'TROOPER'; }
       else if (first.includes('steampunk')) { designation = 'STEAMPUNK'; cls = 'DEMONIC'; armour = 'HEAVY'; }
     }
-
     document.getElementById('mi-designation').textContent = designation;
     document.getElementById('mi-class').textContent       = cls;
     document.getElementById('mi-armour').textContent      = armour;
     document.getElementById('mi-reactor').textContent     = 'ACTIVE';
     document.getElementById('mi-tubes').textContent       = count + ' CLIPS';
     document.getElementById('mi-glow').textContent        = 'FORGE';
-
     log('MODEL INTEL UPDATED — ' + designation + ' / ' + cls, 'ok');
   }
 
+  // ── ORACLE GAS QUERY (no wallet) ────────────────────────────────
+  async function queryOracleGas() {
+    try {
+      const res = await fetch('/api/oracle');
+      const oracle = await res.json();
+      updateGasDisplay(oracle.gas);
+      log('ORACLE GAS FEED ACTIVE — SIGNAL: ' + (oracle.gas?.signal || 'UNKNOWN'), 'ok');
+      document.getElementById('t6').textContent = 'ORACLE: ' + (oracle.gas?.signal || 'UNKNOWN');
+    } catch (err) {
+      log('ORACLE GAS QUERY FAILED — ' + err.message, 'warn');
+    }
+  }
+
+  function updateGasDisplay(gas) {
+    if (!gas) return;
+    document.getElementById('gas-safe').textContent    = gas.safe    + ' GWEI';
+    document.getElementById('gas-propose').textContent = gas.propose + ' GWEI';
+    document.getElementById('gas-fast').textContent    = gas.fast    + ' GWEI';
+    document.getElementById('gas-signal').textContent  = gas.signal;
+    document.getElementById('gas-status').textContent  = 'LIVE';
+    document.getElementById('t4').textContent = 'ENTROPY_FLUX: ' + (gas.fast > 50 ? '0.87' : '0.37');
+    document.getElementById('t5').textContent = 'GAS: ' + gas.fast + ' GWEI · ' + gas.signal;
+  }
+
+  // ── WALLET CONNECT + ORACLE PILOT QUERY ─────────────────────────
+  window.connectWallet = async function() {
+    const btn = document.getElementById('btn-wallet');
+
+    if (!window.ethereum) {
+      log('NO WEB3 WALLET DETECTED — INSTALL METAMASK', 'warn');
+      btn.textContent = '◈ NO WALLET';
+      return;
+    }
+
+    try {
+      btn.textContent = '◈ CONNECTING...';
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const wallet = accounts[0];
+      const display = wallet.slice(0, 6) + '...' + wallet.slice(-4);
+
+      btn.textContent = '◈ ' + display;
+      btn.style.color = 'var(--teal)';
+      document.getElementById('pilot-id').textContent = display;
+
+      log('WALLET CONNECTED — ' + display, 'ok');
+      log('ORACLE QUERY INITIATED — AUTHENTICATING PILOT', 'info');
+
+      const res = await fetch('/api/oracle?wallet=' + wallet);
+      const oracle = await res.json();
+
+      // Update gas display with live data
+      updateGasDisplay(oracle.gas);
+
+      // Show Oracle transmission
+      if (oracle.transmission) {
+        const panel = document.getElementById('oracle-panel');
+        const trans = document.getElementById('oracle-transmission');
+        panel.style.display = 'block';
+        trans.textContent   = oracle.transmission;
+        log('ORACLE: ' + oracle.transmission.slice(0, 60) + '...', oracle.pilot ? 'ok' : 'warn');
+      }
+
+      // Pilot verified
+      if (oracle.pilot) {
+        document.getElementById('mi-state-text').textContent = 'PILOT VERIFIED';
+        document.getElementById('mi-viewer-state').classList.add('live');
+        log('PILOT RECORD CONFIRMED — CLASS: ' + oracle.pilot.test_pilot_class, 'ok');
+        log('ABEX BALANCE: ' + oracle.pilot.abex_balance, 'ok');
+      } else {
+        document.getElementById('t6').textContent = 'ORACLE: UNVERIFIED';
+        log('PILOT NOT IN REGISTRY — COMPLETE ONBOARDING TO AUTHENTICATE', 'warn');
+      }
+
+    } catch (err) {
+      log('WALLET CONNECTION FAILED: ' + err.message, 'warn');
+      btn.textContent = '◈ CONNECT WALLET';
+    }
+  };
+
   // ── BABYLON GLB LOADER ──────────────────────────────────────────
-  // GLB PATH: place both GLBs in the SAME FOLDER as this HTML
-  // Character: cst-mint-deploy-mvp-animation-group-01.glb
-  // Stage:     scene-mint-deploy-hype-stage-osu-a_stage_env.glb
-  // Serve via VS Code Live Server (port 5500) — do NOT use file://
-  const GLB_FILENAME    = '/api/asset/cst-mint-deploy-mvp-animation-group-01.glb';
-  const STAGE_FILENAME  = '/api/asset/scene-mint-deploy-hype-stage-osu-a_stage_env.glb';
+  const GLB_FILENAME   = '/api/asset/cst-mint-deploy-mvp-animation-group-01.glb';
+  const STAGE_FILENAME = '/api/asset/scene-mint-deploy-hype-stage-osu-a_stage_env.glb';
 
   const canvas     = document.getElementById('renderCanvas');
   const glowCanvas = document.getElementById('glowCanvas');
@@ -577,20 +528,17 @@
     sceneBJS  = new BABYLON.Scene(engineBJS);
     sceneBJS.clearColor = new BABYLON.Color4(0.035, 0.043, 0.051, 1);
 
-    // Camera
-    // Camera — pulled back, looking at platform center, beta-limited above ground
     const camera = new BABYLON.ArcRotateCamera('cam', -Math.PI / 2, Math.PI / 3, 5.5, new BABYLON.Vector3(0, 1.0, 0), sceneBJS);
-camera.lowerRadiusLimit     = 2.0;
-camera.upperRadiusLimit     = 14;
-camera.lowerBetaLimit       = 0.2;
-camera.upperBetaLimit       = Math.PI / 2 + 0.3;  // allows slight below-ground angle
-camera.wheelDeltaPercentage = 0.01;
-camera.angularSensibilityX  = 500;                 // horizontal drag feel
-camera.angularSensibilityY  = 500;                 // vertical drag feel
-camera.inertia              = 0.6;                 // natural deceleration on release
-camera.attachControl(canvas, true);
+    camera.lowerRadiusLimit     = 2.0;
+    camera.upperRadiusLimit     = 14;
+    camera.lowerBetaLimit       = 0.2;
+    camera.upperBetaLimit       = Math.PI / 2 + 0.3;
+    camera.wheelDeltaPercentage = 0.01;
+    camera.angularSensibilityX  = 500;
+    camera.angularSensibilityY  = 500;
+    camera.inertia              = 0.6;
+    camera.attachControl(canvas, true);
 
-    // Lighting
     const hemi = new BABYLON.HemisphericLight('hemi', new BABYLON.Vector3(0,1,0), sceneBJS);
     hemi.intensity   = 0.6;
     hemi.diffuse     = new BABYLON.Color3(0.9, 0.85, 0.8);
@@ -604,30 +552,24 @@ camera.attachControl(canvas, true);
     emberLight.diffuse   = new BABYLON.Color3(0.88, 0.48, 0.12);
     window.emberLight    = emberLight;
 
-    // ── Render loop starts HERE — camera guaranteed before this line ──
     engineBJS.runRenderLoop(() => sceneBJS.render());
     window.addEventListener('resize', () => engineBJS.resize());
 
-   const glowEngine = new BABYLON.Engine(glowCanvas, true, { preserveDrawingBuffer: false, stencil: false });
-const glowScene  = new BABYLON.Scene(glowEngine);
-glowScene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
-// Dummy camera required — Babylon.js v9 throws if scene renders with no camera
-const glowCam = new BABYLON.FreeCamera('glow-cam', new BABYLON.Vector3(0,0,-1), glowScene);
-glowCam.setTarget(BABYLON.Vector3.Zero());
-glowEngine.runRenderLoop(() => glowScene.render());
+    try {
+      const glowEngine = new BABYLON.Engine(glowCanvas, true, { preserveDrawingBuffer: false, stencil: false });
+      const glowScene  = new BABYLON.Scene(glowEngine);
+      glowScene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
+      const glowCam = new BABYLON.FreeCamera('glow-cam', new BABYLON.Vector3(0,0,-1), glowScene);
+      glowCam.setTarget(BABYLON.Vector3.Zero());
+      glowEngine.runRenderLoop(() => glowScene.render());
+    } catch(e) { console.warn('Glow overlay skipped:', e.message); }
 
-    // Load GLB — relative path (same directory as HTML)
     log('GLB LOAD INITIATED — CST MVP ANIMS', 'info');
     setProgress(10, 'LOADING GLB ASSET');
     document.getElementById('canvas-status').textContent = 'LOADING GLB…';
 
-    BABYLON.SceneLoader.ImportMesh(
-      '',
-      '',
-      GLB_FILENAME,
-      sceneBJS,
+    BABYLON.SceneLoader.ImportMesh('', '', GLB_FILENAME, sceneBJS,
       function(meshes, particleSystems, skeletons, animationGroups) {
-        // Auto-scale + center
         const root = meshes[0];
         root.position = new BABYLON.Vector3(0, 0, 0);
 
@@ -642,19 +584,14 @@ glowEngine.runRenderLoop(() => glowScene.render());
         });
         const size  = max.subtract(min);
         const scale = 1.8 / (size.y || 2);
-        root.scaling  = new BABYLON.Vector3(scale, scale, scale);
+        root.scaling    = new BABYLON.Vector3(scale, scale, scale);
         root.position.y = -min.y * scale;
 
-        // Re-target camera to character mid-height
         const charHeight = size.y * scale;
         camera.target = new BABYLON.Vector3(0, charHeight * 0.55, 0);
-        camera.radius = charHeight * 2.6;
+        camera.radius = charHeight * 1.8;
 
         allGroups = animationGroups.length > 0 ? animationGroups : [];
-
-        if (allGroups.length === 0 && skeletons.length > 0) {
-          log('NO ANIM GROUPS IN GLB — CHECKING SCENE ANIMS', 'warn');
-        }
 
         const clipCount = allGroups.length;
         document.getElementById('anim-count').textContent = clipCount + ' / 28';
@@ -678,40 +615,21 @@ glowEngine.runRenderLoop(() => glowScene.render());
         setTimeout(() => confirmCheck('chk-moai',     'BROADCASTING', 5), 900);
         setTimeout(() => confirmCheck('chk-sentinel', 'NOMINAL',      6), 1400);
 
-        // ── Load stage environment AFTER character confirms ──────────
-        // Stage GLB must be in same folder as this HTML
-        // If stage file missing, silently skip — character still renders
         log('STAGE LOAD → ' + STAGE_FILENAME, 'info');
-        BABYLON.SceneLoader.ImportMesh(
-          '',
-          '',
-          STAGE_FILENAME,
-          sceneBJS,
+        BABYLON.SceneLoader.ImportMesh('', '', STAGE_FILENAME, sceneBJS,
           function(stageMeshes) {
             if (!stageMeshes || stageMeshes.length === 0) return;
             const stageRoot = stageMeshes[0];
-
-            // Stage is large — scale to match character world scale
-            // Character is ~1.8 units tall after normalization
-            // Stage should wrap around it without crushing the camera
             stageRoot.scaling  = new BABYLON.Vector3(scale * 0.5, scale * 0.5, scale * 0.5);
             stageRoot.position = new BABYLON.Vector3(0, 0, 0);
-
             log('STAGE ENV LOADED — HYPE STAGE ACTIVE', 'ok');
             document.getElementById('canvas-status').textContent = 'MODEL + STAGE LIVE';
-
-            // Disable all stage animations if any exist
             if (sceneBJS.animationGroups) {
-              sceneBJS.animationGroups.forEach(g => {
-                if (!allGroups.includes(g)) g.stop();
-              });
+              sceneBJS.animationGroups.forEach(g => { if (!allGroups.includes(g)) g.stop(); });
             }
           },
           null,
-          function(s, msg) {
-            // Stage missing — silent fail, character still live
-            log('STAGE: ' + STAGE_FILENAME + ' not found — add to folder', 'warn');
-          }
+          function(s, msg) { log('STAGE: not found — character only mode', 'warn'); }
         );
       },
       function(evt) {
@@ -724,18 +642,13 @@ glowEngine.runRenderLoop(() => glowScene.render());
         document.getElementById('anim-main-status').textContent = 'GLB LOAD FAILED';
         buildAnimGridFallback(KNOWN_CLIPS);
         document.getElementById('anim-count').textContent = '28 / 28';
-        // updateModelIntel fires on error too — uses fallback data
         updateModelIntel(KNOWN_CLIPS);
         confirmCheck('chk-babylon', 'ENGINE LIVE', 1);
-        setProgress(30, 'ENGINE LIVE — NEEDS LOCAL SERVER');
-        log('SERVE FROM: http://localhost:5500 (VS Code Live Server)', 'warn');
-        log('GLB must be in SAME FOLDER as this HTML file', 'warn');
+        setProgress(30, 'ENGINE LIVE — NEEDS ASSET PROXY');
       }
     );
+  }
 
-  }  // ── END initBabylon ─────────────────────────────────────────
-
-  // ── ANIMATION GRID ──────────────────────────────────────────────
   function buildAnimGrid(groups) {
     const grid = document.getElementById('anim-grid');
     grid.innerHTML = '';
@@ -757,7 +670,7 @@ glowEngine.runRenderLoop(() => glowScene.render());
       btn.className = 'anim-clip-btn';
       btn.id = 'clip-btn-' + i;
       btn.innerHTML = `<span>${name}</span><span class="anim-play-dot"></span>`;
-      btn.onclick = () => log('CLIP: ' + name + ' — start Live Server to play', 'warn');
+      btn.onclick = () => log('CLIP: ' + name + ' — check asset proxy', 'warn');
       grid.appendChild(btn);
     });
   }
@@ -771,17 +684,14 @@ glowEngine.runRenderLoop(() => glowScene.render());
     if (!allGroups.length) return;
     index = Math.max(0, Math.min(index, allGroups.length - 1));
     stopAllGroups();
-    currentIndex  = index;
-    activeGroup   = allGroups[index];
+    currentIndex = index;
+    activeGroup  = allGroups[index];
     activeGroup.start(isLooping, currentSpeed);
     if (isPaused) activeGroup.pause();
-
     const btn = document.getElementById('clip-btn-' + index);
     if (btn) btn.classList.add('active-clip');
-
     document.getElementById('anim-active-clip').textContent = activeGroup.name;
     log('CLIP → ' + activeGroup.name, 'ok');
-
     if (!isLooping) {
       activeGroup.onAnimationGroupEndObservable.addOnce(() => {
         playClip((currentIndex + 1) % allGroups.length);
@@ -812,25 +722,28 @@ glowEngine.runRenderLoop(() => glowScene.render());
     if (activeGroup) activeGroup.speedRatio = currentSpeed;
   };
 
-  // ── BOOT ────────────────────────────────────────────────────────
-  function boot() {
-    log('ABYSSUM FORGE CONFIRM v6 — BOOT INITIATED', 'info');
-    setProgress(5, 'INITIALIZING BABYLON ENGINE');
+  window.proceedToGateway = function() {
+    log('COMMANDER AUTHORIZED — DEPLOYING OPERATIVE', 'ok');
+    const btn = document.getElementById('deploy-btn');
+    btn.textContent = '◈ DEPLOYING...';
+    btn.style.pointerEvents = 'none';
+    setTimeout(() => {
+      window.location.href = '/api/create-checkout-session';
+    }, 800);
+  };
 
+  function boot() {
+    log('ABYSSUM FORGE CONFIRM v8 — BOOT INITIATED', 'info');
+    setProgress(5, 'INITIALIZING BABYLON ENGINE');
     revealTelem('t1', 300);
     revealTelem('t2', 700);
     revealTelem('t3', 1100);
-
     setTimeout(() => {
       const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
       if (gl) { log('WebGL2 confirmed — render context live', 'ok'); confirmCheck('chk-webgl', 'ACTIVE', 2); }
       else    { log('WebGL2 unavailable', 'warn'); confirmCheck('chk-webgl', 'FALLBACK', 2); }
     }, 600);
-
     setTimeout(() => {
-      document.getElementById('t4').textContent = 'ENTROPY_FLUX: 0.37';
-      document.getElementById('t5').textContent = 'DRIFT_SCORE: 2.41%';
-      document.getElementById('t6').textContent = 'BOND_LEVEL: 78%';
       revealTelem('t4', 0, 'hot');
       revealTelem('t5', 250, 'hot');
       revealTelem('t6', 500, 'hot');
@@ -839,126 +752,12 @@ glowEngine.runRenderLoop(() => glowScene.render());
       document.getElementById('mi-state-text').textContent = 'SIGNAL LOCK';
       log('STATE_CORE locked — model position confirmed', 'ok');
     }, 2200);
-
     setTimeout(() => {
       log('SYNC_BRIDGE broadcasting on STATE_MACHINE', 'ok');
       document.getElementById('orbital').classList.add('hot');
     }, 3000);
-
     initBabylon();
   }
-
-  // ── WALLET CONNECT + ORACLE QUERY ──────────────────────────────
-  let walletConnected = false;
-
-  window.connectWallet = async function() {
-    const btn = document.getElementById('btn-wallet');
-
-    if (walletConnected) {
-      walletConnected = false;
-      if (btn) { btn.textContent = '◈ CONNECT WALLET'; btn.style.color = ''; }
-      document.querySelector('.pilot-id').textContent = '6F3A..D12F';
-      document.getElementById('mi-state-text').textContent = 'SIGNAL LOCK';
-      document.getElementById('t4').textContent = 'ENTROPY_FLUX: 0.37';
-      document.getElementById('t5').textContent = 'DRIFT_SCORE: 2.41%';
-      document.getElementById('t6').textContent = 'BOND_LEVEL: 78%';
-      log('WALLET DISCONNECTED — SIGNAL CLEARED', 'warn');
-      return;
-    }
-
-    if (!window.ethereum) {
-      log('NO WEB3 WALLET DETECTED — INSTALL METAMASK', 'warn');
-      if (btn) btn.textContent = '◈ NO WALLET';
-      return;
-    }
-
-    try {
-      if (btn) btn.textContent = '◈ CONNECTING...';
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      const wallet = accounts[0];
-      const display = wallet.slice(0, 6) + '...' + wallet.slice(-4);
-      walletConnected = true;
-      if (btn) { btn.textContent = '◈ ' + display + ' · DISCONNECT'; btn.style.color = 'var(--teal)'; }
-      log('WALLET CONNECTED — ' + display, 'ok');
-      // Update Pilot Identity display
-      const pilotIdEl = document.querySelector('.pilot-id');
-      if (pilotIdEl) pilotIdEl.textContent = display;
-
-      const isNextJS = window.location.port !== '5500' && window.location.port !== '5501';
-      if (isNextJS) {
-        // Oracle query
-        log('ORACLE QUERY — AUTHENTICATING PILOT SIGNAL', 'info');
-        try {
-          const res = await fetch('/api/oracle?wallet=' + encodeURIComponent(wallet));
-          if (!res.ok) throw new Error('Oracle ' + res.status);
-          const oracle = await res.json();
-
-          // Update telemetry with live Oracle data
-          const t4 = document.getElementById('t4');
-          const t5 = document.getElementById('t5');
-          const t6 = document.getElementById('t6');
-          if (t4) t4.textContent = 'ENTROPY_FLUX: ' + (oracle.integrity ?? 0).toFixed(2);
-          if (t5) t5.textContent = 'GAS: ' + (oracle.gas?.fast || 0) + ' GWEI · ' + (oracle.gas?.signal || 'UNKNOWN');
-          if (t6) t6.textContent = 'SIGNAL: ' + (oracle.gas?.signal || 'CRITICAL');
-
-          // Oracle Fourth Wall transmission
-          if (oracle.transmission) {
-            log('ORACLE: ' + oracle.transmission, oracle.pilot ? 'ok' : 'warn');
-          }
-
-          // If pilot verified — update Model Intel viewer state
-          if (oracle.pilot) {
-            const stateText = document.getElementById('mi-state-text');
-            if (stateText) stateText.textContent = 'PILOT VERIFIED';
-            updateModelIntel(null);
-          } else {
-            log('ORACLE: PILOT NOT IN MANIFEST — UNVERIFIED SIGNAL', 'warn');
-          }
-        } catch (oracleErr) {
-          log('ORACLE UNAVAILABLE: ' + (oracleErr.message || oracleErr), 'warn');
-          document.getElementById('t6').textContent = 'SIGNAL: DEGRADED';
-        }
-      } else {
-        log('LIVE SERVER MODE — ORACLE QUERY SKIPPED', 'info');
-        document.getElementById('t4').textContent = 'ENTROPY_FLUX: LOCAL';
-        document.getElementById('t5').textContent = 'GAS: OFFLINE (LOCAL)';
-        document.getElementById('t6').textContent = 'SIGNAL: LOCAL MODE';
-      }
-    } catch (err) {
-      walletConnected = false;
-      log('WALLET CONNECTION FAILED: ' + (err.message || err), 'warn');
-      if (btn) { btn.textContent = '◈ CONNECT WALLET'; btn.style.color = ''; }
-    }
-  };
-
-  setTimeout(boot, 400);
-</script>
-</body>
-</html>
-      const t4 = document.getElementById('t4');
-      const t5 = document.getElementById('t5');
-      const t6 = document.getElementById('t6');
-      if (t4) t4.textContent = 'ENTROPY_FLUX: ' + oracle.integrity.toFixed(2);
-      if (t5) t5.textContent = 'GAS: ' + (oracle.gas?.fast || 0) + ' GWEI · ' + (oracle.gas?.signal || 'UNKNOWN');
-      if (t6) t6.textContent = 'SIGNAL: ' + (oracle.gas?.signal || 'CRITICAL');
-
-      // Oracle Fourth Wall transmission
-      if (oracle.transmission) {
-        log('ORACLE: ' + oracle.transmission, oracle.pilot ? 'ok' : 'warn');
-      }
-
-      // If pilot verified — update Model Intel viewer state
-      if (oracle.pilot) {
-        const stateText = document.getElementById('mi-state-text');
-        if (stateText) stateText.textContent = 'PILOT VERIFIED';
-        updateModelIntel(null);
-      }
-
-    } catch (err) {
-      log('WALLET CONNECTION FAILED: ' + (err.message || err), 'warn');
-      if (btn) btn.textContent = '◈ CONNECT WALLET';
-    }
-  };
 
   setTimeout(boot, 400);
 </script>
