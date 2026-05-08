@@ -848,21 +848,23 @@ glowEngine.runRenderLoop(() => glowScene.render());
     initBabylon();
   }
 
-  window.proceedToGateway = function() {
-    log('COMMANDER AUTHORIZED — DEPLOYING OPERATIVE', 'ok');
-    const btn = document.getElementById('deploy-btn');
-    btn.textContent = '◈ DEPLOYING...';
-    btn.style.pointerEvents = 'none';
-    setTimeout(() => {
-      btn.textContent = '◈ MINT TO DEPLOY';
-      btn.style.pointerEvents = 'all';
-      log('Wire proceedToGateway() to gateway route', 'warn');
-    }, 1200);
-  };
-
   // ── WALLET CONNECT + ORACLE QUERY ──────────────────────────────
+  let walletConnected = false;
+
   window.connectWallet = async function() {
     const btn = document.getElementById('btn-wallet');
+
+    if (walletConnected) {
+      walletConnected = false;
+      if (btn) { btn.textContent = '◈ CONNECT WALLET'; btn.style.color = ''; }
+      document.querySelector('.pilot-id').textContent = '6F3A..D12F';
+      document.getElementById('mi-state-text').textContent = 'SIGNAL LOCK';
+      document.getElementById('t4').textContent = 'ENTROPY_FLUX: 0.37';
+      document.getElementById('t5').textContent = 'DRIFT_SCORE: 2.41%';
+      document.getElementById('t6').textContent = 'BOND_LEVEL: 78%';
+      log('WALLET DISCONNECTED — SIGNAL CLEARED', 'warn');
+      return;
+    }
 
     if (!window.ethereum) {
       log('NO WEB3 WALLET DETECTED — INSTALL METAMASK', 'warn');
@@ -875,20 +877,64 @@ glowEngine.runRenderLoop(() => glowScene.render());
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
       const wallet = accounts[0];
       const display = wallet.slice(0, 6) + '...' + wallet.slice(-4);
-      if (btn) { btn.textContent = '◈ ' + display; btn.style.color = 'var(--teal)'; }
-
+      walletConnected = true;
+      if (btn) { btn.textContent = '◈ ' + display + ' · DISCONNECT'; btn.style.color = 'var(--teal)'; }
       log('WALLET CONNECTED — ' + display, 'ok');
-
       // Update Pilot Identity display
       const pilotIdEl = document.querySelector('.pilot-id');
       if (pilotIdEl) pilotIdEl.textContent = display;
 
-      // Oracle query
-      log('ORACLE QUERY — AUTHENTICATING PILOT SIGNAL', 'info');
-      const res = await fetch('/api/oracle?wallet=' + encodeURIComponent(wallet));
-      const oracle = await res.json();
+      const isNextJS = window.location.port !== '5500' && window.location.port !== '5501';
+      if (isNextJS) {
+        // Oracle query
+        log('ORACLE QUERY — AUTHENTICATING PILOT SIGNAL', 'info');
+        try {
+          const res = await fetch('/api/oracle?wallet=' + encodeURIComponent(wallet));
+          if (!res.ok) throw new Error('Oracle ' + res.status);
+          const oracle = await res.json();
 
-      // Update telemetry with live Oracle data
+          // Update telemetry with live Oracle data
+          const t4 = document.getElementById('t4');
+          const t5 = document.getElementById('t5');
+          const t6 = document.getElementById('t6');
+          if (t4) t4.textContent = 'ENTROPY_FLUX: ' + (oracle.integrity ?? 0).toFixed(2);
+          if (t5) t5.textContent = 'GAS: ' + (oracle.gas?.fast || 0) + ' GWEI · ' + (oracle.gas?.signal || 'UNKNOWN');
+          if (t6) t6.textContent = 'SIGNAL: ' + (oracle.gas?.signal || 'CRITICAL');
+
+          // Oracle Fourth Wall transmission
+          if (oracle.transmission) {
+            log('ORACLE: ' + oracle.transmission, oracle.pilot ? 'ok' : 'warn');
+          }
+
+          // If pilot verified — update Model Intel viewer state
+          if (oracle.pilot) {
+            const stateText = document.getElementById('mi-state-text');
+            if (stateText) stateText.textContent = 'PILOT VERIFIED';
+            updateModelIntel(null);
+          } else {
+            log('ORACLE: PILOT NOT IN MANIFEST — UNVERIFIED SIGNAL', 'warn');
+          }
+        } catch (oracleErr) {
+          log('ORACLE UNAVAILABLE: ' + (oracleErr.message || oracleErr), 'warn');
+          document.getElementById('t6').textContent = 'SIGNAL: DEGRADED';
+        }
+      } else {
+        log('LIVE SERVER MODE — ORACLE QUERY SKIPPED', 'info');
+        document.getElementById('t4').textContent = 'ENTROPY_FLUX: LOCAL';
+        document.getElementById('t5').textContent = 'GAS: OFFLINE (LOCAL)';
+        document.getElementById('t6').textContent = 'SIGNAL: LOCAL MODE';
+      }
+    } catch (err) {
+      walletConnected = false;
+      log('WALLET CONNECTION FAILED: ' + (err.message || err), 'warn');
+      if (btn) { btn.textContent = '◈ CONNECT WALLET'; btn.style.color = ''; }
+    }
+  };
+
+  setTimeout(boot, 400);
+</script>
+</body>
+</html>
       const t4 = document.getElementById('t4');
       const t5 = document.getElementById('t5');
       const t6 = document.getElementById('t6');
