@@ -1,6 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
+type GasSignal = 'STABLE' | 'ELEVATED' | 'CRITICAL';
+
+interface GasState {
+  safe: number;
+  propose: number;
+  fast: number;
+  signal: GasSignal;
+}
+
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -12,23 +21,25 @@ const ETHERSCAN_API = `https://api.etherscan.io/api?module=gastracker&action=gas
 export async function GET(req: NextRequest) {
   const wallet = req.nextUrl.searchParams.get('wallet');
 
-  // Gas state — always returned
-  let gasState = { safe: 0, propose: 0, fast: 0, signal: 'CRITICAL' as const };
+  let gasState: GasState = { safe: 0, propose: 0, fast: 0, signal: 'CRITICAL' };
+
   try {
     const gasRes = await fetch(ETHERSCAN_API);
     const gasJson = await gasRes.json();
     if (gasJson.status === '1') {
       const fast = parseInt(gasJson.result.FastGasPrice);
+      const signal: GasSignal = fast > 100 ? 'CRITICAL' : fast > 50 ? 'ELEVATED' : 'STABLE';
       gasState = {
         safe:    parseInt(gasJson.result.SafeGasPrice),
         propose: parseInt(gasJson.result.ProposeGasPrice),
         fast,
-        signal: fast > 100 ? 'CRITICAL' : fast > 50 ? 'ELEVATED' : 'STABLE',
+        signal,
       };
     }
-  } catch { /* Oracle degrades gracefully */ }
+  } catch (_err) {
+    // Oracle degrades gracefully — stub returned
+  }
 
-  // Pilot auth — only if wallet provided
   let pilot = null;
   if (wallet) {
     const { data } = await supabase
