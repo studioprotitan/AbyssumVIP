@@ -303,34 +303,36 @@
 
 <script>
   // ═══════════════════════════════════════════════════════════════
-  //  FORGE CONFIRM v8 — ORACLE WIRED · WALLET CONNECT LIVE
+  //  FORGE CONFIRM v8 — ORACLE WIRED · WALLET CONNECT/DISCONNECT LIVE
   //  Fourth Wall: CONFIRMED BROKEN
   //  Oracle reads: Gas API + Supabase pilot record
+  //  Build: Phase 8.5 — Disconnect toggle clean rewrite 2026-05-08
   // ═══════════════════════════════════════════════════════════════
 
   const cursor = document.getElementById('cursor');
-  document.addEventListener('mousemove', e => {
+  document.addEventListener('mousemove', function(e) {
     cursor.style.left = e.clientX + 'px';
     cursor.style.top  = e.clientY + 'px';
   });
 
   // ── LOG TERMINAL ────────────────────────────────────────────────
-  const logTerminal = document.getElementById('log-terminal');
-  const logStack = [];
-  function log(msg, type = 'info') {
-    const line = document.createElement('div');
-    line.className = `log-line ${type}`;
-    line.textContent = `[${new Date().toTimeString().slice(0,8)}] ${msg}`;
+  var logTerminal = document.getElementById('log-terminal');
+  var logStack = [];
+  function log(msg, type) {
+    type = type || 'info';
+    var line = document.createElement('div');
+    line.className = 'log-line ' + type;
+    line.textContent = '[' + new Date().toTimeString().slice(0,8) + '] ' + msg;
     logTerminal.appendChild(line);
     logStack.push(line);
     if (logStack.length > 7) { logStack[0].remove(); logStack.shift(); }
   }
 
   // ── PROGRESS ────────────────────────────────────────────────────
-  const progFill  = document.getElementById('prog-fill');
-  const progLabel = document.getElementById('prog-label');
-  let checksConfirmed = 0;
-  const totalChecks = 6;
+  var progFill  = document.getElementById('prog-fill');
+  var progLabel = document.getElementById('prog-label');
+  var checksConfirmed = 0;
+  var totalChecks = 6;
 
   function setProgress(val, label) {
     progFill.style.width = val + '%';
@@ -338,29 +340,31 @@
   }
 
   function warmRing(n, color) {
-    const c = color || '#e07a20';
-    const outer = document.getElementById(`ring${n}-outer`);
-    const mid   = document.getElementById(`ring${n}-mid`);
-    const core  = document.getElementById(`ring${n}-core`);
+    var c = color || '#e07a20';
+    var outer = document.getElementById('ring' + n + '-outer');
+    var mid   = document.getElementById('ring' + n + '-mid');
+    var core  = document.getElementById('ring' + n + '-core');
     if (outer) outer.setAttribute('stroke', c);
     if (mid)   mid.setAttribute('stroke', c);
     if (core)  { core.setAttribute('stroke', c); core.setAttribute('fill', c); }
   }
 
   function confirmCheck(id, statusText, ringNum) {
-    const row = document.getElementById(id);
+    var row = document.getElementById(id);
     if (!row) return;
     row.classList.add('confirmed');
     row.querySelector('.sys-status').textContent = statusText || 'CONFIRMED';
     checksConfirmed++;
     if (ringNum) warmRing(ringNum);
-    const pct = Math.round((checksConfirmed / totalChecks) * 100);
-    setProgress(pct, `VERIFYING — ${pct}%`);
+    var pct = Math.round((checksConfirmed / totalChecks) * 100);
+    setProgress(pct, 'VERIFYING — ' + pct + '%');
     if (checksConfirmed === totalChecks) onAllGreen();
   }
 
   function onAllGreen() {
-    ['c-tl','c-tr','c-bl','c-br'].forEach(id => document.getElementById(id).classList.add('hot'));
+    ['c-tl','c-tr','c-bl','c-br'].forEach(function(id) {
+      document.getElementById(id).classList.add('hot');
+    });
     document.getElementById('orbital').classList.add('hot');
     document.getElementById('topnav').classList.add('warm');
     document.getElementById('mission-label').classList.add('warm');
@@ -370,48 +374,50 @@
     document.getElementById('scan-status').style.color = '#2aff7a';
     document.getElementById('confirm-badge').textContent = 'ALL SYSTEMS GREEN — 28 CLIPS LIVE';
     document.getElementById('confirm-badge').className = 'green';
-    setTimeout(() => {
-      ['pip1','pip2','pip3'].forEach(id => document.getElementById(id).classList.add('filled-forge'));
+    setTimeout(function() {
+      ['pip1','pip2','pip3'].forEach(function(id) {
+        document.getElementById(id).classList.add('filled-forge');
+      });
       document.getElementById('pip4').classList.add('filled-teal');
       document.getElementById('pip5').classList.add('filled-gold');
     }, 200);
-    setTimeout(() => {
-      const vs = document.getElementById('mi-viewer-state');
-      vs.classList.remove('warm'); vs.classList.add('live');
+    setTimeout(function() {
+      var vs = document.getElementById('mi-viewer-state');
+      vs.classList.remove('warm');
+      vs.classList.add('live');
       document.getElementById('mi-state-text').textContent = 'VIEWER LIVE';
     }, 400);
     setProgress(100, 'ALL SYSTEMS CONFIRMED — OPERATIVE READY');
-    const btn = document.getElementById('deploy-btn');
+    var btn = document.getElementById('deploy-btn');
     if (btn) { btn.disabled = false; btn.classList.add('armed'); }
     log('CST STELLAR TROOPER — ANIMATIONS LIVE', 'ok');
     log('SYNC_BRIDGE ACTIVE — STATE_MACHINE TRIGGER', 'ok');
     log('CONNECT WALLET TO AUTHENTICATE PILOT', 'warn');
     if (window.emberLight) {
-      let i = 0;
-      const ramp = setInterval(() => {
+      var i = 0;
+      var ramp = setInterval(function() {
         i += 0.04;
         if (window.emberLight) window.emberLight.intensity = Math.min(i * 0.3, 0.4);
         if (i >= 1.4) clearInterval(ramp);
       }, 55);
     }
-    // Auto-query gas on load (no wallet needed)
     queryOracleGas();
   }
 
   function revealTelem(id, delay, cls) {
-    setTimeout(() => {
-      const el = document.getElementById(id);
+    setTimeout(function() {
+      var el = document.getElementById(id);
       if (el) { el.classList.add('visible'); if (cls) el.classList.add(cls); }
     }, delay);
   }
 
   function updateModelIntel(animGroupNames) {
-    const count = animGroupNames ? animGroupNames.length : 28;
-    let designation = 'CST-ERT', cls = 'STELLAR', armour = 'TROOPER';
+    var count = animGroupNames ? animGroupNames.length : 28;
+    var designation = 'CST-ERT', cls = 'STELLAR', armour = 'TROOPER';
     if (animGroupNames && animGroupNames.length > 0) {
-      const first = animGroupNames[0].toLowerCase();
-      if (first.includes('cst-ert')) { designation = 'CST-ERT'; cls = 'STELLAR'; armour = 'TROOPER'; }
-      else if (first.includes('steampunk')) { designation = 'STEAMPUNK'; cls = 'DEMONIC'; armour = 'HEAVY'; }
+      var first = animGroupNames[0].toLowerCase();
+      if (first.indexOf('cst-ert') !== -1) { designation = 'CST-ERT'; cls = 'STELLAR'; armour = 'TROOPER'; }
+      else if (first.indexOf('steampunk') !== -1) { designation = 'STEAMPUNK'; cls = 'DEMONIC'; armour = 'HEAVY'; }
     }
     document.getElementById('mi-designation').textContent = designation;
     document.getElementById('mi-class').textContent       = cls;
@@ -422,14 +428,14 @@
     log('MODEL INTEL UPDATED — ' + designation + ' / ' + cls, 'ok');
   }
 
-  // ── ORACLE GAS QUERY (no wallet) ────────────────────────────────
+  // ── ORACLE GAS QUERY (no wallet required) ───────────────────────
   async function queryOracleGas() {
     try {
-      const res = await fetch('/api/oracle');
-      const oracle = await res.json();
+      var res = await fetch('/api/oracle');
+      var oracle = await res.json();
       updateGasDisplay(oracle.gas);
-      log('ORACLE GAS FEED ACTIVE — SIGNAL: ' + (oracle.gas?.signal || 'UNKNOWN'), 'ok');
-      document.getElementById('t6').textContent = 'ORACLE: ' + (oracle.gas?.signal || 'UNKNOWN');
+      log('ORACLE GAS FEED ACTIVE — SIGNAL: ' + ((oracle.gas && oracle.gas.signal) || 'UNKNOWN'), 'ok');
+      document.getElementById('t6').textContent = 'ORACLE: ' + ((oracle.gas && oracle.gas.signal) || 'UNKNOWN');
     } catch (err) {
       log('ORACLE GAS QUERY FAILED — ' + err.message, 'warn');
     }
@@ -446,73 +452,135 @@
     document.getElementById('t5').textContent = 'GAS: ' + gas.fast + ' GWEI · ' + gas.signal;
   }
 
-  // ── WALLET CONNECT + ORACLE PILOT QUERY ─────────────────────────
-  window.connectWallet = async function() {
-    const btn = document.getElementById('btn-wallet');
+  // ── WALLET STATE ────────────────────────────────────────────────
+  var walletConnected = false;
+  var connectedWallet = '';
 
+  // ── WALLET CONNECT / DISCONNECT TOGGLE ──────────────────────────
+  window.connectWallet = async function() {
+    var btn = document.getElementById('btn-wallet');
+
+    // ── DISCONNECT PATH ──
+    if (walletConnected) {
+      walletConnected = false;
+      connectedWallet = '';
+      if (btn) {
+        btn.textContent = '◈ CONNECT WALLET';
+        btn.style.color = '';
+      }
+      var pilotIdEl = document.getElementById('pilot-id');
+      if (pilotIdEl) pilotIdEl.textContent = 'UNVERIFIED';
+      var miStateText = document.getElementById('mi-state-text');
+      if (miStateText) miStateText.textContent = 'SIGNAL LOCK';
+      document.getElementById('t4').textContent = 'ENTROPY_FLUX: --';
+      document.getElementById('t5').textContent = 'GAS: -- GWEI';
+      document.getElementById('t6').textContent = 'ORACLE: COLD';
+      var oraclePanel = document.getElementById('oracle-panel');
+      if (oraclePanel) oraclePanel.style.display = 'none';
+      log('WALLET DISCONNECTED — SIGNAL CLEARED', 'warn');
+      return;
+    }
+
+    // ── CONNECT PATH ──
     if (!window.ethereum) {
       log('NO WEB3 WALLET DETECTED — INSTALL METAMASK', 'warn');
-      btn.textContent = '◈ NO WALLET';
+      if (btn) btn.textContent = '◈ NO WALLET';
       return;
     }
 
     try {
-      btn.textContent = '◈ CONNECTING...';
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      const wallet = accounts[0];
-      const display = wallet.slice(0, 6) + '...' + wallet.slice(-4);
+      if (btn) btn.textContent = '◈ CONNECTING...';
 
-      btn.textContent = '◈ ' + display;
-      btn.style.color = 'var(--teal)';
-      document.getElementById('pilot-id').textContent = display;
+      var accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      var wallet = accounts[0];
+      var display = wallet.slice(0, 6) + '...' + wallet.slice(-4);
 
-      log('WALLET CONNECTED — ' + display, 'ok');
-      log('ORACLE QUERY INITIATED — AUTHENTICATING PILOT', 'info');
+      walletConnected = true;
+      connectedWallet = wallet;
 
-      const res = await fetch('/api/oracle?wallet=' + wallet);
-      const oracle = await res.json();
-
-      // Update gas display with live data
-      updateGasDisplay(oracle.gas);
-
-      // Show Oracle transmission
-      if (oracle.transmission) {
-        const panel = document.getElementById('oracle-panel');
-        const trans = document.getElementById('oracle-transmission');
-        panel.style.display = 'block';
-        trans.textContent   = oracle.transmission;
-        log('ORACLE: ' + oracle.transmission.slice(0, 60) + '...', oracle.pilot ? 'ok' : 'warn');
+      if (btn) {
+        btn.textContent = '◈ ' + display + ' · DISCONNECT';
+        btn.style.color = 'var(--teal)';
       }
 
-      // Pilot verified
-      if (oracle.pilot) {
-        document.getElementById('mi-state-text').textContent = 'PILOT VERIFIED';
-        document.getElementById('mi-viewer-state').classList.add('live');
-        log('PILOT RECORD CONFIRMED — CLASS: ' + oracle.pilot.test_pilot_class, 'ok');
-        log('ABEX BALANCE: ' + oracle.pilot.abex_balance, 'ok');
+      var pilotIdEl = document.getElementById('pilot-id');
+      if (pilotIdEl) pilotIdEl.textContent = display;
+
+      log('WALLET CONNECTED — ' + display, 'ok');
+
+      // Oracle query — only fires on Next.js host, gracefully skipped on Live Server
+      var port = window.location.port;
+      var isNextJS = (port !== '5500' && port !== '5501' && port !== '5502' && port !== '3000');
+
+      if (isNextJS) {
+        log('ORACLE QUERY — AUTHENTICATING PILOT SIGNAL', 'info');
+        try {
+          var res = await fetch('/api/oracle?wallet=' + encodeURIComponent(wallet));
+          if (!res.ok) { throw new Error('Oracle route returned ' + res.status); }
+          var oracle = await res.json();
+
+          updateGasDisplay(oracle.gas);
+
+          if (oracle.transmission) {
+            var panel = document.getElementById('oracle-panel');
+            var trans = document.getElementById('oracle-transmission');
+            if (panel) panel.style.display = 'block';
+            if (trans) trans.textContent = oracle.transmission;
+            log('ORACLE: ' + oracle.transmission.slice(0, 80) + (oracle.transmission.length > 80 ? '...' : ''), oracle.pilot ? 'ok' : 'warn');
+          }
+
+          if (oracle.pilot) {
+            var miStateText = document.getElementById('mi-state-text');
+            if (miStateText) miStateText.textContent = 'PILOT VERIFIED';
+            var vs = document.getElementById('mi-viewer-state');
+            if (vs) vs.classList.add('live');
+            log('PILOT RECORD CONFIRMED — CLASS: ' + oracle.pilot.test_pilot_class, 'ok');
+            if (oracle.pilot.abex_balance !== undefined) {
+              log('ABEX BALANCE: ' + oracle.pilot.abex_balance, 'ok');
+            }
+            updateModelIntel(null);
+          } else {
+            document.getElementById('t6').textContent = 'ORACLE: UNVERIFIED';
+            log('PILOT NOT IN REGISTRY — COMPLETE ONBOARDING TO AUTHENTICATE', 'warn');
+          }
+
+        } catch (oracleErr) {
+          log('ORACLE UNAVAILABLE: ' + (oracleErr.message || oracleErr), 'warn');
+          document.getElementById('t6').textContent = 'SIGNAL: DEGRADED';
+        }
+
       } else {
-        document.getElementById('t6').textContent = 'ORACLE: UNVERIFIED';
-        log('PILOT NOT IN REGISTRY — COMPLETE ONBOARDING TO AUTHENTICATE', 'warn');
+        // Live Server mode — Oracle skipped, wallet state still correctly set
+        log('LIVE SERVER MODE — ORACLE QUERY SKIPPED', 'info');
+        log('DEPLOY TO VERCEL TO ACTIVATE ORACLE FOURTH WALL', 'warn');
+        document.getElementById('t4').textContent = 'ENTROPY_FLUX: LOCAL';
+        document.getElementById('t5').textContent = 'GAS: OFFLINE (LOCAL)';
+        document.getElementById('t6').textContent = 'SIGNAL: LOCAL MODE';
       }
 
     } catch (err) {
-      log('WALLET CONNECTION FAILED: ' + err.message, 'warn');
-      btn.textContent = '◈ CONNECT WALLET';
+      walletConnected = false;
+      connectedWallet = '';
+      log('WALLET CONNECTION FAILED: ' + (err.message || err), 'warn');
+      if (btn) {
+        btn.textContent = '◈ CONNECT WALLET';
+        btn.style.color = '';
+      }
     }
   };
 
   // ── BABYLON GLB LOADER ──────────────────────────────────────────
-  const GLB_FILENAME   = '/api/asset/cst-mint-deploy-mvp-animation-group-01.glb';
-  const STAGE_FILENAME = '/api/asset/scene-mint-deploy-hype-stage-osu-a_stage_env.glb';
+  var GLB_FILENAME   = '/api/asset/cst-mint-deploy-mvp-animation-group-01.glb';
+  var STAGE_FILENAME = '/api/asset/scene-mint-deploy-hype-stage-osu-a_stage_env.glb';
 
-  const canvas     = document.getElementById('renderCanvas');
-  const glowCanvas = document.getElementById('glowCanvas');
+  var canvas     = document.getElementById('renderCanvas');
+  var glowCanvas = document.getElementById('glowCanvas');
 
-  let engineBJS, sceneBJS;
-  let activeGroup = null, allGroups = [], isLooping = true, isPaused = false;
-  let currentSpeed = 1.0, currentIndex = 0;
+  var engineBJS, sceneBJS;
+  var activeGroup = null, allGroups = [], isLooping = true, isPaused = false;
+  var currentSpeed = 1.0, currentIndex = 0;
 
-  const KNOWN_CLIPS = [
+  var KNOWN_CLIPS = [
     'cst-ert-idle-b','cst-ert-idle-c','cst-ert-idle-d','cst-ert-idle-e','cst-ert-idle-f',
     'cst-ert-braced-drop-a','cst-ert-wall-jump-left-a','cst-ert-jump-low-a','cst-ert-jump-mid-a',
     'cst-ert-jump-quick-a','cst-ert-wall-jump-right-a','cst-ert-jump-run-left-a','cst-ert-jump-run-right-a',
@@ -528,7 +596,7 @@
     sceneBJS  = new BABYLON.Scene(engineBJS);
     sceneBJS.clearColor = new BABYLON.Color4(0.035, 0.043, 0.051, 1);
 
-    const camera = new BABYLON.ArcRotateCamera('cam', -Math.PI / 2, Math.PI / 3, 5.5, new BABYLON.Vector3(0, 1.0, 0), sceneBJS);
+    var camera = new BABYLON.ArcRotateCamera('cam', -Math.PI / 2, Math.PI / 3, 5.5, new BABYLON.Vector3(0, 1.0, 0), sceneBJS);
     camera.lowerRadiusLimit     = 2.0;
     camera.upperRadiusLimit     = 14;
     camera.lowerBetaLimit       = 0.2;
@@ -539,29 +607,30 @@
     camera.inertia              = 0.6;
     camera.attachControl(canvas, true);
 
-    const hemi = new BABYLON.HemisphericLight('hemi', new BABYLON.Vector3(0,1,0), sceneBJS);
+    var hemi = new BABYLON.HemisphericLight('hemi', new BABYLON.Vector3(0,1,0), sceneBJS);
     hemi.intensity   = 0.6;
     hemi.diffuse     = new BABYLON.Color3(0.9, 0.85, 0.8);
     hemi.groundColor = new BABYLON.Color3(0.1, 0.12, 0.14);
 
-    const keyLight = new BABYLON.DirectionalLight('key', new BABYLON.Vector3(-1, -2, 1), sceneBJS);
+    var keyLight = new BABYLON.DirectionalLight('key', new BABYLON.Vector3(-1, -2, 1), sceneBJS);
     keyLight.intensity = 1.2;
 
-    const emberLight = new BABYLON.PointLight('ember', new BABYLON.Vector3(0, 1, -1.5), sceneBJS);
+    var emberLight = new BABYLON.PointLight('ember', new BABYLON.Vector3(0, 1, -1.5), sceneBJS);
     emberLight.intensity = 0;
     emberLight.diffuse   = new BABYLON.Color3(0.88, 0.48, 0.12);
     window.emberLight    = emberLight;
 
-    engineBJS.runRenderLoop(() => sceneBJS.render());
-    window.addEventListener('resize', () => engineBJS.resize());
+    engineBJS.runRenderLoop(function() { sceneBJS.render(); });
+    window.addEventListener('resize', function() { engineBJS.resize(); });
 
+    // Glow overlay — secondary engine, graceful skip on failure
     try {
-      const glowEngine = new BABYLON.Engine(glowCanvas, true, { preserveDrawingBuffer: false, stencil: false });
-      const glowScene  = new BABYLON.Scene(glowEngine);
+      var glowEngine = new BABYLON.Engine(glowCanvas, true, { preserveDrawingBuffer: false, stencil: false });
+      var glowScene  = new BABYLON.Scene(glowEngine);
       glowScene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
-      const glowCam = new BABYLON.FreeCamera('glow-cam', new BABYLON.Vector3(0,0,-1), glowScene);
+      var glowCam = new BABYLON.FreeCamera('glow-cam', new BABYLON.Vector3(0,0,-1), glowScene);
       glowCam.setTarget(BABYLON.Vector3.Zero());
-      glowEngine.runRenderLoop(() => glowScene.render());
+      glowEngine.runRenderLoop(function() { glowScene.render(); });
     } catch(e) { console.warn('Glow overlay skipped:', e.message); }
 
     log('GLB LOAD INITIATED — CST MVP ANIMS', 'info');
@@ -570,30 +639,30 @@
 
     BABYLON.SceneLoader.ImportMesh('', '', GLB_FILENAME, sceneBJS,
       function(meshes, particleSystems, skeletons, animationGroups) {
-        const root = meshes[0];
+        var root = meshes[0];
         root.position = new BABYLON.Vector3(0, 0, 0);
 
-        let min = new BABYLON.Vector3(Infinity, Infinity, Infinity);
-        let max = new BABYLON.Vector3(-Infinity, -Infinity, -Infinity);
-        meshes.forEach(m => {
+        var min = new BABYLON.Vector3(Infinity, Infinity, Infinity);
+        var max = new BABYLON.Vector3(-Infinity, -Infinity, -Infinity);
+        meshes.forEach(function(m) {
           if (m.getBoundingInfo) {
-            const b = m.getBoundingInfo().boundingBox;
+            var b = m.getBoundingInfo().boundingBox;
             min = BABYLON.Vector3.Minimize(min, b.minimumWorld);
             max = BABYLON.Vector3.Maximize(max, b.maximumWorld);
           }
         });
-        const size  = max.subtract(min);
-        const scale = 1.8 / (size.y || 2);
+        var size  = max.subtract(min);
+        var scale = 1.8 / (size.y || 2);
         root.scaling    = new BABYLON.Vector3(scale, scale, scale);
         root.position.y = -min.y * scale;
 
-        const charHeight = size.y * scale;
+        var charHeight = size.y * scale;
         camera.target = new BABYLON.Vector3(0, charHeight * 0.55, 0);
         camera.radius = charHeight * 1.8;
 
         allGroups = animationGroups.length > 0 ? animationGroups : [];
 
-        const clipCount = allGroups.length;
+        var clipCount = allGroups.length;
         document.getElementById('anim-count').textContent = clipCount + ' / 28';
         document.getElementById('anim-main-status').textContent = clipCount + ' CLIPS ACTIVE';
         document.getElementById('anim-main-status').className = 'anim-status-line live';
@@ -606,26 +675,28 @@
         document.getElementById('glowCanvas').style.opacity = '0.6';
 
         log('GLB LOADED — ' + clipCount + ' ANIMATION GROUPS', 'ok');
-        updateModelIntel(allGroups.map(g => g.name));
+        updateModelIntel(allGroups.map(function(g) { return g.name; }));
 
         confirmCheck('chk-babylon', 'GLB LIVE', 1);
         confirmCheck('chk-mesh',    'FORGE_MESH LIVE', 3);
         setProgress(60, 'ANIMATION GROUPS MAPPED');
-        setTimeout(() => confirmCheck('chk-ssot',     'LOCKED',       4), 400);
-        setTimeout(() => confirmCheck('chk-moai',     'BROADCASTING', 5), 900);
-        setTimeout(() => confirmCheck('chk-sentinel', 'NOMINAL',      6), 1400);
+        setTimeout(function() { confirmCheck('chk-ssot',     'LOCKED',       4); }, 400);
+        setTimeout(function() { confirmCheck('chk-moai',     'BROADCASTING', 5); }, 900);
+        setTimeout(function() { confirmCheck('chk-sentinel', 'NOMINAL',      6); }, 1400);
 
         log('STAGE LOAD → ' + STAGE_FILENAME, 'info');
         BABYLON.SceneLoader.ImportMesh('', '', STAGE_FILENAME, sceneBJS,
           function(stageMeshes) {
             if (!stageMeshes || stageMeshes.length === 0) return;
-            const stageRoot = stageMeshes[0];
+            var stageRoot = stageMeshes[0];
             stageRoot.scaling  = new BABYLON.Vector3(scale * 0.5, scale * 0.5, scale * 0.5);
             stageRoot.position = new BABYLON.Vector3(0, 0, 0);
             log('STAGE ENV LOADED — HYPE STAGE ACTIVE', 'ok');
             document.getElementById('canvas-status').textContent = 'MODEL + STAGE LIVE';
             if (sceneBJS.animationGroups) {
-              sceneBJS.animationGroups.forEach(g => { if (!allGroups.includes(g)) g.stop(); });
+              sceneBJS.animationGroups.forEach(function(g) {
+                if (allGroups.indexOf(g) === -1) g.stop();
+              });
             }
           },
           null,
@@ -633,7 +704,7 @@
         );
       },
       function(evt) {
-        const pct = evt.total > 0 ? Math.round((evt.loaded / evt.total) * 50) + 10 : 30;
+        var pct = evt.total > 0 ? Math.round((evt.loaded / evt.total) * 50) + 10 : 30;
         setProgress(pct, 'STREAMING GLB — ' + pct + '%');
       },
       function(scene, msg) {
@@ -650,34 +721,34 @@
   }
 
   function buildAnimGrid(groups) {
-    const grid = document.getElementById('anim-grid');
+    var grid = document.getElementById('anim-grid');
     grid.innerHTML = '';
-    groups.forEach((g, i) => {
-      const btn = document.createElement('button');
+    groups.forEach(function(g, i) {
+      var btn = document.createElement('button');
       btn.className = 'anim-clip-btn';
       btn.id = 'clip-btn-' + i;
-      btn.innerHTML = `<span>${g.name}</span><span class="anim-play-dot"></span>`;
-      btn.onclick = () => playClip(i);
+      btn.innerHTML = '<span>' + g.name + '</span><span class="anim-play-dot"></span>';
+      btn.onclick = (function(idx) { return function() { playClip(idx); }; })(i);
       grid.appendChild(btn);
     });
   }
 
   function buildAnimGridFallback(names) {
-    const grid = document.getElementById('anim-grid');
+    var grid = document.getElementById('anim-grid');
     grid.innerHTML = '';
-    names.forEach((name, i) => {
-      const btn = document.createElement('button');
+    names.forEach(function(name, i) {
+      var btn = document.createElement('button');
       btn.className = 'anim-clip-btn';
       btn.id = 'clip-btn-' + i;
-      btn.innerHTML = `<span>${name}</span><span class="anim-play-dot"></span>`;
-      btn.onclick = () => log('CLIP: ' + name + ' — check asset proxy', 'warn');
+      btn.innerHTML = '<span>' + name + '</span><span class="anim-play-dot"></span>';
+      btn.onclick = (function(n) { return function() { log('CLIP: ' + n + ' — check asset proxy', 'warn'); }; })(name);
       grid.appendChild(btn);
     });
   }
 
   function stopAllGroups() {
-    allGroups.forEach(g => { try { g.stop(); } catch(e) {} });
-    document.querySelectorAll('.anim-clip-btn').forEach(b => b.classList.remove('active-clip'));
+    allGroups.forEach(function(g) { try { g.stop(); } catch(e) {} });
+    document.querySelectorAll('.anim-clip-btn').forEach(function(b) { b.classList.remove('active-clip'); });
   }
 
   function playClip(index) {
@@ -688,12 +759,12 @@
     activeGroup  = allGroups[index];
     activeGroup.start(isLooping, currentSpeed);
     if (isPaused) activeGroup.pause();
-    const btn = document.getElementById('clip-btn-' + index);
+    var btn = document.getElementById('clip-btn-' + index);
     if (btn) btn.classList.add('active-clip');
     document.getElementById('anim-active-clip').textContent = activeGroup.name;
     log('CLIP → ' + activeGroup.name, 'ok');
     if (!isLooping) {
-      activeGroup.onAnimationGroupEndObservable.addOnce(() => {
+      activeGroup.onAnimationGroupEndObservable.addOnce(function() {
         playClip((currentIndex + 1) % allGroups.length);
       });
     }
@@ -718,16 +789,16 @@
 
   window.setSpeed = function(val) {
     currentSpeed = parseFloat(val);
-    document.getElementById('speed-val').textContent = currentSpeed.toFixed(1) + '×';
+    document.getElementById('speed-val').textContent = currentSpeed.toFixed(1) + 'x';
     if (activeGroup) activeGroup.speedRatio = currentSpeed;
   };
 
   window.proceedToGateway = function() {
     log('COMMANDER AUTHORIZED — DEPLOYING OPERATIVE', 'ok');
-    const btn = document.getElementById('deploy-btn');
+    var btn = document.getElementById('deploy-btn');
     btn.textContent = '◈ DEPLOYING...';
     btn.style.pointerEvents = 'none';
-    setTimeout(() => {
+    setTimeout(function() {
       window.location.href = '/api/create-checkout-session';
     }, 800);
   };
@@ -738,21 +809,21 @@
     revealTelem('t1', 300);
     revealTelem('t2', 700);
     revealTelem('t3', 1100);
-    setTimeout(() => {
-      const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+    setTimeout(function() {
+      var gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
       if (gl) { log('WebGL2 confirmed — render context live', 'ok'); confirmCheck('chk-webgl', 'ACTIVE', 2); }
       else    { log('WebGL2 unavailable', 'warn'); confirmCheck('chk-webgl', 'FALLBACK', 2); }
     }, 600);
-    setTimeout(() => {
+    setTimeout(function() {
       revealTelem('t4', 0, 'hot');
       revealTelem('t5', 250, 'hot');
       revealTelem('t6', 500, 'hot');
-      const vs = document.getElementById('mi-viewer-state');
+      var vs = document.getElementById('mi-viewer-state');
       vs.classList.add('warm');
       document.getElementById('mi-state-text').textContent = 'SIGNAL LOCK';
       log('STATE_CORE locked — model position confirmed', 'ok');
     }, 2200);
-    setTimeout(() => {
+    setTimeout(function() {
       log('SYNC_BRIDGE broadcasting on STATE_MACHINE', 'ok');
       document.getElementById('orbital').classList.add('hot');
     }, 3000);
