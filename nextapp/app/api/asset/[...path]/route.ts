@@ -10,7 +10,7 @@ export async function GET(
   const assetName = path.join('/');
   const upstream = `${GITHUB_RELEASE_BASE}/${assetName}`;
 
-  const response = await fetch(upstream);
+  const response = await fetch(upstream, { redirect: 'follow' });
   if (!response.ok) {
     return NextResponse.json({ error: 'Asset not found', asset: assetName }, { status: 404 });
   }
