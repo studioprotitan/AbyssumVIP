@@ -28,11 +28,11 @@ export async function GET(req: NextRequest) {
     const gasRes = await fetch(ETHERSCAN_API);
     const gasJson = await gasRes.json();
     if (gasJson.status === '1') {
-      const fast = parseInt(gasJson.result.FastGasPrice);
-      const signal: GasSignal = fast > 100 ? 'CRITICAL' : fast > 50 ? 'ELEVATED' : 'STABLE';
+      const fast = parseFloat(gasJson.result.FastGasPrice);
+      const signal: GasSignal = fast > 100 ? 'CRITICAL' : fast > 10 ? 'ELEVATED' : 'STABLE';
       gasState = {
-        safe:    parseInt(gasJson.result.SafeGasPrice),
-        propose: parseInt(gasJson.result.ProposeGasPrice),
+        safe:    parseFloat(gasJson.result.SafeGasPrice),
+        propose: parseFloat(gasJson.result.ProposeGasPrice),
         fast,
         signal,
       };
