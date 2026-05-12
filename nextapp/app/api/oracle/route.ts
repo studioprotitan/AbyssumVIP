@@ -16,17 +16,19 @@ const supabase = createClient(
 );
 
 const ETHERSCAN_KEY = process.env.ETHERSCAN_API_KEY || '';
-const ETHERSCAN_API = `https://api.etherscan.io/v2/api?chainid=1&module=gastracker&action=gasoracle&apikey=${process.env.ETHERSCAN_API_KEY}`;
+const ETHERSCAN_API = `https://api.etherscan.io/v2/api?chainid=1&module=gastracker&action=gasoracle&apikey=${ETHERSCAN_KEY}`;
 
 export async function GET(req: NextRequest) {
   const wallet = req.nextUrl.searchParams.get('wallet');
 
-  let gasState: GasState = { safe: 0, propose: 0, fast: 0, signal: 'CRITICAL' };
+  let gasState: GasState = { safe: 0, propose: 0, fast: 0, signal: 'STABLE' };
 
   try {
     console.log('ETHERSCAN URL:', ETHERSCAN_API);
     const gasRes = await fetch(ETHERSCAN_API);
-    const gasJson = await gasRes.json();
+    const gasText = await gasRes.text();
+    console.log('ETHERSCAN RAW:', gasText.slice(0, 200));
+    const gasJson = JSON.parse(gasText);
     if (gasJson.status === '1') {
       const fast = parseFloat(gasJson.result.FastGasPrice);
       const signal: GasSignal = fast > 100 ? 'CRITICAL' : fast > 10 ? 'ELEVATED' : 'STABLE';
@@ -36,9 +38,11 @@ export async function GET(req: NextRequest) {
         fast,
         signal,
       };
+    } else {
+      console.log('ETHERSCAN STATUS NOT 1:', gasJson.status, gasJson.message);
     }
-  } catch (_err) {
-    console.error('ETHERSCAN FETCH ERROR:', _err);
+  } catch (err) {
+    console.error('ETHERSCAN ERROR:', err);
   }
 
   let pilot = null;
