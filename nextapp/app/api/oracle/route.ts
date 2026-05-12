@@ -50,7 +50,7 @@ export async function GET(req: NextRequest) {
     const { data } = await supabase
       .from('pilots')
       .select('id, wallet_address, test_pilot_class, abex_balance, forge_unlocked, oracle_briefed')
-      .eq('wallet_address', wallet)
+      .ilike('wallet_address', wallet)
       .single();
     pilot = data;
   }
