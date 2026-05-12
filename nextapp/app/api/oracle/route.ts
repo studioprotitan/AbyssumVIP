@@ -24,6 +24,7 @@ export async function GET(req: NextRequest) {
   let gasState: GasState = { safe: 0, propose: 0, fast: 0, signal: 'CRITICAL' };
 
   try {
+    console.log('ETHERSCAN URL:', ETHERSCAN_API);
     const gasRes = await fetch(ETHERSCAN_API);
     const gasJson = await gasRes.json();
     if (gasJson.status === '1') {
@@ -37,7 +38,7 @@ export async function GET(req: NextRequest) {
       };
     }
   } catch (_err) {
-    // Oracle degrades gracefully — stub returned
+    console.error('ETHERSCAN FETCH ERROR:', _err);
   }
 
   let pilot = null;
