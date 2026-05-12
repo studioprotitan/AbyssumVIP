@@ -16,7 +16,7 @@ const supabase = createClient(
 );
 
 const ETHERSCAN_KEY = process.env.ETHERSCAN_API_KEY || '';
-const ETHERSCAN_API = `https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=${ETHERSCAN_KEY}`;
+const ETHERSCAN_API = `https://api.etherscan.io/v2/api?chainid=1&module=gastracker&action=gasoracle&apikey=${process.env.ETHERSCAN_API_KEY}`;
 
 export async function GET(req: NextRequest) {
   const wallet = req.nextUrl.searchParams.get('wallet');
