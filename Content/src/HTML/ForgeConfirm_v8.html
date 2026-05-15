@@ -537,23 +537,22 @@
             if (trans) trans.textContent = oracle.transmission;
             log('ORACLE: ' + oracle.transmission.slice(0, 80) + (oracle.transmission.length > 80 ? '...' : ''), oracle.pilot ? 'ok' : 'warn');
 
-            // Brae Voice Injection
-            const text = oracle.transmission;
-            if (oracle.brae_voice_id && oracle.elevenlabs_key && text) {
-              fetch('https://api.elevenlabs.io/v1/text-to-speech/' + oracle.brae_voice_id, {
-                method: 'POST',
-                headers: {
-                  'xi-api-key': oracle.elevenlabs_key,
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                  text: text,
-                  model_id: 'eleven_turbo_v2',
-                  voice_settings: { stability: 0.55, similarity_boost: 0.75, style: 0.15 }
-                })
-              }).then(function(r) { return r.blob(); })
-                .then(function(b) { new Audio(URL.createObjectURL(b)).play(); })
-                .catch(function(e) { console.warn('BRAE VOICE ERROR:', e); });
+            // Brae voice — Web Speech API (free, browser-native)
+            // Replace with ElevenLabs when paid plan is active
+            var braeLine = oracle.transmission;
+            if (braeLine && 'speechSynthesis' in window) {
+              var utterance = new SpeechSynthesisUtterance(braeLine);
+              utterance.rate = 0.92;
+              utterance.pitch = 0.85;
+              utterance.volume = 0.9;
+              // Select a female voice if available
+              var voices = speechSynthesis.getVoices();
+              var preferred = voices.find(function(v) {
+                return v.name.includes('Female') || v.name.includes('Zira') 
+                  || v.name.includes('Susan') || v.name.includes('Samantha');
+              });
+              if (preferred) utterance.voice = preferred;
+              speechSynthesis.speak(utterance);
             }
           }
 
@@ -914,32 +913,22 @@
       _speakElevenLabs(text);
     }
 
-    async function _speakElevenLabs(text) {
-      if (!_elevenLabsKey || !_braeVoiceId) return;
-      try {
-        var res = await fetch(
-          'https://api.elevenlabs.io/v1/text-to-speech/' + _braeVoiceId + '/stream',
-          {
-            method: 'POST',
-            headers: {
-              'xi-api-key': _elevenLabsKey,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              text: text,
-              model_id: 'eleven_turbo_v2',
-              voice_settings: { stability: 0.55, similarity_boost: 0.75, style: 0.15, use_speaker_boost: false }
-            })
-          }
-        );
-        if (!res.ok) { console.warn('BraeOSU TTS failed:', res.status); return; }
-        var blob = await res.blob();
-        var url  = URL.createObjectURL(blob);
-        var audio = new Audio(url);
-        audio.play().catch(function(e) { console.warn('BraeOSU audio play blocked:', e.message); });
-        audio.onended = function() { URL.revokeObjectURL(url); };
-      } catch(e) {
-        console.warn('BraeOSU ElevenLabs error:', e.message);
+    function _speakElevenLabs(braeLine) {
+      // Brae voice — Web Speech API (free, browser-native)
+      // Replace with ElevenLabs when paid plan is active
+      if (braeLine && 'speechSynthesis' in window) {
+        var utterance = new SpeechSynthesisUtterance(braeLine);
+        utterance.rate = 0.92;
+        utterance.pitch = 0.85;
+        utterance.volume = 0.9;
+        // Select a female voice if available
+        var voices = speechSynthesis.getVoices();
+        var preferred = voices.find(function(v) {
+          return v.name.includes('Female') || v.name.includes('Zira') 
+            || v.name.includes('Susan') || v.name.includes('Samantha');
+        });
+        if (preferred) utterance.voice = preferred;
+        speechSynthesis.speak(utterance);
       }
     }
 
