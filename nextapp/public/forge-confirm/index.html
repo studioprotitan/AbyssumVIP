@@ -315,7 +315,7 @@
   //  FORGE CONFIRM v8 — ORACLE WIRED · WALLET CONNECT/DISCONNECT LIVE
   //  Fourth Wall: CONFIRMED BROKEN
   //  Oracle reads: Gas API + Supabase pilot record
-  //  Build: Phase 8.5 — Disconnect toggle clean rewrite 2026-05-08
+  //  Build: Phase 9 — Brae OSU wired · Camera fixed · Web Speech removed
   // ═══════════════════════════════════════════════════════════════
 
   const cursor = document.getElementById('cursor');
@@ -517,7 +517,6 @@
 
       log('WALLET CONNECTED — ' + display, 'ok');
 
-      // Oracle query — only fires on Next.js host, gracefully skipped on Live Server
       var port = window.location.port;
       var isNextJS = (port !== '5500' && port !== '5501' && port !== '5502' && port !== '3000');
 
@@ -530,30 +529,17 @@
 
           updateGasDisplay(oracle.gas);
 
+          // Wire Brae credentials if present in oracle response
+          if (oracle.brae_voice_id) {
+            BraeOSU.setCredentials(oracle.brae_voice_id, oracle.elevenlabs_key);
+          }
+
           if (oracle.transmission) {
             var panel = document.getElementById('oracle-panel');
             var trans = document.getElementById('oracle-transmission');
             if (panel) panel.style.display = 'block';
             if (trans) trans.textContent = oracle.transmission;
             log('ORACLE: ' + oracle.transmission.slice(0, 80) + (oracle.transmission.length > 80 ? '...' : ''), oracle.pilot ? 'ok' : 'warn');
-
-            // Brae voice — Web Speech API (free, browser-native)
-            // Replace with ElevenLabs when paid plan is active
-            var braeLine = oracle.transmission;
-            if (braeLine && 'speechSynthesis' in window) {
-              var utterance = new SpeechSynthesisUtterance(braeLine);
-              utterance.rate = 0.92;
-              utterance.pitch = 0.85;
-              utterance.volume = 0.9;
-              // Select a female voice if available
-              var voices = speechSynthesis.getVoices();
-              var preferred = voices.find(function(v) {
-                return v.name.includes('Female') || v.name.includes('Zira') 
-                  || v.name.includes('Susan') || v.name.includes('Samantha');
-              });
-              if (preferred) utterance.voice = preferred;
-              speechSynthesis.speak(utterance);
-            }
           }
 
           if (oracle.pilot) {
@@ -577,7 +563,6 @@
         }
 
       } else {
-        // Live Server mode — Oracle skipped, wallet state still correctly set
         log('LIVE SERVER MODE — ORACLE QUERY SKIPPED', 'info');
         log('DEPLOY TO VERCEL TO ACTIVATE ORACLE FOURTH WALL', 'warn');
         document.getElementById('t4').textContent = 'ENTROPY_FLUX: LOCAL';
@@ -623,7 +608,8 @@
     sceneBJS  = new BABYLON.Scene(engineBJS);
     sceneBJS.clearColor = new BABYLON.Color4(0.035, 0.043, 0.051, 1);
 
-    var camera = new BABYLON.ArcRotateCamera('cam', -Math.PI / 2, Math.PI / 3, 5.5, new BABYLON.Vector3(0, 1.0, 0), sceneBJS);
+    // ── CAMERA — beta = PI/2.5 keeps horizon level, not ceiling ──
+    var camera = new BABYLON.ArcRotateCamera('cam', -Math.PI / 2, Math.PI / 2.5, 5.5, new BABYLON.Vector3(0, 1.0, 0), sceneBJS);
     camera.lowerRadiusLimit     = 2.0;
     camera.upperRadiusLimit     = 14;
     camera.lowerBetaLimit       = 0.2;
@@ -650,7 +636,6 @@
     engineBJS.runRenderLoop(function() { sceneBJS.render(); });
     window.addEventListener('resize', function() { engineBJS.resize(); });
 
-    // Glow overlay — secondary engine, graceful skip on failure
     try {
       var glowEngine = new BABYLON.Engine(glowCanvas, true, { preserveDrawingBuffer: false, stencil: false });
       var glowScene  = new BABYLON.Scene(glowEngine);
@@ -683,9 +668,10 @@
         root.scaling    = new BABYLON.Vector3(scale, scale, scale);
         root.position.y = -min.y * scale;
 
+        // ── CAMERA FRAMING — chest height target, closer radius ──
         var charHeight = size.y * scale;
         camera.target = new BABYLON.Vector3(0, charHeight * 0.65, 0);
-        camera.radius = charHeight * 1.9;
+        camera.radius = charHeight * 1.7;
 
         allGroups = animationGroups.length > 0 ? animationGroups : [];
 
@@ -861,7 +847,8 @@
   //  OSU-UNIT-A · BRAE GRINDSTONE — BEHAVIORAL LAYER
   //  Brae speaks to the system. Oracle speaks to the pilot.
   //  Two voices. Two colors. One Forge Network.
-  //  Brae → ORANGE. Oracle → TEAL.
+  //  Brae → ORANGE (#e07a20). Oracle → TEAL.
+  //  Voice: ElevenLabs only. No browser TTS fallback — that is not Brae.
   // ══════════════════════════════════════════════════════════════════
 
   var BraeOSU = (function() {
@@ -870,22 +857,21 @@
     var _lastClipName   = null;
     var _pilotVerified  = false;
     var _deployArmed    = false;
-    var _braeVoiceId    = null;   // populated from oracle response if present
-    var _elevenLabsKey  = null;   // populated from oracle response if present
+    var _braeVoiceId    = null;
+    var _elevenLabsKey  = null;
 
-    // Transmission library — keyed by trigger type
     var TRANSMISSIONS = {
       GAS_STABLE:    ["Signal nominal. Carry on.", "Network holding. Nothing to flag."],
-      GAS_ELEVATED:  ["Network load is rising. You picking your moment or waiting for it to pick for you.", "Costs are up. I've worked in worse conditions. Your call."],
-      GAS_CRITICAL:  ["That's not a suggestion. Gas is critical. Move or hold — but decide.", "Critical threshold. I've flagged it. What you do with that is your business."],
+      GAS_ELEVATED:  ["Network load is rising. You picking your moment or waiting for it to pick for you.", "Costs are up. Worked in worse. Your call."],
+      GAS_CRITICAL:  ["That's not a suggestion. Gas is critical. Move or hold — but decide.", "Critical threshold. Flagged. What you do with that is your business."],
       PILOT_AUTH:    ["Pilot on record. I see you.", "Authentication confirmed. Wasn't expecting you this soon."],
-      DEPLOY_ARMED:  ["You're cleared. Whether you're ready is a different question.", "Deploy is armed. I'll be here either way."],
-      CLIP_WALL_JUMP:["Wall jump right. That one's cleaner than it looks.", "Wall jump sequence. That transition has a tighter window than the rig shows."],
+      DEPLOY_ARMED:  ["Cleared. Whether you're ready is a different question.", "Deploy is armed. I'll be here either way."],
+      CLIP_WALL_JUMP:["Wall jump right. Cleaner than it looks.", "Wall jump sequence. Tighter window than the rig shows."],
       CLIP_IDLE:     ["Idle loop. Still watching the ley lines.", "Standing by. Not complaining."],
-      CLIP_SPRINT:   ["Full sprint. She's got the cadence right.", "Sprint sequence. That's the one that reads fastest in field conditions."],
+      CLIP_SPRINT:   ["Full sprint. She's got the cadence right.", "Sprint sequence. Reads fastest in field conditions."],
       CLIP_DEATH:    ["Death state. Every operative has one. Doesn't mean it fires.", "That animation shouldn't be the one we're studying."],
       CLIP_VICTORY:  ["Victory. Canon. Don't get used to it.", "She earned that. Noted."],
-      CLIP_GENERIC:  ["Clip change. I'm tracking.", "Animation state updated. Logged."]
+      CLIP_GENERIC:  ["Clip change. Tracking.", "Animation state updated. Logged."]
     };
 
     function _pick(arr) {
@@ -909,36 +895,45 @@
       if (!panel || !el) return;
       panel.style.display = 'block';
       el.textContent = text;
-      log('OSU·BRAE: ' + text, 'brae');
+      log('OSU BRAE: ' + text, 'brae');
       _speakElevenLabs(text);
     }
 
-    function _speakElevenLabs(braeLine) {
-      // Brae voice — Web Speech API (free, browser-native)
-      // Replace with ElevenLabs when paid plan is active
-      if (braeLine && 'speechSynthesis' in window) {
-        var utterance = new SpeechSynthesisUtterance(braeLine);
-        utterance.rate = 0.92;
-        utterance.pitch = 0.85;
-        utterance.volume = 0.9;
-        // Select a female voice if available
-        var voices = speechSynthesis.getVoices();
-        var preferred = voices.find(function(v) {
-          return v.name.includes('Female') || v.name.includes('Zira') 
-            || v.name.includes('Susan') || v.name.includes('Samantha');
-        });
-        if (preferred) utterance.voice = preferred;
-        speechSynthesis.speak(utterance);
+    async function _speakElevenLabs(text) {
+      // ElevenLabs only. No browser TTS. Brae is silent until voice ID is set.
+      if (!_elevenLabsKey || !_braeVoiceId) return;
+      try {
+        var res = await fetch(
+          'https://api.elevenlabs.io/v1/text-to-speech/' + _braeVoiceId + '/stream',
+          {
+            method: 'POST',
+            headers: {
+              'xi-api-key': _elevenLabsKey,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              text: text,
+              model_id: 'eleven_turbo_v2',
+              voice_settings: { stability: 0.55, similarity_boost: 0.75, style: 0.15, use_speaker_boost: false }
+            })
+          }
+        );
+        if (!res.ok) { console.warn('BraeOSU TTS failed:', res.status); return; }
+        var blob = await res.blob();
+        var url  = URL.createObjectURL(blob);
+        var audio = new Audio(url);
+        audio.play().catch(function(e) { console.warn('BraeOSU audio blocked:', e.message); });
+        audio.onended = function() { URL.revokeObjectURL(url); };
+      } catch(e) {
+        console.warn('BraeOSU ElevenLabs error:', e.message);
       }
     }
 
-    // ── PUBLIC API ──────────────────────────────────────────────────
-
     function onGasUpdate(signal) {
-      if (signal === _lastGasSignal) return;   // no repeat if unchanged
+      if (signal === _lastGasSignal) return;
       _lastGasSignal = signal;
-      if (!_pilotVerified) return;             // Brae is quiet until pilot is on record
-      if (signal === 'STABLE')   { /* Brae holds on stable — silence is intentional */ return; }
+      if (!_pilotVerified) return;
+      if (signal === 'STABLE')   return;   // Silence on stable — intentional
       if (signal === 'ELEVATED') { _transmit(_pick(TRANSMISSIONS.GAS_ELEVATED)); return; }
       if (signal === 'CRITICAL') { _transmit(_pick(TRANSMISSIONS.GAS_CRITICAL)); return; }
     }
@@ -948,16 +943,15 @@
       _pilotVerified = true;
       setTimeout(function() {
         _transmit(_pick(TRANSMISSIONS.PILOT_AUTH));
-      }, 1200);   // slight delay — Oracle fires first, Brae follows
+      }, 1200);
     }
 
     function onClipChange(clipName) {
       if (clipName === _lastClipName) return;
       _lastClipName = clipName;
       if (!_pilotVerified) return;
-      // Only transmit on notable clips — not every idle cycle
       var cat = _clipCategory(clipName);
-      if (cat === 'CLIP_GENERIC' && Math.random() > 0.25) return;  // 75% silence on generic
+      if (cat === 'CLIP_GENERIC' && Math.random() > 0.25) return;
       _transmit(_pick(TRANSMISSIONS[cat]));
     }
 
@@ -978,14 +972,13 @@
     return { onGasUpdate, onPilotAuthenticated, onClipChange, onDeployArmed, setCredentials };
   })();
 
-  // ── PATCH: inject BraeOSU.onGasUpdate into updateGasDisplay ────
+  // ── PATCHES (non-destructive wraps) ────────────────────────────
   var _origUpdateGasDisplay = updateGasDisplay;
   updateGasDisplay = function(gas) {
     _origUpdateGasDisplay(gas);
     if (gas && gas.signal) BraeOSU.onGasUpdate(gas.signal);
   };
 
-  // ── PATCH: inject BraeOSU.onClipChange into playClip ───────────
   var _origPlayClip = playClip;
   playClip = function(index) {
     _origPlayClip(index);
@@ -993,7 +986,6 @@
     if (clipNameEl) BraeOSU.onClipChange(clipNameEl.textContent);
   };
 
-  // ── PATCH: inject BraeOSU.onDeployArmed when deploy btn enables ─
   var _deployObserver = new MutationObserver(function(mutations) {
     mutations.forEach(function(m) {
       if (m.type === 'attributes' && m.attributeName === 'disabled') {
@@ -1005,20 +997,6 @@
   var _deployBtn = document.getElementById('deploy-btn');
   if (_deployBtn) _deployObserver.observe(_deployBtn, { attributes: true });
 
-  // ── PATCH: inject BraeOSU creds + pilot auth from oracle response
-  //    This wraps the oracle fetch handler — credentials come from
-  //    /api/oracle if ELEVENLABS_API_KEY and BRAE_VOICE_ID are set
-  //    in Vercel env vars and echoed in the oracle response.
-  //    If not present, Brae transmits text-only silently.
-  var _origConnectWallet = window.connectWallet;
-  window.connectWallet = async function() {
-    // Let original run — we hook into its oracle response via
-    // BraeOSU.onPilotAuthenticated being called from updateGasDisplay chain.
-    // Pilot auth hook: watch mi-state-text for PILOT VERIFIED change.
-    await _origConnectWallet.apply(this, arguments);
-  };
-
-  // Watch mi-state-text for PILOT VERIFIED — fires BraeOSU.onPilotAuthenticated
   var _pilotStateObserver = new MutationObserver(function(mutations) {
     mutations.forEach(function(m) {
       if (m.type === 'characterData' || m.type === 'childList') {
@@ -1032,7 +1010,6 @@
   var _miStateEl = document.getElementById('mi-state-text');
   if (_miStateEl) _pilotStateObserver.observe(_miStateEl, { characterData: true, childList: true, subtree: true });
 
-  // ── LOG STYLE PATCH: brae class → orange ───────────────────────
   var _origLog = log;
   log = function(msg, cls) {
     if (cls === 'brae') {
@@ -1040,7 +1017,7 @@
       if (terminal) {
         var line = document.createElement('div');
         line.style.cssText = 'font-size:8px;font-family:var(--font-mono);color:#e07a20;padding:1px 0;border-bottom:1px solid rgba(224,122,32,0.12);';
-        line.textContent = '› ' + msg;
+        line.textContent = '> ' + msg;
         terminal.appendChild(line);
         terminal.scrollTop = terminal.scrollHeight;
         return;
