@@ -8,7 +8,7 @@
 <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<<link rel="stylesheet" href="/forge-confirm/ForgeConfirm_v6_combined.css">
+<link rel="stylesheet" href="/forge-confirm/ForgeConfirm_v6_combined.css">
 </head>
 <body>
 
@@ -61,7 +61,7 @@
   <!-- LEFT PANEL -->
   <div class="left-panel">
     <div class="panel-header">
-      <  class="panel-title" style="color:var(--forge);">SYSTEM INTEGRITY</span>
+      <span class="panel-title" style="color:var(--forge);">SYSTEM INTEGRITY</span>
       <span style="font-family:var(--font-mono);font-size:8px;color:var(--teal);" class="pulse" id="scan-status">SCANNING</span>
     </div>
     <div style="display:flex;flex:1;overflow:hidden;min-height:0;">
@@ -275,6 +275,15 @@
     <div class="rp-section" id="oracle-panel" style="border:1px solid var(--forge);padding:8px;margin-bottom:6px;display:none;">
       <div class="rp-label" style="color:var(--forge);">ORACLE TRANSMISSION</div>
       <div id="oracle-transmission" style="font-family:var(--font-mono);font-size:9px;color:var(--teal);line-height:1.5;margin-top:4px;"></div>
+    </div>
+
+    <!-- OSU CHANNEL — BRAE GRINDSTONE -->
+    <div class="rp-section" id="brae-panel" style="border:1px solid #e07a20;padding:8px;margin-bottom:6px;display:none;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <div class="rp-label" style="color:#e07a20;margin-bottom:0;">OSU CHANNEL · BRAE</div>
+        <div id="brae-status-dot" style="width:6px;height:6px;border-radius:50%;background:#e07a20;animation:pulse-anim 1.4s infinite;flex-shrink:0;"></div>
+      </div>
+      <div id="brae-transmission" style="font-family:var(--font-mono);font-size:9px;color:#e07a20;line-height:1.5;margin-top:4px;opacity:0.9;"></div>
     </div>
 
     <div class="rp-section">
@@ -527,6 +536,25 @@
             if (panel) panel.style.display = 'block';
             if (trans) trans.textContent = oracle.transmission;
             log('ORACLE: ' + oracle.transmission.slice(0, 80) + (oracle.transmission.length > 80 ? '...' : ''), oracle.pilot ? 'ok' : 'warn');
+
+            // Brae Voice Injection
+            const text = oracle.transmission;
+            if (oracle.brae_voice_id && oracle.elevenlabs_key && text) {
+              fetch('https://api.elevenlabs.io/v1/text-to-speech/' + oracle.brae_voice_id, {
+                method: 'POST',
+                headers: {
+                  'xi-api-key': oracle.elevenlabs_key,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  text: text,
+                  model_id: 'eleven_turbo_v2',
+                  voice_settings: { stability: 0.55, similarity_boost: 0.75, style: 0.15 }
+                })
+              }).then(function(r) { return r.blob(); })
+                .then(function(b) { new Audio(URL.createObjectURL(b)).play(); })
+                .catch(function(e) { console.warn('BRAE VOICE ERROR:', e); });
+            }
           }
 
           if (oracle.pilot) {
@@ -829,6 +857,208 @@
     }, 3000);
     initBabylon();
   }
+
+  // ══════════════════════════════════════════════════════════════════
+  //  OSU-UNIT-A · BRAE GRINDSTONE — BEHAVIORAL LAYER
+  //  Brae speaks to the system. Oracle speaks to the pilot.
+  //  Two voices. Two colors. One Forge Network.
+  //  Brae → ORANGE. Oracle → TEAL.
+  // ══════════════════════════════════════════════════════════════════
+
+  var BraeOSU = (function() {
+
+    var _lastGasSignal  = null;
+    var _lastClipName   = null;
+    var _pilotVerified  = false;
+    var _deployArmed    = false;
+    var _braeVoiceId    = null;   // populated from oracle response if present
+    var _elevenLabsKey  = null;   // populated from oracle response if present
+
+    // Transmission library — keyed by trigger type
+    var TRANSMISSIONS = {
+      GAS_STABLE:    ["Signal nominal. Carry on.", "Network holding. Nothing to flag."],
+      GAS_ELEVATED:  ["Network load is rising. You picking your moment or waiting for it to pick for you.", "Costs are up. I've worked in worse conditions. Your call."],
+      GAS_CRITICAL:  ["That's not a suggestion. Gas is critical. Move or hold — but decide.", "Critical threshold. I've flagged it. What you do with that is your business."],
+      PILOT_AUTH:    ["Pilot on record. I see you.", "Authentication confirmed. Wasn't expecting you this soon."],
+      DEPLOY_ARMED:  ["You're cleared. Whether you're ready is a different question.", "Deploy is armed. I'll be here either way."],
+      CLIP_WALL_JUMP:["Wall jump right. That one's cleaner than it looks.", "Wall jump sequence. That transition has a tighter window than the rig shows."],
+      CLIP_IDLE:     ["Idle loop. Still watching the ley lines.", "Standing by. Not complaining."],
+      CLIP_SPRINT:   ["Full sprint. She's got the cadence right.", "Sprint sequence. That's the one that reads fastest in field conditions."],
+      CLIP_DEATH:    ["Death state. Every operative has one. Doesn't mean it fires.", "That animation shouldn't be the one we're studying."],
+      CLIP_VICTORY:  ["Victory. Canon. Don't get used to it.", "She earned that. Noted."],
+      CLIP_GENERIC:  ["Clip change. I'm tracking.", "Animation state updated. Logged."]
+    };
+
+    function _pick(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function _clipCategory(name) {
+      if (!name) return 'CLIP_GENERIC';
+      var n = name.toLowerCase();
+      if (n.indexOf('wall-jump') !== -1 || n.indexOf('wall-run') !== -1) return 'CLIP_WALL_JUMP';
+      if (n.indexOf('idle') !== -1)    return 'CLIP_IDLE';
+      if (n.indexOf('sprint') !== -1)  return 'CLIP_SPRINT';
+      if (n.indexOf('death') !== -1)   return 'CLIP_DEATH';
+      if (n.indexOf('victory') !== -1) return 'CLIP_VICTORY';
+      return 'CLIP_GENERIC';
+    }
+
+    function _transmit(text) {
+      var panel = document.getElementById('brae-panel');
+      var el    = document.getElementById('brae-transmission');
+      if (!panel || !el) return;
+      panel.style.display = 'block';
+      el.textContent = text;
+      log('OSU·BRAE: ' + text, 'brae');
+      _speakElevenLabs(text);
+    }
+
+    async function _speakElevenLabs(text) {
+      if (!_elevenLabsKey || !_braeVoiceId) return;
+      try {
+        var res = await fetch(
+          'https://api.elevenlabs.io/v1/text-to-speech/' + _braeVoiceId + '/stream',
+          {
+            method: 'POST',
+            headers: {
+              'xi-api-key': _elevenLabsKey,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              text: text,
+              model_id: 'eleven_turbo_v2',
+              voice_settings: { stability: 0.55, similarity_boost: 0.75, style: 0.15, use_speaker_boost: false }
+            })
+          }
+        );
+        if (!res.ok) { console.warn('BraeOSU TTS failed:', res.status); return; }
+        var blob = await res.blob();
+        var url  = URL.createObjectURL(blob);
+        var audio = new Audio(url);
+        audio.play().catch(function(e) { console.warn('BraeOSU audio play blocked:', e.message); });
+        audio.onended = function() { URL.revokeObjectURL(url); };
+      } catch(e) {
+        console.warn('BraeOSU ElevenLabs error:', e.message);
+      }
+    }
+
+    // ── PUBLIC API ──────────────────────────────────────────────────
+
+    function onGasUpdate(signal) {
+      if (signal === _lastGasSignal) return;   // no repeat if unchanged
+      _lastGasSignal = signal;
+      if (!_pilotVerified) return;             // Brae is quiet until pilot is on record
+      if (signal === 'STABLE')   { /* Brae holds on stable — silence is intentional */ return; }
+      if (signal === 'ELEVATED') { _transmit(_pick(TRANSMISSIONS.GAS_ELEVATED)); return; }
+      if (signal === 'CRITICAL') { _transmit(_pick(TRANSMISSIONS.GAS_CRITICAL)); return; }
+    }
+
+    function onPilotAuthenticated() {
+      if (_pilotVerified) return;
+      _pilotVerified = true;
+      setTimeout(function() {
+        _transmit(_pick(TRANSMISSIONS.PILOT_AUTH));
+      }, 1200);   // slight delay — Oracle fires first, Brae follows
+    }
+
+    function onClipChange(clipName) {
+      if (clipName === _lastClipName) return;
+      _lastClipName = clipName;
+      if (!_pilotVerified) return;
+      // Only transmit on notable clips — not every idle cycle
+      var cat = _clipCategory(clipName);
+      if (cat === 'CLIP_GENERIC' && Math.random() > 0.25) return;  // 75% silence on generic
+      _transmit(_pick(TRANSMISSIONS[cat]));
+    }
+
+    function onDeployArmed() {
+      if (_deployArmed) return;
+      _deployArmed = true;
+      if (!_pilotVerified) return;
+      setTimeout(function() {
+        _transmit(_pick(TRANSMISSIONS.DEPLOY_ARMED));
+      }, 600);
+    }
+
+    function setCredentials(voiceId, apiKey) {
+      _braeVoiceId   = voiceId  || null;
+      _elevenLabsKey = apiKey   || null;
+    }
+
+    return { onGasUpdate, onPilotAuthenticated, onClipChange, onDeployArmed, setCredentials };
+  })();
+
+  // ── PATCH: inject BraeOSU.onGasUpdate into updateGasDisplay ────
+  var _origUpdateGasDisplay = updateGasDisplay;
+  updateGasDisplay = function(gas) {
+    _origUpdateGasDisplay(gas);
+    if (gas && gas.signal) BraeOSU.onGasUpdate(gas.signal);
+  };
+
+  // ── PATCH: inject BraeOSU.onClipChange into playClip ───────────
+  var _origPlayClip = playClip;
+  playClip = function(index) {
+    _origPlayClip(index);
+    var clipNameEl = document.getElementById('anim-active-clip');
+    if (clipNameEl) BraeOSU.onClipChange(clipNameEl.textContent);
+  };
+
+  // ── PATCH: inject BraeOSU.onDeployArmed when deploy btn enables ─
+  var _deployObserver = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      if (m.type === 'attributes' && m.attributeName === 'disabled') {
+        var btn = document.getElementById('deploy-btn');
+        if (btn && !btn.disabled) BraeOSU.onDeployArmed();
+      }
+    });
+  });
+  var _deployBtn = document.getElementById('deploy-btn');
+  if (_deployBtn) _deployObserver.observe(_deployBtn, { attributes: true });
+
+  // ── PATCH: inject BraeOSU creds + pilot auth from oracle response
+  //    This wraps the oracle fetch handler — credentials come from
+  //    /api/oracle if ELEVENLABS_API_KEY and BRAE_VOICE_ID are set
+  //    in Vercel env vars and echoed in the oracle response.
+  //    If not present, Brae transmits text-only silently.
+  var _origConnectWallet = window.connectWallet;
+  window.connectWallet = async function() {
+    // Let original run — we hook into its oracle response via
+    // BraeOSU.onPilotAuthenticated being called from updateGasDisplay chain.
+    // Pilot auth hook: watch mi-state-text for PILOT VERIFIED change.
+    await _origConnectWallet.apply(this, arguments);
+  };
+
+  // Watch mi-state-text for PILOT VERIFIED — fires BraeOSU.onPilotAuthenticated
+  var _pilotStateObserver = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      if (m.type === 'characterData' || m.type === 'childList') {
+        var el = document.getElementById('mi-state-text');
+        if (el && el.textContent === 'PILOT VERIFIED') {
+          BraeOSU.onPilotAuthenticated();
+        }
+      }
+    });
+  });
+  var _miStateEl = document.getElementById('mi-state-text');
+  if (_miStateEl) _pilotStateObserver.observe(_miStateEl, { characterData: true, childList: true, subtree: true });
+
+  // ── LOG STYLE PATCH: brae class → orange ───────────────────────
+  var _origLog = log;
+  log = function(msg, cls) {
+    if (cls === 'brae') {
+      var terminal = document.getElementById('log-terminal');
+      if (terminal) {
+        var line = document.createElement('div');
+        line.style.cssText = 'font-size:8px;font-family:var(--font-mono);color:#e07a20;padding:1px 0;border-bottom:1px solid rgba(224,122,32,0.12);';
+        line.textContent = '› ' + msg;
+        terminal.appendChild(line);
+        terminal.scrollTop = terminal.scrollHeight;
+        return;
+      }
+    }
+    _origLog(msg, cls);
+  };
 
   setTimeout(boot, 400);
 </script>

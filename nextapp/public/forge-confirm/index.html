@@ -536,6 +536,25 @@
             if (panel) panel.style.display = 'block';
             if (trans) trans.textContent = oracle.transmission;
             log('ORACLE: ' + oracle.transmission.slice(0, 80) + (oracle.transmission.length > 80 ? '...' : ''), oracle.pilot ? 'ok' : 'warn');
+
+            // Brae Voice Injection
+            const text = oracle.transmission;
+            if (oracle.brae_voice_id && oracle.elevenlabs_key && text) {
+              fetch('https://api.elevenlabs.io/v1/text-to-speech/' + oracle.brae_voice_id, {
+                method: 'POST',
+                headers: {
+                  'xi-api-key': oracle.elevenlabs_key,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  text: text,
+                  model_id: 'eleven_turbo_v2',
+                  voice_settings: { stability: 0.55, similarity_boost: 0.75, style: 0.15 }
+                })
+              }).then(function(r) { return r.blob(); })
+                .then(function(b) { new Audio(URL.createObjectURL(b)).play(); })
+                .catch(function(e) { console.warn('BRAE VOICE ERROR:', e); });
+            }
           }
 
           if (oracle.pilot) {
