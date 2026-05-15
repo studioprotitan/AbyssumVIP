@@ -69,5 +69,10 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  return NextResponse.json({ pilot, gas: gasState, transmission, integrity });
+  return NextResponse.json({   pilot,
+  gas: gasState,
+  transmission,
+  integrity,
+  brae_voice_id: process.env.BRAE_VOICE_ID || null,
+  elevenlabs_key: process.env.ElevenLabs_API_Key || null, });
 }
