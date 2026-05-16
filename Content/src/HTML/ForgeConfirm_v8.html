@@ -609,16 +609,16 @@
     sceneBJS.clearColor = new BABYLON.Color4(0.035, 0.043, 0.051, 1);
 
     // ── CAMERA — beta = PI/2.5 keeps horizon level, not ceiling ──
-    var camera = new BABYLON.ArcRotateCamera('cam', -Math.PI / 2, Math.PI / 2.5, 5.5, new BABYLON.Vector3(0, 1.0, 0), sceneBJS);
-    camera.lowerRadiusLimit     = 2.0;
-    camera.upperRadiusLimit     = 14;
-    camera.lowerBetaLimit       = 0.2;
-    camera.upperBetaLimit       = Math.PI / 2 + 0.3;
-    camera.wheelDeltaPercentage = 0.01;
-    camera.angularSensibilityX  = 500;
-    camera.angularSensibilityY  = 500;
-    camera.inertia              = 0.6;
-    camera.attachControl(canvas, true);
+    var camera = new BABYLON.ArcRotateCamera('cam', -Math.PI / 2, 0.85, 3.2, new BABYLON.Vector3(0, 1.0, 0), sceneBJS);
+camera.lowerRadiusLimit     = 1.5;
+camera.upperRadiusLimit     = 14;
+camera.lowerBetaLimit       = 0.3;
+camera.upperBetaLimit       = Math.PI / 2.1;
+camera.wheelDeltaPercentage = 0.01;
+camera.angularSensibilityX  = 500;
+camera.angularSensibilityY  = 500;
+camera.inertia              = 0.6;
+camera.attachControl(canvas, true);
 
     var hemi = new BABYLON.HemisphericLight('hemi', new BABYLON.Vector3(0,1,0), sceneBJS);
     hemi.intensity   = 0.6;
