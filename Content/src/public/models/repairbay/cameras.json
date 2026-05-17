@@ -1,16 +1,60 @@
-[
-  {
-    "name": "CameraActor_3",
-    "location": {
-      "x": -4248.086,
-      "y": -793.99,
-      "z": 249.7
+{
+  "cameras": [
+    {
+      "name": "repairbay_entry",
+      "type": "ArcRotateCamera",
+      "position": {
+        "x": -8.00248,
+        "y": 2.5378600000000002,
+        "z": -42.8526
+      },
+      "target": {
+        "x": -4.9988,
+        "y": 2.50676,
+        "z": -44.2201
+      },
+      "fov": 0.8,
+      "nearClip": 0.1,
+      "farClip": 500.0,
+      "notes": "Entry view \u2014 moai-osu-a framed right, platform center"
     },
-    "rotation": {
-      "pitch": 0.0,
-      "yaw": 180.0,
-      "roll": 0.0
+    {
+      "name": "repairbay_platform_wide",
+      "type": "ArcRotateCamera",
+      "position": {
+        "x": -6.0,
+        "y": 4.0,
+        "z": -42.0
+      },
+      "target": {
+        "x": -4.9988,
+        "y": 2.50676,
+        "z": -44.2201
+      },
+      "fov": 1.0,
+      "nearClip": 0.1,
+      "farClip": 500.0,
+      "notes": "Wide shot \u2014 full platform + overhead crane visible"
     },
-    "fov": 90.0
-  }
-]
+    {
+      "name": "repairbay_elevator",
+      "type": "ArcRotateCamera",
+      "position": {
+        "x": -5.0,
+        "y": 3.5,
+        "z": -38.0
+      },
+      "target": {
+        "x": -5.0,
+        "y": 3.0,
+        "z": -40.0
+      },
+      "fov": 0.9,
+      "nearClip": 0.1,
+      "farClip": 500.0,
+      "notes": "Elevator approach \u2014 transition zone to Hype Stage"
+    }
+  ],
+  "default": "repairbay_entry",
+  "forge_confirm_load": "repairbay_entry"
+}
