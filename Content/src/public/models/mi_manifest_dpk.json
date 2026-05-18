@@ -92,25 +92,6 @@
       "trigger": "pilot_entry"
     },
     {
-      "assetId": "scene-mint-deploy-repairbay-platform-a",
-      "babylonPath": "/api/asset/scene-mint-deploy-repairbay-platform-a.glb",
-      "status": "PENDING_CONVERT",
-      "type": "environment",
-      "source_file": "BP_PLATFORM_C_3.fbx",
-      "source_path": "E:/CDN_Genesis-Verse/C_Exports_AbyssumAnimations_CP01/Repair_Bay/",
-      "notes": "FBX exported from UE5 RepairBay_Deploy_Deck. Requires FBX-to-GLB conversion via Blender CP01 pipeline before proxy route is active."
-    },
-    {
-      "assetId": "scene-mint-deploy-repairbay-level-a",
-      "babylonPath": "/api/asset/scene-mint-deploy-repairbay-level-a.glb",
-      "status": "PENDING_EXPORT",
-      "type": "environment",
-      "source_level": "RepairBay_Deploy_Deck",
-      "export_method": "UE5 File > Export All > GLTF",
-      "export_target": "C:/Developer/AbyssumVIP/Content/src/public/models/repairbay/repairbay_lower.gltf",
-      "notes": "Full level GLTF export pending. Script failed on export_hidden_objects attribute. Use manual menu export path."
-    },
-    {
       "assetId": "repairbay-cameras",
       "babylonPath": "/api/asset/repairbay-cameras.json",
       "status": "CONFIRMED",
@@ -123,6 +104,96 @@
         "repairbay_elevator"
       ],
       "notes": "3 axis-corrected ArcRotateCameras. Extracted from UE5 CameraActor. Commit CDN-CAM-002."
+    },
+    {
+      "assetId": "repairbay-platform-circular-a",
+      "babylonPath": "/api/asset/repair-bay-circlular-platform-osu-a.glb",
+      "status": "CONFIRMED",
+      "type": "environment",
+      "zone": "REPAIRBAY",
+      "category": "PLATFORM",
+      "commit": "CDN-ENV-002"
+    },
+    {
+      "assetId": "repairbay-floor-one-a",
+      "babylonPath": "/api/asset/repair-bay-floor-one-a.glb",
+      "status": "CONFIRMED",
+      "type": "environment",
+      "zone": "REPAIRBAY",
+      "category": "FLOOR",
+      "commit": "CDN-ENV-002"
+    },
+    {
+      "assetId": "repairbay-floor-two-a",
+      "babylonPath": "/api/asset/repair-bay-floor-two-a.glb",
+      "status": "CONFIRMED",
+      "type": "environment",
+      "zone": "REPAIRBAY",
+      "category": "FLOOR",
+      "commit": "CDN-ENV-002"
+    },
+    {
+      "assetId": "repairbay-floor-three-a",
+      "babylonPath": "/api/asset/repair-bay-floor-three-a.glb",
+      "status": "CONFIRMED",
+      "type": "environment",
+      "zone": "REPAIRBAY",
+      "category": "FLOOR",
+      "commit": "CDN-ENV-002"
+    },
+    {
+      "assetId": "repairbay-floor-four-a",
+      "babylonPath": "/api/asset/repair-bay-floor-four-a.glb",
+      "status": "CONFIRMED",
+      "type": "environment",
+      "zone": "REPAIRBAY",
+      "category": "FLOOR",
+      "commit": "CDN-ENV-002"
+    },
+    {
+      "assetId": "repairbay-floor-five-a",
+      "babylonPath": "/api/asset/repair-bay-floor-five-a.glb",
+      "status": "CONFIRMED",
+      "type": "environment",
+      "zone": "REPAIRBAY",
+      "category": "FLOOR",
+      "commit": "CDN-ENV-002"
+    },
+    {
+      "assetId": "repairbay-floor-six-a",
+      "babylonPath": "/api/asset/repair-bay-floor-six-a.glb",
+      "status": "CONFIRMED",
+      "type": "environment",
+      "zone": "REPAIRBAY",
+      "category": "FLOOR",
+      "commit": "CDN-ENV-002"
+    },
+    {
+      "assetId": "repairbay-floor-seven-a",
+      "babylonPath": "/api/asset/repair-bay-floor-seven-a.glb",
+      "status": "CONFIRMED",
+      "type": "environment",
+      "zone": "REPAIRBAY",
+      "category": "FLOOR",
+      "commit": "CDN-ENV-002"
+    },
+    {
+      "assetId": "repairbay-floor-eight-a",
+      "babylonPath": "/api/asset/repair-bay-floor-eight-a.glb",
+      "status": "CONFIRMED",
+      "type": "environment",
+      "zone": "REPAIRBAY",
+      "category": "FLOOR",
+      "commit": "CDN-ENV-002"
+    },
+    {
+      "assetId": "repairbay-floor-nine-a",
+      "babylonPath": "/api/asset/repair-bay-floor-nine-a.glb",
+      "status": "CONFIRMED",
+      "type": "environment",
+      "zone": "REPAIRBAY",
+      "category": "FLOOR",
+      "commit": "CDN-ENV-002"
     }
   ]
 }
