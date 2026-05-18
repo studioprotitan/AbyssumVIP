@@ -1,0 +1,128 @@
+{
+  "kit": { "id": "dpk" },
+  "assets": [
+    {
+      "assetId": "scene-hype-stage-idle-pre-mint",
+      "babylonPath": "/api/asset/scene-hype-stage-idle-pre-mint.glb",
+      "status": "CONFIRMED"
+    },
+    {
+      "assetId": "scene-mint-deploy-hype-stage-tunnel",
+      "babylonPath": "/api/asset/scene-mint-deploy-hype-stage-tunnel.glb",
+      "status": "PENDING_EXPORT"
+    },
+    {
+      "assetId": "scene-mint-deploy-dpk-prop-clock-a",
+      "babylonPath": "/api/asset/scene-mint-deploy-dpk-prop-clock-a.glb",
+      "status": "CONFIRMED"
+    },
+    {
+      "assetId": "scene-mint-deploy-dpk-prop-banner-b",
+      "babylonPath": "/api/asset/scene-mint-deploy-dpk-prop-banner-b.glb",
+      "status": "CONFIRMED"
+    },
+    {
+      "assetId": "scene-mint-deploy-dpk-prop-billboard-a",
+      "babylonPath": "/api/asset/scene-mint-deploy-dpk-prop-billboard-a.glb",
+      "status": "PENDING_EXPORT"
+    },
+    {
+      "assetId": "scene-mint-deploy-dpk-prop-bus-stop-a",
+      "babylonPath": "/api/asset/scene-mint-deploy-dpk-prop-bus-stop-a.glb",
+      "status": "PENDING_EXPORT"
+    },
+    {
+      "assetId": "scene-mint-deploy-dpk-prop-postal-box-a",
+      "babylonPath": "/api/asset/scene-mint-deploy-dpk-prop-postal-box-a.glb",
+      "status": "PENDING_EXPORT"
+    },
+    {
+      "assetId": "scene-mint-deploy-dpk-prop-trash-can-b",
+      "babylonPath": "/api/asset/scene-mint-deploy-dpk-prop-trash-can-b.glb",
+      "status": "PENDING_EXPORT"
+    },
+    {
+      "assetId": "scene-mint-deploy-dpk-prop-drinking-fountain-a",
+      "babylonPath": "/api/asset/scene-mint-deploy-dpk-prop-drinking-fountain-a.glb",
+      "status": "PENDING_EXPORT"
+    },
+    {
+      "assetId": "scene-mint-deploy-dpk-prop-blade-sign-d",
+      "babylonPath": "/api/asset/scene-mint-deploy-dpk-prop-blade-sign-d.glb",
+      "status": "PENDING_EXPORT"
+    },
+    {
+      "assetId": "scene-mint-deploy-dpk-prop-tower-i",
+      "babylonPath": "/api/asset/scene-mint-deploy-dpk-prop-tower-i.glb",
+      "status": "PENDING_EXPORT"
+    },
+    {
+      "assetId": "scene-mint-deploy-dpk-bldg-lg-astronomy-institute-a",
+      "babylonPath": "/api/asset/scene-mint-deploy-dpk-bldg-lg-astronomy-institute-a.glb",
+      "status": "PENDING_EXPORT"
+    },
+    {
+      "assetId": "scene-mint-deploy-dpk-bldg-xl-astronomical-admin-a",
+      "babylonPath": "/api/asset/scene-mint-deploy-dpk-bldg-xl-astronomical-admin-a.glb",
+      "status": "PENDING_EXPORT"
+    },
+    {
+      "assetId": "scene-mint-deploy-dpk-bldg-xl-train-station-a",
+      "babylonPath": "/api/asset/scene-mint-deploy-dpk-bldg-xl-train-station-a.glb",
+      "status": "CONFIRMED"
+    },
+    {
+      "assetId": "cst-mint-deploy-mvp-animation-group-01",
+      "babylonPath": "/api/asset/cst-mint-deploy-mvp-animation-group-01.glb",
+      "status": "CONFIRMED",
+      "type": "character",
+      "default_animation": "cst-ert-idle-b"
+    },
+    {
+      "assetId": "scene-mint-deploy-osu-unit-a-saleigha",
+      "babylonPath": "/api/asset/scene-mint-deploy-hype-stage-osu-a_saleigha.glb",
+      "status": "CONFIRMED",
+      "type": "character",
+      "category": "OSU",
+      "role": "oracle_sentinel",
+      "tier": "VIP",
+      "signal_alignment": 18,
+      "oracle_link": "active",
+      "voice_profile": "calm_authoritative",
+      "trigger": "pilot_entry"
+    },
+    {
+      "assetId": "scene-mint-deploy-repairbay-platform-a",
+      "babylonPath": "/api/asset/scene-mint-deploy-repairbay-platform-a.glb",
+      "status": "PENDING_CONVERT",
+      "type": "environment",
+      "source_file": "BP_PLATFORM_C_3.fbx",
+      "source_path": "E:/CDN_Genesis-Verse/C_Exports_AbyssumAnimations_CP01/Repair_Bay/",
+      "notes": "FBX exported from UE5 RepairBay_Deploy_Deck. Requires FBX-to-GLB conversion via Blender CP01 pipeline before proxy route is active."
+    },
+    {
+      "assetId": "scene-mint-deploy-repairbay-level-a",
+      "babylonPath": "/api/asset/scene-mint-deploy-repairbay-level-a.glb",
+      "status": "PENDING_EXPORT",
+      "type": "environment",
+      "source_level": "RepairBay_Deploy_Deck",
+      "export_method": "UE5 File > Export All > GLTF",
+      "export_target": "C:/Developer/AbyssumVIP/Content/src/public/models/repairbay/repairbay_lower.gltf",
+      "notes": "Full level GLTF export pending. Script failed on export_hidden_objects attribute. Use manual menu export path."
+    },
+    {
+      "assetId": "repairbay-cameras",
+      "babylonPath": "/api/asset/repairbay-cameras.json",
+      "status": "CONFIRMED",
+      "type": "camera_config",
+      "default_camera": "repairbay_entry",
+      "forge_confirm_load": "repairbay_entry",
+      "cameras": [
+        "repairbay_entry",
+        "repairbay_platform_wide",
+        "repairbay_elevator"
+      ],
+      "notes": "3 axis-corrected ArcRotateCameras. Extracted from UE5 CameraActor. Commit CDN-CAM-002."
+    }
+  ]
+}
