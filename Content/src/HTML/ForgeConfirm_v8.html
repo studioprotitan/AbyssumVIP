@@ -637,7 +637,6 @@ camera.attachControl(canvas, true);
     emberLight.diffuse   = new BABYLON.Color3(0.88, 0.48, 0.12);
     window.emberLight    = emberLight;
 
-    engineBJS.runRenderLoop(function() { sceneBJS.render(); });
     window.addEventListener('resize', function() { engineBJS.resize(); });
 
     try {
@@ -665,10 +664,16 @@ camera.attachControl(canvas, true);
       allGroups = sceneBJS.animationGroups || [];
       var readyFired = false;
       var t = setTimeout(function() {
-        if (!readyFired) { readyFired = true; engineBJS.runRenderLoop(function() { sceneBJS.render(); }); hideBootOverlay(); }
+        if (!readyFired) {
+          readyFired = true;
+          engineBJS.stopRenderLoop();
+          engineBJS.runRenderLoop(function() { sceneBJS.render(); });
+          onAllGreen();
+        }
       }, 3000);
       sceneBJS.executeWhenReady(function() {
         readyFired = true; clearTimeout(t);
+        engineBJS.stopRenderLoop();
         engineBJS.runRenderLoop(function() { sceneBJS.render(); });
         if (allGroups.length > 0) { buildAnimGrid(allGroups); playClip(0); }
         confirmCheck('chk-babylon', 'GLB LIVE', 1);
