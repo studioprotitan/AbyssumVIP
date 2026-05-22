@@ -562,8 +562,10 @@ body {
 
 // -- SCENE CONFIG (PHASE-9-WIRE-001) --
 var SCENE_FILE     = 'scene-moai-osu-gemini-a.babylon';
-var SCENE_BASE_URL = '/api/asset/';   // Next.js proxy — same pattern as GLBs
+var SCENE_FALLBACK = 'scene-osu-mint-deploy-cam-01-a.babylon';
+var SCENE_BASE_URL = '/api/asset/'; 
 var SCENE_CDN_URL  = 'https://github.com/studioprotitan/AbyssumVIP/releases/download/repairbay-v1.0/scene-moai-osu-gemini-a.babylon';
+var SCENE_CDN_FALLBACK = 'https://github.com/studioprotitan/AbyssumVIP/releases/download/repairbay-v1.0/scene-osu-mint-deploy-cam-01-a.babylon';
 
 var PLATFORM_GLB   = '/api/asset/repair-bay-circlular-platform-osu-a.glb';
 
@@ -641,8 +643,7 @@ function initEngine() {
   tlog('Babylon.js engine initialized', 'ok');
   tlog('Scene target: ' + SCENE_FILE, 'hot');
 
-  // Try proxy first; CDN fallback handled in error callback
-  var SCENE_BASE_URL = './';   // Live Server local — file must be in same folder as HTML
+  // Using defined SCENE_BASE_URL with proxy route
   BABYLON.SceneLoader.Load(
     SCENE_BASE_URL,
     SCENE_FILE,

@@ -3,7 +3,7 @@
 export default function Home() {
   return (
     <main style={{
-      backgroundImage: "url('/gateway-page-load-aspect-ratio-a.png')",
+      backgroundImage: "url('/api/asset/gateway-page-load-aspect-ratio-a.png')",
       backgroundSize: 'cover',
       backgroundPosition: 'center top',
       minHeight: '100vh',
