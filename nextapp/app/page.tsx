@@ -1,23 +1,30 @@
 'use client';
 
 export default function Home() {
-  async function handleEnter() {
-    const res = await fetch('/api/create-checkout-session', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ pilotId: 'GLITCH_GOBLIN_' + Date.now(), tier: 'Standard' }),
-    });
-    const data = await res.json();
-    if (data.url) window.location.href = data.url;
-  }
-
   return (
-    <main style={{ background: '#0a0806', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', fontFamily: 'serif', color: '#e87c2a' }}>
-      <h1 style={{ fontSize: '2.5rem', letterSpacing: '0.2em' }}>ABYSSUM VIP</h1>
-      <p style={{ color: '#888', marginTop: '1rem' }}>Forge Network Access Portal</p>
-      <button onClick={handleEnter} style={{ marginTop: '2rem', color: '#00d4c8', fontSize: '0.9rem', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'serif' }}>
-        Enter the Forge
-      </button>
+    <main style={{
+      backgroundImage: "url('/gateway-page-load-aspect-ratio-a.png')",
+      backgroundSize: 'cover',
+      backgroundPosition: 'center top',
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'flex-end',
+      paddingBottom: '8vh'
+    }}>
+      <a href="/forge-confirm/" style={{
+        color: '#20d9b4',
+        fontFamily: 'monospace',
+        fontSize: '16px',
+        letterSpacing: '4px',
+        textDecoration: 'none',
+        border: '1px solid #20d9b4',
+        padding: '12px 40px',
+        background: 'rgba(0,0,0,0.6)'
+      }}>
+        ENTER THE FORGE
+      </a>
     </main>
   );
 }

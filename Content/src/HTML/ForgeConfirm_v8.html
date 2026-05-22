@@ -25,8 +25,8 @@
     <div class="nav-link">GENESIS</div>
     <div class="nav-link">TRAIN ESCORT</div>
     <div class="nav-link active">FREIGHT CAR</div>
-    <div class="nav-link">CHAR VIEWER</div>
-    <div class="nav-link">FORGE NET</div>
+    <div class="nav-link" onclick="window.open('char-viewer.html','_blank')" style="cursor:pointer;">CHAR VIEWER</div>
+    <div class="nav-link" onclick="window.open('ForgeNetwork_JaneGolem_v1.html','_blank')" style="cursor:pointer;">FORGE NET</div>
   </div>
   <div class="nav-status">
     <div class="status-dot"><span class="dot dot-online"></span>LINK: ONLINE</div>
@@ -582,7 +582,11 @@
   };
 
   // ── BABYLON GLB LOADER ──────────────────────────────────────────
+  // Primary model filename (GLB) and alternative Babylon scene (hosted on CDN)
   var GLB_FILENAME   = '/api/asset/cst-mint-deploy-mvp-animation-group-01.glb';
+  // If you need to load the .babylon scene from the CDN, set BABYLON_FILENAME to the CDN URL
+  // Example: var BABYLON_FILENAME = 'https://cdn.example.com/scene-osu-mint-deploy-cam-01-a.babylon';
+  var BABYLON_FILENAME = '/api/asset/scene-osu-mint-deploy-cam-01-a.babylon';
   var STAGE_FILENAME = '/api/asset/scene-mint-deploy-hype-stage-osu-a_stage_env.glb';
 
   var canvas     = document.getElementById('renderCanvas');
@@ -649,88 +653,36 @@ camera.attachControl(canvas, true);
     setProgress(10, 'LOADING GLB ASSET');
     document.getElementById('canvas-status').textContent = 'LOADING GLB…';
 
-    BABYLON.SceneLoader.ImportMesh('', '', GLB_FILENAME, sceneBJS,
-      function(meshes, particleSystems, skeletons, animationGroups) {
-        var root = meshes[0];
-        root.position = new BABYLON.Vector3(0, 0, 0);
+    var BABYLON_SCENE_URL = 'https://github.com/studioprotitan/AbyssumVIP/releases/download/babylon-scenes-v1.0/scene-osu-mint-deploy-cam-01-a.babylon';
 
-        var min = new BABYLON.Vector3(Infinity, Infinity, Infinity);
-        var max = new BABYLON.Vector3(-Infinity, -Infinity, -Infinity);
-        meshes.forEach(function(m) {
-          if (m.getBoundingInfo) {
-            var b = m.getBoundingInfo().boundingBox;
-            min = BABYLON.Vector3.Minimize(min, b.minimumWorld);
-            max = BABYLON.Vector3.Maximize(max, b.maximumWorld);
-          }
-        });
-        var size  = max.subtract(min);
-        var scale = 1.8 / (size.y || 2);
-        root.scaling    = new BABYLON.Vector3(scale, scale, scale);
-        root.position.y = -min.y * scale;
-
-        // ── CAMERA FRAMING — chest height target, closer radius ──
-        var charHeight = size.y * scale;
-        camera.target = new BABYLON.Vector3(0, charHeight * 0.65, 0);
-        camera.radius = charHeight * 1.7;
-
-        allGroups = animationGroups.length > 0 ? animationGroups : [];
-
-        var clipCount = allGroups.length;
-        document.getElementById('anim-count').textContent = clipCount + ' / 28';
-        document.getElementById('anim-main-status').textContent = clipCount + ' CLIPS ACTIVE';
-        document.getElementById('anim-main-status').className = 'anim-status-line live';
-
-        buildAnimGrid(allGroups);
-        stopAllGroups();
-        if (allGroups.length > 0) playClip(0);
-
-        document.getElementById('canvas-status').textContent = 'MODEL LIVE — ' + clipCount + ' CLIPS';
-        document.getElementById('glowCanvas').style.opacity = '0.6';
-
-        log('GLB LOADED — ' + clipCount + ' ANIMATION GROUPS', 'ok');
-        updateModelIntel(allGroups.map(function(g) { return g.name; }));
-
-        confirmCheck('chk-babylon', 'GLB LIVE', 1);
-        confirmCheck('chk-mesh',    'FORGE_MESH LIVE', 3);
-        setProgress(60, 'ANIMATION GROUPS MAPPED');
-        setTimeout(function() { confirmCheck('chk-ssot',     'LOCKED',       4); }, 400);
-        setTimeout(function() { confirmCheck('chk-moai',     'BROADCASTING', 5); }, 900);
-        setTimeout(function() { confirmCheck('chk-sentinel', 'NOMINAL',      6); }, 1400);
-
-        log('STAGE LOAD → ' + STAGE_FILENAME, 'info');
-        BABYLON.SceneLoader.ImportMesh('', '', STAGE_FILENAME, sceneBJS,
-          function(stageMeshes) {
-            if (!stageMeshes || stageMeshes.length === 0) return;
-            var stageRoot = stageMeshes[0];
-            stageRoot.scaling  = new BABYLON.Vector3(scale * 0.5, scale * 0.5, scale * 0.5);
-            stageRoot.position = new BABYLON.Vector3(0, 0, 0);
-            log('STAGE ENV LOADED — HYPE STAGE ACTIVE', 'ok');
-            document.getElementById('canvas-status').textContent = 'MODEL + STAGE LIVE';
-            if (sceneBJS.animationGroups) {
-              sceneBJS.animationGroups.forEach(function(g) {
-                if (allGroups.indexOf(g) === -1) g.stop();
-              });
-            }
-          },
-          null,
-          function(s, msg) { log('STAGE: not found — character only mode', 'warn'); }
-        );
-      },
-      function(evt) {
-        var pct = evt.total > 0 ? Math.round((evt.loaded / evt.total) * 50) + 10 : 30;
-        setProgress(pct, 'STREAMING GLB — ' + pct + '%');
-      },
-      function(scene, msg) {
-        log('GLB LOAD ERROR: ' + msg, 'warn');
-        document.getElementById('canvas-status').textContent = 'LOAD ERROR — SEE LOG';
-        document.getElementById('anim-main-status').textContent = 'GLB LOAD FAILED';
-        buildAnimGridFallback(KNOWN_CLIPS);
-        document.getElementById('anim-count').textContent = '28 / 28';
-        updateModelIntel(KNOWN_CLIPS);
-        confirmCheck('chk-babylon', 'ENGINE LIVE', 1);
-        setProgress(30, 'ENGINE LIVE — NEEDS ASSET PROXY');
+    BABYLON.SceneLoader.Load('', BABYLON_SCENE_URL, engineBJS, function(loadedScene) {
+      sceneBJS = loadedScene;
+      if (sceneBJS.cameras[0]) {
+        sceneBJS.activeCamera = sceneBJS.cameras[0];
+        sceneBJS.activeCamera.attachControl(canvas, true);
       }
-    );
+      sceneBJS.environmentTexture = null;
+      allGroups = sceneBJS.animationGroups || [];
+      var readyFired = false;
+      var t = setTimeout(function() {
+        if (!readyFired) { readyFired = true; engineBJS.runRenderLoop(function() { sceneBJS.render(); }); hideBootOverlay(); }
+      }, 3000);
+      sceneBJS.executeWhenReady(function() {
+        readyFired = true; clearTimeout(t);
+        engineBJS.runRenderLoop(function() { sceneBJS.render(); });
+        if (allGroups.length > 0) { buildAnimGrid(allGroups); playClip(0); }
+        confirmCheck('chk-babylon', 'GLB LIVE', 1);
+        confirmCheck('chk-mesh', 'FORGE_MESH LIVE', 3);
+        setTimeout(function() { confirmCheck('chk-ssot', 'LOCKED', 4); }, 400);
+        setTimeout(function() { confirmCheck('chk-moai', 'BROADCASTING', 5); }, 900);
+        setTimeout(function() { confirmCheck('chk-sentinel', 'NOMINAL', 6); }, 1400);
+        updateModelIntel(allGroups.map(function(g) { return g.name; }));
+        document.getElementById('canvas-status').textContent = 'MODEL LIVE — ' + allGroups.length + ' CLIPS';
+        queryOracleGas();
+      });
+    }, null, function(s, msg) {
+      log('Scene load error: ' + msg, 'warn');
+    });
   }
 
   function buildAnimGrid(groups) {

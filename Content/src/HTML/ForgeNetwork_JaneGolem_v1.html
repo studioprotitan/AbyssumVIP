@@ -549,19 +549,30 @@ body {
 <script>
 // ═══════════════════════════════════════════════════════
 //  JANE DISTRICT · GOLEM MFG GUIDE v1.0
-//  Scene loader: scene-osu-mint-deploy-cam-01-a.babylon
-//  Tripo3D API: wired
+//  Scene: scene-moai-osu-gemini-a.babylon (MOAI OSU + neutral-idle-a)
+//  CDN: GitHub Releases babylon-scenes-v1.0
+//  Platform: repair-bay-circlular-platform-osu-a.glb
+//  Tripo3D API: wired (v2.5-20250123)
 //  Forge Network: connected
+//  CHANGE LOG:
+//    [PHASE-9-WIRE-001] SCENE_FILE → scene-moai-osu-gemini-a.babylon
+//    [PHASE-9-WIRE-001] SCENE_BASE_URL → /api/asset/ (proxy route)
+//    [PHASE-9-WIRE-001] Platform GLB injected after loadManifestCarousel()
 // ═══════════════════════════════════════════════════════
 
-var SCENE_FILE     = 'scene-osu-mint-deploy-cam-01-a.babylon';
-var SCENE_BASE_URL = './';   // same folder as HTML; update to /api/asset/ on Next.js
+// -- SCENE CONFIG (PHASE-9-WIRE-001) --
+var SCENE_FILE     = 'scene-moai-osu-gemini-a.babylon';
+var SCENE_BASE_URL = '/api/asset/';   // Next.js proxy — same pattern as GLBs
+var SCENE_CDN_URL  = 'https://github.com/studioprotitan/AbyssumVIP/releases/download/repairbay-v1.0/scene-moai-osu-gemini-a.babylon';
+
+var PLATFORM_GLB   = '/api/asset/repair-bay-circlular-platform-osu-a.glb';
+
 var TRIPO_TASK_ID  = 'tsk_mwbI7ibMNhccJmo-M5wjR93jHBYEGUQ1mjzHfirAyCU';
 var TRIPO_API_BASE = 'https://api.tripo3d.ai/v2/openapi';
-// Set your Tripo API key here or inject via env on the server
+// Key injected via oracle response or set directly here for local dev
 var TRIPO_API_KEY  = '';     // 'tripo_sk_...'
 
-var MANIFEST_PATH  = '../public/models/mi_manifest_dpk.json';
+var MANIFEST_PATH  = '/api/asset/mi_manifest_dpk.json';
 
 var canvas   = document.getElementById('renderCanvas');
 var engine, scene, activeCamera;
@@ -601,6 +612,24 @@ function startFPS() {
   }, 500);
 }
 
+// ── PLATFORM GLB LOAD ───────────────────────────────────
+// Injected [PHASE-9-WIRE-001] — loads after scene is ready
+function loadPlatformStage() {
+  BABYLON.SceneLoader.ImportMesh(
+    '',
+    '',
+    PLATFORM_GLB,
+    scene,
+    function(meshes) {
+      tlog('Platform stage loaded — ' + meshes.length + ' meshes', 'ok');
+    },
+    null,
+    function() {
+      tlog('Platform not found — scene-only mode', '');
+    }
+  );
+}
+
 // ── SCENE LOAD — .babylon ───────────────────────────────
 function initEngine() {
   engine = new BABYLON.Engine(canvas, true, {
@@ -610,13 +639,17 @@ function initEngine() {
 
   setBootProgress(20, 'ENGINE READY — LOADING SCENE…');
   tlog('Babylon.js engine initialized', 'ok');
+  tlog('Scene target: ' + SCENE_FILE, 'hot');
 
+  // Try proxy first; CDN fallback handled in error callback
+  var SCENE_BASE_URL = './';   // Live Server local — file must be in same folder as HTML
   BABYLON.SceneLoader.Load(
     SCENE_BASE_URL,
     SCENE_FILE,
     engine,
     function(loadedScene) {
       scene = loadedScene;
+      scene.environmentTexture = null;
       setBootProgress(70, 'SCENE PARSED — WIRING CAMERA…');
       tlog('Scene loaded: ' + SCENE_FILE, 'ok');
 
@@ -643,8 +676,18 @@ function initEngine() {
         tlog(animCount + ' animation groups — first playing', 'ok');
       }
 
+      // Boot overlay fallback if scene stalls
+      var bootFallback = setTimeout(function() {
+        if (!sceneLoaded) {
+          tlog('Boot overlay timeout — forcing scene live', 'warn');
+          hideBootOverlay();
+          sceneLoaded = true;
+        }
+      }, 3000);
+
       // Start render loop
       scene.executeWhenReady(function() {
+        clearTimeout(bootFallback);
         engine.runRenderLoop(function() { scene.render(); });
         setBootProgress(100, 'SCENE LIVE');
         setTimeout(hideBootOverlay, 400);
@@ -654,7 +697,7 @@ function initEngine() {
         document.getElementById('st-scene').textContent  = SCENE_FILE.replace('.babylon','');
         document.getElementById('lbl-scene').textContent = 'SCENE LIVE';
         document.getElementById('dot-scene').className   = 'dot live';
-        document.getElementById('st-type').textContent   = 'CST-ERT';
+        document.getElementById('st-type').textContent   = 'MOAI OSU';
         document.getElementById('st-net').textContent    = 'CONNECTED';
 
         // Animate forge bar
@@ -668,7 +711,12 @@ function initEngine() {
 
         startFPS();
         tlog('Render loop active — all systems green', 'ok');
+
+        // Load manifest carousel
         loadManifestCarousel();
+
+        // Load circular platform stage [PHASE-9-WIRE-001]
+        loadPlatformStage();
       });
     },
     function(evt) {
@@ -677,15 +725,56 @@ function initEngine() {
       setBootProgress(pct, 'STREAMING SCENE — ' + pct + '%');
     },
     function(s, msg, ex) {
-      // Error — try GLB fallback
-      tlog('Scene load error: ' + msg, 'err');
-      tlog('Attempting GLB fallback…', 'hot');
-      setBootProgress(30, 'SCENE FAILED — TRYING GLB…');
-      loadGLBFallback('scene-osu-deploy.glb');
+      // Proxy failed — try CDN release URL directly
+      tlog('Proxy load failed — trying CDN release URL', 'hot');
+      setBootProgress(30, 'PROXY FAILED — TRYING CDN…');
+      loadFromCDN();
     }
   );
 
   window.addEventListener('resize', function() { engine.resize(); });
+}
+
+// ── CDN FALLBACK (GitHub Releases) ──────────────────────
+function loadFromCDN() {
+  tlog('CDN: ' + SCENE_CDN_URL, 'hot');
+  BABYLON.SceneLoader.Load(
+    '',
+    SCENE_CDN_URL,
+    engine,
+    function(loadedScene) {
+      scene = loadedScene;
+      tlog('CDN load successful', 'ok');
+      // Wire camera same as proxy path
+      if (scene.cameras && scene.cameras.length > 0) {
+        scene.activeCamera = scene.cameras[0];
+        scene.activeCamera.attachControl(canvas, true);
+      } else {
+        var cam = new BABYLON.ArcRotateCamera('cam', -Math.PI/2, 1.40, 5, BABYLON.Vector3.Zero(), scene);
+        cam.attachControl(canvas, true);
+      }
+      var animCount = scene.animationGroups ? scene.animationGroups.length : 0;
+      if (animCount > 0) scene.animationGroups[0].start(true);
+      scene.executeWhenReady(function() {
+        engine.runRenderLoop(function() { scene.render(); });
+        hideBootOverlay();
+        sceneLoaded = true;
+        document.getElementById('st-scene').textContent = SCENE_FILE.replace('.babylon','') + ' (CDN)';
+        document.getElementById('lbl-scene').textContent = 'CDN LIVE';
+        document.getElementById('st-type').textContent = 'MOAI OSU';
+        startFPS();
+        tlog('CDN scene live — ' + animCount + ' animation groups', 'ok');
+        loadManifestCarousel();
+        loadPlatformStage();
+      });
+    },
+    null,
+    function() {
+      tlog('CDN load also failed — GLB fallback', 'err');
+      setBootProgress(30, 'CDN FAILED — TRYING GLB…');
+      loadGLBFallback('/api/asset/cst-mint-deploy-mvp-animation-group-01.glb');
+    }
+  );
 }
 
 // ── GLB FALLBACK ─────────────────────────────────────────
@@ -702,8 +791,10 @@ function loadGLBFallback(url) {
     engine.runRenderLoop(function() { scene.render(); });
     hideBootOverlay();
     startFPS();
+    loadManifestCarousel();
+    loadPlatformStage();
   }, null, function() {
-    tlog('GLB fallback also failed — empty scene', 'err');
+    tlog('All load paths failed — empty scene', 'err');
     engine.runRenderLoop(function() { scene.render(); });
     hideBootOverlay();
     startFPS();
@@ -752,7 +843,7 @@ function loadPreset(type) {
   var urls = {
     'base':      SCENE_BASE_URL + SCENE_FILE,
     'character': '/api/asset/cst-mint-deploy-mvp-animation-group-01.glb',
-    'platform':  '/api/asset/repair-bay-circlular-platform-osu-a.glb',
+    'platform':  PLATFORM_GLB,
     'empty':     null
   };
 
@@ -910,7 +1001,7 @@ async function loadManifestCarousel() {
     });
     tlog('Manifest loaded: ' + manifest.assets.length + ' assets', 'ok');
   } catch (e) {
-    tlog('Manifest not found (expected on Live Server) — ' + e.message, '');
+    tlog('Manifest not found — ' + e.message, '');
   }
 }
 
@@ -943,6 +1034,7 @@ function confirmMint() {
 window.addEventListener('load', function() {
   setBootProgress(5, 'INITIALIZING ENGINE…');
   tlog('Jane District Golem MFG — boot initiated', 'hot');
+  tlog('Scene: ' + SCENE_FILE, 'hot');
   setTimeout(initEngine, 300);
 });
 </script>
