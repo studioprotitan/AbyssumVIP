@@ -797,6 +797,10 @@ camera.attachControl(canvas, true);
       log('SYNC_BRIDGE broadcasting on STATE_MACHINE', 'ok');
       document.getElementById('orbital').classList.add('hot');
     }, 3000);
+    // Entropy Throttler — pre-flight CORS warm-up
+    fetch('/api/babylon/scene-osu-mint-deploy-cam-01-a.babylon', { method: 'HEAD' })
+      .then(function(r) { log('ENTROPY: gateway warm — ' + r.status, 'ok'); })
+      .catch(function() { log('ENTROPY: gateway cold — proceeding', 'warn'); });
     initBabylon();
   }
 
