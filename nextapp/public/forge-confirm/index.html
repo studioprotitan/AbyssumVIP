@@ -652,7 +652,7 @@ camera.attachControl(canvas, true);
     setProgress(10, 'LOADING GLB ASSET');
     document.getElementById('canvas-status').textContent = 'LOADING GLB…';
 
-    var BABYLON_SCENE_URL = BABYLON_FILENAME;
+    var BABYLON_SCENE_URL = '/api/babylon/scene-osu-mint-deploy-cam-01-a.babylon';
 
     BABYLON.SceneLoader.Load('', BABYLON_SCENE_URL, engineBJS, function(loadedScene) {
       sceneBJS = loadedScene;
