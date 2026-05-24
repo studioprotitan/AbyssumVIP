@@ -1,4 +1,4 @@
-﻿import Link from 'next/link';
+import Link from 'next/link';
 
 export default function SuccessPage() {
   return (
@@ -8,7 +8,7 @@ export default function SuccessPage() {
       <p style={{ color: '#00d4c8', marginTop: '1rem' }}>RANK: GLITCH GOBLIN</p>
       <p style={{ color: '#c8932a' }}>FUEL: 500.00 ABEX</p>
       <p style={{ color: '#00d4c8' }}>FORGE LINK: ACTIVE</p>
-     <Link href="/forge-confirm/" style={{ marginTop: '2rem', color: '#00d4c8', fontSize: '0.9rem' }}>
+      <Link href="/forge-confirm/" style={{ marginTop: '2rem', color: '#00d4c8', fontSize: '0.9rem' }}>
         Return to Base
       </Link>
     </main>
