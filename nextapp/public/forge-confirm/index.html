@@ -763,14 +763,31 @@ camera.attachControl(canvas, true);
     if (activeGroup) activeGroup.speedRatio = currentSpeed;
   };
 
-  window.proceedToGateway = function() {
-    log('COMMANDER AUTHORIZED — DEPLOYING OPERATIVE', 'ok');
+  window.proceedToGateway = async function() {
+    log('COMMANDER AUTHORIZED � DEPLOYING OPERATIVE', 'ok');
     var btn = document.getElementById('deploy-btn');
-    btn.textContent = '◈ DEPLOYING...';
+    btn.textContent = 'FORGING...';
     btn.style.pointerEvents = 'none';
-    setTimeout(function() {
-      window.location.href = '/api/create-checkout-session';
-    }, 800);
+    var pilotId = connectedWallet || 'GLITCH_GOBLIN_' + Date.now();
+    try {
+      var res = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pilotId: pilotId, tier: 'GLITCH_GOBLIN' })
+      });
+      var data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        log('CHECKOUT ERROR: ' + (data.error || 'no URL returned'), 'warn');
+        btn.textContent = '? MINT TO DEPLOY';
+        btn.style.pointerEvents = '';
+      }
+    } catch(err) {
+      log('CHECKOUT FAILED: ' + err.message, 'warn');
+      btn.textContent = '? MINT TO DEPLOY';
+      btn.style.pointerEvents = '';
+    }
   };
 
   function boot() {
@@ -991,4 +1008,5 @@ camera.attachControl(canvas, true);
 </script>
 </body>
 </html>
+
 
