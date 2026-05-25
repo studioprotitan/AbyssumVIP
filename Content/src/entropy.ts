@@ -1,8 +1,17 @@
-// ENTROPY THROTTLER â€” CORS pre-flight warm-up
-// Fires before any babylon/GLB fetch to resolve CORS handshake early
+// FORGE ENGINE — CORS pre-flight + gateway warm-up
+// Evolved from Entropy Throttler — Phase 9.0
+// Fires before any Babylon/GLB fetch to resolve CORS handshake early
 // Wired to Glitch Goblin as first-contact trigger
 
-export async function entropyThrottle(url: string): Promise<boolean> {
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? '';
+
+const FORGE_GATEWAY_PATHS = [
+  '/forge-confirm/',
+  '/api/create-checkout-session',
+  '/success/',
+];
+
+export async function forgeProbe(url: string): Promise<boolean> {
   try {
     const res = await fetch(url, { method: 'HEAD', mode: 'cors' });
     return res.ok;
@@ -11,6 +20,7 @@ export async function entropyThrottle(url: string): Promise<boolean> {
   }
 }
 
-export async function warmAssetGateway(paths: string[]): Promise<void> {
-  await Promise.allSettled(paths.map(p => entropyThrottle(p)));
+export async function forgeEngineWarmUp(): Promise<void> {
+  const targets = FORGE_GATEWAY_PATHS.map(p => `${BASE_URL}${p}`);
+  await Promise.allSettled(targets.map(forgeProbe));
 }
