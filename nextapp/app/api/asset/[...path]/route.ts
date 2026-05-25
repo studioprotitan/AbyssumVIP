@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const GITHUB_RELEASE_BASE = 'https://github.com/studioprotitan/AbyssumVIP/releases/download/assets-v1';
+export const runtime = 'nodejs';
+
+const GITHUB_RELEASE_BASE = 'https://github.com/studioprotitan/AbyssumVIP/releases/download/repairbay-v1.0';
 
 export async function GET(
   req: NextRequest,
@@ -11,15 +13,22 @@ export async function GET(
   const upstream = `${GITHUB_RELEASE_BASE}/${assetName}`;
 
   const response = await fetch(upstream, { redirect: 'follow' });
+
   if (!response.ok) {
     return NextResponse.json({ error: 'Asset not found', asset: assetName }, { status: 404 });
   }
 
-  const buffer = await response.arrayBuffer();
-  return new NextResponse(buffer, {
+  const contentType = assetName.endsWith('.babylon')
+    ? 'application/octet-stream'
+    : assetName.endsWith('.glb')
+    ? 'model/gltf-binary'
+    : 'application/octet-stream';
+
+  return new NextResponse(response.body, {
     headers: {
-      'Content-Type': 'model/gltf-binary',
-      'Cache-Control': 'public, max-age=86400',
+      'Content-Type': contentType,
+      'Cache-Control': 'public, max-age=31536000, immutable',
+      'Access-Control-Allow-Origin': '*',
     },
   });
 }
