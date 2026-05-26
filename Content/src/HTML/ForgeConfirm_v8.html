@@ -773,7 +773,7 @@ camera.attachControl(canvas, true);
       var res = await fetch('/api/create-checkout-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pilotId: pilotId, tier: 'GLITCH_GOBLIN' })
+        body: JSON.stringify({ pilotId: pilotId, tier: 'Standard' })
       });
       var data = await res.json();
       if (data.url) {
@@ -1008,6 +1008,7 @@ camera.attachControl(canvas, true);
 </script>
 </body>
 </html>
+
 
 
 
