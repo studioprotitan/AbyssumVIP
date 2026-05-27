@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jane District · Golem Manufacturing Guide</title>
+<script src="https://cdn.babylonjs.com/babylon.js"></script>
+<script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Share+Tech+Mono&family=Rajdhani:wght@300;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #080b10;
+  --panel:     #0d1117;
+  --border:    #1a2030;
+  --forge:     #e07a20;
+  --teal:      #20d9b4;
+  --red:       #ff3a3a;
+  --text:      #c8d0dc;
+  --text-dim:  #4a5568;
+  --font-hud:  'Orbitron', monospace;
+  --font-mono: 'Share Tech Mono', monospace;
+  --font-body: 'Rajdhani', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  height: 100vh;
+  display: grid;
+  grid-template-rows: 48px 1fr 110px;
+  grid-template-columns: 280px 1fr 240px;
+  overflow: hidden;
+}
+
+/* ── HEADER ── */
+.topbar {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  background: rgba(8,11,16,0.95);
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
+  position: relative;
+  z-index: 20;
+}
+.topbar-brand {
+  font-family: var(--font-hud);
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--forge);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.topbar-sep { width: 1px; height: 24px; background: var(--border); }
+.topbar-sub {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+}
+.topbar-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.status-pill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-dim);
+}
+.dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--text-dim);
+}
+.dot.live { background: var(--teal); box-shadow: 0 0 6px var(--teal); animation: blink 1.4s infinite; }
+.dot.warn { background: var(--forge); box-shadow: 0 0 6px var(--forge); }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* ── LEFT PANEL ── */
+.left-panel {
+  grid-row: 2;
+  grid-column: 1;
+  background: var(--panel);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.panel-section {
+  padding: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.panel-label {
+  font-family: var(--font-hud);
+  font-size: 8px;
+  font-weight: 600;
+  color: var(--forge);
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+.forge-input {
+  width: 100%;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 8px 10px;
+  outline: none;
+  resize: none;
+  transition: border-color 0.2s;
+}
+.forge-input:focus { border-color: var(--forge); }
+.forge-input::placeholder { color: var(--text-dim); }
+
+.forge-btn {
+  width: 100%;
+  margin-top: 6px;
+  padding: 8px;
+  background: transparent;
+  border: 1px solid var(--forge);
+  color: var(--forge);
+  font-family: var(--font-hud);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: background 0.15s, color 0.15s;
+}
+.forge-btn:hover { background: var(--forge); color: #000; }
+.forge-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.forge-btn.secondary { border-color: var(--teal); color: var(--teal); }
+.forge-btn.secondary:hover { background: var(--teal); color: #000; }
+
+.tripo-status {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-dim);
+  margin-top: 6px;
+  min-height: 16px;
+  line-height: 1.5;
+}
+.tripo-status.ok  { color: var(--teal); }
+.tripo-status.err { color: var(--red); }
+.tripo-status.run { color: var(--forge); animation: blink 0.8s infinite; }
+
+/* TASK LOG */
+.task-log {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.task-log::-webkit-scrollbar { width: 2px; }
+.task-log::-webkit-scrollbar-thumb { background: var(--border); }
+.log-entry {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-dim);
+  border-left: 2px solid var(--border);
+  padding-left: 6px;
+  line-height: 1.5;
+}
+.log-entry.ok  { color: var(--teal);  border-color: var(--teal); }
+.log-entry.err { color: var(--red);   border-color: var(--red); }
+.log-entry.hot { color: var(--forge); border-color: var(--forge); }
+
+/* ASSET URL LOAD */
+.url-row {
+  display: flex;
+  gap: 4px;
+  margin-top: 6px;
+}
+.url-row .forge-input { flex: 1; margin-top: 0; }
+.url-row .forge-btn { width: auto; margin-top: 0; padding: 8px 12px; white-space: nowrap; }
+
+/* ── CENTER ── */
+.center {
+  grid-row: 2;
+  grid-column: 2;
+  position: relative;
+  overflow: hidden;
+}
+
+#renderCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  outline: none;
+}
+
+.vp-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+.vp-corner {
+  position: absolute;
+  width: 20px; height: 20px;
+  border-color: var(--forge);
+  border-style: solid;
+  opacity: 0.5;
+}
+.vp-corner.tl { top: 8px; left: 8px; border-width: 1px 0 0 1px; }
+.vp-corner.tr { top: 8px; right: 8px; border-width: 1px 1px 0 0; }
+.vp-corner.bl { bottom: 8px; left: 8px; border-width: 0 0 1px 1px; }
+.vp-corner.br { bottom: 8px; right: 8px; border-width: 0 1px 1px 0; }
+
+.vp-label {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 8px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  white-space: nowrap;
+}
+.vp-fps {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  color: var(--text-dim);
+}
+.vp-scene-tag {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  font-family: var(--font-hud);
+  font-size: 8px;
+  color: var(--forge);
+  letter-spacing: 2px;
+  opacity: 0.7;
+}
+
+/* ── RIGHT PANEL ── */
+.right-panel {
+  grid-row: 2;
+  grid-column: 3;
+  background: var(--panel);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.right-panel::-webkit-scrollbar { width: 2px; }
+.right-panel::-webkit-scrollbar-thumb { background: var(--border); }
+
+.golem-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+}
+.gs-key {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+.gs-val {
+  font-family: var(--font-hud);
+  font-size: 9px;
+  color: var(--forge);
+}
+.gs-val.teal { color: var(--teal); }
+.gs-val.dim  { color: var(--text-dim); }
+
+.integrity-bar {
+  height: 3px;
+  background: var(--border);
+  margin: 3px 0;
+  position: relative;
+  overflow: hidden;
+}
+.integrity-fill {
+  height: 100%;
+  background: var(--forge);
+  transition: width 0.5s ease;
+}
+.integrity-fill.teal { background: var(--teal); }
+
+.preset-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 8px 12px;
+}
+.preset-btn {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: 8px;
+  padding: 6px 4px;
+  cursor: pointer;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: border-color 0.15s, color 0.15s;
+}
+.preset-btn:hover { border-color: var(--forge); color: var(--forge); }
+.preset-btn.active { border-color: var(--forge); color: var(--forge); background: rgba(224,122,32,0.08); }
+
+/* ── CAROUSEL ── */
+.carousel-row {
+  grid-row: 3;
+  grid-column: 1 / -1;
+  background: rgba(8,11,16,0.98);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: stretch;
+  overflow-x: auto;
+  padding: 0 12px;
+  gap: 8px;
+}
+.carousel-row::-webkit-scrollbar { height: 2px; }
+.carousel-row::-webkit-scrollbar-thumb { background: var(--border); }
+
+.carousel-item {
+  flex-shrink: 0;
+  min-width: 130px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 10px;
+  border-right: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.15s;
+  position: relative;
+}
+.carousel-item:hover { background: rgba(224,122,32,0.05); }
+.carousel-item.active { background: rgba(224,122,32,0.08); }
+.carousel-item.active::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--forge);
+}
+.ci-type {
+  font-family: var(--font-hud);
+  font-size: 7px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  margin-bottom: 3px;
+  text-transform: uppercase;
+}
+.ci-name {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ci-status {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+.ci-status.ready { color: var(--teal); }
+.ci-status.pending { color: var(--forge); }
+
+/* ── PROGRESS BAR ── */
+.boot-overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  transition: opacity 0.8s ease;
+}
+.boot-title {
+  font-family: var(--font-hud);
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--forge);
+  letter-spacing: 6px;
+  margin-bottom: 4px;
+}
+.boot-sub {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  margin-bottom: 24px;
+}
+.boot-bar-track {
+  width: 240px;
+  height: 2px;
+  background: var(--border);
+  position: relative;
+}
+.boot-bar-fill {
+  height: 100%;
+  background: var(--forge);
+  width: 0%;
+  transition: width 0.3s ease;
+}
+.boot-msg {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-dim);
+  margin-top: 8px;
+  letter-spacing: 1px;
+}
+</style>
+</head>
+<body>
+
+<!-- ── TOPBAR ── -->
+<header class="topbar">
+  <div class="topbar-brand">JANE DISTRICT · GOLEM MFG</div>
+  <div class="topbar-sep"></div>
+  <div class="topbar-sub">FORGE NETWORK · MANUFACTURING INTERFACE · BUILD v1.0</div>
+  <div class="topbar-right">
+    <div class="status-pill"><div class="dot live" id="dot-scene"></div><span id="lbl-scene">SCENE LOADING</span></div>
+    <div class="status-pill"><div class="dot warn" id="dot-tripo"></div><span id="lbl-tripo">TRIPO IDLE</span></div>
+    <div class="status-pill" id="fps-pill" style="display:none"><div class="dot live"></div><span id="fps-val">-- FPS</span></div>
+  </div>
+</header>
+
+<!-- ── LEFT PANEL ── -->
+<aside class="left-panel">
+
+  <div class="panel-section">
+    <div class="panel-label">▲ Tripo3D Generate</div>
+    <textarea class="forge-input" id="prompt" rows="3" placeholder="Describe your golem unit..."></textarea>
+    <button class="forge-btn" id="btn-generate" onclick="generateGolem()">▲ GENERATE UNIT</button>
+    <div class="tripo-status" id="tripo-status">TASK READY — AWAITING INPUT</div>
+  </div>
+
+  <div class="panel-section">
+    <div class="panel-label">↓ Load Asset</div>
+    <div class="url-row">
+      <input class="forge-input" id="assetUrl" placeholder="scene.babylon or model.glb" />
+      <button class="forge-btn secondary" onclick="loadAssetFromInput()">LOAD</button>
+    </div>
+    <button class="forge-btn secondary" style="margin-top:6px;" onclick="reloadBaseScene()">↺ RELOAD BASE SCENE</button>
+  </div>
+
+  <div class="panel-section">
+    <div class="panel-label">TASK LOG</div>
+  </div>
+  <div class="task-log" id="task-log"></div>
+
+</aside>
+
+<!-- ── CENTER VIEWPORT ── -->
+<main class="center">
+  <canvas id="renderCanvas"></canvas>
+  <div class="vp-overlay">
+    <div class="vp-corner tl"></div>
+    <div class="vp-corner tr"></div>
+    <div class="vp-corner bl"></div>
+    <div class="vp-corner br"></div>
+    <div class="vp-scene-tag" id="scene-tag">FORGE NETWORKS // GOLEM MFG BAY</div>
+    <div class="vp-fps" id="vp-fps"></div>
+    <div class="vp-label">BABYLON.JS · SCENE VIEWER · CAM: ARCROTATE</div>
+  </div>
+
+  <!-- BOOT OVERLAY -->
+  <div class="boot-overlay" id="boot-overlay">
+    <div class="boot-title">JANE DISTRICT</div>
+    <div class="boot-sub">GOLEM MANUFACTURING INTERFACE</div>
+    <div class="boot-bar-track"><div class="boot-bar-fill" id="boot-fill"></div></div>
+    <div class="boot-msg" id="boot-msg">INITIALIZING ENGINE…</div>
+  </div>
+</main>
+
+<!-- ── RIGHT PANEL ── -->
+<aside class="right-panel">
+
+  <div class="panel-section">
+    <div class="panel-label">UNIT STATUS</div>
+    <div class="golem-stat"><span class="gs-key">UNIT TYPE</span><span class="gs-val" id="st-type">—</span></div>
+    <div class="golem-stat"><span class="gs-key">SCENE</span><span class="gs-val teal" id="st-scene">LOADING</span></div>
+    <div class="golem-stat"><span class="gs-key">CAMERA</span><span class="gs-val" id="st-camera">—</span></div>
+    <div class="golem-stat"><span class="gs-key">ANIMATIONS</span><span class="gs-val" id="st-anims">—</span></div>
+    <div class="golem-stat"><span class="gs-key">TRIPO TASK</span><span class="gs-val dim" id="st-task">IDLE</span></div>
+    <div class="golem-stat"><span class="gs-key">FORGE NET</span><span class="gs-val teal" id="st-net">CONNECTED</span></div>
+    <div class="golem-stat"><span class="gs-key">MINT STATUS</span><span class="gs-val dim" id="st-mint">PENDING</span></div>
+  </div>
+
+  <div class="panel-section">
+    <div class="panel-label">SCENE EXPORT</div>
+    <button class="forge-btn" style="margin-top:0;" onclick="exportScene('babylon')">↑ EXPORT .BABYLON</button>
+    <button class="forge-btn secondary" style="margin-top:6px;" onclick="exportScene('glb')">↑ EXPORT GLB</button>
+  </div>
+
+  <div class="panel-section">
+    <div class="panel-label">INTEGRITY</div>
+    <div class="gs-key" style="margin-bottom:4px;">HULL</div>
+    <div class="integrity-bar"><div class="integrity-fill teal" style="width:100%"></div></div>
+    <div class="gs-key" style="margin-bottom:4px;margin-top:6px;">FORGE LINK</div>
+    <div class="integrity-bar"><div class="integrity-fill" id="forge-bar" style="width:0%"></div></div>
+    <div class="gs-key" style="margin-bottom:4px;margin-top:6px;">RIFT IDLE</div>
+    <div class="integrity-bar"><div class="integrity-fill teal" style="width:84%"></div></div>
+  </div>
+
+  <div class="panel-section">
+    <div class="panel-label">PRESETS</div>
+  </div>
+  <div class="preset-grid" id="preset-grid">
+    <button class="preset-btn active" onclick="loadPreset('base')">BASE SCENE</button>
+    <button class="preset-btn" onclick="loadPreset('character')">CHARACTER</button>
+    <button class="preset-btn" onclick="loadPreset('platform')">PLATFORM</button>
+    <button class="preset-btn" onclick="loadPreset('empty')">EMPTY</button>
+  </div>
+
+  <div class="panel-section" style="margin-top:auto;">
+    <div class="panel-label">FORGE CONFIRM</div>
+    <button class="forge-btn" id="btn-mint" onclick="confirmMint()" disabled>◈ CONFIRM &amp; MINT</button>
+    <div class="tripo-status" id="mint-status">AWAITING UNIT SELECTION</div>
+  </div>
+
+</aside>
+
+<!-- ── CAROUSEL ── -->
+<footer class="carousel-row" id="carousel-row">
+  <!-- populated by JS from manifest -->
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  JANE DISTRICT · GOLEM MFG GUIDE v1.0
+//  Scene: scene-moai-osu-gemini-a.babylon (MOAI OSU + neutral-idle-a)
+//  CDN: GitHub Releases babylon-scenes-v1.0
+//  Platform: repair-bay-circlular-platform-osu-a.glb
+//  Tripo3D API: wired (v2.5-20250123)
+//  Forge Network: connected
+//  CHANGE LOG:
+//    [PHASE-9-WIRE-001] SCENE_FILE → scene-moai-osu-gemini-a.babylon
+//    [PHASE-9-WIRE-001] SCENE_BASE_URL → /api/asset/ (proxy route)
+//    [PHASE-9-WIRE-001] Platform GLB injected after loadManifestCarousel()
+// ═══════════════════════════════════════════════════════
+
+// -- SCENE CONFIG (PHASE-9-WIRE-001) --
+var SCENE_FILE     = 'scene-moai-osu-gemini-a.babylon';
+var SCENE_FALLBACK = 'scene-osu-mint-deploy-cam-01-a.babylon';
+var SCENE_BASE_URL = '/api/asset/'; 
+var SCENE_CDN_URL  = 'https://github.com/studioprotitan/AbyssumVIP/releases/download/repairbay-v1.0/scene-moai-osu-gemini-a.babylon';
+var SCENE_CDN_FALLBACK = 'https://github.com/studioprotitan/AbyssumVIP/releases/download/repairbay-v1.0/scene-osu-mint-deploy-cam-01-a.babylon';
+
+var PLATFORM_GLB   = '/api/asset/repair-bay-circlular-platform-osu-a.glb';
+
+var TRIPO_TASK_ID  = 'tsk_mwbI7ibMNhccJmo-M5wjR93jHBYEGUQ1mjzHfirAyCU';
+var TRIPO_API_BASE = 'https://api.tripo3d.ai/v2/openapi';
+// Key injected via oracle response or set directly here for local dev
+var TRIPO_API_KEY  = '';     // 'tripo_sk_...'
+
+var MANIFEST_PATH  = '/api/asset/mi_manifest_dpk.json';
+
+var canvas   = document.getElementById('renderCanvas');
+var engine, scene, activeCamera;
+var sceneLoaded = false;
+
+// ── LOG ─────────────────────────────────────────────────
+function tlog(msg, cls) {
+  var log = document.getElementById('task-log');
+  var el  = document.createElement('div');
+  el.className = 'log-entry' + (cls ? ' ' + cls : '');
+  el.textContent = '[' + new Date().toTimeString().slice(0,8) + '] ' + msg;
+  log.appendChild(el);
+  log.scrollTop = log.scrollHeight;
+}
+
+// ── BOOT PROGRESS ───────────────────────────────────────
+function setBootProgress(pct, msg) {
+  document.getElementById('boot-fill').style.width = pct + '%';
+  if (msg) document.getElementById('boot-msg').textContent = msg;
+}
+
+function hideBootOverlay() {
+  var ov = document.getElementById('boot-overlay');
+  ov.style.opacity = '0';
+  setTimeout(function() { ov.style.display = 'none'; }, 800);
+}
+
+// ── FPS COUNTER ─────────────────────────────────────────
+function startFPS() {
+  document.getElementById('fps-pill').style.display = 'flex';
+  setInterval(function() {
+    if (engine) {
+      var fps = Math.round(engine.getFps());
+      document.getElementById('fps-val').textContent = fps + ' FPS';
+      document.getElementById('vp-fps').textContent  = fps + ' FPS';
+    }
+  }, 500);
+}
+
+// ── PLATFORM GLB LOAD ───────────────────────────────────
+// Injected [PHASE-9-WIRE-001] — loads after scene is ready
+function loadPlatformStage() {
+  BABYLON.SceneLoader.ImportMesh(
+    '',
+    '',
+    PLATFORM_GLB,
+    scene,
+    function(meshes) {
+      tlog('Platform stage loaded — ' + meshes.length + ' meshes', 'ok');
+    },
+    null,
+    function() {
+      tlog('Platform not found — scene-only mode', '');
+    }
+  );
+}
+
+// ── SCENE LOAD — .babylon ───────────────────────────────
+function initEngine() {
+  engine = new BABYLON.Engine(canvas, true, {
+    preserveDrawingBuffer: true,
+    stencil: true
+  });
+
+  setBootProgress(20, 'ENGINE READY — LOADING SCENE…');
+  tlog('Babylon.js engine initialized', 'ok');
+  tlog('Scene target: ' + SCENE_FILE, 'hot');
+
+  // Using defined SCENE_BASE_URL with proxy route
+  BABYLON.SceneLoader.Load(
+    SCENE_BASE_URL,
+    SCENE_FILE,
+    engine,
+    function(loadedScene) {
+      scene = loadedScene;
+      scene.environmentTexture = null;
+      setBootProgress(70, 'SCENE PARSED — WIRING CAMERA…');
+      tlog('Scene loaded: ' + SCENE_FILE, 'ok');
+
+      // Wire the first available camera (ArcRotate from sandbox export)
+      if (scene.cameras && scene.cameras.length > 0) {
+        activeCamera = scene.cameras[0];
+        scene.activeCamera = activeCamera;
+        activeCamera.attachControl(canvas, true);
+        document.getElementById('st-camera').textContent = 'ARCROTATE (SCENE)';
+        tlog('ArcRotate camera wired from scene', 'ok');
+      } else {
+        // Fallback camera if scene has none
+        activeCamera = new BABYLON.ArcRotateCamera('cam', -Math.PI/2, 1.40, 5, BABYLON.Vector3.Zero(), scene);
+        activeCamera.attachControl(canvas, true);
+        document.getElementById('st-camera').textContent = 'ARCROTATE (FALLBACK)';
+        tlog('No camera in scene — fallback created', 'hot');
+      }
+
+      // Count animation groups
+      var animCount = scene.animationGroups ? scene.animationGroups.length : 0;
+      document.getElementById('st-anims').textContent = animCount + ' GROUPS';
+      if (animCount > 0) {
+        scene.animationGroups[0].start(true);
+        tlog(animCount + ' animation groups — first playing', 'ok');
+      }
+
+      // Boot overlay fallback if scene stalls
+      var bootFallback = setTimeout(function() {
+        if (!sceneLoaded) {
+          tlog('Boot overlay timeout — forcing scene live', 'warn');
+          hideBootOverlay();
+          sceneLoaded = true;
+        }
+      }, 3000);
+
+      // Start render loop
+      scene.executeWhenReady(function() {
+        clearTimeout(bootFallback);
+        engine.runRenderLoop(function() { scene.render(); });
+        setBootProgress(100, 'SCENE LIVE');
+        setTimeout(hideBootOverlay, 400);
+        sceneLoaded = true;
+
+        // Update status panel
+        document.getElementById('st-scene').textContent  = SCENE_FILE.replace('.babylon','');
+        document.getElementById('lbl-scene').textContent = 'SCENE LIVE';
+        document.getElementById('dot-scene').className   = 'dot live';
+        document.getElementById('st-type').textContent   = 'MOAI OSU';
+        document.getElementById('st-net').textContent    = 'CONNECTED';
+
+        // Animate forge bar
+        var bar = document.getElementById('forge-bar');
+        var w = 0;
+        var iv = setInterval(function() {
+          w = Math.min(w + 2, 88);
+          bar.style.width = w + '%';
+          if (w >= 88) clearInterval(iv);
+        }, 20);
+
+        startFPS();
+        tlog('Render loop active — all systems green', 'ok');
+
+        // Load manifest carousel
+        loadManifestCarousel();
+
+        // Load circular platform stage [PHASE-9-WIRE-001]
+        loadPlatformStage();
+      });
+    },
+    function(evt) {
+      // Progress
+      var pct = evt.total > 0 ? Math.round((evt.loaded / evt.total) * 50) + 20 : 50;
+      setBootProgress(pct, 'STREAMING SCENE — ' + pct + '%');
+    },
+    function(s, msg, ex) {
+      // Proxy failed — try CDN release URL directly
+      tlog('Proxy load failed — trying CDN release URL', 'hot');
+      setBootProgress(30, 'PROXY FAILED — TRYING CDN…');
+      loadFromCDN();
+    }
+  );
+
+  window.addEventListener('resize', function() { engine.resize(); });
+}
+
+// ── CDN FALLBACK (GitHub Releases) ──────────────────────
+function loadFromCDN() {
+  tlog('CDN: ' + SCENE_CDN_URL, 'hot');
+  BABYLON.SceneLoader.Load(
+    '',
+    SCENE_CDN_URL,
+    engine,
+    function(loadedScene) {
+      scene = loadedScene;
+      tlog('CDN load successful', 'ok');
+      // Wire camera same as proxy path
+      if (scene.cameras && scene.cameras.length > 0) {
+        scene.activeCamera = scene.cameras[0];
+        scene.activeCamera.attachControl(canvas, true);
+      } else {
+        var cam = new BABYLON.ArcRotateCamera('cam', -Math.PI/2, 1.40, 5, BABYLON.Vector3.Zero(), scene);
+        cam.attachControl(canvas, true);
+      }
+      var animCount = scene.animationGroups ? scene.animationGroups.length : 0;
+      if (animCount > 0) scene.animationGroups[0].start(true);
+      scene.executeWhenReady(function() {
+        engine.runRenderLoop(function() { scene.render(); });
+        hideBootOverlay();
+        sceneLoaded = true;
+        document.getElementById('st-scene').textContent = SCENE_FILE.replace('.babylon','') + ' (CDN)';
+        document.getElementById('lbl-scene').textContent = 'CDN LIVE';
+        document.getElementById('st-type').textContent = 'MOAI OSU';
+        startFPS();
+        tlog('CDN scene live — ' + animCount + ' animation groups', 'ok');
+        loadManifestCarousel();
+        loadPlatformStage();
+      });
+    },
+    null,
+    function() {
+      tlog('CDN load also failed — GLB fallback', 'err');
+      setBootProgress(30, 'CDN FAILED — TRYING GLB…');
+      loadGLBFallback('/api/asset/cst-mint-deploy-mvp-animation-group-01.glb');
+    }
+  );
+}
+
+// ── GLB FALLBACK ─────────────────────────────────────────
+function loadGLBFallback(url) {
+  scene = new BABYLON.Scene(engine);
+  scene.clearColor = new BABYLON.Color4(0.035, 0.043, 0.051, 1);
+  activeCamera = new BABYLON.ArcRotateCamera('cam', -Math.PI/2, 1.40, 5, BABYLON.Vector3.Zero(), scene);
+  activeCamera.attachControl(canvas, true);
+  new BABYLON.HemisphericLight('hemi', new BABYLON.Vector3(0,1,0), scene).intensity = 0.8;
+
+  BABYLON.SceneLoader.ImportMesh('', '', url, scene, function(meshes) {
+    tlog('GLB fallback loaded: ' + url, 'ok');
+    document.getElementById('st-scene').textContent = 'GLB FALLBACK';
+    engine.runRenderLoop(function() { scene.render(); });
+    hideBootOverlay();
+    startFPS();
+    loadManifestCarousel();
+    loadPlatformStage();
+  }, null, function() {
+    tlog('All load paths failed — empty scene', 'err');
+    engine.runRenderLoop(function() { scene.render(); });
+    hideBootOverlay();
+    startFPS();
+  });
+}
+
+// ── LOAD ASSET FROM INPUT ───────────────────────────────
+function loadAssetFromInput() {
+  var url = document.getElementById('assetUrl').value.trim();
+  if (!url) { tlog('No URL entered', 'err'); return; }
+
+  var ext = url.split('.').pop().toLowerCase();
+  tlog('Loading: ' + url, 'hot');
+
+  if (ext === 'babylon') {
+    var parts = url.lastIndexOf('/') > -1 ? [url.slice(0, url.lastIndexOf('/')+1), url.slice(url.lastIndexOf('/')+1)] : ['./', url];
+    BABYLON.SceneLoader.Load(parts[0], parts[1], engine, function(loadedScene) {
+      if (scene) scene.dispose();
+      scene = loadedScene;
+      if (scene.cameras[0]) { scene.activeCamera = scene.cameras[0]; scene.activeCamera.attachControl(canvas, true); }
+      scene.executeWhenReady(function() { tlog('Scene replaced: ' + url, 'ok'); });
+    });
+  } else {
+    BABYLON.SceneLoader.ImportMesh('', '', url, scene, function(meshes) {
+      tlog('GLB loaded: ' + meshes.length + ' meshes', 'ok');
+    }, null, function(s, msg) { tlog('Load error: ' + msg, 'err'); });
+  }
+}
+
+// ── RELOAD BASE SCENE ────────────────────────────────────
+function reloadBaseScene() {
+  tlog('Reloading base scene…', 'hot');
+  if (engine) { engine.stopRenderLoop(); }
+  if (scene)  { scene.dispose(); }
+  document.getElementById('boot-overlay').style.display = 'flex';
+  document.getElementById('boot-overlay').style.opacity = '1';
+  setBootProgress(0, 'RELOADING…');
+  initEngine();
+}
+
+// ── PRESET LOADER ────────────────────────────────────────
+function loadPreset(type) {
+  document.querySelectorAll('.preset-btn').forEach(function(b) { b.classList.remove('active'); });
+  event.target.classList.add('active');
+
+  var urls = {
+    'base':      SCENE_BASE_URL + SCENE_FILE,
+    'character': '/api/asset/cst-mint-deploy-mvp-animation-group-01.glb',
+    'platform':  PLATFORM_GLB,
+    'empty':     null
+  };
+
+  if (type === 'empty') {
+    tlog('Empty scene — camera only', 'hot');
+    return;
+  }
+
+  document.getElementById('assetUrl').value = urls[type] || '';
+  tlog('Preset queued: ' + type, 'hot');
+}
+
+// ── TRIPO3D GENERATE ─────────────────────────────────────
+async function generateGolem() {
+  var prompt = document.getElementById('prompt').value.trim();
+  if (!prompt) { tlog('Enter a generation prompt', 'err'); return; }
+
+  var btn    = document.getElementById('btn-generate');
+  var status = document.getElementById('tripo-status');
+
+  btn.disabled = true;
+  btn.textContent = '▲ GENERATING…';
+  status.className = 'tripo-status run';
+  status.textContent = 'SUBMITTING TASK…';
+  document.getElementById('lbl-tripo').textContent = 'GENERATING';
+  document.getElementById('dot-tripo').className = 'dot live';
+  document.getElementById('st-task').textContent = 'ACTIVE';
+  tlog('Tripo3D task: "' + prompt + '"', 'hot');
+
+  try {
+    // Step 1: Create task
+    var createRes = await fetch(TRIPO_API_BASE + '/task', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + TRIPO_API_KEY
+      },
+      body: JSON.stringify({
+        type: 'text_to_model',
+        prompt: prompt,
+        model_version: 'v2.5-20250123'
+      })
+    });
+
+    if (!createRes.ok) {
+      var errBody = await createRes.text();
+      throw new Error('Task create failed ' + createRes.status + ': ' + errBody);
+    }
+
+    var createData = await createRes.json();
+    var taskId = createData.data && createData.data.task_id ? createData.data.task_id : TRIPO_TASK_ID;
+    tlog('Task created: ' + taskId, 'ok');
+    status.textContent = 'TASK RUNNING — ' + taskId;
+    document.getElementById('st-task').textContent = taskId.slice(0, 16) + '…';
+
+    // Step 2: Poll until success
+    var modelUrl = await pollTripoTask(taskId);
+
+    if (modelUrl) {
+      tlog('Model ready — loading into scene', 'ok');
+      status.className = 'tripo-status ok';
+      status.textContent = 'UNIT GENERATED — LOADING MESH';
+      BABYLON.SceneLoader.ImportMesh('', '', modelUrl, scene, function(meshes) {
+        tlog('Golem mesh loaded: ' + meshes.length + ' meshes', 'ok');
+        status.textContent = 'UNIT ACTIVE IN SCENE';
+        document.getElementById('st-mint').textContent = 'READY';
+        document.getElementById('btn-mint').disabled = false;
+        document.getElementById('mint-status').textContent = 'UNIT READY — CONFIRM TO MINT';
+        document.getElementById('mint-status').className = 'tripo-status ok';
+      }, null, function() {
+        tlog('Mesh load failed — copy URL manually: ' + modelUrl, 'err');
+        document.getElementById('assetUrl').value = modelUrl;
+        status.textContent = 'LOAD FAILED — URL IN FIELD';
+        status.className = 'tripo-status err';
+      });
+    }
+
+  } catch (err) {
+    tlog('Tripo error: ' + err.message, 'err');
+    status.className = 'tripo-status err';
+    status.textContent = 'ERROR — ' + err.message.slice(0, 60);
+    document.getElementById('lbl-tripo').textContent = 'TRIPO ERROR';
+    document.getElementById('st-task').textContent = 'FAILED';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '▲ GENERATE UNIT';
+  }
+}
+
+async function pollTripoTask(taskId) {
+  var maxAttempts = 60;
+  var status = document.getElementById('tripo-status');
+
+  for (var i = 0; i < maxAttempts; i++) {
+    await new Promise(function(r) { setTimeout(r, 3000); });
+
+    var res = await fetch(TRIPO_API_BASE + '/task/' + taskId, {
+      headers: { 'Authorization': 'Bearer ' + TRIPO_API_KEY }
+    });
+
+    if (!res.ok) { tlog('Poll failed: ' + res.status, 'err'); continue; }
+
+    var data = await res.json();
+    var taskData = data.data || {};
+    var taskStatus = taskData.status || 'unknown';
+    var progress = taskData.progress || 0;
+
+    status.textContent = 'TASK ' + taskStatus.toUpperCase() + ' — ' + progress + '%';
+    tlog('Task status: ' + taskStatus + ' ' + progress + '%', '');
+
+    if (taskStatus === 'success') {
+      var glbUrl = taskData.output && taskData.output.pbr_model ? taskData.output.pbr_model : null;
+      if (glbUrl) { tlog('GLB URL: ' + glbUrl, 'ok'); return glbUrl; }
+      tlog('Task succeeded but no model URL found', 'err');
+      return null;
+    }
+
+    if (taskStatus === 'failed' || taskStatus === 'cancelled') {
+      tlog('Task ended: ' + taskStatus, 'err');
+      return null;
+    }
+  }
+
+  tlog('Task polling timed out', 'err');
+  return null;
+}
+
+// ── MANIFEST CAROUSEL ────────────────────────────────────
+async function loadManifestCarousel() {
+  try {
+    var res = await fetch(MANIFEST_PATH);
+    if (!res.ok) throw new Error(res.status);
+    var manifest = await res.json();
+    var row = document.getElementById('carousel-row');
+    row.innerHTML = '';
+    manifest.assets.forEach(function(asset, i) {
+      var el = document.createElement('div');
+      el.className = 'carousel-item' + (i === 0 ? ' active' : '');
+      var statusCls = asset.status === 'CONFIRMED' ? 'ready' : 'pending';
+      el.innerHTML =
+        '<div class="ci-type">DPK</div>' +
+        '<div class="ci-name">' + asset.assetId + '</div>' +
+        '<div class="ci-status ' + statusCls + '">' + asset.status + '</div>';
+      el.onclick = (function(a) {
+        return function() {
+          document.querySelectorAll('.carousel-item').forEach(function(c) { c.classList.remove('active'); });
+          el.classList.add('active');
+          tlog('Asset selected: ' + a.assetId, 'hot');
+          if (a.status === 'CONFIRMED') {
+            document.getElementById('assetUrl').value = a.babylonPath;
+          }
+        };
+      })(asset);
+      row.appendChild(el);
+    });
+    tlog('Manifest loaded: ' + manifest.assets.length + ' assets', 'ok');
+  } catch (e) {
+    tlog('Manifest not found — ' + e.message, '');
+  }
+}
+
+// ── EXPORT ───────────────────────────────────────────────
+function exportScene(format) {
+  if (!scene) { tlog('No scene loaded', 'err'); return; }
+  if (format === 'babylon') {
+    var serialized = BABYLON.SceneSerializer.Serialize(scene);
+    var blob = new Blob([JSON.stringify(serialized)], { type: 'application/json' });
+    var url  = URL.createObjectURL(blob);
+    var a    = document.createElement('a');
+    a.href = url; a.download = 'scene-golem-export.babylon'; a.click();
+    URL.revokeObjectURL(url);
+    tlog('Scene exported as .babylon', 'ok');
+  } else {
+    tlog('GLB export requires GLTF2Exporter — use Sandbox for GLB', 'hot');
+  }
+}
+
+// ── MINT ─────────────────────────────────────────────────
+function confirmMint() {
+  tlog('MINT CONFIRMED — routing to Forge Gateway', 'ok');
+  document.getElementById('st-mint').textContent = 'MINTING…';
+  setTimeout(function() {
+    window.location.href = '/api/create-checkout-session';
+  }, 800);
+}
+
+// ── BOOT ─────────────────────────────────────────────────
+window.addEventListener('load', function() {
+  setBootProgress(5, 'INITIALIZING ENGINE…');
+  tlog('Jane District Golem MFG — boot initiated', 'hot');
+  tlog('Scene: ' + SCENE_FILE, 'hot');
+  setTimeout(initEngine, 300);
+});
+</script>
+
+</body>
+</html>

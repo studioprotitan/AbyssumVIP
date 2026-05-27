@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Char Viewer</title>
+<script src="https://cdn.babylonjs.com/babylon.js"></script>
+<script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+<style>body{margin:0;background:#080b10;}canvas{width:100vw;height:100vh;display:block;}</style>
+</head><body>
+<canvas id="c"></canvas>
+<script>
+var engine = new BABYLON.Engine(document.getElementById('c'), true);
+var url = 'https://github.com/studioprotitan/AbyssumVIP/releases/download/babylon-scenes-v1.0/scene-forge-net-mtd-avatar-a.babylon';
+BABYLON.SceneLoader.Load('', url, engine, function(scene) {
+  scene.environmentTexture = null;
+  if (scene.cameras[0]) { scene.activeCamera = scene.cameras[0]; scene.activeCamera.attachControl(document.getElementById('c'), true); }
+  scene.executeWhenReady(function() { engine.runRenderLoop(function() { scene.render(); }); });
+});
+window.addEventListener('resize', function() { engine.resize(); });
+</script>
+</body></html>
