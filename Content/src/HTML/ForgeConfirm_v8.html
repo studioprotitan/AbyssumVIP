@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Abyssum · Forge Confirm v8</title>
+<title>Abyssum · Forge Confirm v8.1</title>
 <script src="https://cdn.babylonjs.com/babylon.js"></script>
 <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -312,10 +312,9 @@
 
 <script>
   // ═══════════════════════════════════════════════════════════════
-  //  FORGE CONFIRM v8 — ORACLE WIRED · WALLET CONNECT/DISCONNECT LIVE
-  //  Fourth Wall: CONFIRMED BROKEN
-  //  Oracle reads: Gas API + Supabase pilot record
-  //  Build: Phase 9 — Brae OSU wired · Camera fixed · Web Speech removed
+  //  FORGE CONFIRM v8.1 — CLEAN BUILD
+  //  Phase 9.0 — Asset proxy, CORS resolved, tier Standard wired
+  //  Oracle + Brae + Gas API live
   // ═══════════════════════════════════════════════════════════════
 
   const cursor = document.getElementById('cursor');
@@ -437,7 +436,7 @@
     log('MODEL INTEL UPDATED — ' + designation + ' / ' + cls, 'ok');
   }
 
-  // ── ORACLE GAS QUERY (no wallet required) ───────────────────────
+  // ── ORACLE GAS QUERY ────────────────────────────────────────────
   async function queryOracleGas() {
     try {
       var res = await fetch('/api/oracle');
@@ -465,18 +464,13 @@
   var walletConnected = false;
   var connectedWallet = '';
 
-  // ── WALLET CONNECT / DISCONNECT TOGGLE ──────────────────────────
   window.connectWallet = async function() {
     var btn = document.getElementById('btn-wallet');
 
-    // ── DISCONNECT PATH ──
     if (walletConnected) {
       walletConnected = false;
       connectedWallet = '';
-      if (btn) {
-        btn.textContent = '◈ CONNECT WALLET';
-        btn.style.color = '';
-      }
+      if (btn) { btn.textContent = '◈ CONNECT WALLET'; btn.style.color = ''; }
       var pilotIdEl = document.getElementById('pilot-id');
       if (pilotIdEl) pilotIdEl.textContent = 'UNVERIFIED';
       var miStateText = document.getElementById('mi-state-text');
@@ -490,7 +484,6 @@
       return;
     }
 
-    // ── CONNECT PATH ──
     if (!window.ethereum) {
       log('NO WEB3 WALLET DETECTED — INSTALL METAMASK', 'warn');
       if (btn) btn.textContent = '◈ NO WALLET';
@@ -499,22 +492,14 @@
 
     try {
       if (btn) btn.textContent = '◈ CONNECTING...';
-
       var accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
       var wallet = accounts[0];
       var display = wallet.slice(0, 6) + '...' + wallet.slice(-4);
-
       walletConnected = true;
       connectedWallet = wallet;
-
-      if (btn) {
-        btn.textContent = '◈ ' + display + ' · DISCONNECT';
-        btn.style.color = 'var(--teal)';
-      }
-
+      if (btn) { btn.textContent = '◈ ' + display + ' · DISCONNECT'; btn.style.color = 'var(--teal)'; }
       var pilotIdEl = document.getElementById('pilot-id');
       if (pilotIdEl) pilotIdEl.textContent = display;
-
       log('WALLET CONNECTED — ' + display, 'ok');
 
       var port = window.location.port;
@@ -524,16 +509,10 @@
         log('ORACLE QUERY — AUTHENTICATING PILOT SIGNAL', 'info');
         try {
           var res = await fetch('/api/oracle?wallet=' + encodeURIComponent(wallet));
-          if (!res.ok) { throw new Error('Oracle route returned ' + res.status); }
+          if (!res.ok) throw new Error('Oracle route returned ' + res.status);
           var oracle = await res.json();
-
           updateGasDisplay(oracle.gas);
-
-          // Wire Brae credentials if present in oracle response
-          if (oracle.brae_voice_id) {
-            BraeOSU.setCredentials(oracle.brae_voice_id, oracle.elevenlabs_key);
-          }
-
+          if (oracle.brae_voice_id) BraeOSU.setCredentials(oracle.brae_voice_id, oracle.elevenlabs_key);
           if (oracle.transmission) {
             var panel = document.getElementById('oracle-panel');
             var trans = document.getElementById('oracle-transmission');
@@ -541,27 +520,22 @@
             if (trans) trans.textContent = oracle.transmission;
             log('ORACLE: ' + oracle.transmission.slice(0, 80) + (oracle.transmission.length > 80 ? '...' : ''), oracle.pilot ? 'ok' : 'warn');
           }
-
           if (oracle.pilot) {
             var miStateText = document.getElementById('mi-state-text');
             if (miStateText) miStateText.textContent = 'PILOT VERIFIED';
             var vs = document.getElementById('mi-viewer-state');
             if (vs) vs.classList.add('live');
             log('PILOT RECORD CONFIRMED — CLASS: ' + oracle.pilot.test_pilot_class, 'ok');
-            if (oracle.pilot.abex_balance !== undefined) {
-              log('ABEX BALANCE: ' + oracle.pilot.abex_balance, 'ok');
-            }
+            if (oracle.pilot.abex_balance !== undefined) log('ABEX BALANCE: ' + oracle.pilot.abex_balance, 'ok');
             updateModelIntel(null);
           } else {
             document.getElementById('t6').textContent = 'ORACLE: UNVERIFIED';
             log('PILOT NOT IN REGISTRY — COMPLETE ONBOARDING TO AUTHENTICATE', 'warn');
           }
-
         } catch (oracleErr) {
           log('ORACLE UNAVAILABLE: ' + (oracleErr.message || oracleErr), 'warn');
           document.getElementById('t6').textContent = 'SIGNAL: DEGRADED';
         }
-
       } else {
         log('LIVE SERVER MODE — ORACLE QUERY SKIPPED', 'info');
         log('DEPLOY TO VERCEL TO ACTIVATE ORACLE FOURTH WALL', 'warn');
@@ -569,25 +543,16 @@
         document.getElementById('t5').textContent = 'GAS: OFFLINE (LOCAL)';
         document.getElementById('t6').textContent = 'SIGNAL: LOCAL MODE';
       }
-
     } catch (err) {
       walletConnected = false;
       connectedWallet = '';
       log('WALLET CONNECTION FAILED: ' + (err.message || err), 'warn');
-      if (btn) {
-        btn.textContent = '◈ CONNECT WALLET';
-        btn.style.color = '';
-      }
+      if (btn) { btn.textContent = '◈ CONNECT WALLET'; btn.style.color = ''; }
     }
   };
 
-  // ── BABYLON GLB LOADER ──────────────────────────────────────────
-  // Primary model filename (GLB) and alternative Babylon scene (hosted on CDN)
-  var GLB_FILENAME   = '/api/asset/cst-mint-deploy-mvp-animation-group-01.glb';
-  // If you need to load the .babylon scene from the CDN, set BABYLON_FILENAME to the CDN URL
-  // Example: var BABYLON_FILENAME = 'https://github.com/studioprotitan/AbyssumVIP/releases/download/babylon-scenes-v1.0/scene-osu-mint-deploy-cam-01-a.babylon';
+  // ── BABYLON SCENE LOADER ────────────────────────────────────────
   var BABYLON_SCENE_URL = '/api/asset/scene-osu-mint-deploy-cam-01-a.babylon';
-  var STAGE_FILENAME = '/api/asset/scene-mint-deploy-hype-stage-osu-a_stage_env.glb';
 
   var canvas     = document.getElementById('renderCanvas');
   var glowCanvas = document.getElementById('glowCanvas');
@@ -596,33 +561,21 @@
   var activeGroup = null, allGroups = [], isLooping = true, isPaused = false;
   var currentSpeed = 1.0, currentIndex = 0;
 
-  var KNOWN_CLIPS = [
-    'cst-ert-idle-b','cst-ert-idle-c','cst-ert-idle-d','cst-ert-idle-e','cst-ert-idle-f',
-    'cst-ert-braced-drop-a','cst-ert-wall-jump-left-a','cst-ert-jump-low-a','cst-ert-jump-mid-a',
-    'cst-ert-jump-quick-a','cst-ert-wall-jump-right-a','cst-ert-jump-run-left-a','cst-ert-jump-run-right-a',
-    'cst-ert-slide-a','cst-ert-wall-run-left-start-a','cst-ert-wall-run-right-start-a',
-    'cst-ert-jump-land-a','cst-ert-jump-apex-a',
-    'cst-ert-run-a','cst-ert-run-b','cst-ert-sprint-a','cst-ert-walk-a',
-    'cst-ert-crouch-idle-a','cst-ert-crouch-walk-a','cst-ert-roll-a',
-    'cst-ert-hit-react-a','cst-ert-death-a','cst-ert-victory-a'
-  ];
-
   function initBabylon() {
     engineBJS = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true });
     sceneBJS  = new BABYLON.Scene(engineBJS);
     sceneBJS.clearColor = new BABYLON.Color4(0.035, 0.043, 0.051, 1);
 
-    // ── CAMERA — beta = PI/2.5 keeps horizon level, not ceiling ──
-   var camera = new BABYLON.ArcRotateCamera('cam', -Math.PI / 2, 1.40, 2.68, new BABYLON.Vector3(0, 1.0, 0), sceneBJS);
-camera.lowerRadiusLimit     = 1.5;
-camera.upperRadiusLimit     = 10;
-camera.lowerBetaLimit       = 0.8;
-camera.upperBetaLimit       = 1.55;
-camera.wheelDeltaPercentage = 0.01;
-camera.angularSensibilityX  = 450;
-camera.angularSensibilityY  = 450;
-camera.inertia              = 0.55;
-camera.attachControl(canvas, true);
+    var camera = new BABYLON.ArcRotateCamera('cam', -Math.PI / 2, 1.40, 2.68, new BABYLON.Vector3(0, 1.0, 0), sceneBJS);
+    camera.lowerRadiusLimit     = 1.5;
+    camera.upperRadiusLimit     = 10;
+    camera.lowerBetaLimit       = 0.8;
+    camera.upperBetaLimit       = 1.55;
+    camera.wheelDeltaPercentage = 0.01;
+    camera.angularSensibilityX  = 450;
+    camera.angularSensibilityY  = 450;
+    camera.inertia              = 0.55;
+    camera.attachControl(canvas, true);
 
     var hemi = new BABYLON.HemisphericLight('hemi', new BABYLON.Vector3(0,1,0), sceneBJS);
     hemi.intensity   = 0.6;
@@ -648,33 +601,47 @@ camera.attachControl(canvas, true);
       glowEngine.runRenderLoop(function() { glowScene.render(); });
     } catch(e) { console.warn('Glow overlay skipped:', e.message); }
 
-    log('GLB LOAD INITIATED — CST MVP ANIMS', 'info');
-    setProgress(10, 'LOADING GLB ASSET');
-    document.getElementById('canvas-status').textContent = 'LOADING GLB…';
-
-    var BABYLON_SCENE_URL = '/api/asset/scene-osu-mint-deploy-cam-01-a.babylon';
+    log('SCENE LOAD INITIATED — ' + BABYLON_SCENE_URL, 'info');
+    setProgress(10, 'LOADING SCENE ASSET');
+    document.getElementById('canvas-status').textContent = 'LOADING…';
 
     BABYLON.SceneLoader.Load('', BABYLON_SCENE_URL, engineBJS, function(loadedScene) {
       sceneBJS = loadedScene;
-      if (sceneBJS.cameras[0]) {
+      sceneBJS.environmentTexture = null;
+      sceneBJS.clearColor = new BABYLON.Color4(0.05, 0.05, 0.07, 1.0);
+
+      if (sceneBJS.cameras && sceneBJS.cameras[0]) {
         sceneBJS.activeCamera = sceneBJS.cameras[0];
         sceneBJS.activeCamera.attachControl(canvas, true);
       }
-      sceneBJS.environmentTexture = null;
+
       allGroups = sceneBJS.animationGroups || [];
+
       var readyFired = false;
       var t = setTimeout(function() {
         if (!readyFired) {
           readyFired = true;
           engineBJS.stopRenderLoop();
           engineBJS.runRenderLoop(function() { sceneBJS.render(); });
-          onAllGreen();
+          if (allGroups.length > 0) { buildAnimGrid(allGroups); playClip(0); }
+          confirmCheck('chk-babylon', 'GLB LIVE', 1);
+          confirmCheck('chk-mesh', 'FORGE_MESH LIVE', 3);
+          setTimeout(function() { confirmCheck('chk-ssot', 'LOCKED', 4); }, 400);
+          setTimeout(function() { confirmCheck('chk-moai', 'BROADCASTING', 5); }, 900);
+          setTimeout(function() { confirmCheck('chk-sentinel', 'NOMINAL', 6); }, 1400);
+          updateModelIntel(allGroups.map(function(g) { return g.name; }));
+          document.getElementById('canvas-status').textContent = 'MODEL LIVE — ' + allGroups.length + ' CLIPS';
+          queryOracleGas();
         }
       }, 3000);
+
       sceneBJS.executeWhenReady(function() {
-        readyFired = true; clearTimeout(t);
+        if (readyFired) return;
+        readyFired = true;
+        clearTimeout(t);
         engineBJS.stopRenderLoop();
         engineBJS.runRenderLoop(function() { sceneBJS.render(); });
+        allGroups = sceneBJS.animationGroups || [];
         if (allGroups.length > 0) { buildAnimGrid(allGroups); playClip(0); }
         confirmCheck('chk-babylon', 'GLB LIVE', 1);
         confirmCheck('chk-mesh', 'FORGE_MESH LIVE', 3);
@@ -699,19 +666,6 @@ camera.attachControl(canvas, true);
       btn.id = 'clip-btn-' + i;
       btn.innerHTML = '<span>' + g.name + '</span><span class="anim-play-dot"></span>';
       btn.onclick = (function(idx) { return function() { playClip(idx); }; })(i);
-      grid.appendChild(btn);
-    });
-  }
-
-  function buildAnimGridFallback(names) {
-    var grid = document.getElementById('anim-grid');
-    grid.innerHTML = '';
-    names.forEach(function(name, i) {
-      var btn = document.createElement('button');
-      btn.className = 'anim-clip-btn';
-      btn.id = 'clip-btn-' + i;
-      btn.innerHTML = '<span>' + name + '</span><span class="anim-play-dot"></span>';
-      btn.onclick = (function(n) { return function() { log('CLIP: ' + n + ' — check asset proxy', 'warn'); }; })(name);
       grid.appendChild(btn);
     });
   }
@@ -763,8 +717,9 @@ camera.attachControl(canvas, true);
     if (activeGroup) activeGroup.speedRatio = currentSpeed;
   };
 
+  // ── PROCEED TO GATEWAY — STRIPE CHECKOUT ────────────────────────
   window.proceedToGateway = async function() {
-    log('COMMANDER AUTHORIZED � DEPLOYING OPERATIVE', 'ok');
+    log('COMMANDER AUTHORIZED — DEPLOYING OPERATIVE', 'ok');
     var btn = document.getElementById('deploy-btn');
     btn.textContent = 'FORGING...';
     btn.style.pointerEvents = 'none';
@@ -780,18 +735,18 @@ camera.attachControl(canvas, true);
         window.location.href = data.url;
       } else {
         log('CHECKOUT ERROR: ' + (data.error || 'no URL returned'), 'warn');
-        btn.textContent = '? MINT TO DEPLOY';
+        btn.textContent = '◈ MINT TO DEPLOY';
         btn.style.pointerEvents = '';
       }
     } catch(err) {
       log('CHECKOUT FAILED: ' + err.message, 'warn');
-      btn.textContent = '? MINT TO DEPLOY';
+      btn.textContent = '◈ MINT TO DEPLOY';
       btn.style.pointerEvents = '';
     }
   };
 
   function boot() {
-    log('ABYSSUM FORGE CONFIRM v8 — BOOT INITIATED', 'info');
+    log('ABYSSUM FORGE CONFIRM v8.1 — BOOT INITIATED', 'info');
     setProgress(5, 'INITIALIZING BABYLON ENGINE');
     revealTelem('t1', 300);
     revealTelem('t2', 700);
@@ -814,29 +769,18 @@ camera.attachControl(canvas, true);
       log('SYNC_BRIDGE broadcasting on STATE_MACHINE', 'ok');
       document.getElementById('orbital').classList.add('hot');
     }, 3000);
-    // Entropy Throttler — pre-flight CORS warm-up
-    fetch('/api/babylon/scene-osu-mint-deploy-cam-01-a.babylon', { method: 'HEAD' })
+    // Entropy Throttler — CORS pre-flight warm-up
+    fetch('/api/asset/scene-osu-mint-deploy-cam-01-a.babylon', { method: 'HEAD' })
       .then(function(r) { log('ENTROPY: gateway warm — ' + r.status, 'ok'); })
       .catch(function() { log('ENTROPY: gateway cold — proceeding', 'warn'); });
     initBabylon();
   }
 
-  // ══════════════════════════════════════════════════════════════════
-  //  OSU-UNIT-A · BRAE GRINDSTONE — BEHAVIORAL LAYER
-  //  Brae speaks to the system. Oracle speaks to the pilot.
-  //  Two voices. Two colors. One Forge Network.
-  //  Brae → ORANGE (#e07a20). Oracle → TEAL.
-  //  Voice: ElevenLabs only. No browser TTS fallback — that is not Brae.
-  // ══════════════════════════════════════════════════════════════════
-
+  // ── BRAE OSU — BEHAVIORAL LAYER ─────────────────────────────────
   var BraeOSU = (function() {
-
-    var _lastGasSignal  = null;
-    var _lastClipName   = null;
-    var _pilotVerified  = false;
-    var _deployArmed    = false;
-    var _braeVoiceId    = null;
-    var _elevenLabsKey  = null;
+    var _lastGasSignal = null, _lastClipName = null;
+    var _pilotVerified = false, _deployArmed = false;
+    var _braeVoiceId = null, _elevenLabsKey = null;
 
     var TRANSMISSIONS = {
       GAS_STABLE:    ["Signal nominal. Carry on.", "Network holding. Nothing to flag."],
@@ -852,9 +796,7 @@ camera.attachControl(canvas, true);
       CLIP_GENERIC:  ["Clip change. Tracking.", "Animation state updated. Logged."]
     };
 
-    function _pick(arr) {
-      return arr[Math.floor(Math.random() * arr.length)];
-    }
+    function _pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
     function _clipCategory(name) {
       if (!name) return 'CLIP_GENERIC';
@@ -878,17 +820,13 @@ camera.attachControl(canvas, true);
     }
 
     async function _speakElevenLabs(text) {
-      // ElevenLabs only. No browser TTS. Brae is silent until voice ID is set.
       if (!_elevenLabsKey || !_braeVoiceId) return;
       try {
         var res = await fetch(
           'https://api.elevenlabs.io/v1/text-to-speech/' + _braeVoiceId + '/stream',
           {
             method: 'POST',
-            headers: {
-              'xi-api-key': _elevenLabsKey,
-              'Content-Type': 'application/json'
-            },
+            headers: { 'xi-api-key': _elevenLabsKey, 'Content-Type': 'application/json' },
             body: JSON.stringify({
               text: text,
               model_id: 'eleven_turbo_v2',
@@ -902,16 +840,14 @@ camera.attachControl(canvas, true);
         var audio = new Audio(url);
         audio.play().catch(function(e) { console.warn('BraeOSU audio blocked:', e.message); });
         audio.onended = function() { URL.revokeObjectURL(url); };
-      } catch(e) {
-        console.warn('BraeOSU ElevenLabs error:', e.message);
-      }
+      } catch(e) { console.warn('BraeOSU ElevenLabs error:', e.message); }
     }
 
     function onGasUpdate(signal) {
       if (signal === _lastGasSignal) return;
       _lastGasSignal = signal;
       if (!_pilotVerified) return;
-      if (signal === 'STABLE')   return;   // Silence on stable — intentional
+      if (signal === 'STABLE')   return;
       if (signal === 'ELEVATED') { _transmit(_pick(TRANSMISSIONS.GAS_ELEVATED)); return; }
       if (signal === 'CRITICAL') { _transmit(_pick(TRANSMISSIONS.GAS_CRITICAL)); return; }
     }
@@ -919,9 +855,7 @@ camera.attachControl(canvas, true);
     function onPilotAuthenticated() {
       if (_pilotVerified) return;
       _pilotVerified = true;
-      setTimeout(function() {
-        _transmit(_pick(TRANSMISSIONS.PILOT_AUTH));
-      }, 1200);
+      setTimeout(function() { _transmit(_pick(TRANSMISSIONS.PILOT_AUTH)); }, 1200);
     }
 
     function onClipChange(clipName) {
@@ -937,9 +871,7 @@ camera.attachControl(canvas, true);
       if (_deployArmed) return;
       _deployArmed = true;
       if (!_pilotVerified) return;
-      setTimeout(function() {
-        _transmit(_pick(TRANSMISSIONS.DEPLOY_ARMED));
-      }, 600);
+      setTimeout(function() { _transmit(_pick(TRANSMISSIONS.DEPLOY_ARMED)); }, 600);
     }
 
     function setCredentials(voiceId, apiKey) {
@@ -950,7 +882,7 @@ camera.attachControl(canvas, true);
     return { onGasUpdate, onPilotAuthenticated, onClipChange, onDeployArmed, setCredentials };
   })();
 
-  // ── PATCHES (non-destructive wraps) ────────────────────────────
+  // ── PATCHES ─────────────────────────────────────────────────────
   var _origUpdateGasDisplay = updateGasDisplay;
   updateGasDisplay = function(gas) {
     _origUpdateGasDisplay(gas);
@@ -979,9 +911,7 @@ camera.attachControl(canvas, true);
     mutations.forEach(function(m) {
       if (m.type === 'characterData' || m.type === 'childList') {
         var el = document.getElementById('mi-state-text');
-        if (el && el.textContent === 'PILOT VERIFIED') {
-          BraeOSU.onPilotAuthenticated();
-        }
+        if (el && el.textContent === 'PILOT VERIFIED') BraeOSU.onPilotAuthenticated();
       }
     });
   });
@@ -1008,7 +938,3 @@ camera.attachControl(canvas, true);
 </script>
 </body>
 </html>
-
-
-
-
