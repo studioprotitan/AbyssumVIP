@@ -7,7 +7,7 @@
 <canvas id="c"></canvas>
 <script>
 var engine = new BABYLON.Engine(document.getElementById('c'), true);
-var url = 'https://github.com/studioprotitan/AbyssumVIP/releases/download/babylon-scenes-v1.0/scene-forge-net-mtd-avatar-a.babylon';
+var url = '/api/asset/scene-forge-net-mtd-avatar-a.babylon';
 BABYLON.SceneLoader.Load('', url, engine, function(scene) {
   scene.environmentTexture = null;
   if (scene.cameras[0]) { scene.activeCamera = scene.cameras[0]; scene.activeCamera.attachControl(document.getElementById('c'), true); }
