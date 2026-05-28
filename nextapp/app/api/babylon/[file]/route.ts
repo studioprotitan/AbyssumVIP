@@ -31,7 +31,6 @@ const ALLOWED_FILES = new Set([
   // GLB animation groups
   'cst-mint-deploy-mvp-animation-group-01.glb',
   // Forge Deck props — DPK confirmed
-  'scene-mint-deploy-dpk-prop-clock-a.glb',
   'scene-mint-deploy-dpk-prop-banner-b.glb',
   'scene-mint-deploy-dpk-prop-billboard.glb',
   'scene-mint-deploy-dpk-prop-bus-stop.glb',
