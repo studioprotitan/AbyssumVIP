@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const runtime = 'nodejs';
 
-const GITHUB_RELEASE_BASE = 'https://github.com/studioprotitan/Forge-Avatars/releases/download/v1.0';
+const BABYLON_RELEASE_BASE = 'https://github.com/studioprotitan/AbyssumVIP/releases/download/repairbay-v1.0';
+const GLB_RELEASE_BASE = 'https://github.com/studioprotitan/Forge-Avatars/releases/download/v1.0';
 
 export async function GET(
   req: NextRequest,
@@ -10,7 +11,9 @@ export async function GET(
 ) {
   const { path } = await params;
   const assetName = path.join('/');
-  const upstream = `${GITHUB_RELEASE_BASE}/${assetName}`;
+  const upstream = assetName.endsWith('.babylon')
+    ? `${BABYLON_RELEASE_BASE}/${assetName}`
+    : `${GLB_RELEASE_BASE}/${assetName}`;
 
   const response = await fetch(upstream, { redirect: 'follow' });
 
