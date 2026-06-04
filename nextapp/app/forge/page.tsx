@@ -31,19 +31,15 @@ export default function ForgePage() {
         }
         cam.attachControl(canvas, true);
 
-        BABYLON.SceneLoader.ImportMeshAsync('', '/api/asset/cst-ert-stellar-woman.glb', '', scene)
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .then((result: any) => {
-            if (result.meshes[0]) result.meshes[0].position = BABYLON.Vector3.Zero();
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const idle = scene.animationGroups?.find((ag: any) => ag.name === 'cst-ert-idle-b');
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            scene.animationGroups?.forEach((ag: any) => ag.stop());
-            if (idle) idle.play(true);
-            else scene.animationGroups?.[0]?.play(true);
-          })
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .catch((e: any) => console.warn('[MOAI:FORGE] Unit load warn:', e.message));
+       // BABYLON.SceneLoader.ImportMeshAsync('', '/api/asset/cst-ert-stellar-woman.glb', '', scene)
+//   .then((result: any) => {
+//     if (result.meshes[0]) result.meshes[0].position = BABYLON.Vector3.Zero();
+//     const idle = scene.animationGroups?.find((ag: any) => ag.name === 'cst-ert-idle-b');
+//     scene.animationGroups?.forEach((ag: any) => ag.stop());
+//     if (idle) idle.play(true);
+//     else scene.animationGroups?.[0]?.play(true);
+//   })
+//   .catch((e: any) => console.warn('[MOAI:FORGE] Unit load warn:', e.message));
 
         engine.runRenderLoop(() => scene.render());
         window.addEventListener('resize', () => engine.resize());
